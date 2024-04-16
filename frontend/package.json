@@ -2,12 +2,16 @@
   "name": "frontend",
   "version": "0.1.0",
   "private": true,
+  "main": "electron-main.js",
   "dependencies": {
     "@testing-library/jest-dom": "^5.17.0",
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
+    "cors": "^2.8.5",
+    "express": "^4.19.2",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "react-router-dom": "^6.22.3",
     "react-scripts": "5.0.1",
     "web-vitals": "^2.1.4"
   },
@@ -15,7 +19,8 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "electron": "electron ."
   },
   "eslintConfig": {
     "extends": [
@@ -34,5 +39,14 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "@types/sass": "^1.45.0",
+    "@types/sass-loader": "^8.0.8",
+    "@types/webpack": "^5.28.5",
+    "electron": "^30.0.0",
+    "sass": "^1.75.0",
+    "sass-loader": "^14.2.1",
+    "webpack": "^5.91.0"
   }
 }
