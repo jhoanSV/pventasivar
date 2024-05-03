@@ -1,9 +1,9 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { Customerlist,
-         Login,
+         //Login,
          Newcustomer,
-         Newproduct,
+         //Newproduct,
          Newpurchase,
          Newsupplier,
          Sales
@@ -13,11 +13,9 @@ export function RoutesComponent() {
     return (
       <Router>
           <Routes>
+              <Route path='/' element={ <Newpurchase/> }/>
               <Route path='Customerlist' element={ <Customerlist/> }/>
-              <Route path='/' element={ <Newproduct/> }/>
-              <Route path='Newcustomer' element={ <Newcustomer/> }/>
-              <Route path='Newproduct' element={ <Login/> }/>
-              <Route path='Newpurchase' element={ <Newpurchase/> }/>
+              <Route path='Newcustomer' element={ <Newcustomer/> }/>              
               <Route path='Newsupplier' element={ <Newsupplier/> }/>
               <Route path='Sales' element={ <Sales/> }/>
           </Routes>

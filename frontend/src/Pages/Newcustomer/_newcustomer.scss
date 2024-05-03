@@ -1,8 +1,16 @@
 @import "../../scss/_colors.scss";
 
+.newCustomer{
+    padding: 10px 160px;
+}
 
 .standarinput{
     position: relative;
     padding: 1.12vw 3.69vw;
     min-height: 40rem;
+}
+
+.ncTextArea{
+    width: 70%;
+    height: 100px;
 }

@@ -1,0 +1,64 @@
+.headContainer{
+    display: flex;
+    height: 63px;
+    position: relative;
+    padding: 10px 25px 10px 200px;
+    background-color: #193773;
+    color: white;
+    font-size: 40px;
+    justify-content: space-between;
+}
+
+.mainLogoHead{
+    background-color: #193773;
+    position: absolute;
+    left: -2px;
+    top: 0;
+    z-index: 1;
+    width: 116px;
+    padding: 10px;
+    border-radius: 150px;
+    transition: 0.3s;
+}
+.mlh-selected{
+    width: 250px;
+    padding: 0px;
+    left: 81px;
+    top: 10px;
+    transition: 0.3s;
+}
+
+.side-bar{
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 0;
+    height: 100%;
+    background-color: #193773;
+    overflow-x: hidden;
+    transition: 0.3s;
+}
+
+.side-bar.show{
+    width: 412px;
+    transition: 0.3s;
+}
+
+.side-menu{
+    padding-top: 300px;
+}
+.side-menu > div{
+    text-wrap: nowrap;
+    font-size: 34px;
+    padding: 0px 34px;
+    color: #959595;
+    cursor: pointer;
+}
+
+.side-menu > div:hover{
+    color: white;
+}
+
+.htud{
+    
+}
