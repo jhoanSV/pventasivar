@@ -1,2 +1,40 @@
 @import "../../scss/_colors.scss";
 
+.Newproduct{
+    padding: 10px 160px;
+}
+
+.Inv{
+    width: 380px;
+    position: absolute;
+    right: 0;
+    top: 107px;
+}
+
+.InvLabel{
+    text-align: center;
+    padding-bottom: 15px;
+    border-bottom: solid 1px;
+}
+
+.Inv .Colmn1{
+    width: 25%;
+}
+
+.ProImgContainer{
+    width: 200px;
+    height: 200px;
+    border: solid 1px;
+    margin-right: 150px;
+}
+
+.npTextArea{
+    width: 500px;
+    height: 144px;
+    margin: auto 0px;
+    resize: none;
+}
+
+#productName{
+    width: 600px;
+}

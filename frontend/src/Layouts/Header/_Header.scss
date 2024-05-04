@@ -14,11 +14,12 @@
     position: absolute;
     left: -2px;
     top: 0;
-    z-index: 1;
+    z-index: 2;
     width: 116px;
     padding: 10px;
     border-radius: 150px;
     transition: 0.3s;
+    cursor: pointer;
 }
 .mlh-selected{
     width: 250px;
@@ -28,8 +29,14 @@
     transition: 0.3s;
 }
 
+.equis{
+    position: absolute;    
+    cursor: pointer;
+}
+
 .side-bar{
     position: fixed;
+    z-index: 1;
     left: 0;
     top: 0;
     width: 0;
@@ -47,7 +54,7 @@
 .side-menu{
     padding-top: 300px;
 }
-.side-menu > div{
+.side-menu > div a, .clsBtn{
     text-wrap: nowrap;
     font-size: 34px;
     padding: 0px 34px;
@@ -55,7 +62,7 @@
     cursor: pointer;
 }
 
-.side-menu > div:hover{
+.side-menu > div a:hover, .clsBtn:hover{
     color: white;
 }
 

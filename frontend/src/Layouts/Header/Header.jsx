@@ -1,10 +1,11 @@
+import { Link } from 'react-router-dom';
 import { useTheContext } from '../../TheProvider';
 import './_Header.scss';
 import React from 'react';
 
 export const Header = () => {
 
-    const { setLogged } = useTheContext()
+    const { setLogged, section } = useTheContext()
     
     const showSideBar = (e) =>{
         e.target.classList.add('mlh-selected')
@@ -26,38 +27,52 @@ export const Header = () => {
                     onClick={(e)=>{showSideBar(e)}}
                 />
                 <div className='side-bar'>
-                    <div onClick={()=>{hideSideBar()}}>
-                        Equis
+                    <div onClick={()=>{hideSideBar()}} className='equis'>
+                        <i className="bi bi-x-lg"></i>
                     </div>
                     <div className='side-menu'>
                         <div>
-                            VENTAS
+                            <Link to={'/'} className='genLink'>
+                                VENTAS
+                            </Link>
                         </div>
                         <div>
-                            MODULO POS
+                            <Link to={'/'} className='genLink'>
+                                MODULO POS
+                            </Link>
                         </div>
                         <div>
-                            PRODUCTOS
+                            <Link to={'/'} className='genLink'>
+                                PRODUCTOS
+                            </Link>
                         </div>
                         <div>
-                            CLIENTES
+                            <Link to={'/'} className='genLink'>
+                                CLIENTES
+                            </Link>
                         </div>
                         <div>
-                            PROVEEDORES
+                            <Link to={'/'} className='genLink'>
+                                PROVEEDORES
+                            </Link>
                         </div>
                         <div>
-                            ADMINISTRACION
+                            <Link to={'/'} className='genLink'>
+                                ADMINISTRACION
+                            </Link>                            
                         </div>
                         <div>
-                            CONFIGURACION
+                            <Link to={'/'} className='genLink'>
+                                CONFIGURACION
+                            </Link>                            
                         </div>
-                        <div onClick={()=>{setLogged(false)}}>
+                        <div onClick={()=>{setLogged(false)}} className='clsBtn'>
                             CERRAR SESION
                         </div>
                     </div>
 
                 </div>
-                <label>Nombre de seccion o algo así</label>
+                <label>{section}</label>
                 <div className='htud'>
                     usuario: usuarionombre
                 </div>

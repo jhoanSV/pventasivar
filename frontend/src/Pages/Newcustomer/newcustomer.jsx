@@ -1,10 +1,20 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import "./_newcustomer.scss";
+import { useTheContext } from '../../TheProvider';
 
 export function Newcustomer(){
+    
+    const { setSection } = useTheContext();
+
+    useEffect(() => {
+        setSection('Nuevo cliente')
+
+        // eslint-disable-next-line
+    }, []);
+
     return (
         <section className='newCustomer'>
-            <form>
+            <div>
                 <div className='Row'>
                     <div className='Colmn1'>
                         <label>Tipo cliente</label>
@@ -88,10 +98,10 @@ export function Newcustomer(){
                     </div>
                 </div>
 
-                <button>Guardar</button>
-                <button>Historial</button>
-                <button>Cancelar</button>
-            </form>            
+                <button className='btnStnd btn1'>Guardar</button>
+                <button className='btnStnd btn1'>Historial</button>
+                <button className='btnStnd btn1'>Cancelar</button>
+            </div>
         </section>
     );
 }
