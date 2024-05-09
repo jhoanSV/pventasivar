@@ -1,1 +1,11 @@
 @import "../../scss/_colors.scss";
+
+.CustomerList{
+    padding: 10px 160px;
+}
+
+.CLdiv1, .SLdiv1{
+    display: flex;
+    justify-content: space-between;
+    padding: 20px;
+}

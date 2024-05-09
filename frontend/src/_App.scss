@@ -35,3 +35,16 @@
   box-shadow: none;
   transform: translateY(3px);
 }
+
+.tableContainer{
+  background-color: #d9d9d9;
+  height: 65vh;
+  overflow-y: auto;
+}
+
+input[type="text"] {
+  background-color: #d9d9d9;
+  border: none;
+  border-radius: 5px;
+  padding: 6px;
+}

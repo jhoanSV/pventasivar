@@ -45,6 +45,16 @@ export function Newsupplier(){
             </div>
             <div className="Row">
                 <div className="Colmn1">
+                    <label>Nombre Asesor</label>
+                </div>
+                <div className="Colmn2">
+                    <input type="text"/>
+                    <label>Apellidos</label>
+                    <input type="text"/>
+                </div>
+            </div>
+            <div className="Row">
+                <div className="Colmn1">
                     <label>Telefono1</label>
                 </div>
                 <div className="Colmn2">
@@ -53,7 +63,23 @@ export function Newsupplier(){
             </div>
             <div className="Row">
                 <div className="Colmn1">
-                    <label>E-mil</label>
+                    <label>Telefono2</label>
+                </div>
+                <div className="Colmn2">
+                    <input type="text"/>
+                </div>
+            </div>
+            <div className="Row">
+                <div className="Colmn1">
+                    <label>E-mail</label>
+                </div>
+                <div className="Colmn2">
+                    <input type="text"/>
+                </div>
+            </div>
+            <div className="Row">
+                <div className="Colmn1">
+                    <label>Web Page</label>
                 </div>
                 <div className="Colmn2">
                     <input type="text"/>
@@ -89,9 +115,9 @@ export function Newsupplier(){
                     />
                 </div>
             </div>
-            <button>Guardar</button>
-            <button>Cancelar</button>
-            <button>Historial</button>
+            <button className='btnStnd btn1'>Guardar</button>
+            <button className='btnStnd btn1'>Cancelar</button>
+            <button className='btnStnd btn1'>Historial</button>
         </section>
     )
 }

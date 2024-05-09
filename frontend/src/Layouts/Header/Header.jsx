@@ -32,37 +32,37 @@ export const Header = () => {
                     </div>
                     <div className='side-menu'>
                         <div>
-                            <Link to={'/'} className='genLink'>
+                            <Link to={'/'} className='genLink' onClick={()=>{hideSideBar()}}>
                                 VENTAS
                             </Link>
                         </div>
                         <div>
-                            <Link to={'/'} className='genLink'>
+                            <Link to={'/'} className='genLink' onClick={()=>{hideSideBar()}}>
                                 MODULO POS
                             </Link>
                         </div>
                         <div>
-                            <Link to={'/'} className='genLink'>
+                            <Link to={'/'} className='genLink' onClick={()=>{hideSideBar()}}>
                                 PRODUCTOS
                             </Link>
                         </div>
                         <div>
-                            <Link to={'/'} className='genLink'>
+                            <Link to={'/Customerlist'} className='genLink' onClick={()=>{hideSideBar()}}>
                                 CLIENTES
                             </Link>
                         </div>
                         <div>
-                            <Link to={'/'} className='genLink'>
+                            <Link to={'/Supplierlist'} className='genLink' onClick={()=>{hideSideBar()}}>
                                 PROVEEDORES
                             </Link>
                         </div>
                         <div>
-                            <Link to={'/'} className='genLink'>
+                            <Link to={'/'} className='genLink' onClick={()=>{hideSideBar()}}>
                                 ADMINISTRACION
                             </Link>                            
                         </div>
                         <div>
-                            <Link to={'/'} className='genLink'>
+                            <Link to={'/'} className='genLink' onClick={()=>{hideSideBar()}}>
                                 CONFIGURACION
                             </Link>                            
                         </div>
