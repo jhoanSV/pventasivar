@@ -19,7 +19,7 @@ export function Newpurchase(){
                 <label>
                     Ingrese c&oacute;digo del producto:{' '}
                 </label>
-                <input type='text'/>
+                <input id='NPinput' type='text'/>
                 {'  '}
                 <button className='btnStnd btn1'>Agregar productos</button>
             </section>

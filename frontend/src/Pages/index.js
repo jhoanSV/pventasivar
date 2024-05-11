@@ -6,3 +6,4 @@ export * from "./Newpurchase";
 export * from "./Newsupplier";
 export * from "./Sales";
 export * from './Supplierlist';
+export * from './POSMODULE';

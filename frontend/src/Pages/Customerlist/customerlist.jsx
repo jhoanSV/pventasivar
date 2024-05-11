@@ -15,6 +15,14 @@ export function Customerlist(){
         alert('viendo jsjs')
     }
 
+    const ModifyFunction = () =>{
+        alert('modificando jsjs')
+    }
+
+    const DeleteFunction = () =>{
+        alert('eliminando jsjs')
+    }
+
     const ctHeaders = [
         {
             header: 'ID/NIT',
@@ -51,10 +59,26 @@ export function Customerlist(){
         {
             header: 'Ver',
             key: null,
-            defaultWidth: '57px',
+            defaultWidth: '0px',
             function: verFunction,
             type: 'BIcon',
             var1: 'bi bi-eye-fill'
+        },
+        {
+            header: 'Modificar',
+            key: null,
+            defaultWidth: '0px',
+            function: ModifyFunction,
+            type: 'BIcon',
+            var1: 'bi bi-pencil-square'
+        },
+        {
+            header: 'Eliminar',
+            key: null,
+            defaultWidth: '0px',
+            function: DeleteFunction,
+            type: 'BIcon',
+            var1: 'bi bi-trash-fill'
         }
     ]
 

@@ -37,7 +37,7 @@ export const Header = () => {
                             </Link>
                         </div>
                         <div>
-                            <Link to={'/'} className='genLink' onClick={()=>{hideSideBar()}}>
+                            <Link to={'/MODULOPOS'} className='genLink' onClick={()=>{hideSideBar()}}>
                                 MODULO POS
                             </Link>
                         </div>

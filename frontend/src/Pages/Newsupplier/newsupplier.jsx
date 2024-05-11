@@ -115,9 +115,13 @@ export function Newsupplier(){
                     />
                 </div>
             </div>
-            <button className='btnStnd btn1'>Guardar</button>
-            <button className='btnStnd btn1'>Cancelar</button>
-            <button className='btnStnd btn1'>Historial</button>
+            <div style={{marginLeft: '15.5%', display: 'flex', justifyContent: 'space-between'}}>
+                <div>
+                    <button className='btnStnd btn1' style={{marginRight: '10px'}}>Guardar</button>
+                    <button className='btnStnd btn1'>Historial</button>
+                </div>
+                <button className='btnStnd btn1'>Cancelar</button>
+            </div>
         </section>
     )
 }

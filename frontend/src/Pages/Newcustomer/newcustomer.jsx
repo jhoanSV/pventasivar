@@ -1,9 +1,10 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import "./_newcustomer.scss";
 import { useTheContext } from '../../TheProvider';
 
 export function Newcustomer(){
     
+    const [conCredito, setConCredito] = useState(false);
     const { setSection } = useTheContext();
 
     useEffect(() => {
@@ -79,10 +80,14 @@ export function Newcustomer(){
                     <div className='Colmn1'>
                         <label>Credito</label>
                     </div>
-                    <div className='Colmn2'>
-                        <input type="checkbox" className=""/>
-                        <label>Limite de credito</label>
-                        <input type="text" className=""/>
+                    <div className='Colmn2' style={{minHeight: '28px'}}>
+                        <input type="checkbox" className="" onChange={()=>{setConCredito(e=>!e)}}/>
+                        {conCredito &&
+                            <>
+                                <label style={{paddingRight: '10px'}}>Limite de credito</label>
+                                <input type="text" className=""/>
+                            </>
+                        }
                     </div>
                 </div>
                 <div className='Row'>
@@ -97,10 +102,13 @@ export function Newcustomer(){
                         />
                     </div>
                 </div>
-
-                <button className='btnStnd btn1'>Guardar</button>
-                <button className='btnStnd btn1'>Historial</button>
-                <button className='btnStnd btn1'>Cancelar</button>
+                <div style={{marginLeft: '15.5%', display: 'flex', justifyContent: 'space-between'}}>
+                    <div>
+                        <button className='btnStnd btn1' style={{marginRight: '10px'}}>Guardar</button>
+                        <button className='btnStnd btn1'>Historial</button>
+                    </div>
+                    <button className='btnStnd btn1'>Cancelar</button>
+                </div>
             </div>
         </section>
     );

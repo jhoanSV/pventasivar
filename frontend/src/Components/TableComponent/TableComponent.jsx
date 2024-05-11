@@ -2,8 +2,6 @@ import React, { useEffect } from 'react';
 import './_TableComponent.scss';
 
 export const TableComponent = ({data, headers}) => {
-    console.log(data);
-    console.log(headers);
     const createResizableTable = function (table) {
         const cols = table.querySelectorAll('th');
         [].forEach.call(cols, function (col) {
@@ -49,6 +47,10 @@ export const TableComponent = ({data, headers}) => {
 
         resizer.addEventListener('mousedown', mouseDownHandler);
     };
+
+    const selectedRowFunction = (e) =>{
+        e.currentTarget.classList.toggle('active-row')
+    }
     
     useEffect(() => {
         createResizableTable(document.getElementById('theTableId'));
@@ -60,25 +62,24 @@ export const TableComponent = ({data, headers}) => {
             <thead>
                 <tr>
                     {headers.map((item, index) =>
-                        <th key={index} style={{width: item['defaultWidth']}}>{item['header']}</th>
+                        <th key={index} style={{width: item['defaultWidth']}}>
+                            <div className='cellContent'>{item['header']}</div>
+                        </th>
                     )}
                 </tr>
             </thead>
             <tbody>
                 {data.slice(0,10).map((item, index) => 
-                    <tr key={index}>
+                    <tr key={index} onClick={selectedRowFunction}>
                         {headers.map((header, index) => 
-                            <>
+                            <td key={index}>
                                 {header['function'] ?
-                                    <td>
-                                        <i className={header['var1']} onClick={()=>{header['function']()}}></i>
-                                    </td>
+                                    <i className={header['var1']} onClick={()=>{header['function']()}}></i>
                                 :
-                                    <td key={index}>{item[header['key']]}</td>
+                                    <div className='cellContent'>{item[header['key']]}</div>
                                 }
-                            </>
+                            </td>
                         )}
-                        
                     </tr>
                 )}
             </tbody>

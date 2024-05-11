@@ -14,6 +14,7 @@
 .theTable th,
 .theTable td {
     padding: 12px 15px;
+    white-space: nowrap;
 }
 
 .theTable tbody tr {
@@ -28,6 +29,11 @@
     border-bottom: 2px solid #193773;
 }
 
+.theTable tbody tr:hover{
+    background-color: rgba(0, 0, 0, 0.1);
+    box-shadow: inset -5px -13px 15px 0px rgba(0, 0, 0, 0.15);
+}
+
 .theTable tbody tr.active-row {
     font-weight: bold;
     background-color: #2753ac94;
@@ -35,6 +41,11 @@
 
 .theTable th{
     position: relative;
+}
+
+td i {
+    display: flex;
+    justify-content: center;
 }
 
 .resizer {
