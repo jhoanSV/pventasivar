@@ -2,6 +2,12 @@
 
 .Newproduct{
     padding: 10px 160px;
+    input[type=text]{
+        width: 41%;
+    }
+    .Colmn2{
+        width: 100%;
+    }
 }
 
 .Inv{
@@ -14,7 +20,8 @@
 .InvLabel{
     text-align: center;
     padding-bottom: 15px;
-    border-bottom: solid 1px;
+    border-bottom: solid 0px;
+    border-color: $azulPrincipal;
 }
 
 .Inv .Colmn1{
@@ -31,10 +38,50 @@
 .npTextArea{
     width: 500px;
     height: 144px;
-    margin: auto 0px;
+    margin: auto 2px;
     resize: none;
 }
 
 #productName{
     width: 600px;
+}
+
+.custom-radio {
+    position: relative;
+    opacity: 0;
+    cursor: pointer;
+    margin-right: 5px;
+    margin-left: 5px;
+    border-color: $amarilloPrincipal;
+    border: 1px solid;
+  }
+
+.custom-label {
+    position: relative;
+    padding-left: 10px; /* Adjust padding for better spacing */
+    margin-right: 5px;
+    cursor: pointer;
+    user-select: none;
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+  
+    i::before {
+      content: "";
+      position: absolute;
+      top: 50%;
+      left: 0;
+      transform: translateY(-50%);
+      width: 20px; /* Increase width for larger border */
+      height: 20px; /* Increase height for larger border */
+      border: 4px solid; /* Increase border width and set color */
+      border-color: #D9D9D9;
+      border-radius: 50%;
+      background-color: white;
+      transition: border-color 0.2s ease-in-out;
+    }
+}
+
+.custom-radio:checked + i::before {
+    border-color: $amarilloPrincipal; /* Change border color when checked */
 }
