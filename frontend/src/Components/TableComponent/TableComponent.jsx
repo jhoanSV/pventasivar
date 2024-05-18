@@ -1,7 +1,8 @@
 import React, { useEffect } from 'react';
 import './_TableComponent.scss';
 
-export const TableComponent = ({data, headers}) => {
+export const TableComponent = ({data, headers, setSlct}) => {
+
     const createResizableTable = function (table) {
         const cols = table.querySelectorAll('th');
         [].forEach.call(cols, function (col) {
@@ -48,7 +49,14 @@ export const TableComponent = ({data, headers}) => {
         resizer.addEventListener('mousedown', mouseDownHandler);
     };
 
-    const selectedRowFunction = (e) =>{
+    const selectedRowFunction = (e, item) =>{
+        //? Esto se arregla después jsjs
+        console.log(typeof(item));
+        if(!e.currentTarget.classList.contains('active-row')){
+            setSlct(i=>[...i, item])
+        }else{
+            setSlct(i=>i.filter(item=>item!==item))
+        }
         e.currentTarget.classList.toggle('active-row')
     }
     
@@ -70,14 +78,10 @@ export const TableComponent = ({data, headers}) => {
             </thead>
             <tbody>
                 {data.slice(0,10).map((item, index) => 
-                    <tr key={index} onClick={selectedRowFunction}>
+                    <tr key={index} onClick={(e)=>selectedRowFunction(e, item)} onDoubleClick={()=>{alert('doublejsjs')}}>
                         {headers.map((header, index) => 
                             <td key={index}>
-                                {header['function'] ?
-                                    <i className={header['var1']} onClick={()=>{header['function']()}}></i>
-                                :
-                                    <div className='cellContent'>{item[header['key']]}</div>
-                                }
+                                <div className='cellContent'>{item[header['key']]}</div>
                             </td>
                         )}
                     </tr>

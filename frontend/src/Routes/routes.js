@@ -14,7 +14,7 @@ import { Customerlist,
 export function RoutesComponent() {
     return (      
         <Routes>
-            <Route path='/' element={ <Newpurchase/> }/>
+            <Route path='/' element={ <Sales/> }/>
             <Route path='/MODULOPOS' element={ <PosModule/>}/>
 
             <Route path='/NewProduct' element={ <Newproduct/> }/>
@@ -22,7 +22,7 @@ export function RoutesComponent() {
             <Route path='/Newcustomer' element={ <Newcustomer/> }/>
             <Route path='/Supplierlist' element={ <Supplierlist/> }/>
             <Route path='/Newsupplier' element={ <Newsupplier/> }/>
-            <Route path='/Sales' element={ <Sales/> }/>
+            <Route path='/Newpurchase' element={ <Newpurchase/> }/>
 
         </Routes>
     );
