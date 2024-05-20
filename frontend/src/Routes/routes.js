@@ -25,7 +25,6 @@ export function RoutesComponent() {
             <Route path='/Supplierlist' element={ <Supplierlist/> }/>
             <Route path='/Newsupplier' element={ <Newsupplier/> }/>
             <Route path='/Newpurchase' element={ <Newpurchase/> }/>
-            <Route path='/Sales' element={ <Sales/> }/>
             <Route path='/InvAdjustment' element={ <InvAdjustment/> }/>
             <Route path='/ProductsList' element={ <ProductsList/> }/>
             <Route path='/Inventory' element={ <Inventory/> }/>

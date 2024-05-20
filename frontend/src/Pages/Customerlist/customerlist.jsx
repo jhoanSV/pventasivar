@@ -27,10 +27,10 @@ export function Customerlist(){
 
     const ctHeaders = [
         {
-            header: 'ID/NIT',
-            key: 'id_nit',
-            defaultWidth: '131px',
-            type: 'text',
+            header: 'ID/NIT',//*Nombre de cabecera
+            key: 'id_nit',//*llave para acceder al dato del JSON
+            defaultWidth: '131px',//*Ancho por defecto
+            type: 'text',//*Tipo de celda
         },
         {
             header: 'Nombre',
