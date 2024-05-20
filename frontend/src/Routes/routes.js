@@ -6,9 +6,9 @@ import { Customerlist,
          Newproduct,
          Newpurchase,
          Newsupplier,
-         PosModule,
          Sales,
          Supplierlist,
+         BalanceReport,
          InvAdjustment,
          ProductsList,
          Inventory
@@ -17,13 +17,14 @@ import { Customerlist,
 export function RoutesComponent() {
     return (      
         <Routes>
-            <Route path='/' element={ <Newpurchase/> }/>
-            <Route path='/MODULOPOS' element={ <PosModule/>}/>
+            <Route path='/' element={ <Sales/> }/>
             <Route path='/NewProduct' element={ <Newproduct/> }/>
             <Route path='/Customerlist' element={ <Customerlist/> }/>
             <Route path='/Newcustomer' element={ <Newcustomer/> }/>
+            <Route path='/BalanceReport' element={ <BalanceReport/>}/>
             <Route path='/Supplierlist' element={ <Supplierlist/> }/>
             <Route path='/Newsupplier' element={ <Newsupplier/> }/>
+            <Route path='/Newpurchase' element={ <Newpurchase/> }/>
             <Route path='/Sales' element={ <Sales/> }/>
             <Route path='/InvAdjustment' element={ <InvAdjustment/> }/>
             <Route path='/ProductsList' element={ <ProductsList/> }/>

@@ -67,5 +67,21 @@
 }
 
 .htud{
-    
+    display: flex;
+}
+
+.m-selected{
+    color: #F2CB05 !important;
+}
+
+.subm-container{
+    display: flex;
+    padding-left: 20px;
+    height: 0px;
+    overflow: hidden;
+    flex-direction: column;
+}
+
+.m-selected + .subm-container{
+    height: auto;
 }

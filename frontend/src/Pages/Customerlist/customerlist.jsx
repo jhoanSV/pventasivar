@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import "./_customerlist.scss";
 import { useNavigate } from 'react-router-dom';
 import { useTheContext } from '../../TheProvider';
@@ -8,19 +8,21 @@ import { TableComponent } from '../../Components';
 
 export function Customerlist(){
 
+    const [selected, setSelected] = useState([]);
+    const [multiSelect, setMultiSelect] = useState(false);
     const navigate = useNavigate()
     const { setSection } = useTheContext();
 
     const verFunction = () =>{
-        alert('viendo jsjs')
-    }
-
-    const ModifyFunction = () =>{
-        alert('modificando jsjs')
+        navigate('/Newcustomer', { state: selected[0] })
     }
 
     const DeleteFunction = () =>{
         alert('eliminando jsjs')
+    }
+
+    const deselect = () =>{
+        setSelected([])
     }
 
     const ctHeaders = [
@@ -28,57 +30,31 @@ export function Customerlist(){
             header: 'ID/NIT',
             key: 'id_nit',
             defaultWidth: '131px',
-            function: null,
             type: 'text',
-            var1: null
         },
         {
             header: 'Nombre',
             key: 'nombre',
             defaultWidth: '223px',
-            function: null,
             type: 'text',
-            var1: null
         },
         {
             header: 'Apellidos',
             key: 'apellido',
             defaultWidth: '223px',
-            function: null,
             type: 'text',
-            var1: null
         },
         {
             header: 'Telefono 1',
             key: 'telefono1',
             defaultWidth: '135.5px',
-            function: null,
             type: 'text',
-            var1: null
         },
         {
-            header: 'Ver',
-            key: null,
-            defaultWidth: '0px',
-            function: verFunction,
-            type: 'BIcon',
-            var1: 'bi bi-eye-fill'
-        },
-        {
-            header: 'Modificar',
-            key: null,
-            defaultWidth: '0px',
-            function: ModifyFunction,
-            type: 'BIcon',
-            var1: 'bi bi-pencil-square'
-        },
-        {
-            header: 'Eliminar',
-            key: null,
-            defaultWidth: '0px',
-            function: DeleteFunction,
-            type: 'BIcon',
-            var1: 'bi bi-trash-fill'
+            header: 'E-mail',
+            key: 'email',
+            defaultWidth: '135.5px',
+            type: 'text',
         }
     ]
 
@@ -90,24 +66,43 @@ export function Customerlist(){
 
     return (
         <section className="CustomerList">
-            <div className='CLdiv1'>
-                <div>                    
-                    <label>Filtrar por: </label>
-                    <select>
-                        <option value="1">No se 1</option>
-                        <option value="2">No se 2</option>
-                        <option value="2">No se 3 jsjs</option>
-                    </select>
+            <div className='actionsContainer'>
+                <div className='CLdiv1'>
+                    <div>
+                        <label>Filtrar/Buscar: </label>
+                    </div>
+                    <input type="text" style={{width: '56%'}}/>
+                    <button className='btnStnd btn1' onClick={()=>{navigate('/BalanceReport')}}>Reporte de saldos</button>
                 </div>
-                <input type="text" style={{width: '56%'}}/>
-                <button className='btnStnd btn1'>Estado de cuenta</button>
+                <div className='CLdiv2'>
+                    <button className='btn1Stnd' onClick={()=>(deselect())}
+                        disabled={selected.length === 0}>
+                        <i className='bi bi-x'/>
+                    </button>
+                    <label style={{marginRight: '8px', padding: '3px', color: selected.length === 0 ? 'rgb(183 183 183)' : 'black'}}>
+                        Seleccionados: {selected.length}
+                    </label>
+                    <button className='btn1Stnd' onClick={()=>(verFunction())}
+                        disabled={(selected.length === 0 || selected.length > 1)}>
+                        <i className='bi bi-eye-fill'/>
+                    </button>
+                    <button className='btn1Stnd' onClick={()=>(DeleteFunction())}
+                        disabled={selected.length === 0}>
+                        <i className='bi bi-trash-fill'/>
+                    </button>
+                    <input id='checkmlsct' type="checkbox" className="" onChange={()=>{setMultiSelect(a=>!a);setSelected([])}}/>
+                    <label className='noSelect' style={{padding: '3px'}} htmlFor='checkmlsct'>
+                        Seleccionar Varios
+                    </label>
+                </div>
             </div>
-            <div className='tableContainer'>
-                <TableComponent
-                    data={jsonTest}
-                    headers={ctHeaders}
-                />
-            </div>
+            <TableComponent
+                data={jsonTest}
+                headers={ctHeaders}
+                selected={selected}
+                setSelected={setSelected}
+                multiSelect={multiSelect}
+            />
             
             <button className='btnStnd btn1' onClick={()=>{navigate('/Newcustomer')}}>Crear nuevo cliente</button>
             <button className='btnStnd btn1'>Exportar a Excel</button>
