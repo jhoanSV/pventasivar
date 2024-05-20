@@ -40,17 +40,20 @@ export function Newproduct(){
                     <div className='Colmn1'>
                         <label>Se vende:</label>
                     </div>
-                    <div className='Colmn2'>
-                        <label>
-                            <input type="radio" className="" name='unitPaq'/>
+                    <div className='Row'>
+                        <label className="custom-label">
+                            <input type="radio" className="custom-radio" name="uniorpack" />
+                            <i></i>
                             por unidad
                         </label>
-                        <label>
-                            <input type="radio" className="" name='unitPaq'/>
+                        <label className="custom-label">
+                            <input type="radio" className="custom-radio" name="uniorpack"/>
+                            <i></i>
                             granel
                         </label>
-                        <label>
-                            <input type="radio" className="" name='unitPaq'/>
+                        <label className="custom-label">
+                            <input type="radio" className="custom-radio" name="uniorpack"/>
+                            <i></i>
                             paquete/kit
                         </label>
                     </div>
