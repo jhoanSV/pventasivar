@@ -6,24 +6,22 @@ import { Customerlist,
          Newproduct,
          Newpurchase,
          Newsupplier,
-         PosModule,
          Sales,
          Supplierlist,
+         BalanceReport
 } from "../Pages";
 
 export function RoutesComponent() {
     return (      
         <Routes>
             <Route path='/' element={ <Sales/> }/>
-            <Route path='/MODULOPOS' element={ <PosModule/>}/>
-
             <Route path='/NewProduct' element={ <Newproduct/> }/>
             <Route path='/Customerlist' element={ <Customerlist/> }/>
             <Route path='/Newcustomer' element={ <Newcustomer/> }/>
+            <Route path='/BalanceReport' element={ <BalanceReport/>}/>
             <Route path='/Supplierlist' element={ <Supplierlist/> }/>
             <Route path='/Newsupplier' element={ <Newsupplier/> }/>
             <Route path='/Newpurchase' element={ <Newpurchase/> }/>
-
         </Routes>
     );
 }

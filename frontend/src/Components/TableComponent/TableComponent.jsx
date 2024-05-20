@@ -1,7 +1,9 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import './_TableComponent.scss';
 
-export const TableComponent = ({data, headers, setSlct}) => {
+export const TableComponent = ({data, headers, selected, setSelected, multiSelect}) => {
+
+    const [prevClick, setPrevClick] = useState();
 
     const createResizableTable = function (table) {
         const cols = table.querySelectorAll('th');
@@ -49,13 +51,21 @@ export const TableComponent = ({data, headers, setSlct}) => {
         resizer.addEventListener('mousedown', mouseDownHandler);
     };
 
-    const selectedRowFunction = (e, item) =>{
-        //? Esto se arregla después jsjs
-        console.log(typeof(item));
-        if(!e.currentTarget.classList.contains('active-row')){
-            setSlct(i=>[...i, item])
+    const selectedRowFunction = (e, item, llave) =>{
+        if(multiSelect){
+            if(e.currentTarget.classList.contains('active-row')){//* if already have the active class then remove the item from the selected list
+                let a = selected
+                a = a.filter((entry) => entry['id_nit']!== llave)
+                setSelected(a);
+            }else{//* if doesnt have the active class add the item
+                setSelected(i=>[...i, item])
+            }
         }else{
-            setSlct(i=>i.filter(item=>item!==item))
+            if(prevClick){                
+                prevClick.classList.remove('active-row');
+            }
+            setPrevClick(e.currentTarget)
+            setSelected([item]);
         }
         e.currentTarget.classList.toggle('active-row')
     }
@@ -65,28 +75,40 @@ export const TableComponent = ({data, headers, setSlct}) => {
         // eslint-disable-next-line
     }, []);
 
+    useEffect(() => {
+        if (selected.length===0) {
+            document.querySelectorAll('.active-row').forEach(item => {
+                item.classList.remove('active-row')
+            })
+        }
+    }, [selected]);
+
     return (
-        <table className='theTable' id='theTableId'>
-            <thead>
-                <tr>
-                    {headers.map((item, index) =>
-                        <th key={index} style={{width: item['defaultWidth']}}>
-                            <div className='cellContent'>{item['header']}</div>
-                        </th>
-                    )}
-                </tr>
-            </thead>
-            <tbody>
-                {data.slice(0,10).map((item, index) => 
-                    <tr key={index} onClick={(e)=>selectedRowFunction(e, item)} onDoubleClick={()=>{alert('doublejsjs')}}>
-                        {headers.map((header, index) => 
-                            <td key={index}>
-                                <div className='cellContent'>{item[header['key']]}</div>
-                            </td>
+        <>            
+            <div className="tableContainer">                
+                <table className='theTable' id='theTableId'>
+                    <thead style={{position: 'sticky', top: '0'}}>
+                        <tr>
+                            {headers.map((item, index) =>
+                                <th key={index} style={{width: item['defaultWidth']}}>
+                                    <div className='cellContent'>{item['header']}</div>
+                                </th>
+                            )}
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {data.slice(0,10).map((item, index) => 
+                            <tr key={index} onClick={(e)=>selectedRowFunction(e, item, item['id_nit'])} onDoubleClick={()=>{alert('doublejsjs')}}>
+                                {headers.map((header, index) => 
+                                    <td key={index}>
+                                        <div className='cellContent'>{item[header['key']]}</div>
+                                    </td>
+                                )}
+                            </tr>
                         )}
-                    </tr>
-                )}
-            </tbody>
-        </table>
+                    </tbody>
+                </table>
+            </div>
+        </>
     );
 }

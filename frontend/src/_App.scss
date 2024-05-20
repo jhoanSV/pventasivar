@@ -55,9 +55,26 @@
   overflow-y: auto;
 }
 
-input[type="text"] {
+input[type="text"], input[type="number"] {
   background-color: #d9d9d9;
   border: none;
   border-radius: 5px;
   padding: 6px;
+}
+
+.noInputArrows::-webkit-outer-spin-button,
+.noInputArrows::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox */
+.noInputArrows {
+  -moz-appearance: textfield;
+}
+
+.noSelect{
+  -webkit-user-select: none; /* Safari */
+  -ms-user-select: none; /* IE 10 and IE 11 */
+  user-select: none; /* Standard syntax */
 }

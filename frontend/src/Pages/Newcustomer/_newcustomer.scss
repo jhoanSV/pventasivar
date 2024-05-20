@@ -2,7 +2,7 @@
 
 .newCustomer{
     padding: 10px 160px;
-    input[type=text]{
+    input[type=text], input[type=number]{
         width: 41%;
     }
     .Colmn2{
@@ -22,4 +22,8 @@
     background-color: #d9d9d9;
     border: none;
     border-radius: 5px;
+}
+
+#nitId{
+    width: 2.1875rem;
 }
