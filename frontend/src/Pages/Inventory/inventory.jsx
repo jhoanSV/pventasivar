@@ -35,24 +35,48 @@ export function Inventory(){
             var1: null
         },
         {
-            header: 'Categoria',
-            key: 'categoria',
+            header: 'Costo',
+            key: 'costo',
             defaultWidth: '223px',
             function: null,
             type: 'text',
             var1: null
         },
         {
-            header: 'Costo',
-            key: 'costo',
+            header: 'Total',
+            key: 'total',
             defaultWidth: '135.5px',
             function: null,
             type: 'text',
             var1: null
         },
         {
-            header: 'Precio compra',
-            key: 'precio_compra',
+            header: 'Precio venta',
+            key: 'precio_venta',
+            defaultWidth: '0px',
+            function: null,
+            type: 'text',
+            var1: null
+        },
+        {
+            header: 'Existencia',
+            key: 'exitencia',
+            defaultWidth: '0px',
+            function: null,
+            type: 'text',
+            var1: null
+        },
+        {
+            header: 'Inv. minimo',
+            key: 'inv_minimo',
+            defaultWidth: '0px',
+            function: null,
+            type: 'text',
+            var1: null
+        },
+        {
+            header: 'Inv. maximo',
+            key: 'inv_maximo',
             defaultWidth: '0px',
             function: null,
             type: 'text',
@@ -65,6 +89,14 @@ export function Inventory(){
             function: null,
             type: 'BIcon',
             var1: 'bi bi-pencil-square'
+        },
+        {
+            header: 'Modificar',
+            key: null,
+            defaultWidth: '0px',
+            function: null,
+            type: 'BIcon',
+            var1: 'bi bi-pencil-square'
         }
     ]
 
@@ -72,13 +104,21 @@ export function Inventory(){
         <div class="Inventory">
             <div className="Row">
                 <div className="Colmn1">
-                    <label>Costo del inventario</label>
+                    <div>
+                        <label>Costo del inventario</label>
+                    </div>
                     <label>$000.000,00</label>
                 </div>
                 <div className="Colmn2">
-                    <label>Cantidad de productos en el inventario</label>
+                    <div>
+                        <label>Cantidad de productos en el inventario</label>
+                    </div>
                     <label>Muchos productos</label>
                 </div>
+            </div>
+            <div classname="Row">
+                <label>Buscar:</label>
+                <input type="text" placeholder='Buscar'/>
             </div>
             <div className='tableContainer'>
                 <TableComponent

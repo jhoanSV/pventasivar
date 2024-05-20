@@ -70,7 +70,15 @@ export function ProductsList(){
 
     return (
         <div class="Productslist">
-            
+            <div className='Row'>
+                <label>Categoria:</label>
+                <button className='btnStnd btn1'
+                    style={{marginLeft: '20px'}}
+                    onClick={()=>{navigate('/Newsupplier');setSection('Nuevo Proveedor')}}
+                >
+                    Actualizar varios
+                </button>
+            </div>
             <div className='tableContainer'>
                 <TableComponent
                     data={jsonTest}
