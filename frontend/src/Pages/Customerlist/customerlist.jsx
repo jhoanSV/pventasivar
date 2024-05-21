@@ -10,15 +10,37 @@ export function Customerlist(){
 
     const [selected, setSelected] = useState([]);
     const [multiSelect, setMultiSelect] = useState(false);
+    const [show1, setShow1] = useState(false);
     const navigate = useNavigate()
     const { setSection } = useTheContext();
+
+    const Popop1 = () => {
+        
+        return(
+            <div className='modal1'>
+                <div className='modal-content1'>
+                    <div className='modal-header1'>
+                        <span className='close1' onClick={() => setShow1(false)}>&times;</span>
+                    </div>
+                    <div className='modal-body1'>
+                        Escriba "eliminar" para confirmar la eliminación
+                        <input type='text'></input>
+                    </div>
+                    <div className='modal-footer1'>
+                        <button className='btnStnd btn1' onClick={() => setShow1(false)}>Cancelar</button>
+                        <button className='btnStnd btn1' onClick={() => DeleteFunction()}>Eliminar</button>
+                    </div>
+                </div>
+            </div>
+        )
+    }
 
     const verFunction = () =>{
         navigate('/Newcustomer', { state: selected[0] })
     }
 
     const DeleteFunction = () =>{
-        alert('eliminando jsjs')
+        alert('Elimineishon')
     }
 
     const deselect = () =>{
@@ -74,7 +96,7 @@ export function Customerlist(){
                     <input type="text" style={{width: '56%'}}/>
                     <button className='btnStnd btn1' onClick={()=>{navigate('/BalanceReport')}}>Reporte de saldos</button>
                 </div>
-                <div className='CLdiv2'>
+                <div className='CLdiv2' style={{position: 'relative'}}>
                     <button className='btn1Stnd' onClick={()=>(deselect())}
                         disabled={selected.length === 0}>
                         <i className='bi bi-x'/>
@@ -86,10 +108,11 @@ export function Customerlist(){
                         disabled={(selected.length === 0 || selected.length > 1)}>
                         <i className='bi bi-eye-fill'/>
                     </button>
-                    <button className='btn1Stnd' onClick={()=>(DeleteFunction())}
+                    <button className='btn1Stnd' onClick={()=>(setShow1(true))}
                         disabled={selected.length === 0}>
                         <i className='bi bi-trash-fill'/>
                     </button>
+                    {show1 && <Popop1/>}
                     <input id='checkmlsct' type="checkbox" className="" onChange={()=>{setMultiSelect(a=>!a);setSelected([])}}/>
                     <label className='noSelect' style={{padding: '3px'}} htmlFor='checkmlsct'>
                         Seleccionar Varios
@@ -102,6 +125,7 @@ export function Customerlist(){
                 selected={selected}
                 setSelected={setSelected}
                 multiSelect={multiSelect}
+                doubleClickFunct={verFunction}
             />
             
             <button className='btnStnd btn1' onClick={()=>{navigate('/Newcustomer')}}>Crear nuevo cliente</button>

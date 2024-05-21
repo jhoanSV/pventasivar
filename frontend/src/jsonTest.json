@@ -90,8 +90,8 @@
         "email": "elemail",
         "credito": true,
         "limCredito": 2000,
-        "otro2": 5,
-        "otro3": 50
+        "direccion": "cra. 26 #56a-13",
+        "ultimoPago": 50
     },
     {
         "id_nit": "101234-9",
