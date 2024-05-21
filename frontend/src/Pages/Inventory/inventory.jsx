@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import "./_inventory.scss";
 import { useNavigate } from 'react-router-dom';
 import { useTheContext } from '../../TheProvider';
@@ -9,6 +9,8 @@ import jsonTest from '../../jsonTest.json';
 export function Inventory(){
 
     const navigate = useNavigate()
+    const [selected, setSelected] = useState([]);
+    const [multiSelect, setMultiSelect] = useState(false);
     const { setSection } = useTheContext();
 
     useEffect(() => {
@@ -22,84 +24,64 @@ export function Inventory(){
             header: 'Cod',
             key: 'cod',
             defaultWidth: '131px',
-            function: null,
             type: 'text',
-            var1: null
         },
         {
             header: 'Descripción',
             key: 'descripcion',
             defaultWidth: '223px',
-            function: null,
             type: 'text',
-            var1: null
         },
         {
             header: 'Costo',
             key: 'costo',
             defaultWidth: '223px',
-            function: null,
             type: 'text',
-            var1: null
         },
         {
             header: 'Total',
             key: 'total',
             defaultWidth: '135.5px',
-            function: null,
             type: 'text',
-            var1: null
         },
         {
             header: 'Precio venta',
             key: 'precio_venta',
             defaultWidth: '0px',
-            function: null,
             type: 'text',
-            var1: null
         },
         {
             header: 'Existencia',
             key: 'exitencia',
             defaultWidth: '0px',
-            function: null,
             type: 'text',
-            var1: null
         },
         {
             header: 'Inv. minimo',
             key: 'inv_minimo',
             defaultWidth: '0px',
-            function: null,
             type: 'text',
-            var1: null
         },
         {
             header: 'Inv. maximo',
             key: 'inv_maximo',
             defaultWidth: '0px',
-            function: null,
             type: 'text',
-            var1: null
-        },
-        {
-            header: 'Ver',
-            key: null,
-            defaultWidth: '0px',
-            function: null,
-            type: 'BIcon',
-            var1: 'bi bi-pencil-square'
-        },
-        {
-            header: 'Modificar',
-            key: null,
-            defaultWidth: '0px',
-            function: null,
-            type: 'BIcon',
-            var1: 'bi bi-pencil-square'
         }
     ]
 
+    const DeleteFunction = () =>{
+        alert('eliminando jsjs')        
+    }
+
+    const deselect = () =>{
+        setSelected([])
+    }
+
+    const verFunction = () =>{
+        navigate('/Products', { state: selected[0] })
+    }
+    
     return (
         <div class="Inventory">
             <div className="Row">
@@ -120,10 +102,45 @@ export function Inventory(){
                 <label>Buscar:</label>
                 <input type="text" placeholder='Buscar'/>
             </div>
+            <div className=''>
+                <div className='' style={{padding: '10px 140px'}}>
+                    <label>Categoria:</label>
+                    <button className='btnStnd btn1'
+                        style={{marginLeft: '20px'}}
+                        onClick={()=>{navigate('/Newsupplier');setSection('Nuevo Proveedor')}}
+                    >
+                        Actualizar varios
+                    </button>
+                </div>
+                <div className=''>
+                    <button className='btn1Stnd' onClick={()=>(deselect())}
+                        disabled={selected.length === 0}>
+                        <i className='bi bi-x'/>
+                    </button>
+                    <label style={{marginRight: '8px', padding: '3px', color: selected.length === 0 ? 'rgb(183 183 183)' : 'black'}}>
+                        Seleccionados: {selected.length}
+                    </label>
+                    <button className='btn1Stnd' onClick={()=>(verFunction())}
+                        disabled={(selected.length === 0 || selected.length > 1)}>
+                        <i className='bi bi-eye-fill'/>
+                    </button>
+                    <button className='btn1Stnd' onClick={()=>(DeleteFunction())}
+                        disabled={selected.length === 0}>
+                        <i className='bi bi-trash-fill'/>
+                    </button>
+                    <input id='checkmlsct' type="checkbox" className="" onChange={()=>{setMultiSelect(a=>!a);setSelected([])}}/>
+                    <label className='noSelect' style={{padding: '3px'}} htmlFor='checkmlsct'>
+                        Seleccionar Varios
+                    </label>
+                </div>
+            </div>
             <div className='tableContainer'>
                 <TableComponent
                     data={jsonTest}
                     headers={ctHeaders}
+                    selected={selected}
+                    setSelected={setSelected}
+                    multiSelect={multiSelect}
                 />
             </div>
         </div>

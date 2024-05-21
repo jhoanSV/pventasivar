@@ -11,7 +11,8 @@ import { Customerlist,
          BalanceReport,
          InvAdjustment,
          ProductsList,
-         Inventory
+         Inventory,
+         KardexProducts
 } from "../Pages";
 
 export function RoutesComponent() {
