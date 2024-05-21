@@ -93,7 +93,7 @@ export function Inventory(){
                 </div>
                 <div className="Colmn2">
                     <div>
-                        <label>Cantidad de productos en el inventario</label>
+                        <label>Cantidad de articulos en el inventario</label>
                     </div>
                     <label>Muchos productos</label>
                 </div>
@@ -110,6 +110,12 @@ export function Inventory(){
                         onClick={()=>{navigate('/Newsupplier');setSection('Nuevo Proveedor')}}
                     >
                         Actualizar varios
+                    </button>
+                    <button className='btnStnd btn1'
+                        style={{marginLeft: '20px'}}
+                        onClick={()=>{}}
+                    >
+                        Bajos en inventario
                     </button>
                 </div>
                 <div className=''>
@@ -132,6 +138,13 @@ export function Inventory(){
                     <label className='noSelect' style={{padding: '3px'}} htmlFor='checkmlsct'>
                         Seleccionar Varios
                     </label>
+                    <label className='noSelect' style={{padding: '3px'}} htmlFor='checkmlsct'>
+                        Ajuste de inventario
+                    </label>
+                    <button className='btn1Stnd' onClick={()=>(DeleteFunction())}
+                        disabled={selected.length === 0}>
+                        <i className='bi bi-trash-fill'/>
+                    </button>
                 </div>
             </div>
             <div className='tableContainer'>
