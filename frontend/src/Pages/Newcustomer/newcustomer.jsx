@@ -98,7 +98,7 @@ export function Newcustomer(){
                 </div>
                 <div className='Row'>
                     <div className='Colmn1'>
-                        <label>Nombres</label>
+                        <label>{cType==='2' ? 'Razón social' : 'Nombres'}</label>
                     </div>
                     <div className='Colmn2'>
                         <input id='cnombre' type="text" className=""/>
@@ -181,7 +181,7 @@ export function Newcustomer(){
                     <div>
                         <button className='btnStnd btn1'
                          style={{marginRight: '10px'}} onClick={()=>{validate()}}>{location.state ? 'Modificar' : 'Guardar'}</button>
-                        <button className='btnStnd btn1'>Historial</button>
+                        {location.state && <button className='btnStnd btn1'>Estado de cuenta</button>}
                     </div>
                     <button className='btnStnd btn1' onClick={()=>navigate(-1)}>Cancelar</button>
                 </div>

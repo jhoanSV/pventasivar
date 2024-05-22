@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import './_TableComponent.scss';
 
-export const TableComponent = ({data, headers, selected, setSelected, multiSelect}) => {
+export const TableComponent = ({data, headers, selected, setSelected, multiSelect, doubleClickFunct}) => {
 
     const [prevClick, setPrevClick] = useState();
 
@@ -98,7 +98,7 @@ export const TableComponent = ({data, headers, selected, setSelected, multiSelec
                     </thead>
                     <tbody>
                         {data.slice(0,10).map((item, index) => 
-                            <tr key={index} onClick={(e)=>selectedRowFunction(e, item, item['id_nit'])} onDoubleClick={()=>{alert('doublejsjs')}}>
+                            <tr key={index} onClick={(e)=>selectedRowFunction(e, item, item['id_nit'])} onDoubleClick={()=>{doubleClickFunct()}}>
                                 {headers.map((header, index) => 
                                     <td key={index}>
                                         <div className='cellContent'>{item[header['key']]}</div>

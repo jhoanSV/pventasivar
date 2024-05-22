@@ -12,7 +12,7 @@ import { Customerlist,
          InvAdjustment,
          ProductsList,
          Inventory,
-         KardexProducts
+         AccountState
 } from "../Pages";
 
 export function RoutesComponent() {
@@ -23,6 +23,7 @@ export function RoutesComponent() {
             <Route path='/Customerlist' element={ <Customerlist/> }/>
             <Route path='/Newcustomer' element={ <Newcustomer/> }/>
             <Route path='/BalanceReport' element={ <BalanceReport/>}/>
+            <Route path='/AccountState' element={ <AccountState/>}/>
             <Route path='/Supplierlist' element={ <Supplierlist/> }/>
             <Route path='/Newsupplier' element={ <Newsupplier/> }/>
             <Route path='/Newpurchase' element={ <Newpurchase/> }/>

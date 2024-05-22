@@ -70,11 +70,6 @@ export const Header = () => {
                             </Link>
                         </div>
                         <div>
-                            <Link to={'/MODULOPOS'} className='genLink' onClick={()=>{hideSideBar()}}>
-                                MODULO POS
-                            </Link>
-                        </div>
-                        <div>
                             <Link to={'/ProductsList'} className='genLink' onClick={()=>{hideSideBar()}}>
                                 PRODUCTOS
                             </Link>
@@ -92,11 +87,17 @@ export const Header = () => {
                                 }}>
                                     LISTADO
                                 </Link>
-                                <Link to={'/Customerlist'} className='genLink' onClick={(e)=>{
+                                <Link to={'/BalanceReport'} className='genLink' onClick={(e)=>{
                                     hideSideBar()
                                     e.target.classList.toggle('m-selected')
                                 }}>
                                     REPORTE DE SALDOS
+                                </Link>
+                                <Link to={'/NewCustomer'} className='genLink' onClick={(e)=>{
+                                    hideSideBar()
+                                    e.target.classList.toggle('m-selected')
+                                }}>
+                                    NUEVO
                                 </Link>
                             </div>
                         </div>
