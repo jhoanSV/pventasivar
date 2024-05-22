@@ -7,7 +7,7 @@ export function InvAdjustment(){
 
     const navigate = useNavigate()
     const { setSection } = useTheContext();
-
+    
     useEffect(() => {
         setSection('Ajustes de inventario')
 
@@ -85,6 +85,10 @@ export function InvAdjustment(){
                     <label>bla</label>
                 </div>
             </div>
+            <button
+                className='btnStnd btn1'
+                onClick={()=>{navigate('/Inventory')}}
+                >Modificar inventario</button>
         </section>
     )
 }
