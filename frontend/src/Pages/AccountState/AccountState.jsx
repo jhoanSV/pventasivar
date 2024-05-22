@@ -15,7 +15,7 @@ export const AccountState = () => {
     
     const ctHeaders = [
         {
-            header: 'Follo',
+            header: 'Folio',
             key: 'consecutivo',
             defaultWidth: '131px',
             type: 'text',
