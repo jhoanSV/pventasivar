@@ -14,6 +14,24 @@
     position: absolute;
     left: -2px;
     top: 0;
+    width: 116px;
+    padding: 10px;
+    border-radius: 150px;
+    //transition: 0.3s;
+    cursor: pointer;
+}
+.mlh-selected{
+    width: 0px;
+    padding: 0px;
+    left: 81px;
+    top: 10px;
+    //transition: 0.3s;
+}
+.Ins-mlh{
+    background-color: #193773;
+    position: absolute;
+    left: -2px;
+    top: 0;
     z-index: 2;
     width: 116px;
     padding: 10px;
@@ -21,7 +39,7 @@
     transition: 0.3s;
     cursor: pointer;
 }
-.mlh-selected{
+.Ins-mlh.show{
     width: 250px;
     padding: 0px;
     left: 81px;
