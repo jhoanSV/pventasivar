@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import "./_newproduct.scss";
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useTheContext } from '../../TheProvider';
+import { TheInput } from '../../Components';
 
 export function Newproduct(){
     //*Examples
@@ -24,20 +25,45 @@ export function Newproduct(){
     const location = useLocation();
     const [selectedCategory, setSelectedCategory] = useState(''); // set the selected category
     const [buttons, setButtons] = useState("Crear producto");
-    const [productData, setProductData] = useState({});
+    const [productData, setProductData] = useState({'cod_de_barras':'','descripcion':'', 'invMaximo':'', 'invMinimo':'', 'inventario': '', 'pcosto':'', 'pventa': '', 'ubicacion':''});
     const [modificarProducto, setModificarProducto] = useState(false);
+    const [pctGan, setpctGan] = useState('');
     const [productsDataShow, setproductsDataShow] = useState({});
+
     useEffect(() => {
         if (location.state){
-            setSection('Modificar producto');
             setProductData(location.state);
+            setSection('Modificar producto');
             setButtons("Modificar producto");
-            setModificarProducto(true)
+            setModificarProducto(true);
+            if(location.state.pventa && location.state.pcosto){
+                let pct = (((location.state.pventa-location.state.pcosto)/location.state.pcosto)*100).toFixed(2).toString();        
+                pct = pct.replace(/\./g, ',');
+                setpctGan(pct);
+            }
         } else {
-            setSection('Nuevo Producto')
+            setSection('Nuevo Producto');
         }
         // eslint-disable-next-line
     },[]);
+
+    const calpctC = (e) =>{
+        let pct = (((productData.pventa-e)/e)*100).toFixed(2).toString();
+        pct = pct.replace(/\./g, ',');
+        setpctGan(pct);
+    }
+
+    const calpctV = (e) =>{
+        let pct = (((e-productData.pcosto)/productData.pcosto)*100).toFixed(2).toString();
+        pct = pct.replace(/\./g, ',');
+        setpctGan(pct);
+    }
+
+    const calpventa = (e) =>{
+        let newPventa = (productData.pcosto + (productData.pcosto*e/100)).toFixed(2).toString();
+        newPventa = newPventa.replace(/\./g, ',');
+        return(newPventa)
+    }
 
     const changeValuesProducts = (key, value)=>{
         //This function allows us to change the one specific value in the product data
@@ -51,41 +77,7 @@ export function Newproduct(){
         //*This function handles the selected category and 
         const { value } = e.target;
         setSelectedCategory(value);
-      };
-
-    const Formater = (number) =>{
-        //it gives a number format        
-        if (number === '') return ''
-        const numberfromat = Number(number.replace(/,/g, '.'));
-        return Intl.NumberFormat('de-DE').format(numberfromat);
-    }
-
-    const handleBlur = (key) => {
-        //gives a number format at the moment of leave the element
-        const formattedValue = Formater(productData[key]);
-        if (isNaN(formattedValue)) {
-            changeValuesProducts(key, 0);
-        } else {
-        changeValuesProducts(key,formattedValue);
-        }
     };
-
-    const handleFocus = (key) => {
-        //remove the format while the user is focused on the element
-        const value = productData[key].toString()
-        let withoutFormat = value.replace(/\./g, '')
-        changeValuesProducts(key, withoutFormat)
-         
-    };
-
-    const onchangeNumber = (key, text) => {
-        const characters = ['1','2','3','4','5','6','7','8','9','0','.',',']
-        console.log(text.slice(-1))
-        if (characters.includes(text.slice(-1))) {
-            changeValuesProducts(key, text)
-        }
-    }
-
 
     return (
         <section className='Newproduct'>
@@ -99,7 +91,8 @@ export function Newproduct(){
                             type="text"
                             className=""
                             onChange={(e)=>changeValuesProducts("cod_de_barras", e.target.value)}
-                            value={productData.cod_de_barras}/>
+                            value={productData.cod_de_barras}/>                        
+                        <button onClick={()=>console.log(productData)}>a</button>
                     </div>
                 </div>
                 <div className='Row'>
@@ -136,15 +129,11 @@ export function Newproduct(){
                         <label>Costo</label>
                     </div>
                     <div className='Colmn2'>
-                        <input
-                            id="costo"
-                            type="text"
-                            className=''
-                            onChange={(e)=>onchangeNumber("pcosto", e.target.value)}
-                            value={productData.pcosto}
-                            onBlur={()=>{handleBlur("pcosto")}}
-                            onFocus={()=>{handleFocus("pcosto")}}
-                            />
+                        <TheInput
+                            val={productData.pcosto}
+                            numType={'real'}
+                            onchange={(e)=>{changeValuesProducts('pcosto', Number(e));calpctC(e)}}
+                        />
                     </div>
                 </div>
                 <div className='Row'>
@@ -152,7 +141,11 @@ export function Newproduct(){
                         <label>% ganancia</label>
                     </div>
                     <div className='Colmn2'>
-                        <input type="text" className=""/>
+                        <TheInput
+                            val={pctGan}
+                            numType={'real'}
+                            onchange={(e)=>{changeValuesProducts('pventa', calpventa(e))}}
+                        />
                     </div>
                 </div>
                 <div className='Row'>
@@ -160,12 +153,11 @@ export function Newproduct(){
                         <label>Precio venta</label>
                     </div>
                     <div className='Colmn2'>
-                        <input
-                            id="venta"
-                            type="text"
-                            className=''
-                            onChange={(e)=>changeValuesProducts("pventa", e.target.value)}
-                            value={productData.pventa}/>
+                        <TheInput
+                            val={productData.pventa}
+                            numType={'real'}
+                            onchange={(e)=>{changeValuesProducts('pventa', Number(e));calpctV(e)}}
+                        />
                     </div>
                 </div>
                 <div className='Row'>
