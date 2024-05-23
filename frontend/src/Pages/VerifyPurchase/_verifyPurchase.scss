@@ -7,6 +7,7 @@
 
 .Titles {
     align-self: flex-end;
+    right: '50px';
     h2{
         display: flex;
         margin: 0;
@@ -14,13 +15,27 @@
     }
 }
 
-.table {
+.Table {
     width: 100%;
     margin: 3;
 }
 
-.table thead tr{
+.Table thead tr{
     background-color: #193773;
     color: #ffffff;
     text-align: left;
+}
+
+.Table tbody {
+    display: flex;
+}
+.Table tbody:hover{
+    background-color: rgba(0, 0, 0, 0.1);
+    box-shadow: inset -5px -13px 15px 0px rgba(0, 0, 0, 0.15);
+}
+
+
+
+.Finantialdata {
+    align-self: flex-end;
 }

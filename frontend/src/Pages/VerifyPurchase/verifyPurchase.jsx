@@ -15,19 +15,25 @@ export function VerifyPurchase(){
     const [order, setOrder] = useState(jsonTest);
     const [total, setTotal] = useState(0);
 
-    const deselect = () =>{
-        setSelected([])
-    }
-
-    const verFunction = () =>{
-        navigate('/NewProduct', { state: selected[0]})
-    }
-
     useEffect(() => {
-        setSection('Veridicar orden')
+        setSection('Verificar orden')
         totalSum()
         // eslint-disable-next-line
     }, []);
+    
+    const deselect = () =>{
+        setSelected([])
+    };
+
+    const verFunction = () =>{
+        navigate('/NewProduct', { state: selected[0]})
+    };
+
+    const checkbox = () =>{
+        //This function verify if the client has selected verify the product
+        console.log('it chanched correctly')
+    };
+
 
     const ctHeaders = [
         {
@@ -45,7 +51,7 @@ export function VerifyPurchase(){
         {
             header: 'Descripción',
             key: 'descripcion',
-            defaultWidth: '131px',
+            defaultWidth: '300px',
             type: 'text',
         },
         {
@@ -80,43 +86,45 @@ export function VerifyPurchase(){
         }
     ]
 
-    const row = (item) => {
+    const row = (item, sizes) => {
         const comparator = (value1, value2) => {
             if (value1>value2){
-                return <i class="bi bi-caret-up-fill" color='Green'></i>
+                return <i class="bi bi-caret-up-fill" style={{color: 'green'}}></i>
             } else if (value1<value2){
-                return <i class="bi bi-caret-down-fill" color='red'></i>
+                return <i class="bi bi-caret-down-fill" style={{color: 'red'}}></i>
             } else {
                 return <label>=</label>
             }
         }
         return (
-            <div style={{display: 'flex'}}>
+            <tbody onClick={()=>{console.log(item)}} onDoubleClick={()=>{console.log("activa el modificar")}}>
                 <div style={{width: '131px'}}>
                     <label>{item.cantidad}</label>
                 </div>
                 <div style={{width: '131px'}}>
                     <label>{item.cod}</label>
                 </div>
-                <div style={{width: '131px'}}>
+                <div style={{width: '300px'}}>
                     <label>{item.descripcion}</label>
                 </div>
                 <div style={{width: '223px'}}>
-                    <label>$ {item.vrUnitario}</label>
+                    <label>$ {Formater(item.vrUnitario)}</label>
                 </div>
-                <div style={{width: '223px'}}>
+                <div style={{width: '223px', alignItems: 'center' }}>
                     {comparator(item.vrUnitario, item.vrUnitarioSistem)}
                 </div>
                 <div style={{width: '223px'}}>
-                    <label>$ {item.vrUnitario * item.cantidad}</label>
+                    <label>$ {Formater(item.vrUnitario * item.cantidad)}</label>
                 </div>
                 <div style={{width: '223px'}}>
                     <label>{item.existencia}</label>
                 </div>
                 <div style={{width: '223px'}}>
-                    <input type="checkbox"></input>
+                    <input
+                        type="checkbox"
+                        onChange={()=>checkbox()}></input>
                 </div>
-            </div>
+            </tbody>
         )
     }
 
@@ -126,6 +134,14 @@ export function VerifyPurchase(){
             suma += item.cantidad * item.vrUnitario
         ))
         setTotal(suma)
+    }
+
+    const Formater = (number) =>{
+        //it gives a number format
+        if (number === '') return '';
+        const numberString = String(number).replace(/,/g, '.');
+        const numberfromat = Number(numberString);
+        return Intl.NumberFormat('de-DE').format(numberfromat);
     }
 
     return (
@@ -141,17 +157,7 @@ export function VerifyPurchase(){
                         </button>
                 <label>Modificar</label>
             </div>
-            <div className='table'>                
-                <TableComponent
-                    data={jsonTest}
-                    headers={ctHeaders}
-                    selected={selected}
-                    setSelected={setSelected}
-                    multiSelect={multiSelect}
-                    row={row}
-                />
-            </div>
-            <div className='theTable'>
+            <div className='Table'>
                 <thead style={{position: 'sticky', top: '0'}}>
                     <tr>
                         {ctHeaders.map((item, index) =>
@@ -174,17 +180,23 @@ export function VerifyPurchase(){
                     Recepcionar pedido
             </button>
             </div>
-            <div className="Row">
-                <div className="Colmn1">
-                    <label>N° pre-factura:</label>
+            <div className='Finantialdata'>
+                <div className="Row">
+                    <div className='colmn1'>
+                        <label>N° pre-factura:</label>
+                    </div>
+                    <div className='colmn2'>
+                        <label>000000</label>
+                    </div>
                 </div>
-                <div className="Colmn2">
-                    <label>000000</label>
+                <div className="Row">
+                    <div className='colmn1'>
+                        <label>Utilidad:</label>
+                    </div>
+                    <div className='colmn2'>
+                        <label>$ {Formater(total)}</label>
+                    </div>
                 </div>
-            </div>
-            <div className="Row">
-                <label>Utilidad:</label>
-                <label>$ {total}</label>
             </div>
         </div>
     )

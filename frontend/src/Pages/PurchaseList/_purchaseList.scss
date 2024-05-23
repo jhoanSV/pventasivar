@@ -1,1 +1,14 @@
 @import "../../scss/_colors.scss";
+
+.Buscador {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+}
+.searchDate {
+    display: flex;
+    align-self: flex-end;
+    margin-right: 20px;
+    gap: 10px;
+}

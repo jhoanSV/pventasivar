@@ -12,6 +12,27 @@ export function PurchaseList(){
     const [selected, setSelected] = useState([]);
     const [multiSelect, setMultiSelect] = useState(false);
     const { setSection } = useTheContext();
+    const [orderslist, setOrderslist] = useState([
+        {
+            consecutivo: 1,
+            N_orden: 100,
+            Fecha: '2021-10-10',
+            valor: 1000000,
+        },
+        {
+            consecutivo: 2,
+            N_orden: 101,
+            Fecha: '2021-10-10',
+            valor: 1000000,
+        },
+        {
+            consecutivo: 3,
+            N_orden: 102,
+            Fecha: '2021-10-10',
+            valor: 1000000,
+        }
+    
+    ])
 
     const deselect = () =>{
         setSelected([])
@@ -56,6 +77,18 @@ export function PurchaseList(){
 
     return (
         <div class="ShoppingList">
+            <div className='Buscador'>
+                <div>
+                <label>Buscar:</label>
+                <input type="text" name="buscar" id="buscar" placeholder='Buscar facura' style={{width: '200px'}} />
+                </div>
+                <div className='searchDate'>
+                    <label>Desde:</label>
+                    <input type="date"/>
+                    <label>Hasta:</label>
+                    <input type="date"/>
+                </div>
+            </div>
             <div>
                 <button className='btnStnd btn1'
                         style={{marginLeft: '20px'}}
@@ -78,7 +111,7 @@ export function PurchaseList(){
             </div>
             <div>                
                 <TableComponent
-                    data={jsonTest}
+                    data={orderslist}
                     headers={ctHeaders}
                     selected={selected}
                     setSelected={setSelected}
