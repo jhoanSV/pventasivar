@@ -1,1 +1,2 @@
-export * from './TableComponent'
+export * from './TableComponent';
+export * from './Flatlist';

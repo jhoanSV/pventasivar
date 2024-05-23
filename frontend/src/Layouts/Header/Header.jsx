@@ -102,8 +102,8 @@ export const Header = () => {
                             </div>
                         </div>
                         <div>
-                            <Link to={'/Supplierlist'} className='genLink' onClick={()=>{hideSideBar()}}>
-                                PROVEEDORES
+                            <Link to={'/PurchaseList'} className='genLink' onClick={()=>{hideSideBar()}}>
+                                COMPRAS
                             </Link>
                         </div>
                         <div>
