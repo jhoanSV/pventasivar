@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import './_TableComponent.scss';
 
-export const TableComponent = ({data, headers, selected, setSelected, multiSelect, doubleClickFunct}) => {
+export const TableComponent = ({data, headers, selected, setSelected, multiSelect, doubleClickFunct, row}) => {
 
     const [prevClick, setPrevClick] = useState();
 

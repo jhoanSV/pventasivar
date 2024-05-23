@@ -1,0 +1,26 @@
+@import "../../scss/_colors.scss";
+
+.ShoppingList{
+    display: flex;
+    flex-direction: column; /* Alinea los hijos en columna */
+}
+
+.Titles {
+    align-self: flex-end;
+    h2{
+        display: flex;
+        margin: 0;
+        justify-content: center;
+    }
+}
+
+.table {
+    width: 100%;
+    margin: 3;
+}
+
+.table thead tr{
+    background-color: #193773;
+    color: #ffffff;
+    text-align: left;
+}
