@@ -2,6 +2,8 @@ import React, { useEffect, useState } from 'react';
 import "./_newproduct.scss";
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useTheContext } from '../../TheProvider';
+import { TheInput } from '../../Components';
+import imgPlaceHolder from '../../Assets/AVIF/placeHolderProduct.avif'
 
 export function Newproduct(){
     //*Examples
@@ -22,22 +24,35 @@ export function Newproduct(){
     const navigate = useNavigate()
     const { setSection } = useTheContext();
     const location = useLocation();
+    const [imgSrc, setImgSrc] = useState(location.state && `https://sivarwebresources.s3.amazonaws.com/AVIF/${location.state.cod}.avif`)
     const [selectedCategory, setSelectedCategory] = useState(''); // set the selected category
     const [buttons, setButtons] = useState("Crear producto");
-    const [productData, setProductData] = useState({});
+    const [productData, setProductData] = useState({'cod_de_barras':'','descripcion':'', 'invMaximo':'', 'invMinimo':'', 'inventario': '', 'pcosto':'', 'pventa': '', 'ubicacion':''});
     const [modificarProducto, setModificarProducto] = useState(false);
+    const [pctGan, setpctGan] = useState('');
+    // eslint-disable-next-line
     const [productsDataShow, setproductsDataShow] = useState({});
-    useEffect(() => {
-        if (location.state){
-            setSection('Modificar producto');
-            setProductData(location.state);
-            setButtons("Modificar producto");
-            setModificarProducto(true)
-        } else {
-            setSection('Nuevo Producto')
-        }
-        // eslint-disable-next-line
-    },[]);
+
+    const calpctC = (e) =>{
+        let thePventa = Number(productData.pventa.replace(/\./g, ''))
+        let pct = (((thePventa-e)/e)*100).toFixed(2).toString();
+        pct = pct.replace(/\./g, ',');
+        setpctGan(pct);
+    }
+
+    const calpctV = (e) =>{
+        let thePcosto = Number(productData.pcosto.replace(/\./g, ''))
+        let pct = (((e-thePcosto)/thePcosto)*100).toFixed(2).toString();
+        pct = pct.replace(/\./g, ',');
+        setpctGan(pct);
+    }
+
+    const calpventa = (e) =>{
+        let thePcosto = Number(productData.pcosto.replace(/\./g, ''))
+        let newPventa = (thePcosto + (thePcosto*e/100)).toFixed(2).toString();
+        changeValuesProducts('pventa', Formater(newPventa));
+        //newPventa = newPventa.replace(/\./g, ',');
+    }
 
     const changeValuesProducts = (key, value)=>{
         //This function allows us to change the one specific value in the product data
@@ -51,41 +66,56 @@ export function Newproduct(){
         //*This function handles the selected category and 
         const { value } = e.target;
         setSelectedCategory(value);
-      };
+    };
 
     const Formater = (number) =>{
-        //it gives a number format        
-        if (number === '') return ''
-        const numberfromat = Number(number.replace(/,/g, '.'));
+        if (!number) return ''
+        let thenumber = typeof(number)==='number' ? number.toString() : number
+        //it gives a number format
+        const numberfromat = Number(thenumber.replace(/,/g, '.'));
         return Intl.NumberFormat('de-DE').format(numberfromat);
     }
 
-    const handleBlur = (key) => {
-        //gives a number format at the moment of leave the element
-        const formattedValue = Formater(productData[key]);
-        if (isNaN(formattedValue)) {
-            changeValuesProducts(key, 0);
-        } else {
-        changeValuesProducts(key,formattedValue);
-        }
-    };
-
-    const handleFocus = (key) => {
-        //remove the format while the user is focused on the element
-        const value = productData[key].toString()
-        let withoutFormat = value.replace(/\./g, '')
-        changeValuesProducts(key, withoutFormat)
-         
-    };
-
-    const onchangeNumber = (key, text) => {
-        const characters = ['1','2','3','4','5','6','7','8','9','0','.',',']
-        console.log(text.slice(-1))
-        if (characters.includes(text.slice(-1))) {
-            changeValuesProducts(key, text)
-        }
+    const handleError = () =>{
+        //console.log(`img ${codigo} not found`);
+        setImgSrc(imgPlaceHolder)
     }
 
+    const handleBtn1 = () =>{
+        /*
+            Here FIRST CHANGE THE PCOSTO AND PVENTA TO NUMBERS
+        */
+        location.state.pventa = Number(productData['pventa'].replace(/\./g, '')); // change to numer
+        location.state.pcosto = Number(productData['pcosto'].replace(/\./g, '')); // change to number 
+        location.state.inventario = Number(productData['inventario'].replace(/\./g, '')); // change to number 
+        location.state.invMinimo = Number(productData['invMinimo'].replace(/\./g, '')); // change to number 
+        location.state.invMaximo = Number(productData['invMaximo'].replace(/\./g, '')); // change to number 
+        console.log(location.state);
+        /*Function to change the backend I guess*/
+        //navigate('/ProductsList')
+    }
+
+    useEffect(() => {
+        if (location.state){
+            if(location.state.pventa && location.state.pcosto){
+                let pct = (((location.state.pventa-location.state.pcosto)/location.state.pcosto)*100).toFixed(2).toString();        
+                pct = pct.replace(/\./g, ',');
+                setpctGan(pct);
+            }
+            location.state.pventa = Formater(location.state.pventa)
+            location.state.pcosto = Formater(location.state.pcosto)
+            location.state.inventario = Formater(location.state.inventario)
+            location.state.invMinimo = Formater(location.state.invMinimo)
+            location.state.invMaximo = Formater(location.state.invMaximo)
+            setProductData(location.state);
+            setSection('Modificar producto');
+            setButtons("Modificar producto");
+            setModificarProducto(true);
+        } else {
+            setSection('Nuevo Producto');
+        }
+        // eslint-disable-next-line
+    },[]);
 
     return (
         <section className='Newproduct'>
@@ -136,15 +166,11 @@ export function Newproduct(){
                         <label>Costo</label>
                     </div>
                     <div className='Colmn2'>
-                        <input
-                            id="costo"
-                            type="text"
-                            className=''
-                            onChange={(e)=>onchangeNumber("pcosto", e.target.value)}
-                            value={productData.pcosto}
-                            onBlur={()=>{handleBlur("pcosto")}}
-                            onFocus={()=>{handleFocus("pcosto")}}
-                            />
+                        <TheInput
+                            val={productData.pcosto}
+                            numType={'real'}
+                            onchange={(e)=>{changeValuesProducts('pcosto', e);calpctC(e)}}
+                        />
                     </div>
                 </div>
                 <div className='Row'>
@@ -152,7 +178,11 @@ export function Newproduct(){
                         <label>% ganancia</label>
                     </div>
                     <div className='Colmn2'>
-                        <input type="text" className=""/>
+                        <TheInput
+                            val={pctGan}
+                            numType={'real'}
+                            onchange={(e)=>{calpventa(e)}}
+                        />
                     </div>
                 </div>
                 <div className='Row'>
@@ -160,12 +190,11 @@ export function Newproduct(){
                         <label>Precio venta</label>
                     </div>
                     <div className='Colmn2'>
-                        <input
-                            id="venta"
-                            type="text"
-                            className=''
-                            onChange={(e)=>changeValuesProducts("pventa", e.target.value)}
-                            value={productData.pventa}/>
+                        <TheInput
+                            val={productData.pventa}
+                            numType={'real'}
+                            onchange={(e)=>{changeValuesProducts('pventa', e);calpctV(e)}}
+                        />
                     </div>
                 </div>
                 <div className='Row'>
@@ -191,16 +220,28 @@ export function Newproduct(){
                     </div>
                 }
                 <div className="Row" style={{padding: '35px'}}>
-                    <div className="ProImgContainer">
-                        <img 
-                            className=""
-                            alt='imgProduct'
-                            />
-                    </div>
-
+                    {modificarProducto ?
+                        <div className="ProImgContainer">
+                            <picture>
+                                <source
+                                    type="image/avif"
+                                    srcSet={imgSrc}
+                                />
+                                <img
+                                    style={{width: '100%'}}
+                                    src={imgSrc}
+                                    onError={handleError}
+                                    alt="imgProducto"
+                                    decoding="async"
+                                />
+                            </picture>
+                        </div>
+                        :
+                        <></>
+                    }
                     <textarea
                         type="textbox"
-                        className="npTextArea"
+                        className="taStnd npTextArea"
                         placeholder="Detalles del producto"
                     />
                 </div>
@@ -215,16 +256,15 @@ export function Newproduct(){
                             <label>Inv actual</label>
                         </div>
                         <div className='Colmn2'>
-                        {modificarProducto && 
-                            <label>{productData.inventario}</label>
-                        }
-                        {!modificarProducto && <input
-                            id="venta"
-                            type="text"
-                            className=''
-                            onChange={(e)=>changeValuesProducts("inventario", e.target.value)}
-                            value={productData.inventario}/>
-                        }
+                            {modificarProducto ?
+                                <label>{productData.inventario}</label>
+                            :
+                                <TheInput
+                                    val={productData.inventario}
+                                    numType={'nat'}
+                                    onchange={(e)=>{changeValuesProducts('inventario', e)}}
+                                />
+                            }
                         </div>
                     </div>
                     <div className="Row">
@@ -232,12 +272,11 @@ export function Newproduct(){
                             <label>Inv minimo</label>
                         </div>
                         <div className='Colmn2'>
-                            <input
-                                id="invMinimo"
-                                type="text"
-                                className=''
-                                onChange={(e)=>changeValuesProducts("invMinimo", e.target.value)}
-                                value={productData.invMinimo}/>
+                            <TheInput
+                                //val={productData.invMinimo}
+                                numType={'nat'}
+                                onchange={(e)=>{changeValuesProducts('invMinimo', e)}}
+                            />
                         </div>
                     </div>
                     <div className="Row">
@@ -245,12 +284,11 @@ export function Newproduct(){
                             <label>Inv maximo</label>
                         </div>
                         <div className='Colmn2'>
-                            <input
-                                id="invMaximo"
-                                type="text"
-                                className=''
-                                onChange={(e)=>changeValuesProducts("invMaximo", e.target.value)}
-                                value={productData.invMaximo}/>
+                            <TheInput
+                                val={productData.invMaximo}
+                                numType={'nat'}
+                                onchange={(e)=>{changeValuesProducts('invMaximo', e)}}
+                            />                                
                         </div>
                     </div>
                     <div className="Row">
@@ -268,14 +306,21 @@ export function Newproduct(){
                     </div>
                 </div>
             </div>
-            <button
-                className='btnStnd btn1'
-                onClick={()=>{navigate('/ProductsList')}}>{buttons}</button>
-            {modificarProducto && 
+            <div style={{display: 'flex', padding: '0px 4%'}}>
                 <button
                     className='btnStnd btn1'
-                    onClick={()=>{navigate('/InvAdjustment')}}
-                    >Modificar inventario</button>}
+                    onClick={()=>{handleBtn1()}}>{buttons}</button>
+                {modificarProducto && 
+                    <button
+                        style={{margin: '0px 10px'}}
+                        className='btnStnd btn1'
+                        onClick={()=>{navigate('/InvAdjustment')}}
+                        >Modificar inventario</button>}
+                <button
+                    style={{marginLeft: 'auto'}}
+                    className='btnStnd btn1'
+                    onClick={()=>{navigate(-1)}}>Cancelar</button>
+            </div>
         </section>
     );
 }

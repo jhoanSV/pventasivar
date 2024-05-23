@@ -4,6 +4,7 @@ import './_TableComponent.scss';
 export const TableComponent = ({data, headers, selected, setSelected, multiSelect, doubleClickFunct}) => {
 
     const [prevClick, setPrevClick] = useState();
+    const [limit, setLimit] = useState(0);
 
     const createResizableTable = function (table) {
         const cols = table.querySelectorAll('th');
@@ -69,9 +70,21 @@ export const TableComponent = ({data, headers, selected, setSelected, multiSelec
         }
         e.currentTarget.classList.toggle('active-row')
     }
+
+    const observeT = () =>{
+        const obsT = document.getElementById('obsTrigger')
+        const observer = new IntersectionObserver((entry)=>{
+            if(entry[0].isIntersecting){
+                setLimit(prevLim =>prevLim+10)
+            }
+        })
+        observer.observe(obsT)
+    }
     
     useEffect(() => {
         createResizableTable(document.getElementById('theTableId'));
+        setLimit(20)
+        observeT()
         // eslint-disable-next-line
     }, []);
 
@@ -97,7 +110,7 @@ export const TableComponent = ({data, headers, selected, setSelected, multiSelec
                         </tr>
                     </thead>
                     <tbody>
-                        {data.slice(0,10).map((item, index) => 
+                        {data.slice(0,limit).map((item, index) => 
                             <tr key={index} onClick={(e)=>selectedRowFunction(e, item, item['id_nit'])} onDoubleClick={()=>{doubleClickFunct()}}>
                                 {headers.map((header, index) => 
                                     <td key={index}>
@@ -106,6 +119,7 @@ export const TableComponent = ({data, headers, selected, setSelected, multiSelec
                                 )}
                             </tr>
                         )}
+                        <tr id='obsTrigger'></tr>
                     </tbody>
                 </table>
             </div>

@@ -1,53 +1,23 @@
 import { Link } from 'react-router-dom';
 import { useTheContext } from '../../TheProvider';
 import './_Header.scss';
-import React, { useEffect, useRef } from 'react';
+import React from 'react';
 
 export const Header = () => {
 
     const { setLogged, section } = useTheContext()
-    const sideBarRef = useRef(null);
-    const contentRef = useRef(null);
     
     const showSideBar = (e) =>{
-        e.scrollTop = 0
         e.target.classList.add('mlh-selected')
         document.querySelector('.side-bar').classList.add('show')
-        sideBarRef.current.scrollTop = 0
+        document.getElementById('lgId2').classList.add('show')
     }
 
     const hideSideBar = () =>{
         document.querySelector('.mainLogoHead').classList.remove('mlh-selected')
         document.querySelector('.side-bar').classList.remove('show')
-        document.getElementById('lgId').removeAttribute('style')
+        document.getElementById('lgId2').classList.remove('show')
     }
-
-
-    useEffect(() => {
-        const sideBar = sideBarRef.current;
-        const content = contentRef.current;
-        
-        // *Verify if the content is larger than the side-bar
-        if (content.scrollHeight > sideBar.clientHeight) {
-            // *Add an event listener to the scroll event
-            sideBar.addEventListener('scroll', handleScroll);
-        }
-        
-        // *On dismount remove the event listener
-        return () => {
-            if (content.scrollHeight > sideBar.clientHeight) {
-                sideBar.removeEventListener('scroll', handleScroll);
-            }
-        };
-    }, []);
-
-    const handleScroll = (event) => {
-        // *Get the scroll value
-        const theScroll = event.target.scrollTop;
-        const theImg = document.getElementById('lgId')
-        //theImg.style.width = ((250) - (250*((theScroll)/125))) + 'px'
-        theImg.style.width = ((250) - theScroll) + 'px'
-    };
 
     return (
         <section>
@@ -59,11 +29,18 @@ export const Header = () => {
                     alt='MainLogo'
                     onClick={(e)=>{showSideBar(e)}}
                 />
-                <div className='side-bar' ref={sideBarRef}>
+                <div className='side-bar'>
                     <div onClick={()=>{hideSideBar()}} className='equis'>
                         <i className="bi bi-x-lg"></i>
                     </div>
-                    <div className='side-menu' ref={contentRef}>
+                    <img
+                        id='lgId2'
+                        className='Ins-mlh'
+                        src={require('../../Assets/icono2.png')}
+                        alt='MainLogo'
+                        onClick={()=>{hideSideBar()}}
+                    />
+                    <div className='side-menu'>
                         <div>
                             <Link to={'/'} className='genLink' onClick={()=>{hideSideBar()}}>
                                 VENTAS

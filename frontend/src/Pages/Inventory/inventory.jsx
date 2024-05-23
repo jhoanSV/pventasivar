@@ -83,7 +83,7 @@ export function Inventory(){
     }
     
     return (
-        <div class="Inventory">
+        <div className="Inventory">
             <div className="Row">
                 <div className="Colmn1">
                     <div>

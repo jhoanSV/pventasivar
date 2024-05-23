@@ -6,26 +6,32 @@ import { TableComponent } from '../../Components';
 //es un json de prueba
 import jsonTest from '../../products_json_test.json';
 
-export function ProductsList(){
+export const ProductsList = () => {
 
     const navigate = useNavigate()
     const [selected, setSelected] = useState([]);
-    const [multiSelect, setMultiSelect] = useState(false);
+    const [contentList, setContentList] = useState(jsonTest);
+    //const [multiSelect, setMultiSelect] = useState(false);//* De momento se omite esto
     const { setSection } = useTheContext();
-
-    const deselect = () =>{
-        setSelected([])
-    }
 
     const verFunction = () =>{
         navigate('/NewProduct', { state: selected[0]})
     }
 
-    useEffect(() => {
-        setSection('Listado de productos')
+    const filterByText = (item, text) =>
+        item.cod.toString().includes(text) ||
+        item.cod_de_barras.toLowerCase() === (text) ||
+        item.descripcion.toLowerCase().includes(text);        
 
-        // eslint-disable-next-line
-    }, []);
+    const SearchHandle = (text) =>{
+        let c = jsonTest;
+        if (text !== ''){
+            c = c.filter((i)=>filterByText(i, text))
+            setContentList(c)
+        }else{
+            setContentList(jsonTest)
+        }
+    }
 
     const ctHeaders = [
         {
@@ -72,12 +78,20 @@ export function ProductsList(){
         }
     ]
 
+    useEffect(() => {
+        setSection('Listado de productos')
+
+        // eslint-disable-next-line
+    }, []);
+
     return (
-        <div class="Productslist">
+        <section className="Productslist">
             <div className=''>
-                <div className='' style={{padding: '10px 140px'}}>
+                <div>
                     <label>Buscar:</label>
-                    <input type="text" placeholder='Buscar'/>
+                    <input type="text" placeholder='Buscar'
+                        onChange={(e)=>{SearchHandle((e.target.value).toLowerCase())}}
+                     />
                     <button className='btnStnd btn1'
                         style={{marginLeft: '20px'}}
                         onClick={()=>{navigate('/Newproduct')}}
@@ -99,8 +113,9 @@ export function ProductsList(){
                     <label style={{marginRight: '8px', padding: '3px', color: selected.length === 0 ? 'rgb(183 183 183)' : 'black'}}>
                         Seleccionados: {selected.length}
                     </label>*/}
-                    <button className='btn1Stnd' onClick={()=>(verFunction())}
-                        disabled={(selected.length === 0 || selected.length > 1)}>
+                    <button className='btn1Stnd' onClick={()=>(verFunction())} style={{fontSize: '20px'}}
+                        disabled={(selected.length === 0 || selected.length > 1)}
+                        onMouseEnter={()=>{console.log('hoverjsjs');}}>
                         <i className='bi bi-eye-fill'/>
                     </button>
                     {/*<input id='checkmlsct' type="checkbox" className="" onChange={()=>{setMultiSelect(a=>!a);setSelected([])}}/>
@@ -117,13 +132,14 @@ export function ProductsList(){
             </div>
             <div>                
                 <TableComponent
-                    data={jsonTest}
+                    data={contentList}
                     headers={ctHeaders}
                     selected={selected}
                     setSelected={setSelected}
-                    multiSelect={multiSelect}
+                    multiSelect={false}
+                    doubleClickFunct={verFunction}
                 />
             </div>
-        </div>
+        </section>
     )
 }
