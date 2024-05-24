@@ -1,0 +1,23 @@
+.theModalContainer {
+    display: flex;
+    position: fixed;
+    top: 0px;
+    left: 0px;
+    width: 100%;
+    height: 100%;
+    background-color: #161B2266;
+    z-index: 2;
+}
+
+.theModal-content {
+    background-color: #f2f2f2;
+    border-radius: 12px;
+    margin: auto;
+}
+.theModal-body{
+    padding: 10px;
+}
+.theModal-header {
+    display: flex;
+    justify-content: flex-end;
+}
