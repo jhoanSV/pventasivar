@@ -1,28 +1,63 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import "./_InvAdjustment.scss";
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { useTheContext } from '../../TheProvider';
+import { TheInput } from '../../Components';
 
 export function InvAdjustment(){
 
     const navigate = useNavigate()
     const { setSection } = useTheContext();
+    const [cantAdj, setCantAdj] = useState('');
+    const [newCant, setNewCant] = useState('');
     
-    useEffect(() => {
-        setSection('Ajustes de inventario')
+    const location = useLocation();    
+    const theData = useLocation().state;    
+    
+    console.log(theData);
+    
+    const Formater = (number) =>{
+        if (!number) return ''
+        let thenumber = typeof(number)==='number' ? number.toString() : number
+        //it gives a number format
+        const numberfromat = Number(thenumber.replace(/,/g, '.'));
+        return Intl.NumberFormat('de-DE').format(numberfromat);
+    }
 
+    const adjustCant = (op, e) =>{//*operation depending on op
+        let currCant = Number(theData.inventario.replace(/\./g, ''))
+        if(op==='ca'){
+            setNewCant(Formater(((currCant+Number(e))).toString()))
+        }else if(op==='nc'){
+            setCantAdj(Formater((-(currCant-Number(e))).toString()))
+        }
+    }
+
+    useEffect(() => {        
+        setSection('Ajustes de inventario')
+        console.log(theData);
+        if(theData)theData.inventario = Formater(theData.inventario)
         // eslint-disable-next-line
     }, []);
 
+    useEffect(() => {
+        if(!location.state){
+            console.log('hptaaaaaaaa');        
+            navigate('/', {replace: true});
+            //navigate(location.pathname, {replace: true});
+        }
+    }, [location, navigate]);
+
     return (
+        theData && 
         <section className='InvAdjustment'>
-            <h1>Nombre del producto</h1>
+            <h1>{theData.descripcion}</h1>
             <div className='Row'>
                 <div className='Colmn1'>
                     <label>Cantidad actual:</label>
                 </div>
-                <div className='Colmn 2'>
-                    <label>cantidad</label>
+                <div className='Colmn2'>
+                    <label>{theData.inventario}</label>
                 </div>
             </div>
             <div className='Row'>
@@ -30,7 +65,11 @@ export function InvAdjustment(){
                     <label>+/-:</label>
                 </div>
                 <div className='Colmn2'>
-                    <input type="text" id="i-menos-mas" name="i-menos-mas"></input>
+                    <TheInput
+                        val={cantAdj}
+                        numType={'ent'}
+                        onchange={(e)=>{adjustCant('ca', e)}}
+                    /> 
                 </div>
             </div>
             <div className='Row'>
@@ -38,41 +77,21 @@ export function InvAdjustment(){
                     <label>Nueva cantidad:</label>
                 </div>
                 <div className='Colmn2'>
-                    <input type="text" id="i-nueva-cantidad" name="i-nueva-cantidad"></input>
+                    <TheInput
+                        val={newCant}
+                        numType={'ent'}
+                        onchange={(e)=>{adjustCant('nc', e)}}
+                    /> 
                 </div>
             </div>
             <div className='Row'>
                 <div className='Colmn1'>
-                    <label>Costo:</label>
-                </div>
-                <div className='Colmn2'>
-                    <input type="text" id="i-costo" name="i-costo"></input>
-                </div>
-            </div>
-            <div className='Row'>
-                <div className='Colmn1'>
-                    <label>Porcentaje:</label>
-                </div>
-                <div className='Colmn2'>
-                    <input type="text" id="i-porcentaje" name="i-porcentaje"></input>
-                </div>
-            </div>
-            <div className='Row'>
-                <div className='Colmn1'>
-                    <label>Precio venta:</label>
-                </div>
-                <div className='Colmn2'>
-                    <input type="text" id="i-p-venta" name="i-p-venta"></input>
-                </div>
-            </div>
-            <div className='Row'>
-                <div className='Colmn1'>
-                    <label>Precio venta:</label>
+                    <label>Motivo de ajuste:</label>
                 </div>
                 <div className='Colmn2'>
                     <textarea
                         type="textbox"
-                        className="npTextArea"
+                        className="npTextArea taStnd"
                         placeholder="Notas/Detalles del producto"
                     />
                 </div>

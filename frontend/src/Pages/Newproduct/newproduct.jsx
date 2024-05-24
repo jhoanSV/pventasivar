@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import "./_newproduct.scss";
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useTheContext } from '../../TheProvider';
-import { TheInput } from '../../Components';
+import { TheInput, UserConfirm } from '../../Components';
 import imgPlaceHolder from '../../Assets/AVIF/placeHolderProduct.avif'
 
 export function Newproduct(){
@@ -30,6 +30,7 @@ export function Newproduct(){
     const [productData, setProductData] = useState({'cod_de_barras':'','descripcion':'', 'invMaximo':'', 'invMinimo':'', 'inventario': '', 'pcosto':'', 'pventa': '', 'ubicacion':''});
     const [modificarProducto, setModificarProducto] = useState(false);
     const [pctGan, setpctGan] = useState('');
+    const [show1, setShow1] = useState(false);
     // eslint-disable-next-line
     const [productsDataShow, setproductsDataShow] = useState({});
 
@@ -81,7 +82,7 @@ export function Newproduct(){
         setImgSrc(imgPlaceHolder)
     }
 
-    const handleBtn1 = () =>{
+    const prepData = () =>{
         /*
             Here FIRST CHANGE THE PCOSTO AND PVENTA TO NUMBERS
         */
@@ -91,9 +92,24 @@ export function Newproduct(){
         location.state.invMinimo = Number(productData['invMinimo'].replace(/\./g, '')); // change to number 
         location.state.invMaximo = Number(productData['invMaximo'].replace(/\./g, '')); // change to number 
         console.log(location.state);
-        /*Function to change the backend I guess*/
-        //navigate('/ProductsList')
     }
+
+    const handleBtn1 = () =>{
+        /*
+            validate in case of changes
+        */
+        prepData();
+        /*Function to change the backend, I guess, with the location.state*/
+        navigate('/ProductsList')
+    }
+
+    const handleBtn2 = () =>{
+        /*
+            validate in case of changes
+        */
+        setShow1(true)
+    }
+
 
     useEffect(() => {
         if (location.state){
@@ -310,12 +326,21 @@ export function Newproduct(){
                 <button
                     className='btnStnd btn1'
                     onClick={()=>{handleBtn1()}}>{buttons}</button>
-                {modificarProducto && 
-                    <button
-                        style={{margin: '0px 10px'}}
-                        className='btnStnd btn1'
-                        onClick={()=>{navigate('/InvAdjustment')}}
-                        >Modificar inventario</button>}
+                {modificarProducto &&
+                    <>
+                        <button
+                            style={{ margin: '0px 10px' }}
+                            className='btnStnd btn1'
+                            onClick={() => { handleBtn2() }}
+                        >Modificar inventario</button>
+                        {show1 &&
+                            <UserConfirm
+                                show={setShow1}
+                                confirmed={(e)=>{if(e){prepData();navigate('/InvAdjustment', {state: location.state})}}}/>
+                        }
+                    </>
+                }
+                    
                 <button
                     style={{marginLeft: 'auto'}}
                     className='btnStnd btn1'
