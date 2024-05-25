@@ -86,7 +86,7 @@ export function VerifyPurchase(){
         }
     ]
 
-    const row = (item, sizes) => {
+    const row = (item, isSelected, columnsWidth) => {
         const comparator = (value1, value2) => {
             if (value1>value2){
                 return <i class="bi bi-caret-up-fill" style={{color: 'green'}}></i>
@@ -98,28 +98,28 @@ export function VerifyPurchase(){
         }
         return (
             <tbody onClick={()=>{console.log(item)}} onDoubleClick={()=>{console.log("activa el modificar")}}>
-                <div style={{width: '131px'}}>
-                    <label>{item.cantidad}</label>
+                <div style={{width: columnsWidth[0]}}>
+                    <label className={isSelected ? 'selected-label' : ''}>{item.cantidad}</label>
                 </div>
-                <div style={{width: '131px'}}>
-                    <label>{item.cod}</label>
+                <div style={{width: columnsWidth[1]}}>
+                    <label className={isSelected ? 'selected-label' : ''}>{item.cod}</label>
                 </div>
-                <div style={{width: '300px'}}>
-                    <label>{item.descripcion}</label>
+                <div style={{width: columnsWidth[2]}}>
+                    <label className={isSelected ? 'selected-label' : ''}>{item.descripcion}</label>
                 </div>
-                <div style={{width: '223px'}}>
-                    <label>$ {Formater(item.vrUnitario)}</label>
+                <div style={{width: columnsWidth[3]}}>
+                    <label className={isSelected ? 'selected-label' : ''}>$ {Formater(item.vrUnitario)}</label>
                 </div>
-                <div style={{width: '223px', alignItems: 'center' }}>
+                <div style={{width: columnsWidth[4], alignItems: 'center' }}>
                     {comparator(item.vrUnitario, item.vrUnitarioSistem)}
                 </div>
-                <div style={{width: '223px'}}>
-                    <label>$ {Formater(item.vrUnitario * item.cantidad)}</label>
+                <div style={{width: columnsWidth[5]}}>
+                    <label className={isSelected ? 'selected-label' : ''}>$ {Formater(item.vrUnitario * item.cantidad)}</label>
                 </div>
-                <div style={{width: '223px'}}>
-                    <label>{item.existencia}</label>
+                <div style={{width: columnsWidth[6]}}>
+                    <label className={isSelected ? 'selected-label' : ''}>{item.existencia}</label>
                 </div>
-                <div style={{width: '223px'}}>
+                <div style={{width: columnsWidth[7]}}>
                     <input
                         type="checkbox"
                         onChange={()=>checkbox()}></input>
@@ -158,18 +158,10 @@ export function VerifyPurchase(){
                 <label>Modificar</label>
             </div>
             <div className='Table'>
-                <thead style={{position: 'sticky', top: '0'}}>
-                    <tr>
-                        {ctHeaders.map((item, index) =>
-                            <th key={index} style={{width: item['defaultWidth']}}>
-                                <div className='cellContent'>{item['header']}</div>
-                            </th>
-                        )}
-                    </tr>
-                </thead>
                 <Flatlist
                     data={jsonTest}
                     row={row}
+                    headers={ctHeaders}
                 />
             </div>
             <div>
@@ -182,18 +174,18 @@ export function VerifyPurchase(){
             </div>
             <div className='Finantialdata'>
                 <div className="Row">
-                    <div className='colmn1'>
-                        <label>N° pre-factura:</label>
+                    <div className='column'>
+                        <label style={{fontWeight: 600}}>N° pre-factura:</label>
                     </div>
-                    <div className='colmn2'>
+                    <div className='column'>
                         <label>000000</label>
                     </div>
                 </div>
                 <div className="Row">
-                    <div className='colmn1'>
-                        <label>Utilidad:</label>
+                    <div className='column'>
+                        <label style={{fontWeight: 600}}>Utilidad:</label>
                     </div>
-                    <div className='colmn2'>
+                    <div className='column'>
                         <label>$ {Formater(total)}</label>
                     </div>
                 </div>
