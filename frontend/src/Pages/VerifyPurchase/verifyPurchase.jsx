@@ -3,6 +3,7 @@ import "./_verifyPurchase.scss";
 import { useNavigate } from 'react-router-dom';
 import { useTheContext } from '../../TheProvider';
 import { TableComponent, Flatlist } from '../../Components';
+import { TheInput } from '../../Components/InputComponent/TheInput';
 //es un json de prueba
 import jsonTest from '../../order_test.json';
 
@@ -14,6 +15,8 @@ export function VerifyPurchase(){
     const { setSection } = useTheContext();
     const [order, setOrder] = useState(jsonTest);
     const [total, setTotal] = useState(0);
+    const [showModalChangeprice, setShowModalChangeprice] = useState(true);
+
 
     useEffect(() => {
         setSection('Verificar orden')
@@ -97,7 +100,9 @@ export function VerifyPurchase(){
             }
         }
         return (
-            <tbody onClick={()=>{console.log(item)}} onDoubleClick={()=>{console.log("activa el modificar")}}>
+            <tbody
+                onClick={()=>{console.log(item)}}
+                onDoubleClick={()=>{setShowModalChangeprice(true)}}>
                 <div style={{width: columnsWidth[0]}}>
                     <label className={isSelected ? 'selected-label' : ''}>{item.cantidad}</label>
                 </div>
@@ -142,7 +147,97 @@ export function VerifyPurchase(){
         const numberString = String(number).replace(/,/g, '.');
         const numberfromat = Number(numberString);
         return Intl.NumberFormat('de-DE').format(numberfromat);
-    }
+    };
+
+    const ChangePrice = (codProduct) =>{
+        const data = {
+            "cantidad": 3,
+            "cod": "TNC25",
+            "descripcion": "Motoreductor amarillo dlble eje",
+            "vrUnitario": 5500,
+            "vrUnitarioSistem": 5400,
+            "diferencia": -100,
+            "vrTotal": 3000,
+            "estado": 0,
+            "existencia": 4
+        }
+        return (
+            <div>
+                <div>
+                    <div>
+                        <label className='subtitle'>Codigo:</label>
+                        <label className='subtitle'>{codProduct}</label>
+                    </div>
+                </div>
+                <div >
+                    <label className='subtitle'>order.descripcion</label>
+                </div>
+                <div className='Rows'>
+                    <div className='column1'>
+                        <label className='subtitle'>Inventario actual:</label>
+                    </div>
+                    <div className='column2'>
+                        <TheInput numType='real'>
+                            order.existencia
+                        </TheInput>
+                    </div>
+                    <div className='column1'>
+                        <label className='subtitle'>Minimo:</label>
+                    </div>
+                    <div className='column2'>
+                        <label>order.invMinimo</label>
+                    </div>
+                    <div className='column1'>
+                        <label className='subtitle'>Maximo:</label>
+                    </div>
+                    <div className='column2'>
+                        <label>order.invMaximo</label>
+                    </div>
+                    <div className='column1'>
+                        <label className='subtitle'>Consto actual:</label>
+                    </div>
+                    <label className='column2'>$ order.constoActual</label>
+                </div>
+                <div className='form-container'>
+                    <div className='form-row'>
+                        <label className='subtitle'>Cantidad de compra:</label>
+                        <input type='text'></input>
+                    </div>
+                    <div className='form-row'>
+                        <label className='subtitle'>Nuevo costo:</label>
+                        <input type='text'></input>
+                    </div>
+                    <div className='form-row'>
+                        <label className='subtitle'>Ganancia:</label>
+                        <input type='text'></input>
+                    </div>
+                    <div className='form-row'>
+                        <label className='subtitle'>Nuevo precio de venta:</label>
+                        <input type='text'></input>
+                    </div>
+                    <div className='form-row'>
+                        <label className='subtitle'>precio venta:</label>
+                        <label>000</label>
+                    </div>
+                </div>
+                <div>
+                    <button className='btnStnd btn1'
+                        style={{marginLeft: '20px'}}
+                        onClick={()=>{}}
+                            >
+                            aceptar
+                    </button>
+                    <button className='btnStnd btn1'
+                        style={{marginLeft: '20px'}}
+                        onClick={()=>{setShowModalChangeprice(false)}}
+                        >
+                            cancelar
+                    </button>
+                </div>
+            </div>
+        )
+
+    };
 
     return (
         <div class="ShoppingList">
@@ -159,7 +254,7 @@ export function VerifyPurchase(){
             </div>
             <div className='Table'>
                 <Flatlist
-                    data={jsonTest}
+                    data={order}
                     row={row}
                     headers={ctHeaders}
                 />
@@ -190,6 +285,7 @@ export function VerifyPurchase(){
                     </div>
                 </div>
             </div>
+            {showModalChangeprice && ChangePrice('001')}
         </div>
     )
 }

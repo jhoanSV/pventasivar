@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import "./_purchaseList.scss";
 import { useNavigate } from 'react-router-dom';
 import { useTheContext } from '../../TheProvider';
@@ -11,20 +11,26 @@ export function PurchaseList(){
     const navigate = useNavigate()
     const [selected, setSelected] = useState([]);
     const [multiSelect, setMultiSelect] = useState(false);
-    const [stateFilter, setStateFilter] = useState('')
+    const [stateFilter, setStateFilter] = useState('Todos')
     const { setSection } = useTheContext();
+
+    const [date1, setDate1] = useState('');
+    const [date2, setDate2] = useState('');
+
+    const inputRef = useRef(null);
+
     let dataorder = [{
             consecutivo: 13,
             N_orden: 100,
             estado: 'Recibido',
-            Fecha: '2021-10-10',
+            Fecha: '2024-01-01',
             valor: 1000000,
         },
         {
             consecutivo: 12,
             N_orden: 101,
             estado: 'Por ingresar',
-            Fecha: '2021-10-10',
+            Fecha: '2024-11-20',
             valor: 560000,
         },
         {
@@ -45,63 +51,63 @@ export function PurchaseList(){
             consecutivo: 9,
             N_orden: 104,
             estado: 'Por ingresar',
-            Fecha: '2021-10-10',
+            Fecha: '2024-09-20',
             valor: 1000000,
         },
         {
             consecutivo: 8,
             N_orden: 102,
             estado: 'Por ingresar',
-            Fecha: '2021-10-10',
+            Fecha: '2024-08-20',
             valor: 1000000,
         },
         {
             consecutivo: 7,
             N_orden: 102,
             estado: 'Recibido',
-            Fecha: '2021-10-10',
+            Fecha: '2024-07-20',
             valor: 1000000,
         },
         {
             consecutivo: 6,
             N_orden: 102,
             estado: 'Recibido',
-            Fecha: '2021-10-10',
+            Fecha: '2024-06-20',
             valor: 1000000,
         },
         {
             consecutivo: 5,
             N_orden: 102,
             estado: 'Recibido',
-            Fecha: '2021-10-10',
+            Fecha: '2024-05-20',
             valor: 1000000,
         },
         {
             consecutivo: 4,
             N_orden: 102,
             estado: 'Recibido',
-            Fecha: '2021-10-10',
+            Fecha: '2024-04-20',
             valor: 1000000,
         },
         {
             consecutivo: 3,
             N_orden: 102,
             estado: 'Recibido',
-            Fecha: '2021-10-10',
+            Fecha: '2024-03-20',
             valor: 1000000,
         },
         {
             consecutivo: 2,
             N_orden: 102,
             estado: 'Recibido',
-            Fecha: '2021-10-10',
+            Fecha: '2024-02-20',
             valor: 1000000,
         },
         {
             consecutivo: 1,
             N_orden: 102,
             estado: 'Recibido',
-            Fecha: '2021-10-10',
+            Fecha: '2024-01-01',
             valor: 1000000,
         }
     
@@ -122,6 +128,10 @@ export function PurchaseList(){
 
         // eslint-disable-next-line
     }, []);
+
+    useEffect(() => {
+        SearchHandle(getInputValue());
+    }, [date1, date2, stateFilter]);
 
     const ctHeaders = [
         {
@@ -180,11 +190,34 @@ export function PurchaseList(){
     const filterByText = (item, text) => {
         // Filter the data depending on the text of the searcher
         if (stateFilter!== 'Todos'){
-            return item.N_orden.toString().includes(text) && item.estado.toString() == stateFilter
+            console.log('fecha 1 ' + date1 + ' fecha 2 ' + date2)
+            if (date1!== '' && date2 === '') {
+                return item.N_orden.toString().includes(text)
+                    && item.estado.toString() === stateFilter
+                    && item.Fecha >= new Date(date1)
+            } else if (date2!== '' && date1 === '') {
+                return item.N_orden.toString().includes(text) && item.estado.toString() === stateFilter && new Date(item.Fecha) <= new Date(date2)
+            } else if (date1!== '' && date2!== '') {
+                return item.N_orden.toString().includes(text) && item.estado.toString() === stateFilter && new Date(item.Fecha) >= new Date(date1) && new Date(item.Fecha) <= new Date(date2)   
+            } else {
+                return item.N_orden.toString().includes(text) && item.estado.toString() === stateFilter
+            }
         } else {
-            return item.N_orden.toString().includes(text)
+            if (date1!== '' && date2 === '') {
+                return item.N_orden.toString().includes(text)
+                    && item.estado.toString() === stateFilter
+                    && item.Fecha >= new Date(date1)
+            } else if (date2!== '' && date1 === '') {
+                return item.N_orden.toString().includes(text) && new Date(item.Fecha) <= new Date(date2)
+            } else if (date1!== '' && date2!== '') {
+                return item.N_orden.toString().includes(text) && new Date(item.Fecha) >= new Date(date1) && new Date(item.Fecha) <= new Date(date2)   
+            } else {
+                return item.N_orden.toString().includes(text)
+            }
         }
     };
+
+
 
     const SearchHandle = (text) =>{
         let c = dataorder;
@@ -200,7 +233,7 @@ export function PurchaseList(){
 
     const row=(item, isSelected, columnsWidth)=> {
         return (
-            <tbody onClick={()=>{console.log(item)}} onDoubleClick={()=>{console.log("activa el modificar")}}>
+            <tbody onClick={()=>{}} onDoubleClick={()=>{console.log("activa el modificar")}}>
                 <div style={{width: columnsWidth[0]}}>
                     <label className={isSelected ? 'selected-label' : ''}>{item.consecutivo}</label>
                 </div>
@@ -235,6 +268,24 @@ export function PurchaseList(){
         ;
     };
 
+    const filterText = (item, text) => {
+        const textMatch = (item) => item.N_orden.toString().includes(text);
+        const stateMatch = (item) => stateFilter === 'Todos' || item.estado.toString() === stateFilter;
+        const dateMatch = (item) => {
+            const itemDate = new Date(item.Fecha);
+            const startDateCheck = date1 ? itemDate >= new Date(date1) : true;
+            const endDateCheck = date2 ? itemDate <= new Date(date2) : true;
+            return startDateCheck && endDateCheck;
+        };
+        return (item) => textMatch(item) && stateMatch(item) && dateMatch(item);
+    };
+
+    // Function to get the input value at any time
+    const getInputValue = () => {
+        const currentValue = inputRef.current.value.toLowerCase();
+        console.log('Current input value:', currentValue);
+        return currentValue;
+    };
     
     return (
         <div class="ShoppingList">
@@ -248,19 +299,21 @@ export function PurchaseList(){
                         className="searcher"
                         id="buscar"
                         placeholder='Buscar facura'
-                        onChange={(e)=>{SearchHandle((e.target.value).toLowerCase())}}/>
+                        onChange={(e)=>{SearchHandle((e.target.value).toLowerCase())}}
+                        ref={inputRef}/>
                 </div>
 
                 <div className='searchDate'>
                     <label
                         style={{'font-weight': '600'}}>Desde:</label>
                     <input
-                        type="date"/>
+                        type="date"
+                        onChange={(e)=>{setDate1(e.target.value)}}/>
                     <label
                         style={{'font-weight': '600'}}>Hasta:</label>
                     <input
                         type="date"
-                        />
+                        onChange={(e)=>{setDate2(e.target.value)}}/>
                 </div>
             </div>
             <div className='ButtonActios'>
