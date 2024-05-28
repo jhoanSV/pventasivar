@@ -177,9 +177,7 @@ export function VerifyPurchase(){
                         <label className='subtitle'>Inventario actual:</label>
                     </div>
                     <div className='column2'>
-                        <TheInput numType='real'>
-                            order.existencia
-                        </TheInput>
+                        <label>order.invMinimo</label>
                     </div>
                     <div className='column1'>
                         <label className='subtitle'>Minimo:</label>
@@ -201,23 +199,27 @@ export function VerifyPurchase(){
                 <div className='form-container'>
                     <div className='form-row'>
                         <label className='subtitle'>Cantidad de compra:</label>
-                        <input type='text'></input>
+                        <TheInput numType='nat'>
+                        </TheInput>
                     </div>
                     <div className='form-row'>
                         <label className='subtitle'>Nuevo costo:</label>
-                        <input type='text'></input>
+                        <TheInput numType='real'>
+                        </TheInput>
                     </div>
                     <div className='form-row'>
                         <label className='subtitle'>Ganancia:</label>
-                        <input type='text'></input>
+                        <TheInput numType='real'>
+                        </TheInput>
                     </div>
                     <div className='form-row'>
                         <label className='subtitle'>Nuevo precio de venta:</label>
-                        <input type='text'></input>
+                        <TheInput numType='real'>
+                        </TheInput>
                     </div>
                     <div className='form-row'>
                         <label className='subtitle'>precio venta:</label>
-                        <label>000</label>
+                        <label>$ 000</label>
                     </div>
                 </div>
                 <div>
