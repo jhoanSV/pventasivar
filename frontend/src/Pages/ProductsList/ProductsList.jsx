@@ -12,10 +12,12 @@ export const ProductsList = () => {
     const [selected, setSelected] = useState([]);
     const [contentList, setContentList] = useState(jsonTest);
     //const [multiSelect, setMultiSelect] = useState(false);//* De momento se omite esto
-    const { setSection } = useTheContext();
+    const { setSection, setSomeData} = useTheContext();
 
     const verFunction = () =>{
-        navigate('/NewProduct', { state: selected[0]})
+        //navigate('/NewProduct', { state: selected[0]})        
+        setSomeData({...selected[0]})
+        navigate('/NewProduct')
     }
 
     const filterByText = (item, text) =>
@@ -79,8 +81,8 @@ export const ProductsList = () => {
     ]
 
     useEffect(() => {
+        setSomeData(null)
         setSection('Listado de productos')
-
         // eslint-disable-next-line
     }, []);
 

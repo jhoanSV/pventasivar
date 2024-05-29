@@ -1,20 +1,17 @@
 import React, { useEffect, useState } from 'react';
 import "./_InvAdjustment.scss";
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useTheContext } from '../../TheProvider';
 import { TheInput } from '../../Components';
 
 export function InvAdjustment(){
 
     const navigate = useNavigate()
-    const { setSection } = useTheContext();
+    const { setSection, someData, invAdAuth, setInvAdAuth, setSomeData } = useTheContext();
+    const [currentC, setCurrentC] = useState('0');
     const [cantAdj, setCantAdj] = useState('');
     const [newCant, setNewCant] = useState('');
-    
-    const location = useLocation();    
-    const theData = useLocation().state;    
-    
-    console.log(theData);
+    const [taValue, setTaValue] = useState('');
     
     const Formater = (number) =>{
         if (!number) return ''
@@ -25,39 +22,46 @@ export function InvAdjustment(){
     }
 
     const adjustCant = (op, e) =>{//*operation depending on op
-        let currCant = Number(theData.inventario.replace(/\./g, ''))
+        let currCant = Number(currentC.replace(/\./g, ''))
         if(op==='ca'){
+            setCantAdj(e)
             setNewCant(Formater(((currCant+Number(e))).toString()))
         }else if(op==='nc'){
             setCantAdj(Formater((-(currCant-Number(e))).toString()))
         }
     }
 
+    const modifyCant = () =>{
+        let d = someData;
+        d.inventario = Number(newCant.replace(/\./g, ''));
+        console.log(newCant);
+        //setSomeData(d)
+    }
+
     useEffect(() => {        
         setSection('Ajustes de inventario')
-        console.log(theData);
-        if(theData)theData.inventario = Formater(theData.inventario)
+        if(invAdAuth){
+            //* Make de query to get the current inventory quantity
+            setCurrentC(Formater(someData.inventario))
+        }else{
+            navigate('/', {replace: true});
+        }
+        return () => {
+            setInvAdAuth(false)
+        }
         // eslint-disable-next-line
     }, []);
 
-    useEffect(() => {
-        if(!location.state){
-            console.log('hptaaaaaaaa');        
-            navigate('/', {replace: true});
-            //navigate(location.pathname, {replace: true});
-        }
-    }, [location, navigate]);
-
     return (
-        theData && 
+        invAdAuth && 
         <section className='InvAdjustment'>
-            <h1>{theData.descripcion}</h1>
+            <h1>{someData.descripcion}</h1>
             <div className='Row'>
                 <div className='Colmn1'>
                     <label>Cantidad actual:</label>
                 </div>
                 <div className='Colmn2'>
-                    <label>{theData.inventario}</label>
+                    <label>{currentC}</label>
                 </div>
             </div>
             <div className='Row'>
@@ -69,7 +73,7 @@ export function InvAdjustment(){
                         val={cantAdj}
                         numType={'ent'}
                         onchange={(e)=>{adjustCant('ca', e)}}
-                    /> 
+                    />
                 </div>
             </div>
             <div className='Row'>
@@ -93,6 +97,8 @@ export function InvAdjustment(){
                         type="textbox"
                         className="npTextArea taStnd"
                         placeholder="Notas/Detalles del producto"
+                        onChange={(e)=>setTaValue(e.target.value)}
+                        value={taValue}
                     />
                 </div>
             </div>
@@ -106,8 +112,18 @@ export function InvAdjustment(){
             </div>
             <button
                 className='btnStnd btn1'
-                onClick={()=>{navigate('/Inventory')}}
-                >Modificar inventario</button>
+                onClick={() => { modifyCant() }}
+                disabled={
+                    (cantAdj==='') ||
+                    (Number(newCant.replace(/\./g, '')) === Number(currentC.replace(/\./g, ''))) ||
+                    (Number(newCant.replace(/\./g, '')) < 0 ) ||
+                    (taValue.length < 5)
+                }
+            >Modificar inventario</button>
+            <button
+                className='btnStnd btn1'
+                onClick={() => { navigate(-1) }}
+            >Cancelar</button>
         </section>
     )
 }

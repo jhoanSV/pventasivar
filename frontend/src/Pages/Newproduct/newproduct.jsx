@@ -22,7 +22,7 @@ export function Newproduct(){
 
 
     const navigate = useNavigate()
-    const { setSection } = useTheContext();
+    const { setSection, someData, setSomeData, setInvAdAuth } = useTheContext();
     const location = useLocation();
     const [imgSrc, setImgSrc] = useState(location.state && `https://sivarwebresources.s3.amazonaws.com/AVIF/${location.state.cod}.avif`)
     const [selectedCategory, setSelectedCategory] = useState(''); // set the selected category
@@ -83,15 +83,28 @@ export function Newproduct(){
     }
 
     const prepData = () =>{
+        console.log(productData);
+        let d = productData
+        d.pventa = Number(d['pventa'].replace(/\./g, ''))
+        d.pcosto = Number(d['pcosto'].replace(/\./g, ''))
+        d.inventario = Number(d['inventario'].replace(/\./g, ''))
+        d.invMinimo = Number(d['invMinimo'].replace(/\./g, ''))
+        d.invMaximo = Number(d['invMaximo'].replace(/\./g, ''))
+        
+        setSomeData(d);
         /*
-            Here FIRST CHANGE THE PCOSTO AND PVENTA TO NUMBERS
+            Here FIRST CHANGE THE PCOSTO, PVENTA and others TO NUMBERS
         */
-        location.state.pventa = Number(productData['pventa'].replace(/\./g, '')); // change to numer
-        location.state.pcosto = Number(productData['pcosto'].replace(/\./g, '')); // change to number 
-        location.state.inventario = Number(productData['inventario'].replace(/\./g, '')); // change to number 
-        location.state.invMinimo = Number(productData['invMinimo'].replace(/\./g, '')); // change to number 
-        location.state.invMaximo = Number(productData['invMaximo'].replace(/\./g, '')); // change to number 
-        console.log(location.state);
+        // setSomeData(prevValue => {
+        //     return {
+        //         ...prevValue, // Copia los valores anteriores
+        //         pventa: Number(prevValue['pventa'].replace(/\./g, '')), // Actualiza 'pcosto'
+        //         pcosto: Number(prevValue['pcosto'].replace(/\./g, '')), // Actualiza 'pcosto'
+        //         inventario: Number(prevValue['inventario'].replace(/\./g, '')), // Actualiza 'pcosto'
+        //         invMinimo: Number(prevValue['invMinimo'].replace(/\./g, '')), // Actualiza 'pcosto'
+        //         invMaximo: Number(prevValue['invMaximo'].replace(/\./g, '')) // Actualiza 'pcosto'
+        //     };
+        // });
     }
 
     const handleBtn1 = () =>{
@@ -99,7 +112,7 @@ export function Newproduct(){
             validate in case of changes
         */
         prepData();
-        /*Function to change the backend, I guess, with the location.state*/
+        /*Function to change the backend, I guess, with idk wich info*/
         navigate('/ProductsList')
     }
 
@@ -111,19 +124,20 @@ export function Newproduct(){
     }
 
 
-    useEffect(() => {
-        if (location.state){
-            if(location.state.pventa && location.state.pcosto){
-                let pct = (((location.state.pventa-location.state.pcosto)/location.state.pcosto)*100).toFixed(2).toString();        
+    useEffect(() => {        
+        if (someData){
+            let data = {...someData}
+            if(data.pventa && data.pcosto){
+                let pct = (((data.pventa-data.pcosto)/data.pcosto)*100).toFixed(2).toString();        
                 pct = pct.replace(/\./g, ',');
                 setpctGan(pct);
             }
-            location.state.pventa = Formater(location.state.pventa)
-            location.state.pcosto = Formater(location.state.pcosto)
-            location.state.inventario = Formater(location.state.inventario)
-            location.state.invMinimo = Formater(location.state.invMinimo)
-            location.state.invMaximo = Formater(location.state.invMaximo)
-            setProductData(location.state);
+            data.pventa = Formater(data.pventa)
+            data.pcosto = Formater(data.pcosto)
+            data.inventario = Formater(data.inventario)
+            data.invMinimo = Formater(data.invMinimo)
+            data.invMaximo = Formater(data.invMaximo)
+            setProductData(data);
             setSection('Modificar producto');
             setButtons("Modificar producto");
             setModificarProducto(true);
@@ -336,7 +350,7 @@ export function Newproduct(){
                         {show1 &&
                             <UserConfirm
                                 show={setShow1}
-                                confirmed={(e)=>{if(e){prepData();navigate('/InvAdjustment', {state: location.state})}}}/>
+                                confirmed={(e)=>{if(e){setInvAdAuth(true);navigate('/InvAdjustment')}}}/>
                         }
                     </>
                 }
