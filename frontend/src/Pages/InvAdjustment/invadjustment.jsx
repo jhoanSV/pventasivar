@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import "./_InvAdjustment.scss";
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { useTheContext } from '../../TheProvider';
 import { TheInput } from '../../Components';
 
 export function InvAdjustment(){
 
     const navigate = useNavigate()
-    const { setSection, someData, invAdAuth, setInvAdAuth, setSomeData } = useTheContext();
+    const { setSection, someData, invAdAuth, setInvAdAuth } = useTheContext();
     const [currentC, setCurrentC] = useState('0');
     const [cantAdj, setCantAdj] = useState('');
     const [newCant, setNewCant] = useState('');
@@ -51,6 +51,14 @@ export function InvAdjustment(){
         }
         // eslint-disable-next-line
     }, []);
+
+    useEffect(() => {
+        if(!location.state){
+            console.log('hptaaaaaaaa');        
+            navigate('/', {replace: true});
+            //navigate(location.pathname, {replace: true});
+        }
+    }, [location, navigate]);
 
     return (
         invAdAuth && 
