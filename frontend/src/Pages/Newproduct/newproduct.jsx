@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { useTheContext } from '../../TheProvider';
 import { TheInput, UserConfirm } from '../../Components';
 import imgPlaceHolder from '../../Assets/AVIF/placeHolderProduct.avif'
+import { GeneralModal } from '../../Components/Modals/GeneralModal';
 
 export function Newproduct(){
     //*Examples
@@ -30,6 +31,9 @@ export function Newproduct(){
     const [modificarProducto, setModificarProducto] = useState(false);
     const [pctGan, setpctGan] = useState('');
     const [show1, setShow1] = useState(false);
+    const [show2, setShow2] = useState(false);
+    const [medidaUnit, setMedidaUnit] = useState(1);
+    const [granel, setGranel] = useState('Metros');
     // eslint-disable-next-line
     const [productsDataShow, setproductsDataShow] = useState({});
 
@@ -112,6 +116,63 @@ export function Newproduct(){
         setShow1(true)
     }
 
+    const granelPopup = () =>{
+        return(
+            <>
+                <h1>{productData.cod}</h1>
+                <h3>{productData.descripcion}</h3>
+                <div className='Row'>
+                    <span style={{width: '114px', textAlign: 'end', marginRight: '10px'}}>
+                        Medida
+                    </span>
+                    <select value={granel} name='medida' onChange={(e)=>{setGranel(e.target.value)}}>
+                        <option value='Metros'>Metros</option>
+                        <option value='Kilos'>Kilos</option>
+                    </select>
+                </div>
+                <div className="Row">
+                    <span style={{marginRight: '10px'}}>
+                        Medida Unitaria
+                    </span>
+                    <TheInput
+                        val={medidaUnit}
+                        numType='real'
+                        onchange={(e)=>{setMedidaUnit(e)}}
+                    />
+                </div>
+                <div className="Row">
+                    <table className='theTable'>
+                        <thead>
+                            <tr>
+                                <th>a</th>
+                                <th>Costo</th>
+                                <th>P. venta</th>
+                                <th>% Gananacia</th>                                
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Completo</td>
+                                <td>{productData.pcosto}</td>
+                                <td>{productData.pventa}</td>
+                                <td>{pctGan}</td>
+                            </tr>
+                            <tr>
+                                <td>{granel}</td>
+                                <td><TheInput val={(Number(productData.pcosto.replace(/\./g, ''))/medidaUnit)} numType='real'/></td>
+                                <td>{productData.pventa}</td>
+                                <td>{pctGan}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div style={{display: 'flex', gap: '5px'}}>
+                    <button className='btnStnd btn1' onClick={() => setShow2(false)}>Cancelar</button>{/*desseleccionar radio cuando cancelar*/}
+                </div>
+            </>
+        )
+    }
+
 
     useEffect(() => {        
         if (someData){
@@ -161,23 +222,6 @@ export function Newproduct(){
                             className=''
                             onChange={(e)=>changeValuesProducts("descripcion", e.target.value)}
                             value={productData.descripcion}/>
-                    </div>
-                </div>
-                <div className='Row'>
-                    <div className='Colmn1'>
-                        <label>Se vende:</label>
-                    </div>
-                    <div className='Row'>
-                        <label className="custom-label">
-                            <input type="radio" className="custom-radio" name="uniorpack" />
-                            <i></i>
-                            por unidad
-                        </label>
-                        <label className="custom-label">
-                            <input type="radio" className="custom-radio" name="uniorpack"/>
-                            <i></i>
-                            granel
-                        </label>
                     </div>
                 </div>
                 <div className='Row'>
@@ -238,6 +282,24 @@ export function Newproduct(){
                         </div>
                     </div>
                 }
+                <div className={'Row salesMethod '+((productData.cod_de_barras && productData.descripcion && productData.pcosto && productData.pventa) && 'show')}>
+                    <div className='Colmn1'>
+                        <label>Se vende:</label>
+                    </div>
+                    <div className='Row'>
+                        <label className="custom-label">
+                            <input type="radio" className="custom-radio" name="uniorpack" />
+                            <i></i>
+                            por unidad
+                        </label>
+                        <label className="custom-label">
+                            <input type="radio" className="custom-radio" name="uniorpack" onClick={()=>{setShow2(true)}}/>
+                            <i></i>
+                            granel
+                        </label>
+                    </div>
+                </div>
+                {show2 && <GeneralModal show={setShow2} Contenido={granelPopup} width='max-content' height='72%'/>}
                 <div className="Row" style={{padding: '35px'}}>
                     {modificarProducto ?
                         <div className="ProImgContainer">

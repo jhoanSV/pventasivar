@@ -14,7 +14,7 @@
     width: 380px;
     position: absolute;
     right: 0;
-    top: 107px;
+    top: 10%;
 }
 
 .InvLabel{
@@ -84,4 +84,14 @@
 
 .custom-radio:checked + i::before {
     border-color: $amarilloPrincipal; /* Change border color when checked */
+}
+
+.salesMethod{
+    overflow: hidden;
+    max-height: 0;
+    transition: all 0.5s;
+}
+.salesMethod.show{
+    max-height: 500px;
+    transition: all 2s;
 }

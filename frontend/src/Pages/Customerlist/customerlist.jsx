@@ -5,6 +5,7 @@ import { useTheContext } from '../../TheProvider';
 //Para testeo
 import jsonTest from '../../jsonTest.json';
 import { TableComponent } from '../../Components';
+import { GeneralModal } from '../../Components/Modals/GeneralModal';
 
 export function Customerlist(){
 
@@ -17,21 +18,14 @@ export function Customerlist(){
     const Popop1 = () => {
         
         return(
-            <div className='modal1'>
-                <div className='modal-content1'>
-                    <div className='modal-header1'>
-                        <span className='close1' onClick={() => setShow1(false)}>&times;</span>
-                    </div>
-                    <div className='modal-body1'>
-                        Escriba "eliminar" para confirmar la eliminación
-                        <input type='text'></input>
-                    </div>
-                    <div className='modal-footer1'>
-                        <button className='btnStnd btn1' onClick={() => setShow1(false)}>Cancelar</button>
-                        <button className='btnStnd btn1' onClick={() => DeleteFunction()}>Eliminar</button>
-                    </div>
+            <>
+                Escriba "eliminar" para confirmar la eliminación
+                <input type='text'></input>
+                <div style={{display: 'flex', gap: '5px'}}>
+                    <button className='btnStnd btn1' onClick={() => setShow1(false)}>Cancelar</button>
+                    <button className='btnStnd btn1' onClick={() => DeleteFunction()}>Eliminar</button>
                 </div>
-            </div>
+            </>
         )
     }
 
@@ -112,7 +106,7 @@ export function Customerlist(){
                         disabled={selected.length === 0}>
                         <i className='bi bi-trash-fill'/>
                     </button>
-                    {show1 && <Popop1/>}
+                    {show1 && <GeneralModal show={setShow1} Contenido={Popop1}/>}
                     <input id='checkmlsct' type="checkbox" className="" onChange={()=>{setMultiSelect(a=>!a);setSelected([])}}/>
                     <label className='noSelect' style={{padding: '3px'}} htmlFor='checkmlsct'>
                         Seleccionar Varios
