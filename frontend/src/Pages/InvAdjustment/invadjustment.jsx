@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import "./_InvAdjustment.scss";
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useTheContext } from '../../TheProvider';
 import { TheInput } from '../../Components';
 
@@ -34,7 +34,8 @@ export function InvAdjustment(){
     const modifyCant = () =>{
         let d = someData;
         d.inventario = Number(newCant.replace(/\./g, ''));
-        console.log(newCant);
+        alert('Cantidad modificada correctamente, aparentemente')
+        navigate('/NewProduct')
         //setSomeData(d)
     }
 
@@ -51,14 +52,6 @@ export function InvAdjustment(){
         }
         // eslint-disable-next-line
     }, []);
-
-    useEffect(() => {
-        if(!location.state){
-            console.log('hptaaaaaaaa');        
-            navigate('/', {replace: true});
-            //navigate(location.pathname, {replace: true});
-        }
-    }, [location, navigate]);
 
     return (
         invAdAuth && 
@@ -120,6 +113,7 @@ export function InvAdjustment(){
             </div>
             <button
                 className='btnStnd btn1'
+                style={{marginRight: '10px'}}
                 onClick={() => { modifyCant() }}
                 disabled={
                     (cantAdj==='') ||

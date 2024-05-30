@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import "./_newproduct.scss";
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useTheContext } from '../../TheProvider';
 import { TheInput, UserConfirm } from '../../Components';
 import imgPlaceHolder from '../../Assets/AVIF/placeHolderProduct.avif'
@@ -23,8 +23,7 @@ export function Newproduct(){
 
     const navigate = useNavigate()
     const { setSection, someData, setSomeData, setInvAdAuth } = useTheContext();
-    const location = useLocation();
-    const [imgSrc, setImgSrc] = useState(location.state && `https://sivarwebresources.s3.amazonaws.com/AVIF/${location.state.cod}.avif`)
+    const [imgSrc, setImgSrc] = useState(someData && `https://sivarwebresources.s3.amazonaws.com/AVIF/${someData.cod}.avif`)
     const [selectedCategory, setSelectedCategory] = useState(''); // set the selected category
     const [buttons, setButtons] = useState("Crear producto");
     const [productData, setProductData] = useState({'cod_de_barras':'','descripcion':'', 'invMaximo':'', 'invMinimo':'', 'inventario': '', 'pcosto':'', 'pventa': '', 'ubicacion':''});
@@ -95,16 +94,6 @@ export function Newproduct(){
         /*
             Here FIRST CHANGE THE PCOSTO, PVENTA and others TO NUMBERS
         */
-        // setSomeData(prevValue => {
-        //     return {
-        //         ...prevValue, // Copia los valores anteriores
-        //         pventa: Number(prevValue['pventa'].replace(/\./g, '')), // Actualiza 'pcosto'
-        //         pcosto: Number(prevValue['pcosto'].replace(/\./g, '')), // Actualiza 'pcosto'
-        //         inventario: Number(prevValue['inventario'].replace(/\./g, '')), // Actualiza 'pcosto'
-        //         invMinimo: Number(prevValue['invMinimo'].replace(/\./g, '')), // Actualiza 'pcosto'
-        //         invMaximo: Number(prevValue['invMaximo'].replace(/\./g, '')) // Actualiza 'pcosto'
-        //     };
-        // });
     }
 
     const handleBtn1 = () =>{
@@ -259,7 +248,6 @@ export function Newproduct(){
                                 />
                                 <img
                                     style={{width: '100%'}}
-                                    src={imgSrc}
                                     onError={handleError}
                                     alt="imgProducto"
                                     decoding="async"
