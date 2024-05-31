@@ -7,7 +7,8 @@ export const TheInput = ({
     numType='real',//*numType to define the number type between naturals(nat), integers(ent), reals(real). If is not provided then will be real
     onchange=false,//*next three props are to set an onchange, onblur and onfocus, pls set like this (e)=>{function(e)} where e is the value of the input. e is not really necesary
     onblur=false,
-    onfocus=false,}) => {
+    onfocus=false,
+    pholder=''}) => {
 
     const [value, setValue] = useState(val);
     
@@ -65,6 +66,7 @@ export const TheInput = ({
             id={id}
             className={className}
             value={value}
+            placeholder={pholder}
             onChange={(e)=>{handleChange(e)}}
             onFocus={(e)=>{handleFocus(e)}}
             onBlur={(e)=>{handleBlur(e)}}

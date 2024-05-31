@@ -6,7 +6,7 @@ import { useTheContext } from './TheProvider';
 
 function App() {
   
-  const { logged, someData } = useTheContext();
+  const { logged } = useTheContext();
   
   return (
     <>
@@ -17,9 +17,6 @@ function App() {
         </>
         :
         <>
-          <div style={{position: 'fixed', top: '0', left: '50%', zIndex: '1', color: 'white'}}>
-            {someData && someData.pcosto}
-          </div>
           <Header/>
           <Routes/>
         </>
