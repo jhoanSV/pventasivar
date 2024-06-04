@@ -12,8 +12,9 @@ export function Customerlist(){
     const [selected, setSelected] = useState([]);
     const [multiSelect, setMultiSelect] = useState(false);
     const [show1, setShow1] = useState(false);
+    const [contentList, setContentList] = useState(jsonTest);
     const navigate = useNavigate()
-    const { setSection } = useTheContext();
+    const { setSection, setSomeData } = useTheContext();
 
     const Popop1 = () => {
         
@@ -30,7 +31,8 @@ export function Customerlist(){
     }
 
     const verFunction = () =>{
-        navigate('/Newcustomer', { state: selected[0] })
+        setSomeData({...selected[0]})
+        navigate('/Newcustomer')
     }
 
     const DeleteFunction = () =>{
@@ -74,8 +76,26 @@ export function Customerlist(){
         }
     ]
 
+    const filterByText = (item, text) =>
+        item.id_nit.toLowerCase().includes(text) ||
+        item.nombre.toLowerCase().includes(text) ||
+        item.apellido.toLowerCase().includes(text) ||
+        item.barrio.toLowerCase().includes(text) ||
+        item.email.toLowerCase().includes(text);
+
+    const SearchHandle = (text) =>{
+        let c = jsonTest;
+        if (text !== ''){
+            c = c.filter((i)=>filterByText(i, text))
+            setContentList(c)
+        }else{
+            setContentList(jsonTest)
+        }
+    }
+
     useEffect(() => {
         setSection('Lista de Clientes')
+        setSomeData(null)
 
         // eslint-disable-next-line
     }, []);
@@ -87,7 +107,9 @@ export function Customerlist(){
                     <div>
                         <label>Filtrar/Buscar: </label>
                     </div>
-                    <input type="text" style={{width: '56%'}}/>
+                    <input type="text" style={{width: '56%'}}
+                        onChange={(e)=>{SearchHandle((e.target.value).toLowerCase())}}
+                    />
                     <button className='btnStnd btn1' onClick={()=>{navigate('/BalanceReport')}}>Reporte de saldos</button>
                 </div>
                 <div className='CLdiv2' style={{position: 'relative'}}>
@@ -114,7 +136,7 @@ export function Customerlist(){
                 </div>
             </div>
             <TableComponent
-                data={jsonTest}
+                data={contentList}
                 headers={ctHeaders}
                 selected={selected}
                 setSelected={setSelected}
