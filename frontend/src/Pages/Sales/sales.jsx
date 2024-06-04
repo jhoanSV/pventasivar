@@ -1,115 +1,161 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useState, useRef} from 'react';
 import { TableComponent, Flatlist } from '../../Components';
+import { TheInput } from '../../Components/InputComponent/TheInput';
 import "./_sales.scss";
+import jsonTest from '../../tickets-text.json';
+
 
 export function Sales(){
-    const order = [{
-            Cantidad: 50,
-            Codigo: 'CG001',
-            Descripcion: 'chazo anclaje 1/4 x 1 3/8',
-            UM: 1,
-            pCosto: '',
-            pVenta: 260,
-        },{
-            Cantidad: 25,
-            Codigo: 'CG003',
-            Descripcion: 'chazo anclaje 1/4 x 2 1/4',
-            UM: 1,
-            pCosto: '',
-            pVenta: 440,
-        },{
-            Cantidad: 4,
-            Codigo: '66302',
-            Descripcion: 'Sifon flexible cromado Push lavamanos con rebose',
-            UM: 1,
-            pCosto: '',
-            pVenta: 14000,
-        },{
-            Cantidad: 1,
-            Codigo: 'DES02',
-            Descripcion: 'Kankro ecologico 12 horas',
-            UM: 1,
-            pCosto: '',
-            pVenta: 28000,
-        },{
-            Cantidad: 2,
-            Codigo: 'PT012',
-            Descripcion: '1200',
-            UM: 1,
-            pCosto: '',
-            pVenta: 1200,
-        },{
-            Cantidad: 2,
-            Codigo: 'PT013',
-            Descripcion: 'Tester grande',
-            UM: 1,
-            pCosto: '',
-            pVenta: 1900,
-        },{
-            Cantidad: 6,
-            Codigo: 'ROD01',
-            Descripcion: 'Rodillo Felpa acrilica 9"',
-            UM: 1,
-            pCosto: '',
-            pVenta: 3900,
-        },{
-            Cantidad: 12,
-            Codigo: '10101',
-            Descripcion: 'Envace negro 1/32',
-            UM: 1,
-            pCosto: '',
-            pVenta: 575,
-        },{
-            Cantidad: 12,
-            Codigo: '10102',
-            Descripcion: 'Envace negro 1/16',
-            UM: 1,
-            pCosto: '',
-            pVenta: 600,
-        },{
-            Cantidad: 12,
-            Codigo: '10103',
-            Descripcion: 'Envace negro 1/8',
-            UM: 1,
-            pCosto: '',
-            pVenta: 650,
-        },{
-            Cantidad: 12,
-            Codigo: '10104',
-            Descripcion: 'Envace negro 1/4',
-            UM: 1,
-            pCosto: '',
-            pVenta: 800,
-        },{
-            Cantidad: 2,
-            Codigo: 'SP109',
-            Descripcion: 'tope de rodillo',
-            UM: 1,
-            pCosto: '',
-            pVenta: 820,
-        },{
-            Cantidad: 2,
-            Codigo: 'AP001',
-            Descripcion: 'acople rapido',
-            UM: 1,
-            pCosto: '',
-            pVenta: 4500,
-        },{
-            Cantidad: 6,
-            Codigo: 'SP136',
-            Descripcion: 'Chupa sanitaria',
-            UM: 1,
-            pCosto: '',
-            pVenta: 3700,
-        },{
-            Cantidad: 1,
-            Codigo: 'AVE05',
-            Descripcion: 'Interruptor AVE doble conmutable',
-            UM: 1,
-            pCosto: '',
-            pVenta: 11500,
+    const [buttonCount, setButtonCount] = useState(1); // Initial button count
+    const [tabindex, setTabindex] = useState(1);
+    const [total, setTotal] = useState(0);
+    const [orderslist, setOrderslist] = useState(jsonTest[1])
+    const [selectedButton, setSelectedButton] = useState(null);
+    const [selectedfila, setSelectedfila] = useState(0);
+    const [changeQuantity, setChangeQuantity] = useState(null);
+    const [changePventa, setChangePventa] = useState(null);
+    const selectedfilaRef = useRef(selectedfila);
+
+
+    useEffect(() => {
+        sumarTotal()
+    }, [orderslist]);
+    
+    useEffect(() => {
+        console.log("selectedRow changed: ", selectedfila);
+    }, [selectedfila]);
+    
+    useEffect(() => {
+        window.addEventListener('keydown', handleKeyDown);
+        
+        return () => {
+            window.removeEventListener('keydown', handleKeyDown);
+        };
+    }, []);
+    
+    useEffect(() => {
+        selectedfilaRef.current = selectedfila;
+    }, [selectedfila]);
+
+    const changeTab =(index) => {
+        setOrderslist(jsonTest[index])
+        setTabindex(index)
+        setSelectedButton(index)
+        if (jsonTest[index].length !== 0) {
+            setSelectedfila(jsonTest[index].length - 1)
+        } else if (jsonTest[index].length === 0 ) {
+            setSelectedfila(null)
         }
-    ];
+    };
+
+    const handleKeyDown = (event) => {
+        const currentSelectedFila = selectedfilaRef.current;
+        console.log(event.key)
+        if (event.key === '+') {
+            updateCantidad(currentSelectedFila, 1)
+        } else if (event.key === '-') {
+            updateCantidad(currentSelectedFila,-1)
+        } else if (event.key === 'ArrowDown' && currentSelectedFila + 1 >= 0 && currentSelectedFila + 1 < jsonTest[tabindex].length) {
+            setSelectedfila(currentSelectedFila + 1)
+        } else if (event.key === 'ArrowUp' && currentSelectedFila - 1 >= 0 && currentSelectedFila - 1 < jsonTest[tabindex].length) {
+            setSelectedfila(currentSelectedFila - 1)
+        }
+    };
+
+    const onblurChangeCuantity = (row, amount) => {
+        if (amount > 0) {
+            jsonTest[tabindex][row].Cantidad = amount
+            // Crea una copia del jsonTest[tabindex] para actualizar el estado
+            const updatedOrdersList = [...jsonTest[tabindex]];
+            // Actualiza el estado con la nueva lista
+            setOrderslist(updatedOrdersList);
+        }
+        setChangeQuantity(null)
+    };
+
+    const onblurChangePv = (row, amount) => {
+        if (amount > 0) {
+            const theValue = amount
+            let withoutFormat = theValue.replace(/\./g, '')
+            jsonTest[tabindex][row].pVenta = withoutFormat
+            // Crea una copia del jsonTest[tabindex] para actualizar el estado
+            const updatedOrdersList = [...jsonTest[tabindex]];
+            // Actualiza el estado con la nueva lista
+            setOrderslist(updatedOrdersList);
+        }
+        setChangePventa(null)
+    };
+    
+    const RowOrder = (item, index, columnsWidth) => {
+        const isEditing = changeQuantity === index;
+        const isEditingPv = changePventa === index;
+        //const [changeVrVenta, setChangeVrVenta] = useState(false)
+        const rowIndex = index;
+        return (
+                <>
+                    <td style={{width: columnsWidth[0]}} onDoubleClick={()=>{setChangeQuantity(index)}}>
+                        { isEditing ? (
+                            <TheInput
+                                id = {'i'+ rowIndex}
+                                numType ='nat'
+                                val = {item.Cantidad}
+                                sTyle = {{width: columnsWidth[0]}}
+                                onblur = {(e) => onblurChangeCuantity(rowIndex, e)}
+                                autofocus={true}
+                            /> ) :
+                        ( 
+                            <label>{item.Cantidad}</label>
+                        )}
+                    </td>
+                    <td style={{width: columnsWidth[1]}}>
+                        <label>{item.Codigo}</label>
+                    </td>
+                    <td style={{width: columnsWidth[2]}}>
+                        <label>{item.Descripcion}</label>
+                    </td>
+                    <td style={{width: columnsWidth[3]}}>
+                        <label>{item.UM}</label>
+                    </td>
+                    <td style={{width: columnsWidth[4]}} onDoubleClick={()=>setChangePventa(index)}>
+                        { isEditingPv ? (
+                            <TheInput
+                                id = {'i'+ rowIndex}
+                                numType ='real'
+                                val = {item.pVenta}
+                                sTyle = {{width: columnsWidth[0]}}
+                                onblur = {(e) => onblurChangePv(rowIndex, e)}
+                                autofocus={true}
+                            /> ) :
+                        ( 
+                            <label>$ {Formater(item.pVenta)}</label>
+                        )}
+                    </td>
+                    <td style={{width: columnsWidth[5]}}>
+                        <label>$ {Formater(item.pVenta * item.Cantidad)}</label>
+                    </td>
+                </>
+        );
+    };
+    
+    const Formater = (number) =>{
+        //it gives a number format
+        if (number === '') return '';
+        const numberString = String(number).replace(/,/g, '.');
+        const numberfromat = Number(numberString);
+        return Intl.NumberFormat('de-DE').format(numberfromat);
+    };
+    
+
+    const updateCantidad = (selectedRow, amount) => {
+        if (jsonTest[tabindex][selectedRow].Cantidad + amount > 0) {
+            jsonTest[tabindex][selectedRow].Cantidad += amount
+            // Crea una copia del jsonTest[tabindex] para actualizar el estado
+            console.log('fila al aumentar ' + selectedRow)
+            const updatedOrdersList = [...jsonTest[tabindex]];
+            // Actualiza el estado con la nueva lista
+            setOrderslist(updatedOrdersList);
+        }
+      };
 
     const ctHeaders = [
         {
@@ -128,7 +174,7 @@ export function Sales(){
         {
             header: 'Descripción',
             key: 'descripcion',
-            defaultWidth: 300,
+            defaultWidth: 500,
             type: 'text',
         },
         {
@@ -150,96 +196,65 @@ export function Sales(){
             type: 'text',
         }
     ];
-    const [buttonCount, setButtonCount] = useState(1); // Initial button count
-    const [total, setTotal] = useState(0);
-    const [orderslist, setOrderslist] = useState(order)
-
-    useEffect(() => {
-        sumarTotal()
-    }, [orderslist])
-    
 
     const createButton = () => {
-        setButtonCount(buttonCount + 1); // Increment button count
+        setButtonCount(prevCount => {
+            const newCount = prevCount + 1;
+            jsonTest[newCount] = []
+            changeTab(newCount)
+            //setSelectedButton(newCount); // Automatically select the new radio button
+            return newCount;
+        });
     };
 
-    const Formater = (number) =>{
-        //it gives a number format
-        if (number === '') return '';
-        const numberString = String(number).replace(/,/g, '.');
-        const numberfromat = Number(numberString);
-        return Intl.NumberFormat('de-DE').format(numberfromat);
-    };
 
     const sumarTotal = () => {
         let suma = 0;
-        orderslist.map((item, index) => (
+        if (orderslist && orderslist.length > 0) {orderslist.forEach((item, index) => (
             suma += item.pVenta * item.Cantidad
-        ))
+        ))}
         setTotal(suma)
     }
-
-    const RowOrder = (item, index, columnsWidth) => {
-        const [changeQuantity, setChangeQuantity] = useState(false)
-        const [changeVrVenta, setChangeVrVenta] = useState(false)
-        
-        return (
-            <tbody>
-                <div style={{width: columnsWidth[0]}} onDoubleClick={()=>setChangeQuantity(!changeQuantity)}>
-                    { !changeQuantity && 
-                        <label>{item.Cantidad}</label> }
-                    { changeQuantity && 
-                        <input type="number"
-                        value={item.Cantidad}
-                        onChange={{}}
-                        style={{width: columnsWidth[0]}}/>
-                    }
-                </div>
-                <div style={{width: columnsWidth[1]}}>
-                    <label>{item.Codigo}</label>
-                </div>
-                <div style={{width: columnsWidth[2]}}>
-                    <label>{item.Descripcion}</label>
-                </div>
-                <div style={{width: columnsWidth[3]}}>
-                    <label>{item.UM}</label>
-                </div>
-                <div style={{width: columnsWidth[4]}} onDoubleClick={()=>setChangeVrVenta(!changeVrVenta)}>
-                    { !changeVrVenta &&
-                        <label>${Formater(item.pVenta)}</label> }
-                    { changeVrVenta && 
-                        <input type="number"
-                        value={item.pVenta}
-                        onChange={{}}
-                        style={{width: columnsWidth[4]}}/>
-                    }
-                </div>
-                <div style={{width: columnsWidth[5]}}>
-                    <label>$ {Formater(item.pVenta * item.Cantidad)}</label>
-                </div>
-            </tbody>
-        );
-    };
-
 
     return (
         <div>
             <div className="Search">
+                <label>Ingrese el codigo del producto</label>
                 <input
                     type="text"
-                    placeholder="Buscar..."/>
-            <button className="btnStnd btn1">Buscar</button>
+                    id='NPinput'
+                    placeholder="Codigo del producto"
+                    style={{width: '500px'}}/>
+                <button className="btnStnd btn1">Buscar</button>
             </div>
-            <div>
-            <button onClick={createButton}>Create Button</button>
-                {[...Array(buttonCount)].map((_, index) => (
-                    <button key={index}>Button {index + 1}</button>
-                ))}
-            <Flatlist
-                data={orderslist}
-                row={RowOrder}
-                headers={ctHeaders}
-            />
+            <div className="tabs">
+                <div className='tabButtons'>
+                        {[...Array(buttonCount)].map((_, index) => (
+                            <div className='tabButtonModel' key={index}>
+                                    <input
+                                        type="radio"
+                                        id={`radio${index + 1}`}
+                                        name="dynamicRadioGroup"
+                                        className='tabButton'
+                                        checked={selectedButton === index + 1}
+                                        onChange={() => changeTab(index + 1)}
+                                    />
+                                    <label className='tab-rb-label' htmlFor={`radio${index + 1}`}>
+                                        {index + 1}
+                                    </label>
+                                {/*<label htmlFor={`radio${index + 1}`}></label>*/}
+                                <button className="tab-btn-close" onClick={() => {}}>x</button>
+                            </div>
+                        ))}
+                        <button onClick={()=>{createButton()}} className='add-tab'>+</button>
+                </div>
+                <Flatlist
+                    data={orderslist}
+                    headers={ctHeaders}
+                    row={RowOrder}
+                    selectedRow={selectedfila}
+                    setSelectedRow={setSelectedfila}
+                />
             </div>
             <div>
                 <button className="btnStnd btn1">F2-Cobrar</button>

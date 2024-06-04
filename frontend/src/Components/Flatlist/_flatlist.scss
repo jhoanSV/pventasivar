@@ -34,7 +34,7 @@
 }
 
 .Flatlist tbody {
-    display: flex;
+    display: block;
     overflow-y: auto; // Enable vertical scrolling when content exceeds the height
 }
 .Flatlist tbody:hover{

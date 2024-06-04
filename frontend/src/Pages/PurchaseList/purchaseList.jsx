@@ -234,21 +234,22 @@ export function PurchaseList(){
     const row=(item, isSelected, columnsWidth)=> {
         return (
             <tbody onClick={()=>{}} onDoubleClick={()=>{console.log("activa el modificar")}}>
-                <div style={{width: columnsWidth[0]}}>
+                
+                <td style={{width: columnsWidth[0]}}>
                     <label className={isSelected ? 'selected-label' : ''}>{item.consecutivo}</label>
-                </div>
-                <div style={{width: columnsWidth[1]}}>
+                </td>
+                <td style={{width: columnsWidth[1]}}>
                     <label className={isSelected ? 'selected-label' : ''}>{item.N_orden}</label>
-                </div>
-                <div style={{width: columnsWidth[2]}}>
+                </td>
+                <td style={{width: columnsWidth[2]}}>
                     <label className={isSelected ? 'selected-label' : ''} style={StateOfTheOrder(item.estado)}>{item.estado}</label>
-                </div>
-                <div style={{width: columnsWidth[3]}}>
+                </td>
+                <td style={{width: columnsWidth[3]}}>
                     <label className={isSelected ? 'selected-label' : ''}>{item.Fecha}</label>
-                </div>
-                <div style={{width: columnsWidth[3]}}>
+                </td>
+                <td style={{width: columnsWidth[3]}}>
                     <label className={isSelected ? 'selected-label' : ''}>$ {Formater(item.valor)}</label>
-                </div>
+                </td>
             </tbody>
         )
     };
@@ -343,13 +344,6 @@ export function PurchaseList(){
                 </button>
             </div>
             <div className='Table'>               
-                {/*<TableComponent
-                    data={orderslist}
-                    headers={ctHeaders}
-                    selected={selected}
-                    setSelected={setSelected}
-                    multiSelect={multiSelect}
-                />*/}
                 <Flatlist
                     data={orderslist}
                     row={row}

@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import './_flatlist.scss';
 
-export const Flatlist = ({ data, row, Width = '90%', Height = 500, headers = []}) => {
-    const [selectedRow, setSelectedRow] = useState(null);
+export const Flatlist = ({ data, row, Width = '90%', Height = 500, headers = [], selectedRow, setSelectedRow}) => {
+    //const [selectedRow, setSelectedRow] = useState(null);
     const [width, setWidth] = useState(Width);
     const [height, setHeight] = useState(Height);
     const [columnsWidth, setColumnsWidth] = useState([]);
@@ -23,7 +23,6 @@ export const Flatlist = ({ data, row, Width = '90%', Height = 500, headers = []}
         }
     }, [headers, Width]);
 
-
     const handleRowClick = (index) => {
         setSelectedRow(index);
     };
@@ -39,14 +38,17 @@ export const Flatlist = ({ data, row, Width = '90%', Height = 500, headers = []}
                     )}
                 </tr>
             </thead>
-            {data.map((item, index) => (
-                <div
-                    key={index}
-                    className={`rowflatlist ${selectedRow === index ? 'selected' : ''}`}
-                    onClick={() => handleRowClick(index)}>
-                    {row(item, selectedRow === index, columnsWidth)}
-                </div>
-            ))}
+            <tbody>
+                {data && data.length > 0 && (data.map((item, index) => (
+                    <tr
+                        key={index}
+                        className={`rowflatlist ${selectedRow === index ? 'selected' : ''}`}
+                        onClick={() => handleRowClick(index)}
+                    >
+                    {row(item, index, columnsWidth)}
+                    </tr>
+                )))}
+            </tbody>
         </div>
     );
 }
