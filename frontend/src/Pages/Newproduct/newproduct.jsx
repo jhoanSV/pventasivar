@@ -293,7 +293,7 @@ export function Newproduct(){
                         </div>
                         <div className='Colmn2'>
                             <TheInput
-                                //val={productData.invMinimo}
+                                val={productData.invMinimo}
                                 numType={'nat'}
                                 onchange={(e)=>{changeValuesProducts('invMinimo', e)}}
                             />

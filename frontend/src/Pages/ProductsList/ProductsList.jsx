@@ -5,6 +5,7 @@ import { useTheContext } from '../../TheProvider';
 import { TableComponent } from '../../Components';
 //es un json de prueba
 import jsonTest from '../../products_json_test.json';
+import { ModalBusca } from '../../Components/Modals/ModalBusca';
 
 export const ProductsList = () => {
 
@@ -132,7 +133,8 @@ export const ProductsList = () => {
                     </button>*/}
                 </div>
             </div>
-            <div>                
+            <ModalBusca></ModalBusca>
+            <div>
                 <TableComponent
                     data={contentList}
                     headers={ctHeaders}

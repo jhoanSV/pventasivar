@@ -1,0 +1,31 @@
+.productsContainer{
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.caja-product{
+    margin: 3%;
+    padding: 2%;
+    width: 27%;
+    max-height: 220px;
+    border: solid 1px black;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    cursor: pointer;
+    &:hover{
+        transform: scale(1.025);
+    }
+}
+
+.MBimgContainer{
+    img{        
+        width: 100%;
+        aspect-ratio: 1 / 1;
+        object-fit: contain;
+    }
+}
+
+.scrollable{
+    overflow-y: auto;
+}
