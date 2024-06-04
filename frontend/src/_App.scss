@@ -35,11 +35,18 @@
   background-color: transparent;
   border: none;
   border-radius: 25px;
+  height: max-content;
   aspect-ratio: 1 / 1;
 }
 .btn1:active{
   box-shadow: none;
   transform: translateY(3px);
+}
+.btn1:disabled{
+  background-color: #68799b;
+  cursor: default;
+  box-shadow: 0px 3px 0px 0px rgb(67 77 96);
+  transform: translateY(0px);
 }
 .btn1Stnd:hover{
   background-color: rgb(0 0 0 / 26%);
@@ -56,7 +63,7 @@
   overflow-y: auto;
 }
 
-input[type="text"], input[type="number"] {
+input[type="text"], input[type="number"], input[type="password"] {
   background-color: #d9d9d9;
   border: none;
   border-radius: 5px;
@@ -83,13 +90,4 @@ input[type="text"], input[type="number"] {
   -webkit-user-select: none; /* Safari */
   -ms-user-select: none; /* IE 10 and IE 11 */
   user-select: none; /* Standard syntax */
-}
-
-.modal1{
-  position: fixed;
-  top: 0px;
-  width: 200px;
-  height: 200px;
-  background-color: green;
-  z-index: 2;
 }
