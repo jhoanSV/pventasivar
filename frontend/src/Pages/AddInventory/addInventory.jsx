@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import "./_addInventory.scss";
 import { useNavigate } from 'react-router-dom';
 import { useTheContext } from '../../TheProvider';
+import { TheInput } from '../../Components/InputComponent/TheInput';
 
 export function AddInventory(){
 
@@ -40,10 +41,8 @@ export function AddInventory(){
                     <label>Agregar:</label>
                 </div>
                 <div className='Colmn2'>
-                    <input
-                        type="text"
-                        id="i-agregar"
-                        name="i-agregar"/>
+                    <TheInput numType='nat'>
+                    </TheInput>
                 </div>
             </div>
             <div className='Row'>
@@ -51,10 +50,8 @@ export function AddInventory(){
                     <label>Costo:</label>
                 </div>
                 <div className='Colmn2'>
-                    <input
-                        type="text"
-                        id="i-costo"
-                        name="i-pcosto"></input>
+                    <TheInput numType='real'>
+                    </TheInput>
                 </div>
             </div>
             <div className='Row'>
@@ -62,10 +59,8 @@ export function AddInventory(){
                     <label>Precio venta:</label>
                 </div>
                 <div className='Colmn2'>
-                    <input
-                        type="text"
-                        id="i-pventa"
-                        name="i-pventa"></input>
+                    <TheInput numType='real'>
+                    </TheInput>
                 </div>
             </div>
             <div className='Row'>

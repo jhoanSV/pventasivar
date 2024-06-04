@@ -3,6 +3,7 @@ import "./_verifyPurchase.scss";
 import { useNavigate } from 'react-router-dom';
 import { useTheContext } from '../../TheProvider';
 import { TableComponent, Flatlist } from '../../Components';
+import { TheInput } from '../../Components/InputComponent/TheInput';
 //es un json de prueba
 import jsonTest from '../../order_test.json';
 
@@ -14,6 +15,8 @@ export function VerifyPurchase(){
     const { setSection } = useTheContext();
     const [order, setOrder] = useState(jsonTest);
     const [total, setTotal] = useState(0);
+    const [showModalChangeprice, setShowModalChangeprice] = useState(true);
+
 
     useEffect(() => {
         setSection('Verificar orden')
@@ -86,7 +89,7 @@ export function VerifyPurchase(){
         }
     ]
 
-    const row = (item, sizes) => {
+    const row = (item, isSelected, columnsWidth) => {
         const comparator = (value1, value2) => {
             if (value1>value2){
                 return <i class="bi bi-caret-up-fill" style={{color: 'green'}}></i>
@@ -97,29 +100,31 @@ export function VerifyPurchase(){
             }
         }
         return (
-            <tbody onClick={()=>{console.log(item)}} onDoubleClick={()=>{console.log("activa el modificar")}}>
-                <div style={{width: '131px'}}>
-                    <label>{item.cantidad}</label>
+            <tbody
+                onClick={()=>{console.log(item)}}
+                onDoubleClick={()=>{setShowModalChangeprice(true)}}>
+                <div style={{width: columnsWidth[0]}}>
+                    <label className={isSelected ? 'selected-label' : ''}>{item.cantidad}</label>
                 </div>
-                <div style={{width: '131px'}}>
-                    <label>{item.cod}</label>
+                <div style={{width: columnsWidth[1]}}>
+                    <label className={isSelected ? 'selected-label' : ''}>{item.cod}</label>
                 </div>
-                <div style={{width: '300px'}}>
-                    <label>{item.descripcion}</label>
+                <div style={{width: columnsWidth[2]}}>
+                    <label className={isSelected ? 'selected-label' : ''}>{item.descripcion}</label>
                 </div>
-                <div style={{width: '223px'}}>
-                    <label>$ {Formater(item.vrUnitario)}</label>
+                <div style={{width: columnsWidth[3]}}>
+                    <label className={isSelected ? 'selected-label' : ''}>$ {Formater(item.vrUnitario)}</label>
                 </div>
-                <div style={{width: '223px', alignItems: 'center' }}>
+                <div style={{width: columnsWidth[4], alignItems: 'center' }}>
                     {comparator(item.vrUnitario, item.vrUnitarioSistem)}
                 </div>
-                <div style={{width: '223px'}}>
-                    <label>$ {Formater(item.vrUnitario * item.cantidad)}</label>
+                <div style={{width: columnsWidth[5]}}>
+                    <label className={isSelected ? 'selected-label' : ''}>$ {Formater(item.vrUnitario * item.cantidad)}</label>
                 </div>
-                <div style={{width: '223px'}}>
-                    <label>{item.existencia}</label>
+                <div style={{width: columnsWidth[6]}}>
+                    <label className={isSelected ? 'selected-label' : ''}>{item.existencia}</label>
                 </div>
-                <div style={{width: '223px'}}>
+                <div style={{width: columnsWidth[7]}}>
                     <input
                         type="checkbox"
                         onChange={()=>checkbox()}></input>
@@ -142,7 +147,99 @@ export function VerifyPurchase(){
         const numberString = String(number).replace(/,/g, '.');
         const numberfromat = Number(numberString);
         return Intl.NumberFormat('de-DE').format(numberfromat);
-    }
+    };
+
+    const ChangePrice = (codProduct) =>{
+        const data = {
+            "cantidad": 3,
+            "cod": "TNC25",
+            "descripcion": "Motoreductor amarillo dlble eje",
+            "vrUnitario": 5500,
+            "vrUnitarioSistem": 5400,
+            "diferencia": -100,
+            "vrTotal": 3000,
+            "estado": 0,
+            "existencia": 4
+        }
+        return (
+            <div>
+                <div>
+                    <div>
+                        <label className='subtitle'>Codigo:</label>
+                        <label className='subtitle'>{codProduct}</label>
+                    </div>
+                </div>
+                <div >
+                    <label className='subtitle'>order.descripcion</label>
+                </div>
+                <div className='Rows'>
+                    <div className='column1'>
+                        <label className='subtitle'>Inventario actual:</label>
+                    </div>
+                    <div className='column2'>
+                        <label>order.invMinimo</label>
+                    </div>
+                    <div className='column1'>
+                        <label className='subtitle'>Minimo:</label>
+                    </div>
+                    <div className='column2'>
+                        <label>order.invMinimo</label>
+                    </div>
+                    <div className='column1'>
+                        <label className='subtitle'>Maximo:</label>
+                    </div>
+                    <div className='column2'>
+                        <label>order.invMaximo</label>
+                    </div>
+                    <div className='column1'>
+                        <label className='subtitle'>Consto actual:</label>
+                    </div>
+                    <label className='column2'>$ order.constoActual</label>
+                </div>
+                <div className='form-container'>
+                    <div className='form-row'>
+                        <label className='subtitle'>Cantidad de compra:</label>
+                        <TheInput numType='nat'>
+                        </TheInput>
+                    </div>
+                    <div className='form-row'>
+                        <label className='subtitle'>Nuevo costo:</label>
+                        <TheInput numType='real'>
+                        </TheInput>
+                    </div>
+                    <div className='form-row'>
+                        <label className='subtitle'>Ganancia:</label>
+                        <TheInput numType='real'>
+                        </TheInput>
+                    </div>
+                    <div className='form-row'>
+                        <label className='subtitle'>Nuevo precio de venta:</label>
+                        <TheInput numType='real'>
+                        </TheInput>
+                    </div>
+                    <div className='form-row'>
+                        <label className='subtitle'>precio venta:</label>
+                        <label>$ 000</label>
+                    </div>
+                </div>
+                <div>
+                    <button className='btnStnd btn1'
+                        style={{marginLeft: '20px'}}
+                        onClick={()=>{}}
+                            >
+                            aceptar
+                    </button>
+                    <button className='btnStnd btn1'
+                        style={{marginLeft: '20px'}}
+                        onClick={()=>{setShowModalChangeprice(false)}}
+                        >
+                            cancelar
+                    </button>
+                </div>
+            </div>
+        )
+
+    };
 
     return (
         <div class="ShoppingList">
@@ -158,18 +255,10 @@ export function VerifyPurchase(){
                 <label>Modificar</label>
             </div>
             <div className='Table'>
-                <thead style={{position: 'sticky', top: '0'}}>
-                    <tr>
-                        {ctHeaders.map((item, index) =>
-                            <th key={index} style={{width: item['defaultWidth']}}>
-                                <div className='cellContent'>{item['header']}</div>
-                            </th>
-                        )}
-                    </tr>
-                </thead>
                 <Flatlist
-                    data={jsonTest}
+                    data={order}
                     row={row}
+                    headers={ctHeaders}
                 />
             </div>
             <div>
@@ -182,22 +271,23 @@ export function VerifyPurchase(){
             </div>
             <div className='Finantialdata'>
                 <div className="Row">
-                    <div className='colmn1'>
-                        <label>N° pre-factura:</label>
+                    <div className='column'>
+                        <label style={{fontWeight: 600}}>N° pre-factura:</label>
                     </div>
-                    <div className='colmn2'>
+                    <div className='column'>
                         <label>000000</label>
                     </div>
                 </div>
                 <div className="Row">
-                    <div className='colmn1'>
-                        <label>Utilidad:</label>
+                    <div className='column'>
+                        <label style={{fontWeight: 600}}>Utilidad:</label>
                     </div>
-                    <div className='colmn2'>
+                    <div className='column'>
                         <label>$ {Formater(total)}</label>
                     </div>
                 </div>
             </div>
+            {showModalChangeprice && ChangePrice('001')}
         </div>
     )
 }

@@ -1,14 +1,40 @@
 @import "../../scss/_colors.scss";
 
-.Buscador {
-    display: flex;
+.searchSection {
+    display: grid;
     align-items: center;
-    justify-content: space-between;
+    grid-template-columns: 33.33% 33.33% auto;
     margin-bottom: 20px;
 }
+
+.search {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 10px;
+    gap: 10px;
+    & .searcher {
+        width: 80%;
+        align-self: center;
+    }
+}
+
+.Table {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
 .searchDate {
     display: flex;
-    align-self: flex-end;
-    margin-right: 20px;
+    justify-self: flex-end;
+    margin: 10px;
     gap: 10px;
 }
+
+.ButtonActios {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
