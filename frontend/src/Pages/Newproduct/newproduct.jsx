@@ -218,7 +218,7 @@ export function Newproduct(){
                             <label>Proveedor</label>
                         </div>
                         <div className='Colmn2'>
-                            <input type="text" className=""/>
+                            <input type="text" className="" value={productData.descripcion} onChange={(e)=>changeValuesProducts("descripcion", e.target.value)}/*change to category*/ readOnly={productData.cod ? true : false}/>
                         </div>
                     </div>
                 }

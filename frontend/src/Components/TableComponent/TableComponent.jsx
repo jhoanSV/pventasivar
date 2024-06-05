@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import './_TableComponent.scss';
 
-export const TableComponent = ({data, headers, selected, setSelected, multiSelect, doubleClickFunct}) => {
+export const TableComponent = ({data, headers, selected, setSelected, multiSelect, doubleClickFunct, Other=null}) => {
 
     const [prevClick, setPrevClick] = useState();
     const [limit, setLimit] = useState(0);
@@ -114,7 +114,25 @@ export const TableComponent = ({data, headers, selected, setSelected, multiSelec
                             <tr key={index} onClick={(e)=>selectedRowFunction(e, item, item['id_nit'])} onDoubleClick={()=>{doubleClickFunct()}}>
                                 {headers.map((header, index) => 
                                     <td key={index}>
-                                        <div className='cellContent'>{item[header['key']]}</div>
+                                        {header['type']==='img' ?
+                                            <picture>
+                                                <source
+                                                    type="image/avif"
+                                                    srcSet={header['functions'](item)}
+                                                />
+                                                <img
+                                                    style={{width: '100%'}}
+                                                    alt="imgProducto"
+                                                    decoding="async"
+                                                />
+                                            </picture>
+                                        :header['type']==='text' ?
+                                            <div className='cellContent'>{item[header['key']]}</div>
+                                        :header['type'] === 'other' ?
+                                            <Other item={item} />
+                                        :
+                                            <></>
+                                        }
                                     </td>
                                 )}
                             </tr>

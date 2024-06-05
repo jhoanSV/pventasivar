@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { useTheContext } from '../../TheProvider';
 import { TableComponent } from '../../Components';
 //es un json de prueba
-import jsonTest from '../../jsonTest.json';
+import jsonTest from '../../products_json_test.json';
 
 export function Inventory(){
 
@@ -19,7 +19,7 @@ export function Inventory(){
         // eslint-disable-next-line
     }, []);
 
-    const ctHeaders = [
+    const InvHeaders = [
         {
             header: 'Cod',
             key: 'cod',
@@ -52,7 +52,7 @@ export function Inventory(){
         },
         {
             header: 'Existencia',
-            key: 'exitencia',
+            key: 'existencia',
             defaultWidth: '0px',
             type: 'text',
         },
@@ -98,7 +98,7 @@ export function Inventory(){
                     <label>Muchos productos</label>
                 </div>
             </div>
-            <div classname="Row">
+            <div className="Row">
                 <label>Buscar:</label>
                 <input type="text" placeholder='Buscar'/>
             </div>
@@ -147,10 +147,10 @@ export function Inventory(){
                     </button>
                 </div>
             </div>
-            <div className='tableContainer'>
+            <div>
                 <TableComponent
                     data={jsonTest}
-                    headers={ctHeaders}
+                    headers={InvHeaders}
                     selected={selected}
                     setSelected={setSelected}
                     multiSelect={multiSelect}
