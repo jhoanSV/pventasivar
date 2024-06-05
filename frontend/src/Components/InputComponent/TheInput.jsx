@@ -9,7 +9,7 @@ export const TheInput = ({
     onblur=false,
     onfocus=false,
     autofocus=false,
-    sTyle=''}) => {
+    sTyle={}}) => {
 
     const [value, setValue] = useState(val);
     

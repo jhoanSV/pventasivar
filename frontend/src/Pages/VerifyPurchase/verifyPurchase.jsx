@@ -100,12 +100,11 @@ export function VerifyPurchase(){
             }
         }
         return (
-            <tbody
-                onClick={()=>{console.log(item)}}
+            <div onClick={()=>{console.log(item)}}
                 onDoubleClick={()=>{setShowModalChangeprice(true)}}>
-                <div style={{width: columnsWidth[0]}}>
+                <td style={{width: columnsWidth[0]}}>
                     <label className={isSelected ? 'selected-label' : ''}>{item.cantidad}</label>
-                </div>
+                </td>
                 <div style={{width: columnsWidth[1]}}>
                     <label className={isSelected ? 'selected-label' : ''}>{item.cod}</label>
                 </div>
@@ -129,7 +128,7 @@ export function VerifyPurchase(){
                         type="checkbox"
                         onChange={()=>checkbox()}></input>
                 </div>
-            </tbody>
+            </div>
         )
     }
 
@@ -192,7 +191,7 @@ export function VerifyPurchase(){
                         <label>order.invMaximo</label>
                     </div>
                     <div className='column1'>
-                        <label className='subtitle'>Consto actual:</label>
+                        <label className='subtitle'>Costo actual:</label>
                     </div>
                     <label className='column2'>$ order.constoActual</label>
                 </div>
