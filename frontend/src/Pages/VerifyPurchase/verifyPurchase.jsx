@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { useTheContext } from '../../TheProvider';
 import { TableComponent, Flatlist } from '../../Components';
 import { TheInput } from '../../Components/InputComponent/TheInput';
+import { ChangePurchasePro } from '../../Components/Modals/ChangePurchasePro';
 //es un json de prueba
 import jsonTest from '../../order_test.json';
 
@@ -16,7 +17,20 @@ export function VerifyPurchase(){
     const [order, setOrder] = useState(jsonTest);
     const [total, setTotal] = useState(0);
     const [showModalChangeprice, setShowModalChangeprice] = useState(true);
+    const [selectedfila, setSelectedfila] = useState(0);
 
+    const data = {
+        "cantidad": 3,
+        "cod": "TNC25",
+        "descripcion": "Motoreductor amarillo dlble eje",
+        "vrUnitario": 5500,
+        "pCostoSistem": 5400,
+        "estado": 0,
+        "existencia": 4,
+        "invMinimo": 5,
+        "invMaximo": 50,
+        "pVentaSistem": 6000
+    }
 
     useEffect(() => {
         setSection('Verificar orden')
@@ -100,35 +114,35 @@ export function VerifyPurchase(){
             }
         }
         return (
-            <div onClick={()=>{console.log(item)}}
+            <tr onClick={()=>{console.log(item)}}
                 onDoubleClick={()=>{setShowModalChangeprice(true)}}>
                 <td style={{width: columnsWidth[0]}}>
                     <label className={isSelected ? 'selected-label' : ''}>{item.cantidad}</label>
                 </td>
-                <div style={{width: columnsWidth[1]}}>
+                <td style={{width: columnsWidth[1]}}>
                     <label className={isSelected ? 'selected-label' : ''}>{item.cod}</label>
-                </div>
-                <div style={{width: columnsWidth[2]}}>
+                </td>
+                <td style={{width: columnsWidth[2]}}>
                     <label className={isSelected ? 'selected-label' : ''}>{item.descripcion}</label>
-                </div>
-                <div style={{width: columnsWidth[3]}}>
+                </td>
+                <td style={{width: columnsWidth[3]}}>
                     <label className={isSelected ? 'selected-label' : ''}>$ {Formater(item.vrUnitario)}</label>
-                </div>
-                <div style={{width: columnsWidth[4], alignItems: 'center' }}>
+                </td>
+                <td style={{width: columnsWidth[4], alignItems: 'center' }}>
                     {comparator(item.vrUnitario, item.vrUnitarioSistem)}
-                </div>
-                <div style={{width: columnsWidth[5]}}>
+                </td>
+                <td style={{width: columnsWidth[5]}}>
                     <label className={isSelected ? 'selected-label' : ''}>$ {Formater(item.vrUnitario * item.cantidad)}</label>
-                </div>
-                <div style={{width: columnsWidth[6]}}>
+                </td>
+                <td style={{width: columnsWidth[6]}}>
                     <label className={isSelected ? 'selected-label' : ''}>{item.existencia}</label>
-                </div>
-                <div style={{width: columnsWidth[7]}}>
+                </td>
+                <td style={{width: columnsWidth[7]}}>
                     <input
                         type="checkbox"
                         onChange={()=>checkbox()}></input>
-                </div>
-            </div>
+                </td>
+            </tr>
         )
     }
 
@@ -258,6 +272,8 @@ export function VerifyPurchase(){
                     data={order}
                     row={row}
                     headers={ctHeaders}
+                    selectedRow={selectedfila}
+                    setSelectedRow={setSelectedfila}
                 />
             </div>
             <div>
@@ -286,7 +302,7 @@ export function VerifyPurchase(){
                     </div>
                 </div>
             </div>
-            {showModalChangeprice && ChangePrice('001')}
+            {showModalChangeprice && <ChangePurchasePro data={data} show={showModalChangeprice} width='450px' height='400px'/>}
         </div>
     )
 }
