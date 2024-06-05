@@ -7,7 +7,7 @@
         "pcosto": 1000,
         "pventa": 2000,
         "pcompra": 93,
-        "inventario": "23921",
+        "inventario": 23921,
         "invMinimo": 15,
         "invMaximo": 50,
         "ubicacion": "A1"
@@ -17,10 +17,10 @@
         "cod_de_barras": "57320",
         "descripcion": "John Hancock Hedged Equity & Income Fund",
         "categoria": "EBANISTERIA",
-        "pcosto": 42,
-        "pventa": 38,
+        "pcosto": 12000,
+        "pventa": 24000,
         "pcompra": 69,
-        "inventario": "43796",
+        "inventario": 43796,
         "invMinimo": 15,
         "invMaximo": 50,
         "ubicacion": "A1"
@@ -28,12 +28,12 @@
     {
         "cod": 3,
         "cod_de_barras": "3",
-        "descripcion": "Bridgford Foods Corporation",
+        "descripcion": "Bridgford Foods Corporation Corporated and Asociated",
         "categoria": "EBANISTERIA",
-        "pcosto": 92,
-        "pventa": 42,
+        "pcosto": 9200,
+        "pventa": 4200,
         "pcompra": 85,
-        "inventario": "1480",
+        "inventario": 1480,
         "invMinimo": 15,
         "invMaximo": 50,
         "ubicacion": "A1"
@@ -43,10 +43,10 @@
         "cod_de_barras": "6",
         "descripcion": "Fresenius Medical Care Corporation",
         "categoria": "EBANISTERIA",
-        "pcosto": 62,
-        "pventa": 90,
+        "pcosto": 6200,
+        "pventa": 9000,
         "pcompra": 96,
-        "inventario": "2",
+        "inventario": 2,
         "invMinimo": 15,
         "invMaximo": 50,
         "ubicacion": "A1"
@@ -56,10 +56,10 @@
         "cod_de_barras": "1335",
         "descripcion": "Astec Industries, Inc.",
         "categoria": "EBANISTERIA",
-        "pcosto": 51,
-        "pventa": 69,
+        "pcosto": 5100,
+        "pventa": 6900,
         "pcompra": 51,
-        "inventario": "63",
+        "inventario": 63,
         "invMinimo": 15,
         "invMaximo": 50,
         "ubicacion": "A1"
@@ -69,10 +69,10 @@
         "cod_de_barras": "295",
         "descripcion": "AppFolio, Inc.",
         "categoria": "EBANISTERIA",
-        "pcosto": 13,
-        "pventa": 61,
+        "pcosto": 1300,
+        "pventa": 6100,
         "pcompra": 49,
-        "inventario": "17996",
+        "inventario": 17996,
         "invMinimo": 15,
         "invMaximo": 50,
         "ubicacion": "A1"
@@ -85,7 +85,7 @@
         "pcosto": 50,
         "pventa": 61,
         "pcompra": 57,
-        "inventario": "03",
+        "inventario": 3,
         "invMinimo": 15,
         "invMaximo": 50,
         "ubicacion": "A1"
@@ -98,7 +98,7 @@
         "pcosto": 27,
         "pventa": 88,
         "pcompra": 61,
-        "inventario": "16",
+        "inventario": 16,
         "invMinimo": 15,
         "invMaximo": 50,
         "ubicacion": "A1"
@@ -111,7 +111,7 @@
         "pcosto": 85,
         "pventa": 90,
         "pcompra": 84,
-        "inventario": "64589",
+        "inventario": 64589,
         "invMinimo": 15,
         "invMaximo": 50,
         "ubicacion": "A1"
@@ -124,7 +124,7 @@
         "pcosto": 46,
         "pventa": 6,
         "pcompra": 41,
-        "inventario": "88484",
+        "inventario": 88484,
         "invMinimo": 15,
         "invMaximo": 50,
         "ubicacion": "A1"
@@ -137,7 +137,7 @@
         "pcosto": 99,
         "pventa": 35,
         "pcompra": 79,
-        "inventario": "60613",
+        "inventario": 60613,
         "invMinimo": 15,
         "invMaximo": 50,
         "ubicacion": "A1"
@@ -150,7 +150,7 @@
         "pcosto": 23,
         "pventa": 50,
         "pcompra": 15,
-        "inventario": "2"
+        "inventario": 2
     },
     {
         "cod": 13,
@@ -160,7 +160,7 @@
         "pcosto": 37,
         "pventa": 73,
         "pcompra": 20,
-        "inventario": "03539"
+        "inventario": 3539
     },
     {
         "cod": 14,
@@ -170,7 +170,7 @@
         "pcosto": 35,
         "pventa": 99,
         "pcompra": 7,
-        "inventario": "22209"
+        "inventario": 22209
     },
     {
         "cod": 15,

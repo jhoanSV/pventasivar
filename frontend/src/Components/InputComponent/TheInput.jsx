@@ -9,7 +9,8 @@ export const TheInput = ({
     onblur=false,
     onfocus=false,
     autofocus=false,
-    sTyle={}}) => {
+    sTyle={},
+    pholder=''}) => {
 
     const [value, setValue] = useState(val);
     
@@ -68,6 +69,7 @@ export const TheInput = ({
             style={sTyle}
             className={className}
             value={value}
+            placeholder={pholder}
             onChange={(e)=>{handleChange(e)}}
             onFocus={(e)=>{handleFocus(e)}}
             onBlur={(e)=>{handleBlur(e)}}

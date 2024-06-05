@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import "./_newproduct.scss";
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useTheContext } from '../../TheProvider';
-import { TheInput } from '../../Components';
+import { TheInput, UserConfirm } from '../../Components';
 import imgPlaceHolder from '../../Assets/AVIF/placeHolderProduct.avif'
+import { GranelModal } from '../../Components/Modals/GranelModal';
 
 export function Newproduct(){
     //*Examples
@@ -22,14 +23,15 @@ export function Newproduct(){
 
 
     const navigate = useNavigate()
-    const { setSection } = useTheContext();
-    const location = useLocation();
-    const [imgSrc, setImgSrc] = useState(location.state && `https://sivarwebresources.s3.amazonaws.com/AVIF/${location.state.cod}.avif`)
+    const { setSection, someData, setSomeData, setInvAdAuth } = useTheContext();
+    const [imgSrc, setImgSrc] = useState(someData && `https://sivarwebresources.s3.amazonaws.com/AVIF/${someData.cod}.avif`)
     const [selectedCategory, setSelectedCategory] = useState(''); // set the selected category
     const [buttons, setButtons] = useState("Crear producto");
     const [productData, setProductData] = useState({'cod_de_barras':'','descripcion':'', 'invMaximo':'', 'invMinimo':'', 'inventario': '', 'pcosto':'', 'pventa': '', 'ubicacion':''});
     const [modificarProducto, setModificarProducto] = useState(false);
     const [pctGan, setpctGan] = useState('');
+    const [show1, setShow1] = useState(false);
+    const [show2, setShow2] = useState(false);
     // eslint-disable-next-line
     const [productsDataShow, setproductsDataShow] = useState({});
 
@@ -81,33 +83,51 @@ export function Newproduct(){
         setImgSrc(imgPlaceHolder)
     }
 
-    const handleBtn1 = () =>{
+    const prepData = () =>{
+        console.log(productData);
+        let d = productData
+        d.pventa = Number(d['pventa'].replace(/\./g, ''))
+        d.pcosto = Number(d['pcosto'].replace(/\./g, ''))
+        d.inventario = Number(d['inventario'].replace(/\./g, ''))
+        d.invMinimo = Number(d['invMinimo'].replace(/\./g, ''))
+        d.invMaximo = Number(d['invMaximo'].replace(/\./g, ''))
+        
+        setSomeData(d);
         /*
-            Here FIRST CHANGE THE PCOSTO AND PVENTA TO NUMBERS
+            Here FIRST CHANGE THE PCOSTO, PVENTA and others TO NUMBERS
         */
-        location.state.pventa = Number(productData['pventa'].replace(/\./g, '')); // change to numer
-        location.state.pcosto = Number(productData['pcosto'].replace(/\./g, '')); // change to number 
-        location.state.inventario = Number(productData['inventario'].replace(/\./g, '')); // change to number 
-        location.state.invMinimo = Number(productData['invMinimo'].replace(/\./g, '')); // change to number 
-        location.state.invMaximo = Number(productData['invMaximo'].replace(/\./g, '')); // change to number 
-        console.log(location.state);
-        /*Function to change the backend I guess*/
-        //navigate('/ProductsList')
     }
 
-    useEffect(() => {
-        if (location.state){
-            if(location.state.pventa && location.state.pcosto){
-                let pct = (((location.state.pventa-location.state.pcosto)/location.state.pcosto)*100).toFixed(2).toString();        
+    const handleBtn1 = () =>{
+        /*
+            validate in case of changes
+        */
+        prepData();
+        /*Function to change the backend, I guess, with idk wich info*/
+        navigate('/ProductsList')
+    }
+
+    const handleBtn2 = () =>{
+        /*
+            validate in case of changes
+        */
+        setShow1(true)
+    }
+
+    useEffect(() => {        
+        if (someData){
+            let data = {...someData}
+            if(data.pventa && data.pcosto){
+                let pct = (((data.pventa-data.pcosto)/data.pcosto)*100).toFixed(2).toString();        
                 pct = pct.replace(/\./g, ',');
                 setpctGan(pct);
             }
-            location.state.pventa = Formater(location.state.pventa)
-            location.state.pcosto = Formater(location.state.pcosto)
-            location.state.inventario = Formater(location.state.inventario)
-            location.state.invMinimo = Formater(location.state.invMinimo)
-            location.state.invMaximo = Formater(location.state.invMaximo)
-            setProductData(location.state);
+            data.pventa = Formater(data.pventa)
+            data.pcosto = Formater(data.pcosto)
+            data.inventario = Formater(data.inventario)
+            data.invMinimo = Formater(data.invMinimo)
+            data.invMaximo = Formater(data.invMaximo)
+            setProductData(data);
             setSection('Modificar producto');
             setButtons("Modificar producto");
             setModificarProducto(true);
@@ -142,23 +162,6 @@ export function Newproduct(){
                             className=''
                             onChange={(e)=>changeValuesProducts("descripcion", e.target.value)}
                             value={productData.descripcion}/>
-                    </div>
-                </div>
-                <div className='Row'>
-                    <div className='Colmn1'>
-                        <label>Se vende:</label>
-                    </div>
-                    <div className='Row'>
-                        <label className="custom-label">
-                            <input type="radio" className="custom-radio" name="uniorpack" />
-                            <i></i>
-                            por unidad
-                        </label>
-                        <label className="custom-label">
-                            <input type="radio" className="custom-radio" name="uniorpack"/>
-                            <i></i>
-                            granel
-                        </label>
                     </div>
                 </div>
                 <div className='Row'>
@@ -219,6 +222,24 @@ export function Newproduct(){
                         </div>
                     </div>
                 }
+                <div className={'Row salesMethod '+((productData.cod_de_barras && productData.descripcion && productData.pcosto && productData.pventa) && 'show')}>
+                    <div className='Colmn1'>
+                        <label>Se vende:</label>
+                    </div>
+                    <div className='Row'>
+                        <label className="custom-label">
+                            <input type="radio" className="custom-radio" name="uniorpack" />
+                            <i></i>
+                            por unidad
+                        </label>
+                        <label className="custom-label">
+                            <input type="radio" className="custom-radio" name="uniorpack" onClick={()=>{setShow2(true)}}/>
+                            <i></i>
+                            granel
+                        </label>
+                    </div>
+                </div>
+                {show2 && <GranelModal show={setShow2} productData={productData} pctGan={pctGan}/>}
                 <div className="Row" style={{padding: '35px'}}>
                     {modificarProducto ?
                         <div className="ProImgContainer">
@@ -229,7 +250,6 @@ export function Newproduct(){
                                 />
                                 <img
                                     style={{width: '100%'}}
-                                    src={imgSrc}
                                     onError={handleError}
                                     alt="imgProducto"
                                     decoding="async"
@@ -273,7 +293,7 @@ export function Newproduct(){
                         </div>
                         <div className='Colmn2'>
                             <TheInput
-                                //val={productData.invMinimo}
+                                val={productData.invMinimo}
                                 numType={'nat'}
                                 onchange={(e)=>{changeValuesProducts('invMinimo', e)}}
                             />
@@ -310,12 +330,21 @@ export function Newproduct(){
                 <button
                     className='btnStnd btn1'
                     onClick={()=>{handleBtn1()}}>{buttons}</button>
-                {modificarProducto && 
-                    <button
-                        style={{margin: '0px 10px'}}
-                        className='btnStnd btn1'
-                        onClick={()=>{navigate('/InvAdjustment')}}
-                        >Modificar inventario</button>}
+                {modificarProducto &&
+                    <>
+                        <button
+                            style={{ margin: '0px 10px' }}
+                            className='btnStnd btn1'
+                            onClick={() => { handleBtn2() }}
+                        >Modificar inventario</button>
+                        {show1 &&
+                            <UserConfirm
+                                show={setShow1}
+                                confirmed={(e)=>{if(e){setInvAdAuth(true);navigate('/InvAdjustment')}}}/>
+                        }
+                    </>
+                }
+                    
                 <button
                     style={{marginLeft: 'auto'}}
                     className='btnStnd btn1'

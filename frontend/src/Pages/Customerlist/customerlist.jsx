@@ -5,38 +5,34 @@ import { useTheContext } from '../../TheProvider';
 //Para testeo
 import jsonTest from '../../jsonTest.json';
 import { TableComponent } from '../../Components';
+import { GeneralModal } from '../../Components/Modals/GeneralModal';
 
 export function Customerlist(){
 
     const [selected, setSelected] = useState([]);
     const [multiSelect, setMultiSelect] = useState(false);
     const [show1, setShow1] = useState(false);
+    const [contentList, setContentList] = useState(jsonTest);
     const navigate = useNavigate()
-    const { setSection } = useTheContext();
+    const { setSection, setSomeData } = useTheContext();
 
     const Popop1 = () => {
         
         return(
-            <div className='modal1'>
-                <div className='modal-content1'>
-                    <div className='modal-header1'>
-                        <span className='close1' onClick={() => setShow1(false)}>&times;</span>
-                    </div>
-                    <div className='modal-body1'>
-                        Escriba "eliminar" para confirmar la eliminación
-                        <input type='text'></input>
-                    </div>
-                    <div className='modal-footer1'>
-                        <button className='btnStnd btn1' onClick={() => setShow1(false)}>Cancelar</button>
-                        <button className='btnStnd btn1' onClick={() => DeleteFunction()}>Eliminar</button>
-                    </div>
+            <>
+                Escriba "eliminar" para confirmar la eliminación
+                <input type='text'></input>
+                <div style={{display: 'flex', gap: '5px'}}>
+                    <button className='btnStnd btn1' onClick={() => setShow1(false)}>Cancelar</button>
+                    <button className='btnStnd btn1' onClick={() => DeleteFunction()}>Eliminar</button>
                 </div>
-            </div>
+            </>
         )
     }
 
     const verFunction = () =>{
-        navigate('/Newcustomer', { state: selected[0] })
+        setSomeData({...selected[0]})
+        navigate('/Newcustomer')
     }
 
     const DeleteFunction = () =>{
@@ -80,8 +76,26 @@ export function Customerlist(){
         }
     ]
 
+    const filterByText = (item, text) =>
+        item.id_nit.toLowerCase().includes(text) ||
+        item.nombre.toLowerCase().includes(text) ||
+        item.apellido.toLowerCase().includes(text) ||
+        item.barrio.toLowerCase().includes(text) ||
+        item.email.toLowerCase().includes(text);
+
+    const SearchHandle = (text) =>{
+        let c = jsonTest;
+        if (text !== ''){
+            c = c.filter((i)=>filterByText(i, text))
+            setContentList(c)
+        }else{
+            setContentList(jsonTest)
+        }
+    }
+
     useEffect(() => {
         setSection('Lista de Clientes')
+        setSomeData(null)
 
         // eslint-disable-next-line
     }, []);
@@ -93,7 +107,9 @@ export function Customerlist(){
                     <div>
                         <label>Filtrar/Buscar: </label>
                     </div>
-                    <input type="text" style={{width: '56%'}}/>
+                    <input type="text" style={{width: '56%'}}
+                        onChange={(e)=>{SearchHandle((e.target.value).toLowerCase())}}
+                    />
                     <button className='btnStnd btn1' onClick={()=>{navigate('/BalanceReport')}}>Reporte de saldos</button>
                 </div>
                 <div className='CLdiv2' style={{position: 'relative'}}>
@@ -112,7 +128,7 @@ export function Customerlist(){
                         disabled={selected.length === 0}>
                         <i className='bi bi-trash-fill'/>
                     </button>
-                    {show1 && <Popop1/>}
+                    {show1 && <GeneralModal show={setShow1} Contenido={Popop1}/>}
                     <input id='checkmlsct' type="checkbox" className="" onChange={()=>{setMultiSelect(a=>!a);setSelected([])}}/>
                     <label className='noSelect' style={{padding: '3px'}} htmlFor='checkmlsct'>
                         Seleccionar Varios
@@ -120,7 +136,7 @@ export function Customerlist(){
                 </div>
             </div>
             <TableComponent
-                data={jsonTest}
+                data={contentList}
                 headers={ctHeaders}
                 selected={selected}
                 setSelected={setSelected}

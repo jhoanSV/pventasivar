@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import "./_newcustomer.scss";
 import { useTheContext } from '../../TheProvider';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 export function Newcustomer(){
     
@@ -10,9 +10,8 @@ export function Newcustomer(){
     const [value, setValue] = useState('');
     const [verCod, setVerCod] = useState('');//* verificationCode
     const [creLim, setCreLim] = useState();//* credit limit
-    const { setSection } = useTheContext();
+    const { setSection, someData } = useTheContext();
     
-    const location = useLocation();
     const navigate = useNavigate()
 
     const handleChange = (e) => {
@@ -37,9 +36,9 @@ export function Newcustomer(){
     useEffect(() => {
         setSection('Nuevo cliente')
 
-        if(location.state){
-            let data = location.state
-            if(data['cType']==='cc'){
+        if(someData){
+            let data = someData
+            if(data['ctype']==='cc'){
                 document.getElementById('CustomerType').value = 1
                 setValue(data['id_nit'])
                 setCType('1')
@@ -180,8 +179,8 @@ export function Newcustomer(){
                 <div style={{marginLeft: '15.5%', display: 'flex', justifyContent: 'space-between'}}>
                     <div>
                         <button className='btnStnd btn1'
-                         style={{marginRight: '10px'}} onClick={()=>{validate()}}>{location.state ? 'Modificar' : 'Guardar'}</button>
-                        {location.state && <button className='btnStnd btn1'>Estado de cuenta</button>}
+                         style={{marginRight: '10px'}} onClick={()=>{validate()}}>{someData ? 'Modificar' : 'Guardar'}</button>
+                        {someData && <button className='btnStnd btn1'>Estado de cuenta</button>}
                     </div>
                     <button className='btnStnd btn1' onClick={()=>navigate(-1)}>Cancelar</button>
                 </div>
