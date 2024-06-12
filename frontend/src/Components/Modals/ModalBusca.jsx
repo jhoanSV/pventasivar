@@ -74,7 +74,7 @@ export const ModalBusca = () => {
                                         );
                                     })
                                 }
-                            </div>                            
+                            </div>
                         </div>
                     </div>
                 </div>
