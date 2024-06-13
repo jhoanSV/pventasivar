@@ -1,18 +1,22 @@
 .productsContainer{
     display: flex;
     flex-wrap: wrap;
+    gap: 20px;
 }
 
 .caja-product{
-    margin: 3%;
-    padding: 2%;
-    width: 27%;
-    max-height: 220px;
+    padding: 1%;
+    width: 154px;
+    max-height: 205px;
     border: solid 1px black;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
     cursor: pointer;
+    .detailBox{
+        overflow: hidden;
+        display: -webkit-box;
+        -webkit-line-clamp: 3;
+        line-clamp: 3;
+        -webkit-box-orient: vertical;
+    }
     &:hover{
         transform: scale(1.025);
     }
