@@ -104,3 +104,18 @@
 .m-selected + .subm-container{
     height: auto;
 }
+#ud{
+    display: flex;
+    font-size: 20px;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+//960
+@media screen and (max-width: 960px) {
+    .headContainer{
+        font-size: 20px;
+        padding: 10px 25px 10px 154px;
+    }
+}

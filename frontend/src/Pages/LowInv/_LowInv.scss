@@ -1,10 +1,10 @@
-.backContainer{
-    position: absolute;
-    left: 3%;
-    top: 72px;
-}
-
 .LowInv{
     position: relative;
     padding: 2% 10%;
+}
+
+.backContainer{
+    position: fixed;
+    left: 3%;
+    bottom: 36px;
 }

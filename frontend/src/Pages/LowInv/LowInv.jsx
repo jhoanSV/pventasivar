@@ -2,10 +2,12 @@ import './_LowInv.scss';
 import React, { useEffect, useState } from 'react';
 import { useTheContext } from '../../TheProvider';
 import p_json from '../../products_json_test.json'
+import { useNavigate } from 'react-router-dom';
 
 export const LowInv = () => {
     
     const { setSection } = useTheContext();
+    const navigate = useNavigate()
     const [lista, setLista] = useState();
     // eslint-disable-next-line
     const [limit, setLimit] = useState(20);
@@ -24,8 +26,8 @@ export const LowInv = () => {
     return (
         <section className='LowInv'>
             <div className='backContainer'>
-                <button className='btnStnd btn1'>
-                    <i className="bi bi-caret-left-square-fill"></i>
+                <button className='btnStnd btn1' onClick={()=>{navigate(-1)}}>
+                    <i className="bi bi-arrow-left"></i>
                 </button>
             </div>
             <div className="Row">
