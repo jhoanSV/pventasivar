@@ -1,5 +1,5 @@
 // Modules to control application life and create native browser window
-const { app, BrowserWindow, shell, ipcMain } = require("electron");
+const { app, BrowserWindow, } = require("electron");
 const path = require("path");
 const express = require("express");
 const cors = require("cors");
@@ -22,16 +22,12 @@ function createWindow() {
     height: 600,
     webPreferences: {
       preload: path.join(__dirname, "preload.js"),
-      contextIsolation: true,
-      enableRemoteModule: false,
-      nodeIntegration: false
     },
   });
 
   // and load the index.html of the app.
   //   mainWindow.loadFile('index.html')
   mainWindow.loadURL("http://localhost:" + PORT);
-
   // Open the DevTools.
   // mainWindow.webContents.openDevTools()
 }
@@ -58,6 +54,3 @@ app.on("window-all-closed", function () {
 
 // In this file you can include the rest of your app's specific main process
 // code. You can also put them in separate files and require them here.
-ipcMain.on('open-url', (event, url) => {
-  shell.openExternal(url);
-});

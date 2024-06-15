@@ -1,6 +1,5 @@
 import { Link } from 'react-router-dom';
 import { useTheContext } from '../../TheProvider';
-import shell from 'electron';
 import './_Header.scss';
 import React from 'react';
 
@@ -34,10 +33,6 @@ export const Header = () => {
         document.querySelector('.mainLogoHead').classList.remove('mlh-selected')
         document.querySelector('.side-bar').classList.remove('show')
         document.getElementById('lgId2').classList.remove('show')
-    }
-
-    const openUrl = () =>{
-        window.electron.openURL('https://www.google.com');
     }
 
     return (
@@ -122,18 +117,20 @@ export const Header = () => {
             <label>{section}</label>
             <div className='htud'>
                 <div>
-                    <picture onClick={()=>{openUrl()}}>
-                        <source
-                            type="image/avif"
-                            srcSet={require('../../Assets/AVIF/LlaveSivar.avif')}
-                        />
-                        <img
-                            width={'45px'}
-                            style={{marginRight: '10px'}}
-                            alt="LogoSivar"
-                            decoding="async"
-                        />
-                    </picture>
+                    <a href="https://sivar.com.co" target="_blank" rel="noreferrer">
+                        <picture onClick={()=>{}}>
+                            <source
+                                type="image/avif"
+                                srcSet={require('../../Assets/AVIF/LlaveSivar.avif')}
+                            />
+                            <img
+                                width={'45px'}
+                                style={{marginRight: '10px'}}
+                                alt="LogoSivar"
+                                decoding="async"
+                            />
+                        </picture>
+                    </a>
                 </div>
                 <div id='ud' style={{display: 'flex', fontSize: '20px', flexDirection: 'column', justifyContent: 'center', alignItems: 'center'}}>
                     <span>Elkin Clementino Zapata Lopera</span>
