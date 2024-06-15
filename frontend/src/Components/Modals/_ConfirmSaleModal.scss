@@ -6,11 +6,9 @@
 }
 
 .content {
-    background-color: #D9D9D9;
     display: flex;
-}
 
-.menuOptions {
-    display: block;
+    & .change {
+        background-color: #D9D9D9;
+    }
 }
-

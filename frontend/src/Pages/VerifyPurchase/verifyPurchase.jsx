@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import "./_verifyPurchase.scss";
 import { useNavigate } from 'react-router-dom';
 import { useTheContext } from '../../TheProvider';
@@ -18,6 +18,7 @@ export function VerifyPurchase(){
     const [total, setTotal] = useState(0);
     const [showModalChangeprice, setShowModalChangeprice] = useState(true);
     const [selectedfila, setSelectedfila] = useState(0);
+    const selectedfilaRef = useRef(selectedfila);
 
     const data = {
         "cantidad": 3,
@@ -51,6 +52,28 @@ export function VerifyPurchase(){
         console.log('it chanched correctly')
     };
 
+    useEffect(() => {
+        window.addEventListener('keydown', handleKeyDown);
+        
+        return () => {
+            window.removeEventListener('keydown', handleKeyDown);
+        };
+    }, []);
+    
+    useEffect(() => {
+        selectedfilaRef.current = selectedfila;
+    }, [selectedfila]);
+
+    const handleKeyDown = (event) => {
+        if (order.length !== 0) {
+            const currentSelectedFila = selectedfilaRef.current;
+            if (event.key === 'ArrowDown' && currentSelectedFila + 1 >= 0 && currentSelectedFila + 1 < order.length) {
+                setSelectedfila(currentSelectedFila + 1)
+            } else if (event.key === 'ArrowUp' && currentSelectedFila - 1 >= 0 && currentSelectedFila - 1 < order.length) {
+                setSelectedfila(currentSelectedFila - 1)
+            }
+        }
+    };
 
     const ctHeaders = [
         {
@@ -302,7 +325,7 @@ export function VerifyPurchase(){
                     </div>
                 </div>
             </div>
-            {showModalChangeprice && <ChangePurchasePro data={data} show={showModalChangeprice} width='450px' height='400px'/>}
+            {showModalChangeprice && <ChangePurchasePro data={data} show={setShowModalChangeprice} width='450px' height='400px'/>}
         </div>
     )
 }

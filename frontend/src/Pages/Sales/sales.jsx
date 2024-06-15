@@ -2,6 +2,9 @@ import React, {useEffect, useState, useRef} from 'react';
 import { TableComponent, Flatlist } from '../../Components';
 import { TheInput } from '../../Components/InputComponent/TheInput';
 import { ConfirmSaleModal } from '../../Components/Modals/ConfirmSaleModal';
+import { UserConfirm } from '../../Components/Modals/UserConfirm';
+import { SignClient } from '../../Components/Modals/SignClient';
+import { SalesOfTheDay } from '../../Components/Modals/SalesOfTheDay';
 import "./_sales.scss";
 import jsonTest from '../../tickets-text.json';
 
@@ -16,7 +19,10 @@ export function Sales(){
     const [ selectedfila, setSelectedfila] = useState(0);
     const [ changeQuantity, setChangeQuantity] = useState(null);
     const [ changePventa, setChangePventa] = useState(null);
-    const [tabButtons, setTabButtons] = useState({ 1: true }); // Dictionary to store tab buttons
+    const [ tabButtons, setTabButtons] = useState({ 1: true }); // Dictionary to store tab buttons
+    const [ confirmUser, setConfirmUser] = useState(false);
+    const [ searchClient, setSearchClient] = useState(false);
+    const [ showSalesOfTheDay, setShowSalesOfTheDay] = useState(false);
     const selectedfilaRef = useRef(selectedfila);
     const selectedTabRef = useRef(tabindex);
 
@@ -126,7 +132,7 @@ export function Sales(){
                     <td style={{width: columnsWidth[3]}}>
                         <label>{item.UM}</label>
                     </td>
-                    <td style={{width: columnsWidth[4]}} onDoubleClick={()=>setChangePventa(index)}>
+                    <td style={{width: columnsWidth[4]}} onDoubleClick={()=>setConfirmUser(true)}>
                         { isEditingPv ? (
                             <TheInput
                                 id = {'i'+ rowIndex}
@@ -208,13 +214,15 @@ export function Sales(){
     ];
 
     const createButton = () => {
-        setButtonCount(prevCount => {
-            const newCount = prevCount + 1;
-            jsonTest[prevCount + 1] = [];
-            changeTab(newCount)
-            return newCount;
-        });
-        setTabButtons(prevButtons => ({ ...prevButtons, [buttonCount + 1]: true }));
+        if (Object.keys(jsonTest).length < 16) {
+            setButtonCount(prevCount => {
+                const newCount = prevCount + 1;
+                jsonTest[prevCount + 1] = [];
+                changeTab(newCount)
+                return newCount;
+            });
+            setTabButtons(prevButtons => ({ ...prevButtons, [buttonCount + 1]: true }));
+        }
     };
 
 
@@ -249,7 +257,9 @@ export function Sales(){
                     style={{width: '500px'}}/>
                 <button className="btnStnd btn1">Buscar</button>
             </div>
-            <button className="btnStnd btn1">Asignar cliente</button>
+            <button
+                className="btnStnd btn1"
+                onClick={()=>setSearchClient(true)}>Asignar cliente</button>
             <div className="tabs">
                 <div className='tabButtons'>
                     {Object.keys(tabButtons).map(tabNumber => (
@@ -283,8 +293,11 @@ export function Sales(){
                 <label>$ {Formater(total)}</label>
             </div>
             <label>{jsonTest[tabindex].length} productos en el ticket actual</label>
-            <button className="btnStnd btn1">Ventas del dia y devoluciones</button>
+            <button className="btnStnd btn1" onClick={()=>setShowSalesOfTheDay(true)}>Ventas del dia y devoluciones</button>
             { showConfirmar && <ConfirmSaleModal orderslist={orderslist} show={setShowConfirmar}/>}
+            { confirmUser && <UserConfirm show={setConfirmUser} confirmed={()=>setChangePventa(selectedfila)}/>}
+            { searchClient && <SignClient show={setSearchClient} retornar={()=>{}}/>}
+            { showSalesOfTheDay && <SalesOfTheDay show={setShowSalesOfTheDay} />}
         </div>
     );
 }

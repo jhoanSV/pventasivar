@@ -2,7 +2,7 @@ import React, {useState, useEffect} from 'react';
 import { TheInput } from '../../Components/InputComponent/TheInput';
 import './_ConfirmSaleModal.scss';
 
-export const ConfirmSaleModal = ({show, orderslist, width='50%', height='80%'}) => {
+export const ConfirmSaleModal = ({show, orderslist, width='50%', height='50%'}) => {
     const [paga, setPaga] = useState(0)
     const [cambio, setCambio] = useState(0)
     const [total, setTotal] = useState(0)
@@ -47,36 +47,45 @@ export const ConfirmSaleModal = ({show, orderslist, width='50%', height='80%'}) 
                         <h2>William sierra</h2>
                     </div>
                     <div className='content'>
-                        <div>
+                        <div className='change'>
                             <div className='Rows'>
                                 <div className='column1'>
-                                    <h2>Total:</h2>
+                                    <label>Total:</label>
                                 </div>
                                 <div className='column2'>
-                                    <h2>$ {Formater(total)}</h2>
+                                    <label>$ {Formater(total)}</label>
                                 </div>
                                 <div className='column1'>
-                                    <h2>Pago con: $ </h2>
+                                    <label>Pago con:</label>
                                 </div>
                                 <div className='column2'>
                                     <TheInput 
                                         numType='real'
+                                        value={paga.pago}
                                         onchange={(e)=>setPaga(e)}
                                     />
                                 </div>
                                 <div className='column1'>
-                                    <h2>Cambio:</h2>
+                                    <label>Cambio:</label>
                                 </div>
                                 <div className='column2'>
-                                    <h2>$ {Formater(cambio)}</h2>
+                                    <label>$ {Formater(cambio)}</label>
                                 </div>
                             </div>
                         </div>
                         <div className='menuOptions'>
-                            <button className="btnStnd btn1" onClick={()=>{}}>Solo cobrar</button>
-                            <button className="btnStnd btn1" onClick={()=>{}}>Cobrar e imprimir</button>
-                            <label>Total de articulos:</label>
-                            <label>{orderslist.length}</label>
+                            <div>
+                                <button className="btnStnd btn1" onClick={()=>{}}>Solo cobrar</button>
+                            </div>
+                            <div>
+                                <button className="btnStnd btn1" onClick={()=>{}}>Cobrar e imprimir</button>
+                            </div>
+                            <div>
+                                <label>Total de articulos:</label>
+                            </div>
+                            <div>
+                                <label>{orderslist.length}</label>
+                            </div>
                         </div>
                     </div>
                 </div>
