@@ -1,0 +1,15 @@
+.twoColumnsContainer{
+    display: grid;
+    grid-template-columns: repeat(2, 1fr); /* Dos columnas de igual tamaño */
+    gap: 10px; /* Espacio entre los divs */
+}
+
+.data_of_sale {
+    display: flex;
+    gap: 20px;
+}
+
+.Col{
+    display: flex;
+    flex-direction: column;
+}

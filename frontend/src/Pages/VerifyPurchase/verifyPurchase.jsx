@@ -1,9 +1,10 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import "./_verifyPurchase.scss";
 import { useNavigate } from 'react-router-dom';
 import { useTheContext } from '../../TheProvider';
 import { TableComponent, Flatlist } from '../../Components';
 import { TheInput } from '../../Components/InputComponent/TheInput';
+import { ChangePurchasePro } from '../../Components/Modals/ChangePurchasePro';
 //es un json de prueba
 import jsonTest from '../../order_test.json';
 
@@ -16,7 +17,21 @@ export function VerifyPurchase(){
     const [order, setOrder] = useState(jsonTest);
     const [total, setTotal] = useState(0);
     const [showModalChangeprice, setShowModalChangeprice] = useState(true);
+    const [selectedfila, setSelectedfila] = useState(0);
+    const selectedfilaRef = useRef(selectedfila);
 
+    const data = {
+        "cantidad": 3,
+        "cod": "TNC25",
+        "descripcion": "Motoreductor amarillo dlble eje",
+        "vrUnitario": 5500,
+        "pCostoSistem": 5400,
+        "estado": 0,
+        "existencia": 4,
+        "invMinimo": 5,
+        "invMaximo": 50,
+        "pVentaSistem": 6000
+    }
 
     useEffect(() => {
         setSection('Verificar orden')
@@ -37,6 +52,28 @@ export function VerifyPurchase(){
         console.log('it chanched correctly')
     };
 
+    useEffect(() => {
+        window.addEventListener('keydown', handleKeyDown);
+        
+        return () => {
+            window.removeEventListener('keydown', handleKeyDown);
+        };
+    }, []);
+    
+    useEffect(() => {
+        selectedfilaRef.current = selectedfila;
+    }, [selectedfila]);
+
+    const handleKeyDown = (event) => {
+        if (order.length !== 0) {
+            const currentSelectedFila = selectedfilaRef.current;
+            if (event.key === 'ArrowDown' && currentSelectedFila + 1 >= 0 && currentSelectedFila + 1 < order.length) {
+                setSelectedfila(currentSelectedFila + 1)
+            } else if (event.key === 'ArrowUp' && currentSelectedFila - 1 >= 0 && currentSelectedFila - 1 < order.length) {
+                setSelectedfila(currentSelectedFila - 1)
+            }
+        }
+    };
 
     const ctHeaders = [
         {
@@ -100,36 +137,35 @@ export function VerifyPurchase(){
             }
         }
         return (
-            <tbody
-                onClick={()=>{console.log(item)}}
+            <tr onClick={()=>{console.log(item)}}
                 onDoubleClick={()=>{setShowModalChangeprice(true)}}>
-                <div style={{width: columnsWidth[0]}}>
+                <td style={{width: columnsWidth[0]}}>
                     <label className={isSelected ? 'selected-label' : ''}>{item.cantidad}</label>
-                </div>
-                <div style={{width: columnsWidth[1]}}>
+                </td>
+                <td style={{width: columnsWidth[1]}}>
                     <label className={isSelected ? 'selected-label' : ''}>{item.cod}</label>
-                </div>
-                <div style={{width: columnsWidth[2]}}>
+                </td>
+                <td style={{width: columnsWidth[2]}}>
                     <label className={isSelected ? 'selected-label' : ''}>{item.descripcion}</label>
-                </div>
-                <div style={{width: columnsWidth[3]}}>
+                </td>
+                <td style={{width: columnsWidth[3]}}>
                     <label className={isSelected ? 'selected-label' : ''}>$ {Formater(item.vrUnitario)}</label>
-                </div>
-                <div style={{width: columnsWidth[4], alignItems: 'center' }}>
+                </td>
+                <td style={{width: columnsWidth[4], alignItems: 'center' }}>
                     {comparator(item.vrUnitario, item.vrUnitarioSistem)}
-                </div>
-                <div style={{width: columnsWidth[5]}}>
+                </td>
+                <td style={{width: columnsWidth[5]}}>
                     <label className={isSelected ? 'selected-label' : ''}>$ {Formater(item.vrUnitario * item.cantidad)}</label>
-                </div>
-                <div style={{width: columnsWidth[6]}}>
+                </td>
+                <td style={{width: columnsWidth[6]}}>
                     <label className={isSelected ? 'selected-label' : ''}>{item.existencia}</label>
-                </div>
-                <div style={{width: columnsWidth[7]}}>
+                </td>
+                <td style={{width: columnsWidth[7]}}>
                     <input
                         type="checkbox"
                         onChange={()=>checkbox()}></input>
-                </div>
-            </tbody>
+                </td>
+            </tr>
         )
     }
 
@@ -192,7 +228,7 @@ export function VerifyPurchase(){
                         <label>order.invMaximo</label>
                     </div>
                     <div className='column1'>
-                        <label className='subtitle'>Consto actual:</label>
+                        <label className='subtitle'>Costo actual:</label>
                     </div>
                     <label className='column2'>$ order.constoActual</label>
                 </div>
@@ -259,6 +295,8 @@ export function VerifyPurchase(){
                     data={order}
                     row={row}
                     headers={ctHeaders}
+                    selectedRow={selectedfila}
+                    setSelectedRow={setSelectedfila}
                 />
             </div>
             <div>
@@ -287,7 +325,7 @@ export function VerifyPurchase(){
                     </div>
                 </div>
             </div>
-            {showModalChangeprice && ChangePrice('001')}
+            {showModalChangeprice && <ChangePurchasePro data={data} show={setShowModalChangeprice} width='450px' height='400px'/>}
         </div>
     )
 }

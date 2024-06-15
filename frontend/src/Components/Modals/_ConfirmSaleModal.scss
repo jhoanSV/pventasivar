@@ -1,0 +1,14 @@
+.header_confirm_sale {
+    display: flex;
+    background-color: #D9D9D9;
+    padding: 10px 160px;
+    gap: 10px;
+}
+
+.content {
+    display: flex;
+
+    & .change {
+        background-color: #D9D9D9;
+    }
+}

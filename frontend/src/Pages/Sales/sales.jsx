@@ -1,29 +1,34 @@
 import React, {useEffect, useState, useRef} from 'react';
 import { TableComponent, Flatlist } from '../../Components';
 import { TheInput } from '../../Components/InputComponent/TheInput';
+import { ConfirmSaleModal } from '../../Components/Modals/ConfirmSaleModal';
+import { UserConfirm } from '../../Components/Modals/UserConfirm';
+import { SignClient } from '../../Components/Modals/SignClient';
+import { SalesOfTheDay } from '../../Components/Modals/SalesOfTheDay';
 import "./_sales.scss";
 import jsonTest from '../../tickets-text.json';
 
 
 export function Sales(){
-    const [buttonCount, setButtonCount] = useState(1); // Initial button count
-    const [tabindex, setTabindex] = useState(1);
-    const [total, setTotal] = useState(0);
-    const [orderslist, setOrderslist] = useState(jsonTest[1])
-    const [selectedButton, setSelectedButton] = useState(null);
-    const [selectedfila, setSelectedfila] = useState(0);
-    const [changeQuantity, setChangeQuantity] = useState(null);
-    const [changePventa, setChangePventa] = useState(null);
+    const [ buttonCount, setButtonCount] = useState(1); // Initial button count
+    const [ tabindex, setTabindex] = useState(1);
+    const [ total, setTotal] = useState(0);
+    const [ orderslist, setOrderslist] = useState(jsonTest[1])
+    const [ selectedButton, setSelectedButton] = useState(null);
+    const [ showConfirmar, setShowConfirmar] = useState(false);
+    const [ selectedfila, setSelectedfila] = useState(0);
+    const [ changeQuantity, setChangeQuantity] = useState(null);
+    const [ changePventa, setChangePventa] = useState(null);
+    const [ tabButtons, setTabButtons] = useState({ 1: true }); // Dictionary to store tab buttons
+    const [ confirmUser, setConfirmUser] = useState(false);
+    const [ searchClient, setSearchClient] = useState(false);
+    const [ showSalesOfTheDay, setShowSalesOfTheDay] = useState(false);
     const selectedfilaRef = useRef(selectedfila);
-
+    const selectedTabRef = useRef(tabindex);
 
     useEffect(() => {
         sumarTotal()
     }, [orderslist]);
-    
-    useEffect(() => {
-        console.log("selectedRow changed: ", selectedfila);
-    }, [selectedfila]);
     
     useEffect(() => {
         window.addEventListener('keydown', handleKeyDown);
@@ -37,6 +42,10 @@ export function Sales(){
         selectedfilaRef.current = selectedfila;
     }, [selectedfila]);
 
+    useEffect(() => {
+        selectedTabRef.current = tabindex;
+    }, [tabindex]);
+
     const changeTab =(index) => {
         setOrderslist(jsonTest[index])
         setTabindex(index)
@@ -49,16 +58,23 @@ export function Sales(){
     };
 
     const handleKeyDown = (event) => {
-        const currentSelectedFila = selectedfilaRef.current;
-        console.log(event.key)
-        if (event.key === '+') {
-            updateCantidad(currentSelectedFila, 1)
-        } else if (event.key === '-') {
-            updateCantidad(currentSelectedFila,-1)
-        } else if (event.key === 'ArrowDown' && currentSelectedFila + 1 >= 0 && currentSelectedFila + 1 < jsonTest[tabindex].length) {
-            setSelectedfila(currentSelectedFila + 1)
-        } else if (event.key === 'ArrowUp' && currentSelectedFila - 1 >= 0 && currentSelectedFila - 1 < jsonTest[tabindex].length) {
-            setSelectedfila(currentSelectedFila - 1)
+        const currentSelectedTab = selectedTabRef.current;
+        if (jsonTest[currentSelectedTab].length !== 0) {
+            const currentSelectedFila = selectedfilaRef.current;
+            if (event.key === '+') {
+                updateCantidad(currentSelectedFila, 1)
+            } else if (event.key === '-') {
+                updateCantidad(currentSelectedFila,-1)
+            } else if (event.key === 'ArrowDown' && currentSelectedFila + 1 >= 0 && currentSelectedFila + 1 < jsonTest[tabindex].length) {
+                setSelectedfila(currentSelectedFila + 1)
+            } else if (event.key === 'ArrowUp' && currentSelectedFila - 1 >= 0 && currentSelectedFila - 1 < jsonTest[tabindex].length) {
+                setSelectedfila(currentSelectedFila - 1)
+            } else if (event.key === 'Delete') {
+                jsonTest[currentSelectedTab].splice(currentSelectedFila, 1)
+                const updatedOrdersList = [...jsonTest[tabindex]];
+                // Actualiza el estado con la nueva lista
+                setOrderslist(updatedOrdersList);
+            }
         }
     };
 
@@ -116,7 +132,7 @@ export function Sales(){
                     <td style={{width: columnsWidth[3]}}>
                         <label>{item.UM}</label>
                     </td>
-                    <td style={{width: columnsWidth[4]}} onDoubleClick={()=>setChangePventa(index)}>
+                    <td style={{width: columnsWidth[4]}} onDoubleClick={()=>setConfirmUser(true)}>
                         { isEditingPv ? (
                             <TheInput
                                 id = {'i'+ rowIndex}
@@ -198,13 +214,15 @@ export function Sales(){
     ];
 
     const createButton = () => {
-        setButtonCount(prevCount => {
-            const newCount = prevCount + 1;
-            jsonTest[newCount] = []
-            changeTab(newCount)
-            //setSelectedButton(newCount); // Automatically select the new radio button
-            return newCount;
-        });
+        if (Object.keys(jsonTest).length < 16) {
+            setButtonCount(prevCount => {
+                const newCount = prevCount + 1;
+                jsonTest[prevCount + 1] = [];
+                changeTab(newCount)
+                return newCount;
+            });
+            setTabButtons(prevButtons => ({ ...prevButtons, [buttonCount + 1]: true }));
+        }
     };
 
 
@@ -214,7 +232,19 @@ export function Sales(){
             suma += item.pVenta * item.Cantidad
         ))}
         setTotal(suma)
-    }
+    };
+
+    const closeTab = (tabNumber) => {
+        console.log(tabNumber)
+        if (Object.keys(jsonTest).length > 1 && tabNumber in jsonTest) {
+            console.log('entro en cerrar el tab')
+            const newTabButtons = { ...tabButtons };
+            delete newTabButtons[tabNumber];
+            setTabButtons(newTabButtons);
+            changeTab(selectedButton === tabNumber ? 1 : selectedButton)
+            setSelectedButton(selectedButton === tabNumber ? 1 : selectedButton);
+        }
+    };
 
     return (
         <div>
@@ -227,25 +257,27 @@ export function Sales(){
                     style={{width: '500px'}}/>
                 <button className="btnStnd btn1">Buscar</button>
             </div>
+            <button
+                className="btnStnd btn1"
+                onClick={()=>setSearchClient(true)}>Asignar cliente</button>
             <div className="tabs">
                 <div className='tabButtons'>
-                        {[...Array(buttonCount)].map((_, index) => (
-                            <div className='tabButtonModel' key={index}>
-                                    <input
-                                        type="radio"
-                                        id={`radio${index + 1}`}
-                                        name="dynamicRadioGroup"
-                                        className='tabButton'
-                                        checked={selectedButton === index + 1}
-                                        onChange={() => changeTab(index + 1)}
-                                    />
-                                    <label className='tab-rb-label' htmlFor={`radio${index + 1}`}>
-                                        {index + 1}
-                                    </label>
-                                {/*<label htmlFor={`radio${index + 1}`}></label>*/}
-                                <button className="tab-btn-close" onClick={() => {}}>x</button>
-                            </div>
-                        ))}
+                    {Object.keys(tabButtons).map(tabNumber => (
+                        <div className='tabButtonModel' key={tabNumber}>
+                            <input
+                                type="radio"
+                                id={`radio${tabNumber}`}
+                                name="dynamicRadioGroup"
+                                className='tabButton'
+                                checked={selectedButton === parseInt(tabNumber)}
+                                onChange={() => changeTab(parseInt(tabNumber))}
+                            />
+                            <label className='tab-rb-label' htmlFor={`radio${tabNumber}`}>
+                                {tabNumber}
+                            </label>
+                            <button className="tab-btn-close" onClick={() => closeTab(parseInt(tabNumber))}>x</button>
+                        </div>
+                    ))}
                         <button onClick={()=>{createButton()}} className='add-tab'>+</button>
                 </div>
                 <Flatlist
@@ -257,9 +289,15 @@ export function Sales(){
                 />
             </div>
             <div>
-                <button className="btnStnd btn1">F2-Cobrar</button>
+                <button className="btnStnd btn1" onClick={()=>setShowConfirmar(true)}>F2-Cobrar</button>
                 <label>$ {Formater(total)}</label>
             </div>
+            <label>{jsonTest[tabindex].length} productos en el ticket actual</label>
+            <button className="btnStnd btn1" onClick={()=>setShowSalesOfTheDay(true)}>Ventas del dia y devoluciones</button>
+            { showConfirmar && <ConfirmSaleModal orderslist={orderslist} show={setShowConfirmar}/>}
+            { confirmUser && <UserConfirm show={setConfirmUser} confirmed={()=>setChangePventa(selectedfila)}/>}
+            { searchClient && <SignClient show={setSearchClient} retornar={()=>{}}/>}
+            { showSalesOfTheDay && <SalesOfTheDay show={setShowSalesOfTheDay} />}
         </div>
     );
 }

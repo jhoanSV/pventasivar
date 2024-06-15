@@ -11,13 +11,36 @@ export function PurchaseList(){
     const navigate = useNavigate()
     const [selected, setSelected] = useState([]);
     const [multiSelect, setMultiSelect] = useState(false);
-    const [stateFilter, setStateFilter] = useState('Todos')
+    const [stateFilter, setStateFilter] = useState('Todos');
+    const [ selectedfila, setSelectedfila] = useState(0);
     const { setSection } = useTheContext();
-
     const [date1, setDate1] = useState('');
     const [date2, setDate2] = useState('');
-
+    const selectedfilaRef = useRef(selectedfila);
     const inputRef = useRef(null);
+
+    useEffect(() => {
+        window.addEventListener('keydown', handleKeyDown);
+        
+        return () => {
+            window.removeEventListener('keydown', handleKeyDown);
+        };
+    }, []);
+    
+    useEffect(() => {
+        selectedfilaRef.current = selectedfila;
+    }, [selectedfila]);
+
+    const handleKeyDown = (event) => {
+        if (dataorder.length !== 0) {
+            const currentSelectedFila = selectedfilaRef.current;
+            if (event.key === 'ArrowDown' && currentSelectedFila + 1 >= 0 && currentSelectedFila + 1 < dataorder.length) {
+                setSelectedfila(currentSelectedFila + 1)
+            } else if (event.key === 'ArrowUp' && currentSelectedFila - 1 >= 0 && currentSelectedFila - 1 < dataorder.length) {
+                setSelectedfila(currentSelectedFila - 1)
+            }
+        }
+    };
 
     let dataorder = [{
             consecutivo: 13,
@@ -348,6 +371,8 @@ export function PurchaseList(){
                     data={orderslist}
                     row={row}
                     headers={ctHeaders}
+                    selectedRow={selectedfila}
+                    setSelectedRow={setSelectedfila}
                 />
             </div>
         </div>
