@@ -1,6 +1,6 @@
 [
     {
-        "cod": 1,
+        "cod": "",
         "cod_de_barras": "7011",
         "descripcion": "Yintech Investment Holdings Limited",
         "categoria": "EBANISTERIA",
@@ -13,7 +13,7 @@
         "ubicacion": "A1"
     },
     {
-        "cod": 2,
+        "cod": "",
         "cod_de_barras": "57320",
         "descripcion": "John Hancock Hedged Equity & Income Fund",
         "categoria": "EBANISTERIA",
@@ -26,7 +26,7 @@
         "ubicacion": "A1"
     },
     {
-        "cod": 3,
+        "cod": "",
         "cod_de_barras": "3",
         "descripcion": "Bridgford Foods Corporation Corporated and Asociated",
         "categoria": "EBANISTERIA",
@@ -91,7 +91,7 @@
         "ubicacion": "A1"
     },
     {
-        "cod": 8,
+        "cod": "",
         "cod_de_barras": "718",
         "descripcion": "Watsco, Inc.",
         "categoria": "APU",

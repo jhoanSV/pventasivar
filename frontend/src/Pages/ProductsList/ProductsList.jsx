@@ -36,6 +36,27 @@ export const ProductsList = () => {
         }
     }
 
+    const Test1 = (i) =>{
+        console.log(i['item']);
+        return(
+            <>
+                {i['item']['cod'] &&
+                    <picture>
+                        <source
+                            type="image/avif"
+                            srcSet={require('../../Assets/AVIF/LogoSivarB.avif')}
+                        />
+                        <img
+                            style={{width: '100%'}}
+                            alt="imgProducto"
+                            decoding="async"
+                        />
+                    </picture>
+                }
+            </>
+        )
+    }
+
     const ctHeaders = [
         {
             header: 'Cod',
@@ -76,8 +97,8 @@ export const ProductsList = () => {
         {
             header: 'Pre Compra',
             key: 'pre_compra',
-            defaultWidth: '0px',            
-            type: 'text',
+            defaultWidth: '0px',
+            type: 'other',
         }
     ]
 
@@ -142,6 +163,7 @@ export const ProductsList = () => {
                     setSelected={setSelected}
                     multiSelect={false}
                     doubleClickFunct={verFunction}
+                    Other={Test1}
                 />
             </div>
         </section>

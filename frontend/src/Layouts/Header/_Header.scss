@@ -17,6 +17,7 @@
     width: 116px;
     padding: 10px;
     border-radius: 150px;
+    z-index: 1;
     //transition: 0.3s;
     cursor: pointer;
 }
@@ -102,4 +103,19 @@
 
 .m-selected + .subm-container{
     height: auto;
+}
+#ud{
+    display: flex;
+    font-size: 20px;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+//960
+@media screen and (max-width: 960px) {
+    .headContainer{
+        font-size: 20px;
+        padding: 10px 25px 10px 154px;
+    }
 }

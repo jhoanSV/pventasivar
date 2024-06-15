@@ -15,3 +15,4 @@ export * from './AccountState';
 export * from './PurchaseList';
 export * from './AddInventory';
 export * from './VerifyPurchase';
+export * from './LowInv';

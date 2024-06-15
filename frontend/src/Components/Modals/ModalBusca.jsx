@@ -56,25 +56,28 @@ export const ModalBusca = () => {
                                     lista.slice(0,limit).map((product, index) => {
                                         return (
                                             <div className='caja-product' key={index}>
-                                                <div className='MBimgContainer'>
-                                                    <picture>
-                                                        {/* {<source
-                                                            type="image/avif"
-                                                            //srcSet={imgSrc}
-                                                        />} */}
-                                                        <img
-                                                            src='https://random-image-pepebigotes.vercel.app/api/random-image'
-                                                            alt="imgProducto"
-                                                            decoding="async"
-                                                        />
-                                                    </picture>
+                                                <div className="detailBox">
+                                                    <div className='MBimgContainer'>
+                                                        <picture>
+                                                            {/* {<source
+                                                                type="image/avif"
+                                                                //srcSet={imgSrc}
+                                                            />} */}
+                                                            <img
+                                                                //src='https://random-image-pepebigotes.vercel.app/api/random-image'
+                                                                src='https://picsum.photos/200/300'
+                                                                alt="imgProducto"
+                                                                decoding="async"
+                                                            />
+                                                        </picture>
+                                                    </div>
+                                                    <strong>{product.descripcion}</strong>
                                                 </div>
-                                                <strong>{product.descripcion}</strong>
                                             </div>
                                         );
                                     })
                                 }
-                            </div>                            
+                            </div>
                         </div>
                     </div>
                 </div>

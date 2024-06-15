@@ -4,13 +4,13 @@ import { useNavigate } from 'react-router-dom';
 import { useTheContext } from '../../TheProvider';
 import { TableComponent } from '../../Components';
 //es un json de prueba
-import jsonTest from '../../jsonTest.json';
+import jsonTest from '../../products_json_test.json';
 
 export function Inventory(){
 
     const navigate = useNavigate()
     const [selected, setSelected] = useState([]);
-    const [multiSelect, setMultiSelect] = useState(false);
+    //const [multiSelect, setMultiSelect] = useState(false);
     const { setSection } = useTheContext();
 
     useEffect(() => {
@@ -19,7 +19,7 @@ export function Inventory(){
         // eslint-disable-next-line
     }, []);
 
-    const ctHeaders = [
+    const InvHeaders = [
         {
             header: 'Cod',
             key: 'cod',
@@ -52,7 +52,7 @@ export function Inventory(){
         },
         {
             header: 'Existencia',
-            key: 'exitencia',
+            key: 'existencia',
             defaultWidth: '0px',
             type: 'text',
         },
@@ -83,41 +83,41 @@ export function Inventory(){
     }
     
     return (
-        <div className="Inventory">
-            <div className="Row">
-                <div className="Colmn1">
+        <section className="Inventory">
+            <div className="Row fstR">
+                <div className='costoInv'>
                     <div>
                         <label>Costo del inventario</label>
                     </div>
                     <label>$000.000,00</label>
                 </div>
-                <div className="Colmn2">
-                    <div>
+                <div style={{textAlign: 'center', fontSize: '20px'}}>
+                    <div style={{marginTop: '10px'}}>
                         <label>Cantidad de articulos en el inventario</label>
                     </div>
-                    <label>Muchos productos</label>
+                    <label>{'2500'}</label>
                 </div>
             </div>
-            <div classname="Row">
-                <label>Buscar:</label>
-                <input type="text" placeholder='Buscar'/>
+            <div className="Row">
+                <label style={{paddingRight: '10px'}}>Buscar:</label>
+                <input type="text" placeholder='Buscar' style={{width: '35%'}}/>
+                <button className='btnStnd btn1'
+                    style={{marginLeft: '20px'}}
+                    onClick={()=>{navigate('/LowInv')}}
+                >
+                    Bajos en inventario
+                </button>
             </div>
             <div className=''>
-                <div className='' style={{padding: '10px 140px'}}>
-                    <label>Categoria:</label>
-                    <button className='btnStnd btn1'
+                {/* <div className='' style={{padding: '10px 140px'}}> */}
+                    {/* <label>Categoria:</label> */}
+                    {/* <button className='btnStnd btn1'
                         style={{marginLeft: '20px'}}
                         onClick={()=>{navigate('/Newsupplier');setSection('Nuevo Proveedor')}}
                     >
                         Actualizar varios
-                    </button>
-                    <button className='btnStnd btn1'
-                        style={{marginLeft: '20px'}}
-                        onClick={()=>{}}
-                    >
-                        Bajos en inventario
-                    </button>
-                </div>
+                    </button> */}
+                {/* </div> */}
                 <div className=''>
                     <button className='btn1Stnd' onClick={()=>(deselect())}
                         disabled={selected.length === 0}>
@@ -134,28 +134,24 @@ export function Inventory(){
                         disabled={selected.length === 0}>
                         <i className='bi bi-trash-fill'/>
                     </button>
-                    <input id='checkmlsct' type="checkbox" className="" onChange={()=>{setMultiSelect(a=>!a);setSelected([])}}/>
+                    {/*<input id='checkmlsct' type="checkbox" className="" onChange={()=>{setMultiSelect(a=>!a);setSelected([])}}/>
                     <label className='noSelect' style={{padding: '3px'}} htmlFor='checkmlsct'>
                         Seleccionar Varios
-                    </label>
-                    <label className='noSelect' style={{padding: '3px'}} htmlFor='checkmlsct'>
+                    </label>*/}
+                    {/*<label className='noSelect' style={{padding: '3px'}} htmlFor='checkmlsct'>
                         Ajuste de inventario
-                    </label>
-                    <button className='btn1Stnd' onClick={()=>(DeleteFunction())}
-                        disabled={selected.length === 0}>
-                        <i className='bi bi-trash-fill'/>
-                    </button>
+                    </label>*/}
                 </div>
             </div>
-            <div className='tableContainer'>
+            <div>
                 <TableComponent
                     data={jsonTest}
-                    headers={ctHeaders}
+                    headers={InvHeaders}
                     selected={selected}
                     setSelected={setSelected}
-                    multiSelect={multiSelect}
+                    multiSelect={false}
                 />
             </div>
-        </div>
+        </section>
     )
 }
