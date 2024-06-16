@@ -28,7 +28,13 @@ export const SalesOfTheDay = ({show, orderslist, width='70%', height='80%'}) => 
 
     useEffect(() => {
         Orders()
+        console.log(selectedOrder.ticket)
     }, [])
+
+    const ChangueSelectedOrder = (Nticket) => {
+        const filteredOrders = orders.filter(order => order.ticket === Nticket);
+        setSelectedOrder(filteredOrders)
+    }
 
     const Orders = () => {
         const uniqueTickets = {};
@@ -120,7 +126,7 @@ export const SalesOfTheDay = ({show, orderslist, width='70%', height='80%'}) => 
         //const [changeVrVenta, setChangeVrVenta] = useState(false)
         const rowIndex = index;
         return (
-                <>
+                <div onClick={()=>ChangueSelectedOrder(item.ticket)}>
                     <td style={{width: columnsWidth[0]}}>
                         <label>{item.ticket}</label>
                     </td>
@@ -132,6 +138,27 @@ export const SalesOfTheDay = ({show, orderslist, width='70%', height='80%'}) => 
                     </td>
                     <td style={{width: columnsWidth[3]}}>
                         <label>${Formater(item.total)}</label>
+                    </td>
+                </div>
+        );
+    };
+
+    const RowOfSelectedOrder = (item, index, columnsWidth) => {
+        //const [changeVrVenta, setChangeVrVenta] = useState(false)
+        const rowIndex = index;
+        return (
+                <>
+                    <td style={{width: columnsWidth[0]}}>
+                        <label>{item.Cantidad}</label>
+                    </td>
+                    <td style={{width: columnsWidth[1]}}>
+                        <label>{item.Descripcion}</label>
+                    </td>
+                    <td style={{width: columnsWidth[2]}}>
+                        <label>${Formater(item.pVenta)}</label>
+                    </td>
+                    <td style={{width: columnsWidth[3]}}>
+                        <label>${Formater(item.Cantidad * item.pVenta)}</label>
                     </td>
                 </>
         );
@@ -172,16 +199,16 @@ export const SalesOfTheDay = ({show, orderslist, width='70%', height='80%'}) => 
                                     <label>Fecha:</label>
                                 </div>
                                 <div className='Col'>
-                                    <label>item.venta</label>
-                                    <label>item.cajero</label>
-                                    <label>item.cliente</label>
-                                    <label>item.fecha</label>
+                                    <label>{selectedOrder.ticket}</label>
+                                    <label>{selectedOrder.ticket}</label>
+                                    <label>{selectedOrder.ticket}</label>
+                                    <label>{selectedOrder.ticket}</label>
                                 </div>
                             </div>
                             <div className='Table'>
                                 <Flatlist
                                     data={selectedOrder}
-                                    row={RowOrder}
+                                    row={RowOfSelectedOrder}
                                     headers={HeadersOrderSelected}
                                     selectedRow={selectedfilaOrder}
                                     setSelectedRow={setSelectedfilaOrder}
