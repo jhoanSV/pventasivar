@@ -37,7 +37,6 @@ export const ProductsList = () => {
     }
 
     const Test1 = (i) =>{
-        console.log(i['item']);
         return(
             <>
                 {i['item']['cod'] &&
@@ -110,7 +109,7 @@ export const ProductsList = () => {
 
     return (
         <section className="Productslist">
-            <div className=''>
+            <div className='plfdiv'>{/*product list first div*/}
                 <div>
                     <label>Buscar:</label>
                     <input type="text" placeholder='Buscar'

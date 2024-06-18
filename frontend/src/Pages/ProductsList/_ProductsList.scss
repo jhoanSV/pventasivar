@@ -3,3 +3,12 @@
 .Productslist{
     padding: 10px 140px;
 }
+
+@media screen and (max-width: 960px) {
+    .Productslist{
+        padding: 10px 80px;
+    }
+    .plfdiv{
+        padding: 0px 50px;
+    }
+}
