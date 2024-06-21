@@ -52,13 +52,12 @@ export const LowInv = () => {
 
     return (
         <section className='LowInv'>
-            <div style={{position: 'fixed', top: '0', right: '0'}}>{limit}</div>
             <div className='backContainer'>
                 <button className='btnStnd btn1' onClick={()=>{navigate(-1)}}>
                     <i className="bi bi-arrow-left"></i>
                 </button>
             </div>
-            <div className="Row">
+            <div className="Row" style={{padding: '0 40px'}}>
                 <label style={{marginRight: '10px'}}>Buscar:</label>
                 <input type="text" placeholder='Buscar' style={{width: '35%', marginBottom: '10px'}}
                     onChange={(e)=>{SearchHandle((e.target.value).toLowerCase())}}/>
@@ -68,7 +67,7 @@ export const LowInv = () => {
                     <>
                         {lista.slice(0,limit).map((product, index) => {
                             return (
-                                <div key={index} style={{position: 'relative', width: '154px'}}>
+                                <div key={index} style={{position: 'relative', width: '154px', height: '200px'}}>
                                     <div className='caja-product'>
                                         <div className='detailBox' key={index}>
                                             <div className='MBimgContainer'>

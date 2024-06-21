@@ -312,9 +312,8 @@ export function PurchaseList(){
     };
     
     return (
-        <div class="ShoppingList">
+        <section class="ShoppingList">
             <div className='searchSection'>
-                <div></div>
                 <div className='search'>
                     <label
                         style={{'font-weight': '600'}}>Buscar:</label>
@@ -375,6 +374,6 @@ export function PurchaseList(){
                     setSelectedRow={setSelectedfila}
                 />
             </div>
-        </div>
+        </section>
     )
 }

@@ -1,9 +1,8 @@
 @import "../../scss/_colors.scss";
 
 .searchSection {
-    display: grid;
+    display: flex;
     align-items: center;
-    grid-template-columns: 33.33% 33.33% auto;
     margin-bottom: 20px;
 }
 
@@ -11,7 +10,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    margin: 10px;
+    margin-left: auto;
     gap: 10px;
     & .searcher {
         width: 80%;
@@ -27,8 +26,7 @@
 
 .searchDate {
     display: flex;
-    justify-self: flex-end;
-    margin: 10px;
+    margin: 10px 10px 10px auto;
     gap: 10px;
 }
 
@@ -38,3 +36,8 @@
     justify-content: center;
 }
 
+@media screen and (max-width: 843px) {
+    .searchSection{
+        padding-left: 90px;
+    }    
+}

@@ -2,7 +2,8 @@
     display: flex;
     flex-wrap: wrap;
     gap: 20px;
-    padding: 3px;
+    padding: 10px 8%;
+    justify-content: space-between;
 }
 
 .productsContainer.MB{
@@ -44,8 +45,4 @@
         aspect-ratio: 1 / 1;
         object-fit: contain;
     }
-}
-
-.scrollable{
-    overflow-y: auto;
 }

@@ -247,7 +247,7 @@ export function Sales(){
     };
 
     return (
-        <div>
+        <section>
             <div className="Search">
                 <label>Ingrese el codigo del producto</label>
                 <input
@@ -298,6 +298,6 @@ export function Sales(){
             { confirmUser && <UserConfirm show={setConfirmUser} confirmed={()=>setChangePventa(selectedfila)}/>}
             { searchClient && <SignClient show={setSearchClient} retornar={()=>{}}/>}
             { showSalesOfTheDay && <SalesOfTheDay show={setShowSalesOfTheDay} />}
-        </div>
+        </section>
     );
 }

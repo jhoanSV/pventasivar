@@ -278,7 +278,7 @@ export function VerifyPurchase(){
     };
 
     return (
-        <div class="ShoppingList">
+        <section class="ShoppingList">
             <div className='Titles'>
                 <h2>Numero de compra</h2>
                 <h2>000</h2>
@@ -326,6 +326,6 @@ export function VerifyPurchase(){
                 </div>
             </div>
             {showModalChangeprice && <ChangePurchasePro data={data} show={setShowModalChangeprice} width='450px' height='400px'/>}
-        </div>
+        </section>
     )
 }

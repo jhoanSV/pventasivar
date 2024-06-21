@@ -248,8 +248,7 @@ export function Newproduct(){
                                     type="image/avif"
                                     srcSet={imgSrc}
                                 />
-                                <img
-                                    style={{width: '100%'}}
+                                <img                                    
                                     onError={handleError}
                                     alt="imgProducto"
                                     decoding="async"

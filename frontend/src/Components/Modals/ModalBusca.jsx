@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import './_ModalBusca.scss';
 import p_json from '../../products_json_test.json';
 
-export const ModalBusca = () => {
+export const ModalBusca = ({click=false}) => {
     
     const [showModalBusca, setShowModalBusca] = useState(false);
     const [limit, setLimit] = useState(0);
@@ -10,6 +10,11 @@ export const ModalBusca = () => {
 
     const P_query = () =>{
         setLista(p_json)
+    }
+
+    const clickFunct = () =>{
+        click && click()
+        setShowModalBusca(false)
     }
 
     const filterByText = (item, text) =>
@@ -70,8 +75,8 @@ export const ModalBusca = () => {
                                 {
                                     lista.slice(0,limit).map((product, index) => {
                                         return (
-                                            <div key={index} style={{position: 'relative', width: '154px'}}>
-                                                <div className='caja-product'>
+                                            <div key={index} style={{position: 'relative', width: '154px', height: '200px'}}>
+                                                <div className='caja-product' onClick={()=>{clickFunct()}}>
                                                     <div className="detailBox">
                                                         <div className='MBimgContainer'>
                                                             <picture>
