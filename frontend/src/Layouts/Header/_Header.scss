@@ -102,9 +102,13 @@
     flex-direction: column;
 }
 
-.m-selected + .subm-container{
+.m-open + .subm-container{
     height: auto;
 }
+.m-open > .bi-caret-right-fill::before{
+    transform: rotate(90deg);
+}
+
 #ud{
     display: flex;
     font-size: 20px;

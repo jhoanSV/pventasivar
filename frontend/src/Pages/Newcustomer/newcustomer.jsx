@@ -102,12 +102,12 @@ export function Newcustomer(){
                     <div className='Colmn2'>
                         <input id='cnombre' type="text" className=""/>
                         <label style={{marginLeft: '10px'}}>Apellidos</label>
-                        <input id='capellido' type="text" className="" style={{marginLeft: '20px'}}/>
+                        <input id='capellido' type="text" className="" style={{marginLeft: '20px', width: '39%'}}/>
                     </div>
                 </div>
                 <div className='Row'>
                     <div className='Colmn1'>
-                        <label>Telefono 1/whastsapp</label>                        
+                        <label>Telefono 1 / whastsapp</label>
                     </div>
                     <div className='Colmn2'>
                         <input id='celId1'
@@ -147,7 +147,7 @@ export function Newcustomer(){
                         <input id='barrioId' type="text" className="" style={{marginLeft: '20px'}}/>
                     </div>
                 </div>
-                <div className='Row'>
+                <div className='Row' style={{display: 'none'}}>{/*Display none while E1*/}
                     <div className='Colmn1'>
                         <label>Credito</label>
                     </div>
@@ -171,7 +171,7 @@ export function Newcustomer(){
                         <textarea
                             id='nctaId'
                             type="textbox"
-                            className="ncTextArea"
+                            className="taStnd ncTextArea"
                             placeholder="Notas/Detalles del cliente"
                         />
                     </div>
