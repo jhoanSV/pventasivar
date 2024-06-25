@@ -1,12 +1,15 @@
 @import "../../scss/_colors.scss";
 
 .Newproduct{
-    padding: 10px 160px;
+    padding: 10px 212px;
     input[type=text]{
         width: 41%;
     }
     .Colmn2{
         width: 100%;
+    }
+    .Colmn1{
+        width: 16%;
     }
 }
 
@@ -14,7 +17,7 @@
     width: 380px;
     position: absolute;
     right: 0;
-    top: 10%;
+    top: 5%;
 }
 
 .InvLabel{
@@ -25,14 +28,24 @@
 }
 
 .Inv .Colmn1{
-    width: 25%;
+    width: 28%;
 }
 
 .ProImgContainer{
     width: 200px;
-    height: 200px;
+    height: max-content;
+    aspect-ratio: 1 / 1;
     border: solid 1px;
     margin-right: 150px;
+    picture{
+        display: block;
+        height: 0;
+    }
+    img{
+        width: 100%;
+        aspect-ratio: 1 / 1;
+        object-fit: contain;
+    }
 }
 
 .npTextArea{
@@ -94,4 +107,22 @@
 .salesMethod.show{
     max-height: 500px;
     transition: all 2s;
+}
+
+@media screen and (max-width: 1188px) {
+    .Newproduct{
+        padding: 10px 130px;
+    }
+}
+
+@media screen and (max-width: 1000px) {
+    .Newproduct{
+        padding: 10px 99px;
+    }
+}
+
+@media screen and (max-width: 935px){
+    .Inv{
+        right: -14%;
+    }    
 }

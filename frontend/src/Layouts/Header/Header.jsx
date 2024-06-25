@@ -1,11 +1,12 @@
 import { Link } from 'react-router-dom';
 import { useTheContext } from '../../TheProvider';
 import './_Header.scss';
-import React from 'react';
+import React, { useEffect } from 'react';
 
 export const Header = () => {
 
     const { setLogged, section } = useTheContext()
+    //const [currentPage, setCurrentPage] = useState();
     
     function updateTime() {
         const now = new Date();
@@ -35,6 +36,20 @@ export const Header = () => {
         document.getElementById('lgId2').classList.remove('show')
     }
 
+    useEffect(() => {
+        const prevS = document.querySelector('.m-selected');
+        if(prevS){
+            console.log(prevS);
+            prevS.classList.remove('m-selected')
+        }
+        const s = section.replace(/\s+/g, "").toLowerCase();
+        const elm = document.getElementById('mi'+(s));
+        if(elm){
+            elm.classList.add('m-selected');
+        }
+        //document.getElementById('mi'+(s)).classList.add('m-selected')
+    }, [ section ]);
+
     return (
         <section className='headContainer'>
             <img
@@ -57,44 +72,71 @@ export const Header = () => {
                 />
                 <div className='side-menu'>
                     <div>
-                        <Link to={'/'} className='genLink' onClick={()=>{hideSideBar()}}>
+                        <Link to={'/'} id='minuevaventa' className='genLink' onClick={(e)=>{
+                            hideSideBar()
+                            e.target.classList.toggle('m-selected')
+                        }}>
                             VENTAS
                         </Link>
                     </div>
                     <div>
-                        <Link to={'/ProductsList'} className='genLink' onClick={()=>{hideSideBar()}}>
-                            PRODUCTOS
-                        </Link>
-                    </div>
-                    <div>
                         <Link className='genLink' onClick={(e)=>{
-                            e.target.classList.toggle('m-selected')
-                        }}>
-                            CLIENTES
+                            e.target.classList.toggle('m-open')}}>
+                            PRODUCTOS
+                            <i className="bi bi-caret-right-fill"></i>
                         </Link>
                         <div className='subm-container'>
-                            <Link to={'/Customerlist'} className='genLink' onClick={(e)=>{
-                                hideSideBar();
-                                e.target.classList.toggle('m-selected');
+                            <Link to={'/ProductsList'} id='milistadodeproductos' className='genLink' onClick={()=>{
+                                hideSideBar()
                             }}>
                                 LISTADO
                             </Link>
-                            <Link to={'/BalanceReport'} className='genLink' onClick={(e)=>{
+                            <Link to={'/NewProduct'} id='minuevoproducto' className='genLink' onClick={()=>{
                                 hideSideBar()
-                                e.target.classList.toggle('m-selected')
                             }}>
-                                REPORTE DE SALDOS
+                                NUEVO
                             </Link>
-                            <Link to={'/NewCustomer'} className='genLink' onClick={(e)=>{
+                            <Link to={'/Inventory'} id='miinventario' className='genLink' onClick={()=>{
+                                hideSideBar()
+                            }}>
+                                INVENTARIO
+                            </Link>
+                            <Link to={'/LowInv'} id='mibajosdeinventario' className='genLink' onClick={()=>{
+                                hideSideBar()
+                            }}>
+                                BAJO INVENTARIO
+                            </Link>
+                        </div>
+                    </div>
+                    <div>
+                        <Link className='genLink' onClick={(e)=>{
+                            e.target.classList.toggle('m-open')
+                        }}>
+                            CLIENTES
+                            <i className="bi bi-caret-right-fill"></i>
+                        </Link>
+                        <div className='subm-container'>
+                            <Link to={'/Customerlist'} id='milistadeclientes' className='genLink' onClick={(e)=>{
+                                hideSideBar();
+                            }}>
+                                LISTADO
+                            </Link>
+                            <Link to={'/NewCustomer'} id='minuevocliente' className='genLink' onClick={(e)=>{
                                 hideSideBar()
                                 e.target.classList.toggle('m-selected')
                             }}>
                                 NUEVO
                             </Link>
+                            <Link to={'/BalanceReport'} id='mireportedesaldos' className='genLink' onClick={(e)=>{
+                                hideSideBar()
+                                e.target.classList.toggle('m-selected')
+                            }}>
+                                REPORTE DE SALDOS
+                            </Link>
                         </div>
                     </div>
                     <div>
-                        <Link to={'/PurchaseList'} className='genLink' onClick={()=>{hideSideBar()}}>
+                        <Link to={'/PurchaseList'} id='micompras' className='genLink' onClick={()=>{hideSideBar()}}>
                             COMPRAS
                         </Link>
                     </div>

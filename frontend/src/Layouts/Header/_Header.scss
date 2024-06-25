@@ -1,6 +1,7 @@
 .headContainer{
     display: flex;
     height: 63px;
+    min-height: unset;
     position: relative;
     padding: 10px 25px 10px 200px;
     background-color: #193773;
@@ -101,9 +102,13 @@
     flex-direction: column;
 }
 
-.m-selected + .subm-container{
+.m-open + .subm-container{
     height: auto;
 }
+.m-open > .bi-caret-right-fill::before{
+    transform: rotate(90deg);
+}
+
 #ud{
     display: flex;
     font-size: 20px;

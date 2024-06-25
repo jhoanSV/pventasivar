@@ -2,15 +2,19 @@ import React, { useEffect, useState } from 'react';
 import './_ModalBusca.scss';
 import p_json from '../../products_json_test.json';
 
-export const ModalBusca = () => {
+export const ModalBusca = ({click=false}) => {
     
     const [showModalBusca, setShowModalBusca] = useState(false);
-    // eslint-disable-next-line
-    const [limit, setLimit] = useState(5);
+    const [limit, setLimit] = useState(0);
     const [lista, setLista] = useState();
 
     const P_query = () =>{
         setLista(p_json)
+    }
+
+    const clickFunct = () =>{
+        click && click()
+        setShowModalBusca(false)
     }
 
     const filterByText = (item, text) =>
@@ -23,23 +27,39 @@ export const ModalBusca = () => {
         if (text !== ''){
             c = c.filter((i)=>filterByText(i, text))
             setLista(c)
+            setLimit(10)
         }else{
             setLista(p_json)
+            setLimit(10)
         }
     }
 
+    const observeT2 = () =>{
+        if(showModalBusca){
+            const obsT = document.getElementById('obsTrigger2')
+            const observer = new IntersectionObserver((entry)=>{
+                if(entry[0].isIntersecting){
+                    setLimit(prevLim =>prevLim+10)
+                }
+            })
+            observer.observe(obsT)
+        }
+    }
+        
     useEffect(() => {
-        P_query()
+        setLimit(20);
+        observeT2();
+        P_query();
         // eslint-disable-next-line
-    }, []);
+    }, [showModalBusca]);
 
     return (
         <div className='sb-container'>
             <button className='btnStnd btn1' onClick={()=>setShowModalBusca(true)}>Buscar</button>
             { showModalBusca &&
                 <div className="theModalContainer">
-                    <div className="theModal-content" style={{ width: '50%', height: '76%', position: 'relative' }}>
-                        <div className='theModal-body scrollable'>
+                    <div className="theModal-content" style={{ width: '50%', height: '85%', position: 'relative' }}>
+                        <div className='theModal-body' style={{height: '100%'}}>
                             <button
                                 className='btn1Stnd'
                                 onClick={() => {setShowModalBusca(false)}}
@@ -51,32 +71,35 @@ export const ModalBusca = () => {
                                 placeholder='Buscar'
                                 onChange={(e)=>{SearchHandle((e.target.value).toLowerCase())}}
                             />
-                            <div className="productsContainer">
+                            <div className="productsContainer MB">
                                 {
                                     lista.slice(0,limit).map((product, index) => {
                                         return (
-                                            <div className='caja-product' key={index}>
-                                                <div className="detailBox">
-                                                    <div className='MBimgContainer'>
-                                                        <picture>
-                                                            {/* {<source
-                                                                type="image/avif"
-                                                                //srcSet={imgSrc}
-                                                            />} */}
-                                                            <img
-                                                                //src='https://random-image-pepebigotes.vercel.app/api/random-image'
-                                                                src='https://picsum.photos/200/300'
-                                                                alt="imgProducto"
-                                                                decoding="async"
-                                                            />
-                                                        </picture>
+                                            <div key={index} style={{position: 'relative', width: '154px', height: '200px'}}>
+                                                <div className='caja-product' onClick={()=>{clickFunct()}}>
+                                                    <div className="detailBox">
+                                                        <div className='MBimgContainer'>
+                                                            <picture>
+                                                                {/* {<source
+                                                                    type="image/avif"
+                                                                    //srcSet={imgSrc}
+                                                                />} */}
+                                                                <img
+                                                                    //src='https://random-image-pepebigotes.vercel.app/api/random-image'
+                                                                    src='https://picsum.photos/200/300'
+                                                                    alt="imgProducto"
+                                                                    decoding="async"
+                                                                />
+                                                            </picture>
+                                                        </div>
+                                                        <strong>{product.descripcion}</strong>
                                                     </div>
-                                                    <strong>{product.descripcion}</strong>
                                                 </div>
                                             </div>
                                         );
                                     })
                                 }
+                                <div id='obsTrigger2' style={{height: '10px'}}></div>
                             </div>
                         </div>
                     </div>
