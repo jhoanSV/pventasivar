@@ -37,7 +37,7 @@
     display: block;
     overflow-y: auto; // Enable vertical scrolling when content exceeds the height
 }
-.Flatlist tbody:hover{
+.Flatlist tbody tr:hover{
     background-color: rgba(0, 0, 0, 0.1);
     box-shadow: inset -5px -13px 15px 0px rgba(0, 0, 0, 0.15);
 }
