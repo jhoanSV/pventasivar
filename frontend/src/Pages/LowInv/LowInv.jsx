@@ -78,7 +78,8 @@ export const LowInv = () => {
                                                     />} */}
                                                     <img
                                                         //src='https://random-image-pepebigotes.vercel.app/api/random-image'
-                                                        src='https://picsum.photos/200/300'
+                                                        //src='https://picsum.photos/300/200'
+                                                        src={`https://picsum.photos/300/20${index}`}
                                                         alt="imgProducto"
                                                         decoding="async"
                                                     />

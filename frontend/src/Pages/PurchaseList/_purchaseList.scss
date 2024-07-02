@@ -34,10 +34,16 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    margin-bottom: 10px;
 }
 
 @media screen and (max-width: 843px) {
     .searchSection{
-        padding-left: 90px;
-    }    
+        padding-left: 24px;
+    }
+}
+@media screen and (max-width: 800px) {
+    .searchSection{
+        padding-left: 40px;
+    }
 }

@@ -16,7 +16,7 @@ function App() {
           />
         </>
         :
-        <div style={{boxShadow: '0 0 15px 20px rgba(0, 0, 0, 0.15)'}}>
+        <div style={{boxShadow: 'rgb(0 0 0 / 28%) 0px 0px 15px 20px'}}>
           <Header/>
           <Routes/>
         </div>

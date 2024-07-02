@@ -14,7 +14,6 @@
 }
 //*tabs style %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 .tabs {
-    width: fit-content;
     margin: 10px auto;
 }
 
@@ -24,28 +23,29 @@
 
 .tabButtons {
     display: flex;
-
+    position: relative;
+    padding-left: 4px;
+    width: max-content;
+    border-bottom: solid 4px #F2CB05;
     & .tabButtonModel {
         position: relative;
         background-color: #D0D9F2;
-        border-top-left-radius: 10px;
-        //border-top-right-radius: 10px;
+        border-radius: 20px 20px 0px 0px;
         padding: 0px 10px;
-        
+        margin: 0px -4px;
+        z-index: 2;
         & .tabButton {
             position: relative;
             opacity: 0;
         }
-
-
     }
 }
 
 
 .tabButtonModel:has(input[type="radio"]:checked){
     background-color: $amarilloPrincipal;
-    border: 2px solid black;
     padding: 0px 10px;
+    z-index: 3;
 }
 
 /* Style for the close button */
@@ -66,6 +66,9 @@
 }
 
 .add-tab {
-    //border-top-left-radius: 10px;
-    border-top-right-radius: 10px;
+    border-radius: 10px 10px 0 0;
+    border-style: none;
+    background-color: #d0d9f2;
+    padding: 0px 10px;
+    z-index: 3;
 }

@@ -7,6 +7,7 @@ import { SignClient } from '../../Components/Modals/SignClient';
 import { SalesOfTheDay } from '../../Components/Modals/SalesOfTheDay';
 import "./_sales.scss";
 import jsonTest from '../../tickets-text.json';
+import { useTheContext } from '../../TheProvider';
 
 
 export function Sales(){
@@ -14,7 +15,7 @@ export function Sales(){
     const [ tabindex, setTabindex] = useState(1);
     const [ total, setTotal] = useState(0);
     const [ orderslist, setOrderslist] = useState(jsonTest[1])
-    const [ selectedButton, setSelectedButton] = useState(null);
+    const [ selectedButton, setSelectedButton] = useState(1);
     const [ showConfirmar, setShowConfirmar] = useState(false);
     const [ selectedfila, setSelectedfila] = useState(0);
     const [ changeQuantity, setChangeQuantity] = useState(null);
@@ -25,12 +26,14 @@ export function Sales(){
     const [ showSalesOfTheDay, setShowSalesOfTheDay] = useState(false);
     const selectedfilaRef = useRef(selectedfila);
     const selectedTabRef = useRef(tabindex);
+    const { setSection } = useTheContext();
 
     useEffect(() => {
         sumarTotal()
     }, [orderslist]);
     
     useEffect(() => {
+        setSection('Ventas')
         window.addEventListener('keydown', handleKeyDown);
         
         return () => {
@@ -247,9 +250,11 @@ export function Sales(){
     };
 
     return (
-        <section>
+        <section className='Sales'>
             <div className="Search">
-                <label>Ingrese el codigo del producto</label>
+                <div className='elipsisText lines2' style={{maxHeight: '42px'}}>
+                    <label>Ingrese el codigo del producto</label>
+                </div>
                 <input
                     type="text"
                     id='NPinput'
@@ -257,47 +262,50 @@ export function Sales(){
                     style={{width: '500px'}}/>
                 <button className="btnStnd btn1">Buscar</button>
             </div>
-            <button
-                className="btnStnd btn1"
-                onClick={()=>setSearchClient(true)}>Asignar cliente</button>
-            <div className="tabs">
-                <div className='tabButtons'>
-                    {Object.keys(tabButtons).map(tabNumber => (
-                        <div className='tabButtonModel' key={tabNumber}>
-                            <input
-                                type="radio"
-                                id={`radio${tabNumber}`}
-                                name="dynamicRadioGroup"
-                                className='tabButton'
-                                checked={selectedButton === parseInt(tabNumber)}
-                                onChange={() => changeTab(parseInt(tabNumber))}
-                            />
-                            <label className='tab-rb-label' htmlFor={`radio${tabNumber}`}>
-                                {tabNumber}
-                            </label>
-                            <button className="tab-btn-close" onClick={() => closeTab(parseInt(tabNumber))}>x</button>
-                        </div>
-                    ))}
-                        <button onClick={()=>{createButton()}} className='add-tab'>+</button>
+            <div style={{padding: '0px 70px'}}>
+                <button
+                    className="btnStnd btn1"
+                    onClick={()=>setSearchClient(true)}>Asignar cliente</button>
+                <div className="tabs">
+                    <div className='tabButtons'>
+                        {Object.keys(tabButtons).map(tabNumber => (
+                            <div className='tabButtonModel' key={tabNumber}>
+                                <input
+                                    type="radio"
+                                    id={`radio${tabNumber}`}
+                                    name="dynamicRadioGroup"
+                                    className='tabButton'
+                                    checked={selectedButton === parseInt(tabNumber)}
+                                    onChange={() => changeTab(parseInt(tabNumber))}
+                                />
+                                <label className='tab-rb-label' htmlFor={`radio${tabNumber}`} style={{userSelect: 'none'}}>
+                                    {tabNumber}
+                                </label>
+                                <button className="tab-btn-close"  style={{userSelect: 'none'}} onClick={() => closeTab(parseInt(tabNumber))}>x</button>
+                            </div>
+                        ))}
+                            <button onClick={()=>{createButton()}} className='add-tab'>+</button>
+                    </div>
+                    <Flatlist
+                        data={orderslist}
+                        headers={ctHeaders}
+                        row={RowOrder}
+                        Height={'60vh'}
+                        selectedRow={selectedfila}
+                        setSelectedRow={setSelectedfila}
+                    />
                 </div>
-                <Flatlist
-                    data={orderslist}
-                    headers={ctHeaders}
-                    row={RowOrder}
-                    selectedRow={selectedfila}
-                    setSelectedRow={setSelectedfila}
-                />
+                <div>
+                    <button className="btnStnd btn1" onClick={()=>setShowConfirmar(true)}>F2-Cobrar</button>
+                    <label>$ {Formater(total)}</label>
+                </div>
+                <label>{jsonTest[tabindex].length} productos en el ticket actual</label>
+                <button className="btnStnd btn1" onClick={()=>setShowSalesOfTheDay(true)}>Ventas del dia y devoluciones</button>
+                { showConfirmar && <ConfirmSaleModal orderslist={orderslist} show={setShowConfirmar}/>}
+                { confirmUser && <UserConfirm show={setConfirmUser} confirmed={()=>setChangePventa(selectedfila)}/>}
+                { searchClient && <SignClient show={setSearchClient} retornar={()=>{}}/>}
+                { showSalesOfTheDay && <SalesOfTheDay show={setShowSalesOfTheDay} />}
             </div>
-            <div>
-                <button className="btnStnd btn1" onClick={()=>setShowConfirmar(true)}>F2-Cobrar</button>
-                <label>$ {Formater(total)}</label>
-            </div>
-            <label>{jsonTest[tabindex].length} productos en el ticket actual</label>
-            <button className="btnStnd btn1" onClick={()=>setShowSalesOfTheDay(true)}>Ventas del dia y devoluciones</button>
-            { showConfirmar && <ConfirmSaleModal orderslist={orderslist} show={setShowConfirmar}/>}
-            { confirmUser && <UserConfirm show={setConfirmUser} confirmed={()=>setChangePventa(selectedfila)}/>}
-            { searchClient && <SignClient show={setSearchClient} retornar={()=>{}}/>}
-            { showSalesOfTheDay && <SalesOfTheDay show={setShowSalesOfTheDay} />}
         </section>
     );
 }

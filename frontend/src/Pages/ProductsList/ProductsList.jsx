@@ -129,31 +129,13 @@ export const ProductsList = () => {
                     </button>
                 </div>
                 <div className=''>
-                    {/*<button className='btn1Stnd' onClick={()=>(deselect())}
-                        disabled={selected.length === 0}>
-                        <i className='bi bi-x'/>
-                    </button>
-                    <label style={{marginRight: '8px', padding: '3px', color: selected.length === 0 ? 'rgb(183 183 183)' : 'black'}}>
-                        Seleccionados: {selected.length}
-                    </label>*/}
                     <button className='btn1Stnd' onClick={()=>(verFunction())} style={{fontSize: '20px'}}
-                        disabled={(selected.length === 0 || selected.length > 1)}
-                        onMouseEnter={()=>{console.log('hoverjsjs');}}>
+                        disabled={(selected.length === 0 || selected.length > 1)}>
                         <i className='bi bi-eye-fill'/>
                     </button>
-                    {/*<input id='checkmlsct' type="checkbox" className="" onChange={()=>{setMultiSelect(a=>!a);setSelected([])}}/>
-                    <label className='noSelect' style={{padding: '3px'}} htmlFor='checkmlsct'>
-                        Seleccionar Varios
-                    </label>
-                    <button className='btnStnd btn1'
-                        style={{marginLeft: '20px'}}
-                        onClick={()=>{navigate('/Newsupplier');setSection('Nuevo Proveedor')}}
-                    >
-                        Actualizar varios
-                    </button>*/}
                 </div>
             </div>
-            <ModalBusca></ModalBusca>
+            {/* <ModalBusca></ModalBusca> */}
             <div>
                 <TableComponent
                     data={contentList}

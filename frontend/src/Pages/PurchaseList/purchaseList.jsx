@@ -256,8 +256,7 @@ export function PurchaseList(){
 
     const row=(item, isSelected, columnsWidth)=> {
         return (
-            <tbody onClick={()=>{}} onDoubleClick={()=>{console.log("activa el modificar")}}>
-                
+            <>
                 <td style={{width: columnsWidth[0]}}>
                     <label className={isSelected ? 'selected-label' : ''}>{item.consecutivo}</label>
                 </td>
@@ -273,7 +272,7 @@ export function PurchaseList(){
                 <td style={{width: columnsWidth[3]}}>
                     <label className={isSelected ? 'selected-label' : ''}>$ {Formater(item.valor)}</label>
                 </td>
-            </tbody>
+            </>
         )
     };
 
@@ -365,15 +364,13 @@ export function PurchaseList(){
                         Nueva compra
                 </button>
             </div>
-            <div className='Table'>               
-                <Flatlist
-                    data={orderslist}
-                    row={row}
-                    headers={ctHeaders}
-                    selectedRow={selectedfila}
-                    setSelectedRow={setSelectedfila}
-                />
-            </div>
+            <Flatlist
+                data={orderslist}
+                row={row}
+                headers={ctHeaders}
+                selectedRow={selectedfila}
+                setSelectedRow={setSelectedfila}
+            />
         </section>
     )
 }

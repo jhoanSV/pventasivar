@@ -16,7 +16,7 @@ export function VerifyPurchase(){
     const { setSection } = useTheContext();
     const [order, setOrder] = useState(jsonTest);
     const [total, setTotal] = useState(0);
-    const [showModalChangeprice, setShowModalChangeprice] = useState(true);
+    const [showModalChangeprice, setShowModalChangeprice] = useState(false);
     const [selectedfila, setSelectedfila] = useState(0);
     const selectedfilaRef = useRef(selectedfila);
 
@@ -129,16 +129,15 @@ export function VerifyPurchase(){
     const row = (item, isSelected, columnsWidth) => {
         const comparator = (value1, value2) => {
             if (value1>value2){
-                return <i class="bi bi-caret-up-fill" style={{color: 'green'}}></i>
+                return <div className='comparatorContainer'><i class="bi bi-caret-up-fill" style={{color: 'green'}}></i></div>
             } else if (value1<value2){
-                return <i class="bi bi-caret-down-fill" style={{color: 'red'}}></i>
+                return <div className='comparatorContainer'><i class="bi bi-caret-down-fill" style={{color: 'red'}}></i></div>
             } else {
-                return <label>=</label>
+                return <div className='comparatorContainer'><label>=</label></div>
             }
         }
         return (
-            <tr onClick={()=>{console.log(item)}}
-                onDoubleClick={()=>{setShowModalChangeprice(true)}}>
+            <>
                 <td style={{width: columnsWidth[0]}}>
                     <label className={isSelected ? 'selected-label' : ''}>{item.cantidad}</label>
                 </td>
@@ -165,7 +164,7 @@ export function VerifyPurchase(){
                         type="checkbox"
                         onChange={()=>checkbox()}></input>
                 </td>
-            </tr>
+            </>
         )
     }
 
@@ -297,6 +296,7 @@ export function VerifyPurchase(){
                     headers={ctHeaders}
                     selectedRow={selectedfila}
                     setSelectedRow={setSelectedfila}
+                    doubleClick={()=>setShowModalChangeprice(true)}
                 />
             </div>
             <div>

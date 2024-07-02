@@ -72,9 +72,8 @@ export const Header = () => {
                 />
                 <div className='side-menu'>
                     <div>
-                        <Link to={'/'} id='minuevaventa' className='genLink' onClick={(e)=>{
+                        <Link to={'/'} id='miventas' className='genLink' onClick={(e)=>{
                             hideSideBar()
-                            e.target.classList.toggle('m-selected')
                         }}>
                             VENTAS
                         </Link>

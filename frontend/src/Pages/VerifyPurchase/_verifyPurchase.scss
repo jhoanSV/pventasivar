@@ -3,6 +3,7 @@
 .ShoppingList{
     display: flex;
     flex-direction: column; /* Alinea los hijos en columna */
+    padding: 0px 80px;
 }
 
 .Titles {
@@ -63,4 +64,9 @@
         grid-column: 2 / 3; /* Places this element in the first column */
         text-align: left;
     }
+}
+
+.comparatorContainer{
+    display: flex;
+    justify-content: center;
 }

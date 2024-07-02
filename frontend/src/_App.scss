@@ -91,3 +91,14 @@ input[type="text"], input[type="number"], input[type="password"] {
   -ms-user-select: none; /* IE 10 and IE 11 */
   user-select: none; /* Standard syntax */
 }
+
+.elipsisText{
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+}
+
+.elipsisText.lines2{
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+}
