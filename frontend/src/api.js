@@ -29,9 +29,10 @@ export const Newproduct = async(NewproductValues) => {
     /*Create a new product but only for the specified client
     you have to send a json of the form:
     {
-        "IdFerreteria": "242", 
+        "IdFerreteria": "242",
         "Cod": "bla",
         "Descripcion": "Producto de prueba para el pos",
+        "Cantidad": 400,
         "SubCategoria": 1,
         "PCosto": 500,
         "PVenta": 1000,
@@ -39,10 +40,13 @@ export const Newproduct = async(NewproductValues) => {
         "InvMaximo": 5,
         "Ubicacion": "A1",
         "Detalle": "Es una prueba de ingreso de nuevo producto al inventario",
-        "Clase": false //this stage this will always be false
+        "Clase": false,
+        "Iva": 19,
+        "Fecha": "2024-04-07 11:49:35",
+        "CodResponsable": "242",
+        "Responsable": "Ferreteria de prueba",
+        "Motivo": "Nuevo producto al inventario"
     }
-    Dikyanid
-    06032023
     */   
     try {
         const res = await fetch(`${API_POS}/newproduct`,{
