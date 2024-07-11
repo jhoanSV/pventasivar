@@ -80,7 +80,7 @@ export const Header = () => {
                     </div>
                     <div>
                         <Link className='genLink' onClick={(e)=>{
-                            e.target.classList.toggle('m-open')}}>
+                            e.currentTarget.classList.toggle('m-open')}}>
                             PRODUCTOS
                             <i className="bi bi-caret-right-fill"></i>
                         </Link>
@@ -109,7 +109,7 @@ export const Header = () => {
                     </div>
                     <div>
                         <Link className='genLink' onClick={(e)=>{
-                            e.target.classList.toggle('m-open')
+                            e.currentTarget.classList.toggle('m-open')
                         }}>
                             CLIENTES
                             <i className="bi bi-caret-right-fill"></i>

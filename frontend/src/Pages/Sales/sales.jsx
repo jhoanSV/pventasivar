@@ -255,11 +255,13 @@ export function Sales(){
                 <div className='elipsisText lines2' style={{maxHeight: '42px'}}>
                     <label>Ingrese el codigo del producto</label>
                 </div>
-                <input
-                    type="text"
-                    id='NPinput'
-                    placeholder="Codigo del producto"
-                    style={{width: '500px'}}/>
+                <div className='inputSearchPContainer'>
+                    <input
+                        type="text"
+                        id='NPinput'
+                        placeholder="Codigo del producto"
+                        style={{width: '500px'}}/>
+                </div>
                 <button className="btnStnd btn1">Buscar</button>
             </div>
             <div style={{padding: '0px 70px'}}>
