@@ -12,14 +12,14 @@ export const GranelModal = ({show, productData, pctGan}) => {
     }
     const [granel, setGranel] = useState('Metros');
     const [medidaUnit, setMedidaUnit] = useState(1);
-    const [cUnit, setcUnit] = useState((typeof(productData.pcosto) !== 'number') ? Formater(productData.pcosto.replace(/\./g, '')/medidaUnit) : Formater(productData.pcosto/medidaUnit));
+    const [cUnit, setcUnit] = useState((typeof(productData.PCosto) !== 'number') ? Formater(productData.PCosto.replace(/\./g, '')/medidaUnit) : Formater(productData.PCosto/medidaUnit));
     const [pctUnit, setPctUnit] = useState('')
     const [pVentaUnit, setPVentaUnit] = useState('');
 
 
     const handleMedUnit = (e) =>{
         setMedidaUnit(e);
-        (typeof(productData.pcosto) !== 'number') ? setcUnit(Formater(productData.pcosto.replace(/\./g, '')/e)) : setcUnit(Formater(productData.pcosto/e))
+        (typeof(productData.PCosto) !== 'number') ? setcUnit(Formater(productData.PCosto.replace(/\./g, '')/e)) : setcUnit(Formater(productData.PCosto/e))
     }
 
     const calpct = (e) =>{
@@ -42,8 +42,8 @@ export const GranelModal = ({show, productData, pctGan}) => {
                     <button className='btn1Stnd' onClick={() => {show(false)}} style={{position: 'absolute', top: '0px', right: '0px'}}>
                         <i className='bi bi-x-lg'/>
                     </button>
-                    <h1>{productData.cod}</h1>
-                    <h3>{productData.descripcion}</h3>
+                    <h1>{productData.Cod}</h1>
+                    <h3>{productData.Descripcion}</h3>
                     <div className='Row'>
                         <span style={{width: '114px', textAlign: 'end', marginRight: '10px'}}>
                             Medida
@@ -76,8 +76,8 @@ export const GranelModal = ({show, productData, pctGan}) => {
                             <tbody>
                                 <tr>
                                     <td>Completo</td>
-                                    <td>{(typeof(productData.pcosto) !== 'number') ? Formater(productData.pcosto.replace(/\./g, '')) : productData.pcosto}</td>
-                                    <td>{(typeof(productData.pventa) !== 'number') ? Formater(productData.pventa.replace(/\./g, '')) : productData.pventa}</td>
+                                    <td>{(typeof(productData.PCosto) !== 'number') ? Formater(productData.PCosto.replace(/\./g, '')) : productData.PCosto}</td>
+                                    <td>{(typeof(productData.PVenta) !== 'number') ? Formater(productData.PVenta.replace(/\./g, '')) : productData.PVenta}</td>
                                     <td>{Number(pctGan.replace(/,/g, '.'))}</td>
                                 </tr>
                                 <tr>

@@ -1,14 +1,35 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import "./_login.scss";
 import { useTheContext } from '../../TheProvider';
+import { validateUser } from '../../api';
 
 export function Login(){
     
-    const { setLogged } = useTheContext()
+    const { setLogged, setUsD } = useTheContext()
+    const [inputData1, setInputData1] = useState();
+    const [inputData2, setInputData2] = useState();
 
-    const LoginHandle = () => {
-        setLogged(true)
+    const LoginHandle = async() => {
+        const userData = await validateUser({
+            "EmailUser": inputData1,
+            "Password": inputData2
+        });
+        console.log(userData);
+        if(!userData){
+            alert('Problema de conexión, intente de nuevo más tarde');
+            return;
+        }
+        if(userData.Cod){
+            setLogged(true);
+            setUsD(userData);
+        }else{
+            alert('Usuario o contraseña incorrectos');
+        }
     }
+
+    // useEffect(() => {
+        
+    // }, []);
 
     return (
         <div className="_About">
@@ -18,11 +39,19 @@ export function Login(){
             <label>
                 Nombre de usuario
             </label>
-            <input type='text'/>
+            <input
+                id='linput1'
+                type='text'
+                onChange={(e)=>setInputData1(e.target.value)}
+            />
             <label>
                 Contraseña
             </label>
-            <input type='text'/>
+            <input
+                id='linput2'
+                type='text'
+                onChange={(e)=>setInputData2(e.target.value)}
+            />
             <button onClick={()=>{LoginHandle()}}>
                 {'-->'}
             </button>
