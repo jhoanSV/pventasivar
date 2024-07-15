@@ -5,8 +5,9 @@ import { useTheContext } from '../../TheProvider';
 import { TheInput, UserConfirm } from '../../Components';
 import imgPlaceHolder from '../../Assets/AVIF/placeHolderProduct.avif'
 import { GranelModal } from '../../Components/Modals/GranelModal';
+import { NuevoProducto } from '../../api';
 
-export function Newproduct(){
+export const Newproduct = () => {
     //*Examples
     // example of list of categories
     // Example dictionary
@@ -23,11 +24,11 @@ export function Newproduct(){
 
 
     const navigate = useNavigate()
-    const { setSection, someData, setSomeData, setInvAdAuth } = useTheContext();
+    const { setSection, someData, setSomeData, setInvAdAuth, usD } = useTheContext();
     const [imgSrc, setImgSrc] = useState(someData && `https://sivarwebresources.s3.amazonaws.com/AVIF/${someData.cod}.avif`)
     const [selectedCategory, setSelectedCategory] = useState(''); // set the selected category
     const [buttons, setButtons] = useState("Crear producto");
-    const [productData, setProductData] = useState({'cod_de_barras':'','descripcion':'', 'invMaximo':'', 'invMinimo':'', 'inventario': '', 'pcosto':'', 'pventa': '', 'ubicacion':''});
+    const [productData, setProductData] = useState({'Cod':'','Descripcion':'', 'InvMaximo':'', 'InvMinimo':'', 'Inventario': '', 'PCosto':'', 'PVenta': '', 'Ubicacion':'', 'Detalle':''});
     const [modificarProducto, setModificarProducto] = useState(false);
     const [pctGan, setpctGan] = useState('');
     const [show1, setShow1] = useState(false);
@@ -36,23 +37,23 @@ export function Newproduct(){
     const [productsDataShow, setproductsDataShow] = useState({});
 
     const calpctC = (e) =>{
-        let thePventa = Number(productData.pventa.replace(/\./g, ''))
+        let thePventa = Number(productData.PVenta.replace(/\./g, ''))
         let pct = (((thePventa-e)/e)*100).toFixed(2).toString();
         pct = pct.replace(/\./g, ',');
         setpctGan(pct);
     }
 
     const calpctV = (e) =>{
-        let thePcosto = Number(productData.pcosto.replace(/\./g, ''))
+        let thePcosto = Number(productData.PCosto.replace(/\./g, ''))
         let pct = (((e-thePcosto)/thePcosto)*100).toFixed(2).toString();
         pct = pct.replace(/\./g, ',');
         setpctGan(pct);
     }
 
     const calpventa = (e) =>{
-        let thePcosto = Number(productData.pcosto.replace(/\./g, ''))
+        let thePcosto = Number(productData.PCosto.replace(/\./g, ''))
         let newPventa = (thePcosto + (thePcosto*e/100)).toFixed(2).toString();
-        changeValuesProducts('pventa', Formater(newPventa));
+        changeValuesProducts('PVenta', Formater(newPventa));
         //newPventa = newPventa.replace(/\./g, ',');
     }
 
@@ -83,28 +84,57 @@ export function Newproduct(){
         setImgSrc(imgPlaceHolder)
     }
 
+    const NPToNumber = (num) =>{
+        let a
+        if (!(typeof(num) === 'number')){
+            a = Number(num.replace(/\./g, ''))
+        }else{
+            a = num
+        }
+        return a
+    }
+
     const prepData = () =>{
-        console.log(productData);
-        let d = productData
-        d.pventa = Number(d['pventa'].replace(/\./g, ''))
-        d.pcosto = Number(d['pcosto'].replace(/\./g, ''))
-        d.inventario = Number(d['inventario'].replace(/\./g, ''))
-        d.invMinimo = Number(d['invMinimo'].replace(/\./g, ''))
-        d.invMaximo = Number(d['invMaximo'].replace(/\./g, ''))
+        let d = {...productData}
+        d.PVenta = NPToNumber(d['PVenta'])
+        d.PCosto = NPToNumber(d['PCosto'])
+        d.Inventario = NPToNumber(d['Inventario'])
+        d.InvMinimo = NPToNumber(d['InvMinimo'])
+        d.InvMaximo = NPToNumber(d['InvMaximo'])
         
-        setSomeData(d);
+        //setSomeData(d);
+        return d;
         /*
             Here FIRST CHANGE THE PCOSTO, PVENTA and others TO NUMBERS
         */
     }
 
-    const handleBtn1 = () =>{
+    const handleBtn1 = async() =>{
         /*
             validate in case of changes
         */
-        prepData();
-        /*Function to change the backend, I guess, with idk wich info*/
-        navigate('/ProductsList')
+        let a = prepData();
+        console.log(productData);
+        console.log(a);
+        a.IdFerreteria = usD.Cod;
+        const fecha = new Date()
+        const today = fecha.getFullYear() + '-' + (fecha.getMonth()+1) + '-' + fecha.getDate() + ' ' + fecha.getHours() + ':' + fecha.getMinutes() + ':' + fecha.getSeconds()
+        a.Fecha = today
+        // *Determinadas----------------------------
+        a.CodResponsable = usD.Cod;
+        a.Responsable = usD.Ferreteria;
+        a.Motivo = "Nuevo producto al inventario";
+        // *----------------------------------------
+        a.SubCategoria = 1;
+        a.Clase = false
+        a.Iva = 19 //* En discusión 
+        const res = await NuevoProducto(a)
+        console.log(res);
+        if(res){
+            navigate('/ProductsList')
+        }else{
+            alert('Ocurrió un error inesperado al crear o modificar el producto');
+        }
     }
 
     const handleBtn2 = () =>{
@@ -117,16 +147,16 @@ export function Newproduct(){
     useEffect(() => {        
         if (someData){
             let data = {...someData}
-            if(data.pventa && data.pcosto){
-                let pct = (((data.pventa-data.pcosto)/data.pcosto)*100).toFixed(2).toString();        
+            if(data.PVenta && data.PCosto){
+                let pct = (((data.PVenta-data.PCosto)/data.PCosto)*100).toFixed(2).toString();
                 pct = pct.replace(/\./g, ',');
                 setpctGan(pct);
             }
-            data.pventa = Formater(data.pventa)
-            data.pcosto = Formater(data.pcosto)
-            data.inventario = Formater(data.inventario)
-            data.invMinimo = Formater(data.invMinimo)
-            data.invMaximo = Formater(data.invMaximo)
+            data.PVenta = Formater(data.PVenta)
+            data.PCosto = Formater(data.PCosto)
+            data.Inventario = Formater(data.Inventario)
+            data.InvMinimo = Formater(data.InvMinimo)
+            data.InvMaximo = Formater(data.InvMaximo)
             setProductData(data);
             setSection('Modificar producto');
             setButtons("Modificar producto");
@@ -142,14 +172,14 @@ export function Newproduct(){
             <div style={{position: 'relative'}}>
                 <div className='Row'>
                     <div className='Colmn1'>                        
-                        <label>Codigo de barras</label>
+                        <label>Codigo</label>
                     </div>
                     <div className='Colmn2'>
                         <input 
                             type="text"
                             className=""
-                            onChange={(e)=>changeValuesProducts("cod_de_barras", e.target.value)}
-                            value={productData.cod_de_barras}/>
+                            onChange={(e)=>changeValuesProducts("Cod", e.target.value)}
+                            value={productData.Cod}/>
                     </div>
                 </div>
                 <div className='Row'>
@@ -160,8 +190,8 @@ export function Newproduct(){
                         <input
                             type="text"
                             className=''
-                            onChange={(e)=>changeValuesProducts("descripcion", e.target.value)}
-                            value={productData.descripcion}/>
+                            onChange={(e)=>changeValuesProducts("Descripcion", e.target.value)}
+                            value={productData.Descripcion}/>
                     </div>
                 </div>
                 <div className='Row'>
@@ -170,9 +200,9 @@ export function Newproduct(){
                     </div>
                     <div className='Colmn2'>
                         <TheInput
-                            val={productData.pcosto}
+                            val={productData.PCosto}
                             numType={'real'}
-                            onchange={(e)=>{changeValuesProducts('pcosto', e);calpctC(e)}}
+                            onchange={(e)=>{changeValuesProducts('PCosto', e);calpctC(e)}}
                         />
                     </div>
                 </div>
@@ -194,9 +224,9 @@ export function Newproduct(){
                     </div>
                     <div className='Colmn2'>
                         <TheInput
-                            val={productData.pventa}
+                            val={productData.PVenta}
                             numType={'real'}
-                            onchange={(e)=>{changeValuesProducts('pventa', e);calpctV(e)}}
+                            onchange={(e)=>{changeValuesProducts('PVenta', e);calpctV(e)}}
                         />
                     </div>
                 </div>
@@ -218,11 +248,11 @@ export function Newproduct(){
                             <label>Proveedor</label>
                         </div>
                         <div className='Colmn2'>
-                            <input type="text" className="" value={productData.descripcion} onChange={(e)=>changeValuesProducts("descripcion", e.target.value)}/*change to category*/ readOnly={productData.cod ? true : false}/>
+                            <input type="text" className="" value={productData.Descripcion} onChange={(e)=>changeValuesProducts("Descripcion", e.target.value)}/*change to category*/ readOnly={productData.IdFerreteria ? false : true}/>
                         </div>
                     </div>
                 }
-                <div className={'Row salesMethod '+((productData.cod_de_barras && productData.descripcion && productData.pcosto && productData.pventa) && 'show')}>
+                <div className={'Row salesMethod '+((productData.Cod && productData.Descripcion && productData.PCosto && productData.PVenta) && 'show')}>
                     <div className='Colmn1'>
                         <label>Se vende:</label>
                     </div>
@@ -262,6 +292,8 @@ export function Newproduct(){
                         type="textbox"
                         className="taStnd npTextArea"
                         placeholder="Detalles del producto"
+                        value={productData.Detalle}
+                        onChange={(e)=>changeValuesProducts("Detalle", e.target.value)}
                     />
                 </div>
 
@@ -276,12 +308,12 @@ export function Newproduct(){
                         </div>
                         <div className='Colmn2'>
                             {modificarProducto ?
-                                <label>{productData.inventario}</label>
+                                <label>{productData.Inventario}</label>
                             :
                                 <TheInput
-                                    val={productData.inventario}
+                                    val={productData.Inventario}
                                     numType={'nat'}
-                                    onchange={(e)=>{changeValuesProducts('inventario', e)}}
+                                    onchange={(e)=>{changeValuesProducts('Inventario', e)}}
                                 />
                             }
                         </div>
@@ -292,9 +324,9 @@ export function Newproduct(){
                         </div>
                         <div className='Colmn2'>
                             <TheInput
-                                val={productData.invMinimo}
+                                val={productData.InvMinimo}
                                 numType={'nat'}
-                                onchange={(e)=>{changeValuesProducts('invMinimo', e)}}
+                                onchange={(e)=>{changeValuesProducts('InvMinimo', e)}}
                             />
                         </div>
                     </div>
@@ -304,9 +336,9 @@ export function Newproduct(){
                         </div>
                         <div className='Colmn2'>
                             <TheInput
-                                val={productData.invMaximo}
+                                val={productData.InvMaximo}
                                 numType={'nat'}
-                                onchange={(e)=>{changeValuesProducts('invMaximo', e)}}
+                                onchange={(e)=>{changeValuesProducts('InvMaximo', e)}}
                             />                                
                         </div>
                     </div>
@@ -319,8 +351,8 @@ export function Newproduct(){
                                 id="ubicacion"
                                 type="text"
                                 className=''
-                                onChange={(e)=>changeValuesProducts("ubicacion", e.target.value)}
-                                value={productData.ubicacion}/>
+                                onChange={(e)=>changeValuesProducts("Ubicacion", e.target.value)}
+                                value={productData.Ubicacion}/>
                         </div>
                     </div>
                 </div>

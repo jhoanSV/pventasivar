@@ -1,5 +1,7 @@
-const API_POS = process.env.SIVARPOS_APP_API;
-const API = process.env.REACT_APP_API;
+// const API_POS = process.env.REACT_APP_SIVARPOS;
+// const API = process.env.REACT_APP_API;
+const API_POS = 'http://192.168.1.110:3000/pos';
+const API = 'http://192.168.1.110:3000/tasks';
 
 export const validateUser = async(validateValueUser) => {
     /*Validate the user information and if it's correct return the data of the user
@@ -10,7 +12,7 @@ export const validateUser = async(validateValueUser) => {
     }
     Dikyanid
     06032023
-    */   
+    */
     try {
         const res = await fetch(`${API}/login`,{
             method: 'POST',
@@ -25,7 +27,7 @@ export const validateUser = async(validateValueUser) => {
 
 //*All related to products %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-export const Newproduct = async(NewproductValues) => {
+export const NuevoProducto = async(NewproductValues) => {
     /*Create a new product but only for the specified client
     you have to send a json of the form:
     {
@@ -36,8 +38,9 @@ export const Newproduct = async(NewproductValues) => {
         "SubCategoria": 1,
         "PCosto": 500,
         "PVenta": 1000,
+        "Inventario": 10
         "InvMinimo": 1,
-        "InvMaximo": 5,
+        "InvMaximo": 10,
         "Ubicacion": "A1",
         "Detalle": "Es una prueba de ingreso de nuevo producto al inventario",
         "Clase": false,
@@ -161,7 +164,7 @@ export const Newclient = async(NewclientValues) => {
     {
         "IdFerreteria": "242",
         "Tipo": 0, //it's 0 if the client is a natural person and 1 if the client is a company
-        "NitCC": 123456789,
+        "NitCC": "123456789",
         "Nombre": "Jhoan Sebastian",
         "Apellido": "Sierra Vargas",
         "Telefono1": "3227804602",

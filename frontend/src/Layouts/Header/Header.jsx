@@ -5,7 +5,7 @@ import React, { useEffect } from 'react';
 
 export const Header = () => {
 
-    const { setLogged, section } = useTheContext()
+    const { setLogged, section, usD } = useTheContext()
     //const [currentPage, setCurrentPage] = useState();
     
     function updateTime() {
@@ -18,11 +18,15 @@ export const Header = () => {
         const formattedTime = `${hours}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
 
         // Update the content of the <span> element
-        document.getElementById('clock').textContent = formattedTime;
+        try {
+            document.getElementById('clock').textContent = formattedTime;
+        } catch (error) {
+            clearInterval(Interval)
+        }
     }
 
     // Update time every second
-    setInterval(updateTime, 1000);
+    const Interval = setInterval(updateTime, 1000);
 
     const showSideBar = (e) =>{
         e.target.classList.add('mlh-selected')
@@ -39,7 +43,6 @@ export const Header = () => {
     useEffect(() => {
         const prevS = document.querySelector('.m-selected');
         if(prevS){
-            console.log(prevS);
             prevS.classList.remove('m-selected')
         }
         const s = section.replace(/\s+/g, "").toLowerCase();
@@ -174,7 +177,7 @@ export const Header = () => {
                     </a>
                 </div>
                 <div id='ud' style={{display: 'flex', fontSize: '20px', flexDirection: 'column', justifyContent: 'center', alignItems: 'center'}}>
-                    <span>Elkin Clementino Zapata Lopera</span>
+                    <span>{usD.Contacto}</span>
                     <span id='clock'></span>
                 </div>
             </div>

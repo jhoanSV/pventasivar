@@ -6,15 +6,16 @@ import { useTheContext } from '../../TheProvider';
 import jsonTest from '../../jsonTest.json';
 import { TableComponent } from '../../Components';
 import { GeneralModal } from '../../Components/Modals/GeneralModal';
+import { Clientlist } from '../../api';
 
 export function Customerlist(){
 
     const [selected, setSelected] = useState([]);
     const [multiSelect, setMultiSelect] = useState(false);
     const [show1, setShow1] = useState(false);
-    const [contentList, setContentList] = useState(jsonTest);
+    const [contentList, setContentList] = useState([]);
     const navigate = useNavigate()
-    const { setSection, setSomeData } = useTheContext();
+    const { setSection, setSomeData, usD } = useTheContext();
 
     const Popop1 = () => {
         
@@ -46,31 +47,31 @@ export function Customerlist(){
     const ctHeaders = [
         {
             header: 'ID/NIT',//*Nombre de cabecera
-            key: 'id_nit',//*llave para acceder al dato del JSON
+            key: 'NitCC',//*llave para acceder al dato del JSON
             defaultWidth: '131px',//*Ancho por defecto
             type: 'text',//*Tipo de celda
         },
         {
             header: 'Nombre',
-            key: 'nombre',
+            key: 'Nombre',
             defaultWidth: '223px',
             type: 'text',
         },
         {
             header: 'Apellidos',
-            key: 'apellido',
+            key: 'Apellido',
             defaultWidth: '223px',
             type: 'text',
         },
         {
             header: 'Telefono 1',
-            key: 'telefono1',
+            key: 'Telefono1',
             defaultWidth: '135.5px',
             type: 'text',
         },
         {
             header: 'E-mail',
-            key: 'email',
+            key: 'Correo',
             defaultWidth: '135.5px',
             type: 'text',
         }
@@ -88,14 +89,22 @@ export function Customerlist(){
         if (text !== ''){
             c = c.filter((i)=>filterByText(i, text))
             setContentList(c)
-        }else{
-            setContentList(jsonTest)
+        }else{            
+            CustomerFetch()
         }
+    }
+
+    const CustomerFetch = async() =>{
+        const listado = await Clientlist({
+            "IdFerreteria" : usD.Cod
+        })
+        if(listado)setContentList(listado);
     }
 
     useEffect(() => {
         setSection('Lista de Clientes')
         setSomeData(null)
+        CustomerFetch()
 
         // eslint-disable-next-line
     }, []);
