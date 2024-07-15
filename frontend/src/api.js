@@ -98,6 +98,43 @@ export const Inventory = async(InventoryValues) => {
     }
 }
 
+
+export const postUpdateInventory = async(NewAmount) => {
+    /*send the new amount to the server to adjust the inventry
+    you have to send a json of the form:
+    {
+        "IdFerreteria": 242,
+        "CodResponsable": "242",
+        "Responsable": "Ferreteria marly",
+        "ConsecutivoProd": "8",
+        "Cantidad": 200,
+        "Fecha": "2024-04-07 11:49:35",
+        "Motivo": "Ajuste de inventario"
+    }
+    */
+    try {
+        const res = await fetch(`${API_POS}/postupdateinventory`,{
+            method: 'POST',
+            headers: { Accept: 'application/json','Content-Type': 'application/json'},
+            body: JSON.stringify(NewAmount)
+        })
+        return await res.json()
+    }catch(error) {
+        console.log('TheError: '+ error)
+    }
+}
+
+export const SubCategories = async() => {
+    /* Return the list of subcategories and categories
+    */
+    try {
+        const res = await fetch(`${API_POS}/subcategories`)
+        return await res.json()
+    }catch(error) {
+        console.log(error)
+    }
+}
+
 //*All related to clients %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 export const Clientlist = async(ClientlistValues) => {
     /*get the list of clientes deppending on the hardware store
@@ -150,3 +187,34 @@ export const Newclient = async(NewclientValues) => {
     }
 }
 
+export const UpdateClient = async(updateclient) => {
+    /*add a new client but only for the hardware store 
+    you have to send a json of the form:
+    {
+        "Tipo": 0,
+        "NitCC": "123456789",
+        "Nombre": "Jhoan Sebastian arreglado",
+        "Apellido": "Sierra vargas arreglado",
+        "Telefono1": "3227804602",
+        "Telefono2": "987654321",
+        "Correo": "correodeprueba@gmail.com",
+        "Direccion": "calle 71 sur N° 14 B-78",
+        "Barrio": "La fortaleza",
+        "FormaDePago": 0,
+        "LimiteDeCredito": 0,
+        "Nota": "Es una prueba para actualizar el cliente nuevo del pos",
+        "Consecutivo": 1,
+        "IdFerreteria": 242
+    }
+    */
+    try {
+        const res = await fetch(`${API_POS}/updateclient`,{
+            method: 'POST',
+            headers: { Accept: 'application/json','Content-Type': 'application/json'},
+            body: JSON.stringify(updateclient)
+        })
+        return await res.json()
+    }catch(error) {
+        console.log('TheError: '+ error)
+    }
+}
