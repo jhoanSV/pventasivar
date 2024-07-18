@@ -9,6 +9,7 @@ export const useTheContext = () => {
 export const TheProvider = ({ children }) => {    
     
     const [logged, setLogged] = useState(false);
+    const [usD, setUsD] = useState();
     const [section, setSection] = useState('Nueva Venta');
     const [someData, setSomeData] = useState(null);
     const [invAdAuth, setInvAdAuth] = useState(false);
@@ -16,6 +17,7 @@ export const TheProvider = ({ children }) => {
     return (
       <TheContext.Provider value={{
           logged, setLogged,
+          usD, setUsD,
           section, setSection,
           someData, setSomeData,
           invAdAuth, setInvAdAuth,
