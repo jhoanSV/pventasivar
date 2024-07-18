@@ -79,6 +79,40 @@ export const ProductList = async(ProductListValues) => {
     }
 }
 
+export const UpdateProduct = async(updateproduct) => {
+    /*Return the list of products adding the products by client
+    you have to send a json of the form:
+    {
+        "IdFerreteria": "242",
+        "ConsecutivoProd": 8,
+        "Cod": "bla",
+        "Descripcion": "Producto de prueba para el pos",
+        "Clase": 0,
+        "SubCategoria": 1,
+        "Detalle": "Producto de prueba para actualizar",
+        "Iva": 19,
+        "PCosto": 600,
+        "PVenta": 1500,
+        "Ubicacion": "A2",
+        "InvMinimo": 1,
+        "InvMaximo": 5,
+        "Medida": "Metros",
+        "UMedida": 6,
+        "PrecioUM": 300
+    }
+    */
+    try {
+        const res = await fetch(`${API_POS}/updateproduct`,{
+            method: 'POST',
+            headers: { Accept: 'application/json','Content-Type': 'application/json'},
+            body: JSON.stringify(updateproduct)
+        })
+        return await res.json()
+    }catch(error) {
+        console.log('TheError: '+ error)
+    }
+}
+
 export const Inventory = async(InventoryValues) => {
     /*Return the inventory deppending to the client
     you have to send a json of the form:
@@ -99,7 +133,7 @@ export const Inventory = async(InventoryValues) => {
 }
 
 
-export const postUpdateInventory = async(NewAmount) => {
+export const postUpdateInventory = async(postupdateinventory) => {
     /*send the new amount to the server to adjust the inventry
     you have to send a json of the form:
     {
@@ -116,7 +150,7 @@ export const postUpdateInventory = async(NewAmount) => {
         const res = await fetch(`${API_POS}/postupdateinventory`,{
             method: 'POST',
             headers: { Accept: 'application/json','Content-Type': 'application/json'},
-            body: JSON.stringify(NewAmount)
+            body: JSON.stringify(postupdateinventory)
         })
         return await res.json()
     }catch(error) {
@@ -212,6 +246,26 @@ export const UpdateClient = async(updateclient) => {
             method: 'POST',
             headers: { Accept: 'application/json','Content-Type': 'application/json'},
             body: JSON.stringify(updateclient)
+        })
+        return await res.json()
+    }catch(error) {
+        console.log('TheError: '+ error)
+    }
+}
+
+//* All about purchases
+export const PurchaseList = async(purchaselist) => {
+    /*return the list of purchases
+    you have to send a json of the form:
+    {
+        "IdFerreteria": 242
+    }
+    */
+    try {
+        const res = await fetch(`${API_POS}/purchaseList`,{
+            method: 'POST',
+            headers: { Accept: 'application/json','Content-Type': 'application/json'},
+            body: JSON.stringify(purchaselist)
         })
         return await res.json()
     }catch(error) {
