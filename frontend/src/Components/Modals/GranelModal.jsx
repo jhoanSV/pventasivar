@@ -1,38 +1,46 @@
 import React, { useState } from 'react';
 import { TheInput } from '../InputComponent';
 
-export const GranelModal = ({show, productData, pctGan}) => {
+export const GranelModal = ({show, productData, pctGan, updtState}) => {
     
     const Formater = (number) =>{
         if (!number) return ''
         let thenumber = typeof(number)==='number' ? number.toString() : number
         //it gives a number format
-        const numberfromat = Number(thenumber.replace(/,/g, '.'));
-        return Intl.NumberFormat('de-DE').format(numberfromat);
+        const numberformat = Number(thenumber.replace(/,/g, '.'));
+        return Intl.NumberFormat('de-DE').format(numberformat.toFixed(2));
     }
-    const [granel, setGranel] = useState('Metros');
-    const [medidaUnit, setMedidaUnit] = useState(1);
-    const [cUnit, setcUnit] = useState((typeof(productData.PCosto) !== 'number') ? Formater(productData.PCosto.replace(/\./g, '')/medidaUnit) : Formater(productData.PCosto/medidaUnit));
-    const [pctUnit, setPctUnit] = useState('')
-    const [pVentaUnit, setPVentaUnit] = useState('');
 
+    //console.log(Number(pctGan.replace(/[.,]/g, (a) => (a === "." ? "" : "."))))
+    console.log(productData.PCosto.replace(/[.,]/g, (a) => (a === "." ? "" : "."))/productData.UMedida.replace(/\./g, ''));
+    const [cUnit, setcUnit] = useState((typeof(productData.PCosto) !== 'number') ? (productData.PCosto.replace(/[.,]/g, (a) => (a === "." ? "" : "."))/productData.UMedida.replace(/\./g, '')) : Formater(productData.PCosto/productData.UMedida));
+    const [pVentaUnit, setPVentaUnit] = useState(productData.PrecioUM);
+    const [pctUnit, setPctUnit] = useState(productData.PrecioUM ? 
+        Formater((((pVentaUnit.replace(/\./g, '')-cUnit)/cUnit)*100).toFixed(2))
+        :
+        ''
+    )
 
     const handleMedUnit = (e) =>{
-        setMedidaUnit(e);
-        (typeof(productData.PCosto) !== 'number') ? setcUnit(Formater(productData.PCosto.replace(/\./g, '')/e)) : setcUnit(Formater(productData.PCosto/e))
+        updtState('UMedida', e);
+        console.log(productData.PCosto);
+        (typeof(productData.PCosto) !== 'number') ? setcUnit(productData.PCosto.replace(/[.,]/g, (a) => (a === "." ? "" : "."))/e) : setcUnit(productData.PCosto/e)
     }
 
     const calpct = (e) =>{
-        let thePcosto = Number(cUnit.replace(/\./g, ''))
-        let pct = (((e-thePcosto)/thePcosto)*100).toFixed(2).toString();
+        let thePventa = Number(e.replace(/[.,]/g, (a) => (a === "," && ".")))
+        let thePcosto = cUnit
+        let pct = (((thePventa-thePcosto)/thePcosto)*100).toFixed(2).toString();
         pct = pct.replace(/\./g, ',');
         setPctUnit(Formater(pct))
     }
 
     const calcPVU = (e) =>{
-        let thePcosto = Number(cUnit.replace(/\./g, ''))
-        let newPventa = (thePcosto + (thePcosto*e/100)).toFixed(2).toString();
-        setPVentaUnit(Formater(newPventa))
+        let thepct = Number(e.replace(/[.,]/g, (a) => (a === "," && ".")));
+        let thePcosto = Number(cUnit);
+        let newPventa = (thePcosto + (thePcosto*thepct/100)).toFixed(2).toString();
+        updtState('PrecioUM', Formater(newPventa));
+        setPVentaUnit(Formater(newPventa));
     }
 
     return(
@@ -42,15 +50,16 @@ export const GranelModal = ({show, productData, pctGan}) => {
                     <button className='btn1Stnd' onClick={() => {show(false)}} style={{position: 'absolute', top: '0px', right: '0px'}}>
                         <i className='bi bi-x-lg'/>
                     </button>
+                    <h1>{productData.Descripcion}</h1>
                     <h1>{productData.Cod}</h1>
-                    <h3>{productData.Descripcion}</h3>
-                    <div className='Row'>
+                    <div className='Row' style={{marginBottom: '10px'}}>
                         <span style={{width: '114px', textAlign: 'end', marginRight: '10px'}}>
                             Medida
                         </span>
-                        <select value={granel} name='medida' onChange={(e)=>{setGranel(e.target.value)}}>
+                        <select value={productData.Medida} name='medida' onChange={(e)=>{updtState('Medida', e.target.value)}}>
                             <option value='Metros'>Metros</option>
                             <option value='Kilos'>Kilos</option>
+                            <option value='UnidadPaq'>Unidad de paquete</option>
                         </select>
                     </div>
                     <div className="Row">
@@ -58,16 +67,16 @@ export const GranelModal = ({show, productData, pctGan}) => {
                             Medida Unitaria
                         </span>
                         <TheInput
-                            val={medidaUnit}
-                            numType='real'
+                            val={productData.UMedida}
+                            numType='nat'
                             onchange={(e)=>{handleMedUnit(e)}}
                         />
                     </div>
                     <div className="Row">
-                        <table className='theTable' style={{margin: '10px 0px'}}>
+                        <table className='theTable gmt' style={{margin: '10px 0px'}}>
                             <thead>
                                 <tr>
-                                    <th>a</th>
+                                    <th></th>
                                     <th>Costo</th>
                                     <th>P. venta</th>
                                     <th>% Gananacia</th>                                
@@ -78,24 +87,24 @@ export const GranelModal = ({show, productData, pctGan}) => {
                                     <td>Completo</td>
                                     <td>{(typeof(productData.PCosto) !== 'number') ? Formater(productData.PCosto.replace(/\./g, '')) : productData.PCosto}</td>
                                     <td>{(typeof(productData.PVenta) !== 'number') ? Formater(productData.PVenta.replace(/\./g, '')) : productData.PVenta}</td>
-                                    <td>{Number(pctGan.replace(/,/g, '.'))}</td>
+                                    <td>{Formater(pctGan)}</td>
                                 </tr>
                                 <tr>
-                                    <td>{granel}</td>
-                                    <td>{cUnit}</td>
+                                    <td>{productData.Medida ? productData.Medida : updtState('Medida', 'Metros')}</td>
+                                    <td>{Formater(cUnit)}</td>
                                     <td>
                                         <TheInput
                                             numType='real'
                                             val={pVentaUnit}
-                                            pholder={Formater(Number(cUnit.replace(/\./g, '')) + (Number(cUnit.replace(/\./g, ''))*Number(pctGan.replace(/,/g, '.'))/100))}
-                                            onchange={(e)=>calpct(e)}
+                                            pholder={Formater(Number(cUnit) + (Number(cUnit)*Number(pctGan.replace(/,/g, '.'))/100))}
+                                            onchange={(e)=>{updtState('PrecioUM', e);calpct(e)}}
                                         />
                                     </td>
                                     <td>
                                         <TheInput
                                             numType='real'
                                             val={pctUnit}
-                                            pholder={Number(pctGan.replace(/,/g, '.'))}
+                                            pholder={Formater(pctGan)}
                                             onchange={(e)=>calcPVU(e)}
                                         />
                                     </td>
@@ -104,7 +113,7 @@ export const GranelModal = ({show, productData, pctGan}) => {
                         </table>
                     </div>
                     <div style={{display: 'flex', gap: '5px'}}>
-                        <button className='btnStnd btn1' onClick={() => show(false)}>Cancelar</button>{/*desseleccionar radio cuando cancelar*/}
+                        <button className='btnStnd btn1' onClick={() => show(false)}>Guardar</button>{/*desseleccionar radio cuando cancelar*/}
                     </div>
                 </div>
             </div>

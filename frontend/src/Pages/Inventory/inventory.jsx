@@ -5,6 +5,7 @@ import { useTheContext } from '../../TheProvider';
 import { TableComponent } from '../../Components';
 //es un json de prueba
 import jsonTest from '../../products_json_test.json';
+import { Inventory as ListInv } from '../../api';
 
 export function Inventory(){
 

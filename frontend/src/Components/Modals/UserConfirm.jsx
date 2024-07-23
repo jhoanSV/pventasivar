@@ -1,36 +1,42 @@
 import React, { useState } from 'react';
 import './_GeneralModal.scss'
+import { validateUser } from '../../api';
 
 export const UserConfirm = ({show, confirmed}) => {
 
     const [user, setUser] = useState('');
     const [password, setPassword] = useState('');
 
-    const veirfyUser = () =>{
-        let auth = false
-        //* function to verify the user, the next method is a toEnglish(simulacro)
-        if(user === 'admin' && password === '123'){
-            auth = true
+    const veirfyUser = async() =>{
+        //* function to verify the user-------------------------
+        const userData = await validateUser({
+            "EmailUser": user,
+            "Password": password
+        });
+        if(!userData){
+            alert('Problema de conexión, intente de nuevo más tarde');
+            return;
         }
-        //*-----------------------------------------------------
-        if(auth){
+        if(userData.Cod){
             confirmed(true)
             show(false)
+        }else{
+            alert('Usuario o contraseña incorrectos');
         }
+        //*-----------------------------------------------------
     }
 
     return (
         <div className='theModalContainer'>
-            <div className='theModal-content' style={{ width: '40%' }}>
-                <div className='theModal-header'>
-                    {/* {<span className='close1'  */}
+            <div className='theModal-content'>
+                <div className='theModal-header' style={{justifyContent: 'flex-end'}}>
                     <button className='btn1Stnd' onClick={() => {show(false)}}>
                         <i className='bi bi-x-lg'/>
                     </button>
                 </div>
                 <div className='theModal-body'>
                     <div className='Row' style={{textAlign: 'center'}}>
-                        <strong>Por favor vuelva a ingresar usario y contraseña para continuar</strong>
+                        <strong>Ingrese usuario y contraseña para continuar</strong>
                     </div>
                     <div className='Row' style={{margin: '10px'}}>
                         <div style={{width: '90px', textAlign: 'end', marginRight: '10px'}}>

@@ -12,6 +12,7 @@ export const TheProvider = ({ children }) => {
     const [usD, setUsD] = useState();
     const [section, setSection] = useState('Nueva Venta');
     const [someData, setSomeData] = useState(null);
+    const [productCodes, setProductCodes] = useState([]);
     const [invAdAuth, setInvAdAuth] = useState(false);
   
     return (
@@ -21,6 +22,7 @@ export const TheProvider = ({ children }) => {
           section, setSection,
           someData, setSomeData,
           invAdAuth, setInvAdAuth,
+          productCodes, setProductCodes,
         }}>
         {children}
       </TheContext.Provider>

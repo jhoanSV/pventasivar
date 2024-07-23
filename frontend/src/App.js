@@ -1,10 +1,10 @@
 import './_App.scss';
-import { Login } from './Pages';
 import { Header } from './Layouts';
+import { Login } from './Pages';
 import { Routes } from "./Routes";
 import { useTheContext } from './TheProvider';
 
-function App() {
+export const App = () => {
   
   const { logged } = useTheContext();
   
@@ -24,5 +24,3 @@ function App() {
     </>
   );
 }
-
-export default App;

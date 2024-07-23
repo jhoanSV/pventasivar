@@ -1,5 +1,15 @@
 @import "../../scss/_colors.scss";
 
+.warningCloud{
+    position: absolute;
+    padding: 2px;
+    background-color: #f2cb05a1;
+    border-radius: 10px;
+    font-weight: 700;
+    inset-block-end: 100%;
+    inset-inline-start: 0px;
+}
+
 .Newproduct{
     padding: 10px 212px;
     input[type=text]{

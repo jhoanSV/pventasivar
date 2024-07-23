@@ -14,7 +14,7 @@ export const ProductsList = () => {
     const [selected, setSelected] = useState([]);
     const [contentList, setContentList] = useState([]);
     //const [multiSelect, setMultiSelect] = useState(false);//* De momento se omite esto
-    const { setSection, setSomeData, usD} = useTheContext();
+    const { setSection, setSomeData, usD, setProductCodes} = useTheContext();
 
     const verFunction = () =>{
         //navigate('/NewProduct', { state: selected[0]})        
@@ -100,7 +100,15 @@ export const ProductsList = () => {
         const listado = await ProductList({
             "IdFerreteria" : usD.Cod
         })
-        if(listado)setContentList(listado);
+        if(listado){
+            let codes = []
+            setContentList(listado);
+            for(let a in listado){
+                codes.push(listado[a].Cod);
+            }
+            setProductCodes(codes);
+            console.log(codes);
+        }
         console.log(listado)
     }
 
