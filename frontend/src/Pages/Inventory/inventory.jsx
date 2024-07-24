@@ -12,13 +12,7 @@ export function Inventory(){
     const navigate = useNavigate()
     const [selected, setSelected] = useState([]);
     //const [multiSelect, setMultiSelect] = useState(false);
-    const { setSection } = useTheContext();
-
-    useEffect(() => {
-        setSection('Inventario')
-
-        // eslint-disable-next-line
-    }, []);
+    const { setSection, usD } = useTheContext();
 
     const InvHeaders = [
         {
@@ -82,6 +76,20 @@ export function Inventory(){
     const verFunction = () =>{
         navigate('/Products', { state: selected[0] })
     }
+
+    const invList = async() =>{
+        const res = await ListInv({
+            "IdFerreteria": usD.Cod
+        })
+        console.log(res);
+    }
+
+    useEffect(() => {
+        setSection('Inventario')
+        invList()
+
+        // eslint-disable-next-line
+    }, []);
     
     return (
         <section className="Inventory">
