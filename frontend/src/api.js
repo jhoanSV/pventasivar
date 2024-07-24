@@ -275,3 +275,41 @@ export const PurchaseList = async(purchaselist) => {
         console.log('TheError: '+ error)
     }
 }
+
+export const PurchaseDetail = async(purchasedetail) => {
+    /*return the detail of the purchase
+    you have to send a json of the form:
+    {
+        "IdFerreteria": 242,
+        "NPrefactura": 10725
+    }
+    */
+    try {
+        const res = await fetch(`${API_POS}/purchasedetail`,{
+            method: 'POST',
+            headers: { Accept: 'application/json','Content-Type': 'application/json'},
+            body: JSON.stringify(purchasedetail)
+        })
+        return await res.json()
+    }catch(error) {
+        console.log('TheError: '+ error)
+    }
+}
+
+export const AddPurchase = async(addpurchase) => {
+    /*create a new purchase
+    you have to send a json of the form:
+    {
+    }
+    */
+    try {
+        const res = await fetch(`${API_POS}/addpurchase`,{
+            method: 'POST',
+            headers: { Accept: 'application/json','Content-Type': 'application/json'},
+            body: JSON.stringify(addpurchase)
+        })
+        return await res.json()
+    }catch(error) {
+        console.log('TheError: '+ error)
+    }
+}
