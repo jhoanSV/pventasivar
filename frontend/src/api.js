@@ -34,15 +34,16 @@ export const NuevoProducto = async(NewproductValues) => {
         "IdFerreteria": "242",
         "Cod": "bla",
         "Descripcion": "Producto de prueba para el pos",
-        "Cantidad": 400,
-        "SubCategoria": 1,
+        "IdSubCategoria": 1,
         "PCosto": 500,
         "PVenta": 1000,
+        'PrecioUM': '', //*Precio unitario de medida
         "Inventario": 10
         "InvMinimo": 1,
         "InvMaximo": 10,
         "Ubicacion": "A1",
         "Detalle": "Es una prueba de ingreso de nuevo producto al inventario",
+        "UMedida" "Metros", //*Unidad de medida. Metros, Kilos, Unidad de paquete
         "Clase": false,
         "Iva": 19,
         "Fecha": "2024-04-07 11:49:35",
@@ -228,20 +229,20 @@ export const UpdateClient = async(updateclient) => {
     /*add a new client but only for the hardware store 
     you have to send a json of the form:
     {
-        "Tipo": 0,
-        "NitCC": "123456789",
-        "Nombre": "Jhoan Sebastian arreglado",
         "Apellido": "Sierra vargas arreglado",
-        "Telefono1": "3227804602",
-        "Telefono2": "987654321",
+        "Barrio": "La fortaleza",
+        "Consecutivo": 1
         "Correo": "correodeprueba@gmail.com",
         "Direccion": "calle 71 sur N° 14 B-78",
-        "Barrio": "La fortaleza",
         "FormaDePago": 0,
+        "IdFerreteria": 242,
         "LimiteDeCredito": 0,
+        "NitCC": "123456789",
+        "Nombre": "Jhoan Sebastian arreglado",
         "Nota": "Es una prueba para actualizar el cliente nuevo del pos",
-        "Consecutivo": 1,
-        "IdFerreteria": 242
+        "Telefono1": "3227804602",
+        "Telefono2": "987654321",
+        "Tipo": 0,
     }
     */
     try {

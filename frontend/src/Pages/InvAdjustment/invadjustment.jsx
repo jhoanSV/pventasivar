@@ -3,11 +3,12 @@ import "./_InvAdjustment.scss";
 import { useNavigate } from 'react-router-dom';
 import { useTheContext } from '../../TheProvider';
 import { TheInput } from '../../Components';
+import { postUpdateInventory } from '../../api';
 
 export function InvAdjustment(){
 
     const navigate = useNavigate()
-    const { setSection, someData, invAdAuth, setInvAdAuth } = useTheContext();
+    const { setSection, someData, setSomeData, invAdAuth, setInvAdAuth, usD } = useTheContext();
     const [currentC, setCurrentC] = useState('0');
     const [cantAdj, setCantAdj] = useState('');
     const [newCant, setNewCant] = useState('');
@@ -31,19 +32,32 @@ export function InvAdjustment(){
         }
     }
 
-    const modifyCant = () =>{
+    const modifyCant = async() =>{
         let d = someData;
-        d.inventario = Number(newCant.replace(/\./g, ''));
-        alert('Cantidad modificada correctamente, aparentemente')
-        navigate('/NewProduct')
-        //setSomeData(d)
+        d.Inventario = Number(newCant.replace(/\./g, ''));
+        const res = await postUpdateInventory({
+            "IdFerreteria": someData.IdFerreteria,
+            "CodResponsable": usD.Cod,
+            "Responsable": usD.Ferreteria,
+            "ConsecutivoProd": someData.Consecutivo,
+            "Cantidad": d.Inventario,
+            "Fecha": "2024-04-07 11:49:35",
+            "Motivo": taValue
+        });
+        console.log(res);
+        if(res && res.message === 'Transacción completada con éxito'){
+            navigate('/NewProduct')
+            alert('Cantidad modificada correctamente')
+        } else {
+            alert('Ocurrió un error inesperado, intente de nuevo más tarde');
+        }
     }
 
     useEffect(() => {        
         setSection('Ajustes de inventario')
         if(invAdAuth){
             //* Make de query to get the current inventory quantity
-            setCurrentC(Formater(someData.inventario))
+            setCurrentC(Formater(someData.Inventario))
         }else{
             navigate('/', {replace: true});
         }
@@ -56,7 +70,7 @@ export function InvAdjustment(){
     return (
         invAdAuth && 
         <section className='InvAdjustment'>
-            <h1>{someData.descripcion}</h1>
+            <h1>{someData.Descripcion}</h1>
             <div className='Row'>
                 <div className='Colmn1'>
                     <label>Cantidad actual:</label>
@@ -108,7 +122,7 @@ export function InvAdjustment(){
                     <label>Responsable:</label>
                 </div>
                 <div className='Colmn2'>
-                    <label>bla</label>
+                    <label>{usD.Contacto}</label>{/*No se si es el nombre del contacto o de la ferretería*/}
                 </div>
             </div>
             <button

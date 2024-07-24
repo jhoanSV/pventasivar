@@ -28,9 +28,13 @@ export const TheInput = ({
             ['1','2','3','4','5','6','7','8','9','0','-','']
             : (numType==='real') && //*for real numbers
             ['1','2','3','4','5','6','7','8','9','0','-','.',',','']
-        if (characters.includes(e.target.value.slice(-1))) {
-            setValue(e.target.value)
-            if(onchange)onchange(e.target.value)
+        console.log(e.nativeEvent.data);
+        if (characters.includes(e.nativeEvent.data) || e.nativeEvent.data===null) {
+            let a = e.target.value;
+            //if(a.slice(-1) === '.') a = a.slice(0, -1) + ','; //*If you enter ".", it changes to ","
+            if(e.nativeEvent.data === '.') a = a.replace(/\./g, ",") //*If you enter ".", it changes to ","
+            setValue(a)
+            if(onchange)onchange(a)
         }
     }
 

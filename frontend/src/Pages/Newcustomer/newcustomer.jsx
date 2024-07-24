@@ -3,11 +3,12 @@ import "./_newcustomer.scss";
 import { TheInput } from '../../Components';
 import { useTheContext } from '../../TheProvider';
 import { useNavigate } from 'react-router-dom';
-import { Newclient } from '../../api';
+import { Newclient, UpdateClient } from '../../api';
 
 export function Newcustomer(){
     
     const { setSection, someData, usD } = useTheContext();
+    const [enableB1, setEnableB1] = useState(false);
     const [conCredito, setConCredito] = useState(false);
     const [verCod, setVerCod] = useState('');//* verificationCode
     const [customerData, setCustomerData] = useState({
@@ -36,29 +37,47 @@ export function Newcustomer(){
 
     const validate = async() =>{
         let a = {...customerData}
+        let res, msj1, msj2, msjV = ''
+        //* Primero se valida
+        const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if(a.NitCC.length < 9){
+            msjV = msjV + 'El Nit/Cédula debe tener al menos 9 caracteres\n'
+        }
+        if(a.Nombre === ''){
+            msjV = msjV + 'El nombre no puede estar vacío\n'
+        }
+        if(!regex.test(a.Correo)){
+            msjV = msjV + 'El correo no es válido\n'
+        }
+        if(msjV){
+            alert(msjV)
+            return;
+        }
+        //*-----------------
+        if(customerData.Tipo===1){
+            a.NitCC = customerData.NitCC + '-' + verCod
+        }
+        const fecha = new Date()
+        const today = fecha.getFullYear() + '-' + (fecha.getMonth()+1) + '-' + fecha.getDate() + ' ' + fecha.getHours() + ':' + fecha.getMinutes() + ':' + fecha.getSeconds()
         if(someData){
-            //* Nuevo
-            console.log('Modifica el producto jsjs');
-        }else{
             //* Modificar
-            //* Primero se valida
-            const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            console.log(regex.test(document.getElementById('emailId').value))//*Esto devuelve un booleano
-            if(customerData.Tipo===1){
-                a.NitCC = customerData.NitCC + '-' + verCod
-            }
-            const fecha = new Date()
-            const today = fecha.getFullYear() + '-' + (fecha.getMonth()+1) + '-' + fecha.getDate() + ' ' + fecha.getHours() + ':' + fecha.getMinutes() + ':' + fecha.getSeconds()
+            msj1 = 'Modificado con éxito'
+            msj2 = 'modificar el cliente'
+            a.Consecutivo = someData.Consecutivo
+            res = await UpdateClient(a)
+        }else{
+            //* Nuevo
+            msj1 = 'Creado con éxito'
+            msj2 = 'crear el cliente'
             a.Fecha = today
-            console.log(a);
-            /*---------------------*/
-            const res = await Newclient(a)
-            console.log(res);
-            if(res){
-                navigate('/Customerlist')
-            }else{
-                alert('Ocurrió un error inesperado al crear o modificar el cliente');
-            }
+            res = await Newclient(a)
+        }
+        console.log(res);
+        if(res.insertId || res.message === 'Transacción completada con éxito'){
+            navigate('/Customerlist')
+            alert(msj1);
+        }else{
+            alert('Ocurrió un error inesperado al '+msj2);
         }
     }
     
@@ -68,10 +87,11 @@ export function Newcustomer(){
 
     const changeValuesCustomer = (key, value)=>{
         //This function allows us to change the one specific value in the product data
+        setEnableB1(true)
         setCustomerData(prevValue => ({
             ...prevValue, // Copia los valores anteriores
             [key]: value // Reemplaza el valor de la clave específica
-          }));
+        }));
     }
 
     useEffect(() => {
@@ -88,6 +108,8 @@ export function Newcustomer(){
                 document.getElementById('checkCredito').checked = true;
                 setConCredito(true)
             }
+            data.IdFerreteria = usD.Cod
+            //data.FormaDePago = 0
             setCustomerData(data)
         }
         // eslint-disable-next-line
@@ -228,8 +250,13 @@ export function Newcustomer(){
                 </div>
                 <div style={{marginLeft: '15.5%', display: 'flex', justifyContent: 'space-between'}}>
                     <div>
+                        {console.log(enableB1)}
                         <button className='btnStnd btn1'
-                         style={{marginRight: '10px'}} onClick={()=>{validate()}}>{someData ? 'Modificar' : 'Guardar'}</button>
+                         style={{marginRight: '10px'}}
+                         onClick={()=>{validate()}}
+                         disabled={!enableB1}>
+                            {someData ? 'Modificar' : 'Guardar'}
+                        </button>
                         {/* {someData && <button className='btnStnd btn1'>Estado de cuenta</button>} */}{/*WIP*/}
                     </div>
                     <button className='btnStnd btn1' onClick={()=>navigate(-1)}>Cancelar</button>

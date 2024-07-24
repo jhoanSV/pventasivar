@@ -7,7 +7,7 @@ import jsonTest from '../../jsonTest.json';
 import { TableComponent } from '../../Components';
 import { GeneralModal } from '../../Components/Modals/GeneralModal';
 import { Clientlist } from '../../api';
-
+import * as XLSX from 'xlsx';
 export function Customerlist(){
 
     const [selected, setSelected] = useState([]);
@@ -46,7 +46,7 @@ export function Customerlist(){
 
     const ctHeaders = [
         {
-            header: 'ID/NIT',//*Nombre de cabecera
+            header: 'NIT/CC',//*Nombre de cabecera
             key: 'NitCC',//*llave para acceder al dato del JSON
             defaultWidth: '131px',//*Ancho por defecto
             type: 'text',//*Tipo de celda
@@ -99,6 +99,15 @@ export function Customerlist(){
             "IdFerreteria" : usD.Cod
         })
         if(listado)setContentList(listado);
+        console.log(listado);
+    }
+
+    const exportXl = () =>{
+        const theList = contentList.map(({ NitCC, Nombre, Apellidos, Telefono1, Correo }) => ({ NitCC, Nombre, Apellidos, Telefono1, Correo }));
+        const worksheet = XLSX.utils.json_to_sheet(theList);
+        const workbook = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(workbook, worksheet, "Clientes");
+        XLSX.writeFile(workbook, "Lista Clientes.xlsx",);
     }
 
     useEffect(() => {
@@ -114,12 +123,12 @@ export function Customerlist(){
             <div className='actionsContainer'>
                 <div className='CLdiv1'>
                     <div>
-                        <label>Filtrar/Buscar: </label>
+                        <label style={{marginRight: '10px'}}>Filtrar/Buscar: </label>
                     </div>
                     <input type="text" style={{width: '56%'}}
                         onChange={(e)=>{SearchHandle((e.target.value).toLowerCase())}}
                     />
-                    <button className='btnStnd btn1' onClick={()=>{navigate('/BalanceReport')}}>Reporte de saldos</button>
+                    {/* {<button className='btnStnd btn1' onClick={()=>{navigate('/BalanceReport')}}>Reporte de saldos</button>} */}
                 </div>
                 <div className='CLdiv2' style={{position: 'relative'}}>
                     <button className='btn1Stnd' onClick={()=>(deselect())}
@@ -152,9 +161,14 @@ export function Customerlist(){
                 multiSelect={multiSelect}
                 doubleClickFunct={verFunction}
             />
-            
-            <button className='btnStnd btn1' onClick={()=>{navigate('/Newcustomer')}}>Crear nuevo cliente</button>
-            <button className='btnStnd btn1'>Exportar a Excel</button>
+            <div style={{marginTop: '10px'}}>
+                <button
+                    className='btnStnd btn1'
+                    onClick={()=>{navigate('/Newcustomer')}}
+                    style={{marginRight: '20px'}}
+                >Crear nuevo cliente</button>
+                <button className='btnStnd btn1' onClick={()=>exportXl()}>Exportar a Excel</button>
+            </div>
         </section>
     );
 }
