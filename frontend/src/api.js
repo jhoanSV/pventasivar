@@ -301,6 +301,30 @@ export const AddPurchase = async(addpurchase) => {
     /*create a new purchase
     you have to send a json of the form:
     {
+        "ConsecutivoFactura": "242",
+        "IdFerreteria": 242,
+        "Fecha": "2024-04-07 11:49:35",
+        "ConsecutivoCompra": 1,
+        "Order": {[
+            {
+                "Cantidad": 5,
+                "Cod": "bla",
+                "Descripcion": "Producto de prueba para el pos2",
+                "VrUnitarioFactura": 400,
+                "PCosto": 500,
+                "Inventario": "250",
+                "verificado": 0
+            },
+            {
+                "Cantidad": 10,
+                "Cod": "bLA2",
+                "Descripcion": "Segundo producto de prueba para el pos",
+                "VrUnitarioFactura": 800,
+                "PCosto": 800,
+                "Inventario": "75",
+                "verificado": 0
+            }
+        ]}
     }
     */
     try {
