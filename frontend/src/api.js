@@ -314,3 +314,54 @@ export const AddPurchase = async(addpurchase) => {
         console.log('TheError: '+ error)
     }
 }
+
+export const UpdateVefiedPurchase = async(updatevefied) => {
+    /*create a new purchase
+    you have to send a json of the form:
+    {
+        "Verificado": true,
+        "IdFerreteria": 242,
+        "NPreFactura": 10725,
+        "Cod" : "bla"
+    }
+    */
+    try {
+        const res = await fetch(`${API_POS}/updatevefied`,{
+            method: 'POST',
+            headers: { Accept: 'application/json','Content-Type': 'application/json'},
+            body: JSON.stringify(updatevefied)
+        })
+        return await res.json()
+    }catch(error) {
+        console.log('TheError: '+ error)
+    }
+}
+
+
+export const ModifyPurchaseProduct = async(modifypurchaseproduct) => {
+    /*create a new purchase
+    you have to send a json of the form:
+    {
+        "Consecutivo": 8,
+        "IdFerreteria": 242,
+        "PCosto": 1800.00,
+        "PVenta": 2000.00,
+        "InvMinimo": 1,
+        "InvMaximo": 1,
+        "Ubicacion": "",
+        "Medida": "",
+        "UMedida": 1,
+        "PrecioUM": 0
+    }
+    */
+    try {
+        const res = await fetch(`${API_POS}/modifypurchaseproduct`,{
+            method: 'POST',
+            headers: { Accept: 'application/json','Content-Type': 'application/json'},
+            body: JSON.stringify(modifypurchaseproduct)
+        })
+        return await res.json()
+    }catch(error) {
+        console.log('TheError: '+ error)
+    }
+}
