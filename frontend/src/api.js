@@ -301,10 +301,9 @@ export const AddPurchase = async(addpurchase) => {
     /*create a new purchase
     you have to send a json of the form:
     {
-        "ConsecutivoFactura": "242",
+        "Consecutivo": 2,
         "IdFerreteria": 242,
         "Fecha": "2024-04-07 11:49:35",
-        "ConsecutivoCompra": 1,
         "Order": {[
             {
                 "Cantidad": 5,
@@ -360,7 +359,6 @@ export const UpdateVefiedPurchase = async(updatevefied) => {
         console.log('TheError: '+ error)
     }
 }
-
 
 export const ModifyPurchaseProduct = async(modifypurchaseproduct) => {
     /*create a new purchase
