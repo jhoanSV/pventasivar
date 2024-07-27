@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import "./_customerlist.scss";
 import { useNavigate } from 'react-router-dom';
 import { useTheContext } from '../../TheProvider';
@@ -14,7 +14,8 @@ export function Customerlist(){
     const [multiSelect, setMultiSelect] = useState(false);
     const [show1, setShow1] = useState(false);
     const [contentList, setContentList] = useState([]);
-    const navigate = useNavigate()
+    const refList = useRef([]);
+    const navigate = useNavigate();
     const { setSection, setSomeData, usD } = useTheContext();
 
     const Popop1 = () => {
@@ -78,17 +79,16 @@ export function Customerlist(){
     ]
 
     const filterByText = (item, text) =>
-        item.id_nit.toLowerCase().includes(text) ||
-        item.nombre.toLowerCase().includes(text) ||
-        item.apellido.toLowerCase().includes(text) ||
-        item.barrio.toLowerCase().includes(text) ||
-        item.email.toLowerCase().includes(text);
+        item.NitCC.toLowerCase().includes(text) ||
+        item.Nombre.toLowerCase().includes(text) ||
+        item.Apellido.toLowerCase().includes(text) ||
+        item.Barrio.toLowerCase().includes(text) ||
+        item.Correo.toLowerCase().includes(text);
 
     const SearchHandle = (text) =>{
-        let c = jsonTest;
+        let c = refList.current;
         if (text !== ''){
-            c = c.filter((i)=>filterByText(i, text))
-            setContentList(c)
+            setContentList(c.filter((i)=>filterByText(i, text)));
         }else{            
             CustomerFetch()
         }
@@ -98,7 +98,10 @@ export function Customerlist(){
         const listado = await Clientlist({
             "IdFerreteria" : usD.Cod
         })
-        if(listado)setContentList(listado);
+        if(listado){
+            setContentList(listado)
+            refList.current = listado;
+        };
         console.log(listado);
     }
 

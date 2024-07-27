@@ -24,10 +24,10 @@
     justify-content: space-between;
 }
 
-.gmt{
+.theTable.gmt{
     tbody{
-        tr:nth-of-type(even){
-            background-color: unset;
+        tr{
+            background-color: #f2f2f2;
         }
     }
 }

@@ -8,7 +8,7 @@ import { postUpdateInventory } from '../../api';
 export function InvAdjustment(){
 
     const navigate = useNavigate()
-    const { setSection, someData, setSomeData, invAdAuth, setInvAdAuth, usD } = useTheContext();
+    const { setSection, someData, invAdAuth, setInvAdAuth, usD } = useTheContext();
     const [currentC, setCurrentC] = useState('0');
     const [cantAdj, setCantAdj] = useState('');
     const [newCant, setNewCant] = useState('');

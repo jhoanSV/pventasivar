@@ -1,12 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import './_flatlist.scss';
 
-export const Flatlist = ({ data, row, Width = '100%', Height = 500, headers = [], selectedRow, setSelectedRow,
+export const Flatlist = ({ data, row, Width = '100%', /*Height,*/ headers = [], selectedRow, setSelectedRow,
     doubleClick = ()=>{}}) => {
     //const [selectedRow, setSelectedRow] = useState(null);
     //const [width, setWidth] = useState(Width);
     //const [height, setHeight] = useState(Height);
-    console.log('I think isnt necesary to set height: '+Height);
     const [columnsWidth, setColumnsWidth] = useState([]);
 
     useEffect(() => {

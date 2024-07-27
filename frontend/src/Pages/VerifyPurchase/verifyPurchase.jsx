@@ -2,101 +2,51 @@ import React, { useEffect, useState, useRef } from 'react';
 import "./_verifyPurchase.scss";
 import { useNavigate } from 'react-router-dom';
 import { useTheContext } from '../../TheProvider';
-import { TableComponent, Flatlist } from '../../Components';
-import { TheInput } from '../../Components/InputComponent/TheInput';
+import { Flatlist } from '../../Components';
 import { ChangePurchasePro } from '../../Components/Modals/ChangePurchasePro';
 //es un json de prueba
 import jsonTest from '../../order_test.json';
+import { AddPurchase, PurchaseDetail, UpdateVefiedPurchase } from '../../api';
 
 export function VerifyPurchase(){
 
     const navigate = useNavigate()
     const [selected, setSelected] = useState([]);
     const [multiSelect, setMultiSelect] = useState(false);
-    const { setSection } = useTheContext();
-    const [order, setOrder] = useState(jsonTest);
+    const [order, setOrder] = useState([]);
     const [total, setTotal] = useState(0);
     const [showModalChangeprice, setShowModalChangeprice] = useState(false);
     const [selectedfila, setSelectedfila] = useState(0);
     const selectedfilaRef = useRef(selectedfila);
-
-    const data = {
-        "cantidad": 3,
-        "cod": "TNC25",
-        "descripcion": "Motoreductor amarillo dlble eje",
-        "vrUnitario": 5500,
-        "pCostoSistem": 5400,
-        "estado": 0,
-        "existencia": 4,
-        "invMinimo": 5,
-        "invMaximo": 50,
-        "pVentaSistem": 6000
-    }
-
-    useEffect(() => {
-        setSection('Verificar orden')
-        totalSum()
-        // eslint-disable-next-line
-    }, []);
+    const dataSelected = useRef();
+    const { setSection, someData, usD } = useTheContext();
     
-    const deselect = () =>{
+    /*const deselect = () =>{ //* Deseleccionar por si algo
         setSelected([])
-    };
-
-    const verFunction = () =>{
-        navigate('/NewProduct', { state: selected[0]})
-    };
-
-    const checkbox = () =>{
-        //This function verify if the client has selected verify the product
-        console.log('it chanched correctly')
-    };
-
-    useEffect(() => {
-        window.addEventListener('keydown', handleKeyDown);
-        
-        return () => {
-            window.removeEventListener('keydown', handleKeyDown);
-        };
-    }, []);
-    
-    useEffect(() => {
-        selectedfilaRef.current = selectedfila;
-    }, [selectedfila]);
-
-    const handleKeyDown = (event) => {
-        if (order.length !== 0) {
-            const currentSelectedFila = selectedfilaRef.current;
-            if (event.key === 'ArrowDown' && currentSelectedFila + 1 >= 0 && currentSelectedFila + 1 < order.length) {
-                setSelectedfila(currentSelectedFila + 1)
-            } else if (event.key === 'ArrowUp' && currentSelectedFila - 1 >= 0 && currentSelectedFila - 1 < order.length) {
-                setSelectedfila(currentSelectedFila - 1)
-            }
-        }
-    };
+    };*/
 
     const ctHeaders = [
         {
             header: 'Cantidad',
-            key: 'cantidad',
+            key: 'Cantidad',
             defaultWidth: '131px',
             type: 'text',
         },
         {
             header: 'Cod',
-            key: 'cod',
+            key: 'Cod',
             defaultWidth: '131px',
             type: 'text',
         },
         {
             header: 'Descripción',
-            key: 'descripcion',
+            key: 'Descripcion',
             defaultWidth: '300px',
             type: 'text',
         },
         {
             header: 'Vr. Unitario',
-            key: 'vrUnitario',
+            key: 'VrUnitarioFactura',
             defaultWidth: '223px',
             type: 'text',
         },
@@ -113,67 +63,91 @@ export function VerifyPurchase(){
             type: 'text',
         },
         {
-            header: 'Existencia',
-            key: 'existencia',
+            header: 'Inventario',
+            key: 'Inventario',
             defaultWidth: '223px',
             type: 'text',
         },
         {
             header: 'verificado',
-            key: 'verificado',
+            key: 'Verificado',
             defaultWidth: '223px',
             type: 'text',
         }
     ]
 
+    const handleKeyDown = (event) => {
+        if (order.length !== 0) {
+            const currentSelectedFila = selectedfilaRef.current;
+            if (event.key === 'ArrowDown' && currentSelectedFila + 1 >= 0 && currentSelectedFila + 1 < order.length) {
+                setSelectedfila(currentSelectedFila + 1)
+            } else if (event.key === 'ArrowUp' && currentSelectedFila - 1 >= 0 && currentSelectedFila - 1 < order.length) {
+                setSelectedfila(currentSelectedFila - 1)
+            }
+        }
+    };
+
     const row = (item, isSelected, columnsWidth) => {
         const comparator = (value1, value2) => {
+            if(value2 === null){
+                return <div className='comparatorContainer'><i className="bi bi-stars"></i></div>
+            }
             if (value1>value2){
-                return <div className='comparatorContainer'><i class="bi bi-caret-up-fill" style={{color: 'green'}}></i></div>
+                return <div className='comparatorContainer'><i className="bi bi-caret-up-fill" style={{color: 'red'}}></i></div>
             } else if (value1<value2){
-                return <div className='comparatorContainer'><i class="bi bi-caret-down-fill" style={{color: 'red'}}></i></div>
+                return <div className='comparatorContainer'><i className="bi bi-caret-down-fill" style={{color: 'green'}}></i></div>
             } else {
                 return <div className='comparatorContainer'><label>=</label></div>
+            }
+        }
+        const handleChekedvp = async(e) => {
+            console.log(order[isSelected]);
+            if(order[isSelected].PVenta !== null || e.target.checked === false){
+                const res = await UpdateVefiedPurchase({
+                    "Verificado": (e.target.checked),
+                    "IdFerreteria": 242,
+                    "NPreFactura": 10725,
+                    "Cod" : item.Cod
+                });
+                console.log(res);
+            }else{
+                e.target.checked = false;
+                alert('El precio de venta de "' + order[isSelected].Descripcion + '" no puede estar vacío ');
             }
         }
         return (
             <>
                 <td style={{width: columnsWidth[0]}}>
-                    <label className={isSelected ? 'selected-label' : ''}>{item.cantidad}</label>
+                    <label className={isSelected ? 'selected-label' : ''}>{item.Cantidad}</label>
                 </td>
                 <td style={{width: columnsWidth[1]}}>
-                    <label className={isSelected ? 'selected-label' : ''}>{item.cod}</label>
+                    <label className={isSelected ? 'selected-label' : ''}>{item.Cod}</label>
                 </td>
                 <td style={{width: columnsWidth[2]}}>
-                    <label className={isSelected ? 'selected-label' : ''}>{item.descripcion}</label>
+                    <label className={isSelected ? 'selected-label' : ''}>{item.Descripcion}</label>
                 </td>
                 <td style={{width: columnsWidth[3]}}>
-                    <label className={isSelected ? 'selected-label' : ''}>$ {Formater(item.vrUnitario)}</label>
+                    <label className={isSelected ? 'selected-label' : ''}>$ {Formater(item.VrUnitarioFactura)}</label>
                 </td>
                 <td style={{width: columnsWidth[4], alignItems: 'center' }}>
-                    {comparator(item.vrUnitario, item.vrUnitarioSistem)}
+                    {comparator(item.VrUnitarioFactura, item.PCosto)}
                 </td>
                 <td style={{width: columnsWidth[5]}}>
-                    <label className={isSelected ? 'selected-label' : ''}>$ {Formater(item.vrUnitario * item.cantidad)}</label>
+                    <label className={isSelected ? 'selected-label' : ''}>$ {Formater(item.VrUnitarioFactura * item.Cantidad)}</label>
                 </td>
                 <td style={{width: columnsWidth[6]}}>
-                    <label className={isSelected ? 'selected-label' : ''}>{item.existencia}</label>
+                    <label className={isSelected ? 'selected-label' : ''}>{item.Inventario}</label>
                 </td>
                 <td style={{width: columnsWidth[7]}}>
                     <input
+                        id={`id${item.Cod}`}
                         type="checkbox"
-                        onChange={()=>checkbox()}></input>
+                        defaultChecked={item.Verificado}
+                        onChange={(e)=>{handleChekedvp(e)}}
+                        />
                 </td>
             </>
         )
-    }
-
-    const totalSum = () => {
-        let suma = 0;
-        order.map((item, index) => (
-            suma += item.cantidad * item.vrUnitario
-        ))
-        setTotal(suma)
     }
 
     const Formater = (number) =>{
@@ -184,109 +158,108 @@ export function VerifyPurchase(){
         return Intl.NumberFormat('de-DE').format(numberfromat);
     };
 
-    const ChangePrice = (codProduct) =>{
-        const data = {
-            "cantidad": 3,
-            "cod": "TNC25",
-            "descripcion": "Motoreductor amarillo dlble eje",
-            "vrUnitario": 5500,
-            "vrUnitarioSistem": 5400,
-            "diferencia": -100,
-            "vrTotal": 3000,
-            "estado": 0,
-            "existencia": 4
-        }
-        return (
-            <div>
-                <div>
-                    <div>
-                        <label className='subtitle'>Codigo:</label>
-                        <label className='subtitle'>{codProduct}</label>
-                    </div>
-                </div>
-                <div >
-                    <label className='subtitle'>order.descripcion</label>
-                </div>
-                <div className='Rows'>
-                    <div className='column1'>
-                        <label className='subtitle'>Inventario actual:</label>
-                    </div>
-                    <div className='column2'>
-                        <label>order.invMinimo</label>
-                    </div>
-                    <div className='column1'>
-                        <label className='subtitle'>Minimo:</label>
-                    </div>
-                    <div className='column2'>
-                        <label>order.invMinimo</label>
-                    </div>
-                    <div className='column1'>
-                        <label className='subtitle'>Maximo:</label>
-                    </div>
-                    <div className='column2'>
-                        <label>order.invMaximo</label>
-                    </div>
-                    <div className='column1'>
-                        <label className='subtitle'>Costo actual:</label>
-                    </div>
-                    <label className='column2'>$ order.constoActual</label>
-                </div>
-                <div className='form-container'>
-                    <div className='form-row'>
-                        <label className='subtitle'>Cantidad de compra:</label>
-                        <TheInput numType='nat'>
-                        </TheInput>
-                    </div>
-                    <div className='form-row'>
-                        <label className='subtitle'>Nuevo costo:</label>
-                        <TheInput numType='real'>
-                        </TheInput>
-                    </div>
-                    <div className='form-row'>
-                        <label className='subtitle'>Ganancia:</label>
-                        <TheInput numType='real'>
-                        </TheInput>
-                    </div>
-                    <div className='form-row'>
-                        <label className='subtitle'>Nuevo precio de venta:</label>
-                        <TheInput numType='real'>
-                        </TheInput>
-                    </div>
-                    <div className='form-row'>
-                        <label className='subtitle'>precio venta:</label>
-                        <label>$ 000</label>
-                    </div>
-                </div>
-                <div>
-                    <button className='btnStnd btn1'
-                        style={{marginLeft: '20px'}}
-                        onClick={()=>{}}
-                            >
-                            aceptar
-                    </button>
-                    <button className='btnStnd btn1'
-                        style={{marginLeft: '20px'}}
-                        onClick={()=>{setShowModalChangeprice(false)}}
-                        >
-                            cancelar
-                    </button>
-                </div>
-            </div>
-        )
+    const totalSum = () => {
+        let suma = 0;
+        order.map((item, index) => (
+            suma += item.cantidad * item.vrUnitario
+        ))
+        setTotal(suma)
+    }
 
-    };
+    const fetchOrderData = async() =>{
+        const orderDetail = await PurchaseDetail({
+            "IdFerreteria": usD.Cod,
+            "NPrefactura": someData.NPreFactura
+        });
+        console.log(orderDetail);
+        if(orderDetail){
+            setOrder(orderDetail)
+            totalSum();
+        }
+    }
+
+    const verifyProduct = () =>{
+        setShowModalChangeprice(true);
+        dataSelected.current = order[selectedfila];
+    }
+
+    const recepcionar = async() =>{
+        const allVerified = order.every(item => item.Verificado === 1);
+        if(allVerified){
+            const theOrder = order.map(item => ({
+                "ConsecutivoProd" : item.ConsecutivoProd,
+                "Cantidad": item.Cantidad,
+                "Cod": item.Cod,
+                "Descripcion": item.Descripcion,
+                "PCosto": item.VrUnitarioFactura,
+                "PCostoLP": item.PCosto,//*Precio anterior a la factura (PCosto)
+                "PVenta": item.PVenta,
+                "Iva": item.Iva
+            }));
+            const fecha = new Date()
+            const today = fecha.getFullYear() + '-' + (fecha.getMonth() + 1) + '-' + fecha.getDate() + ' ' + fecha.getHours() + ':' + fecha.getMinutes() + ':' + fecha.getSeconds()
+            console.log({
+                "IdFerreteria": usD.Cod,
+                "Fecha": today,
+                "CodResponsable": usD.Cod,
+                "Responsable": usD.Contacto,
+                "Consecutivo": someData.Consecutivo,
+                "Order": theOrder,
+            });
+            const res = await AddPurchase({
+                "IdFerreteria": usD.Cod,
+                "Fecha": today,
+                "CodResponsable": usD.Cod,
+                "Responsable": usD.Contacto,
+                "Consecutivo": someData.Consecutivo,
+                "Order": theOrder,
+            });
+            console.log(res);
+            if(res && res.message === 'Transacción completada con éxito'){
+                alert('Producto recepcionado con éxito');
+                //navigate()...
+            } else {
+                alert('Ocurrió un error inesperado al recepcionar pedido');
+            }
+        } else {
+            alert('Todos los productos deben estar verificados');
+        }
+    }
+    
+    useEffect(() => {
+        selectedfilaRef.current = selectedfila;
+    }, [selectedfila]);
+
+    useEffect(() => {
+        console.log(dataSelected.current);        
+    }, [dataSelected]);
+
+    useEffect(() => {
+        console.log(order);
+    }, [order]);
+
+    useEffect(() => {
+        window.addEventListener('keydown', handleKeyDown);
+        setSection('Verificar compra');
+        fetchOrderData();
+
+        return () => {
+            window.removeEventListener('keydown', handleKeyDown);
+        };
+        // eslint-disable-next-line
+    }, []);
 
     return (
-        <section class="ShoppingList">
+        <section className="ShoppingList">
             <div className='Titles'>
-                <h2>Numero de compra</h2>
-                <h2>000</h2>
+                <h2>Factura</h2>
+                <h2>{someData.NPreFactura}</h2>
             </div>
             <div className='Row'>
-                <button className='btn1Stnd' onClick={()=>(verFunction())}
-                            disabled={(selected.length === 0 || selected.length > 1)}>
-                            <i className='bi bi-trash-fill'/>
-                        </button>
+                <button className='btn1Stnd' onClick={()=>(verifyProduct())}
+                    disabled={(selectedfila.length === 0)}>
+                    <i className='bi bi-eye-fill'/>
+                </button>
                 <label>Modificar</label>
             </div>
             <div className='Table'>
@@ -296,13 +269,13 @@ export function VerifyPurchase(){
                     headers={ctHeaders}
                     selectedRow={selectedfila}
                     setSelectedRow={setSelectedfila}
-                    doubleClick={()=>setShowModalChangeprice(true)}
+                    doubleClick={()=>{verifyProduct()}}
                 />
             </div>
             <div>
             <button className='btnStnd btn1'
                     style={{marginLeft: '20px'}}
-                    onClick={()=>{navigate('/AddInventory');setSection('Agregar al inventario')}}
+                    onClick={()=>{recepcionar()/*navigate('/AddInventory');setSection('Agregar al inventario')*/}}
                 >
                     Recepcionar pedido
             </button>
@@ -325,7 +298,7 @@ export function VerifyPurchase(){
                     </div>
                 </div>
             </div>
-            {showModalChangeprice && <ChangePurchasePro data={data} show={setShowModalChangeprice} width='450px' height='400px'/>}
+            {showModalChangeprice && <ChangePurchasePro data={dataSelected.current} show={setShowModalChangeprice} width='450px' height='400px'/>}
         </section>
     )
 }

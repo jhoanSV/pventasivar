@@ -169,7 +169,6 @@ export const Newproduct = () => {
         console.log(productData);
         console.log(a);
         if(productData.PrecioUM ===''){
-            console.log('no se colocó esto PrecioUM');
             a.PrecioUM = a.PCosto
         }
         a.IdFerreteria = usD.Cod;
@@ -226,7 +225,7 @@ export const Newproduct = () => {
         console.log(a);
         const res = await UpdateProduct(a)
         console.log(res);
-        if(res.message === 'Transacción completada con éxito'){
+        if(res && res.message === 'Transacción completada con éxito'){
             navigate('/ProductsList')
             alert('Producto modificado con éxito')
         } else {

@@ -43,7 +43,8 @@ export const NuevoProducto = async(NewproductValues) => {
         "InvMaximo": 10,
         "Ubicacion": "A1",
         "Detalle": "Es una prueba de ingreso de nuevo producto al inventario",
-        "UMedida" "Metros", //*Unidad de medida. Metros, Kilos, Unidad de paquete
+        "Medida": "", //* Numero de la medida
+        "UMedida" 1, //*Unidad de medida. Metros, Kilos, Unidad de paquete
         "Clase": false,
         "Iva": 19,
         "Fecha": "2024-04-07 11:49:35",
@@ -256,8 +257,7 @@ export const UpdateClient = async(updateclient) => {
         console.log('TheError: '+ error)
     }
 }
-
-//* All about purchases
+//*All related to purchases %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 export const PurchaseList = async(purchaselist) => {
     /*return the list of purchases
     you have to send a json of the form:
@@ -301,28 +301,22 @@ export const AddPurchase = async(addpurchase) => {
     /*create a new purchase
     you have to send a json of the form:
     {
-        "Consecutivo": 2,
         "IdFerreteria": 242,
         "Fecha": "2024-04-07 11:49:35",
+        "CodResponsable": ,
+        "Responsable": ,
+        "Consecutivo": ,//*Consecutivo de la compra
         "Order": {[
             {
+                "ConsecutivoProd" : //* Consecutivo del producto
                 "Cantidad": 5,
                 "Cod": "bla",
                 "Descripcion": "Producto de prueba para el pos2",
-                "VrUnitarioFactura": 400,
                 "PCosto": 500,
-                "Inventario": "250",
-                "verificado": 0
+                "PCostoLP": //*Precio anterior a la factura (PCosto)
+                "Iva": 
             },
-            {
-                "Cantidad": 10,
-                "Cod": "bLA2",
-                "Descripcion": "Segundo producto de prueba para el pos",
-                "VrUnitarioFactura": 800,
-                "PCosto": 800,
-                "Inventario": "75",
-                "verificado": 0
-            }
+            ...
         ]}
     }
     */
@@ -364,16 +358,12 @@ export const ModifyPurchaseProduct = async(modifypurchaseproduct) => {
     /*create a new purchase
     you have to send a json of the form:
     {
-        "Consecutivo": 8,
-        "IdFerreteria": 242,
-        "PCosto": 1800.00,
-        "PVenta": 2000.00,
-        "InvMinimo": 1,
-        "InvMaximo": 1,
-        "Ubicacion": "",
-        "Medida": "",
-        "UMedida": 1,
-        "PrecioUM": 0
+        "ConsecutivoProd": data.ConsecutivoProd,
+        "Cod" : data.Cod,
+        "IdFerreteria": usD.Cod,
+        "NPreFactura" : someData.NPreFactura,
+        "PCosto": data.PCosto,
+        "PVenta": data.PVenta,
     }
     */
     try {

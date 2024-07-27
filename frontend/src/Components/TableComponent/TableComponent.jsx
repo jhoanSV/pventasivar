@@ -80,6 +80,14 @@ export const TableComponent = ({data, headers, selected, setSelected, multiSelec
         })
         observer.observe(obsT)
     }
+
+    const Formater = (number) =>{
+        //it gives a number format
+        if (number === '') return '';
+        const numberString = String(number).replace(/,/g, '.');
+        const numberfromat = Number(numberString);
+        return Intl.NumberFormat('de-DE').format(numberfromat);
+    };
     
     useEffect(() => {
         createResizableTable(document.getElementById('theTableId'));
@@ -128,6 +136,8 @@ export const TableComponent = ({data, headers, selected, setSelected, multiSelec
                                             </picture>
                                         :header['type']==='text' ?
                                             <div className='cellContent'>{item[header['key']]}</div>
+                                        :header['type'] === 'coin'?
+                                            <div className='cellContent'>$ {Formater(item[header['key']])}</div>
                                         :header['type'] === 'other' ?
                                             <Other item={item} />
                                         :
