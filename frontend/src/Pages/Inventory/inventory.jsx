@@ -1,15 +1,15 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import "./_inventory.scss";
 import { useNavigate } from 'react-router-dom';
 import { useTheContext } from '../../TheProvider';
 import { TableComponent } from '../../Components';
-//es un json de prueba
-import jsonTest from '../../products_json_test.json';
 import { Inventory as ListInv } from '../../api';
 
 export function Inventory(){
 
     const navigate = useNavigate()
+    const [invList, setInvList] = useState([]);
+    const refList = useRef([]);
     const [selected, setSelected] = useState([]);
     //const [multiSelect, setMultiSelect] = useState(false);
     const { setSection, usD } = useTheContext();
@@ -17,21 +17,21 @@ export function Inventory(){
     const InvHeaders = [
         {
             header: 'Cod',
-            key: 'cod',
+            key: 'Cod',
             defaultWidth: '131px',
             type: 'text',
         },
         {
             header: 'Descripción',
-            key: 'descripcion',
+            key: 'Descripcion',
             defaultWidth: '223px',
             type: 'text',
         },
         {
             header: 'Costo',
-            key: 'costo',
+            key: 'PCosto',
             defaultWidth: '223px',
-            type: 'text',
+            type: 'coin',
         },
         {
             header: 'Total',
@@ -41,29 +41,43 @@ export function Inventory(){
         },
         {
             header: 'Precio venta',
-            key: 'precio_venta',
+            key: 'PVenta',
             defaultWidth: '0px',
-            type: 'text',
+            type: 'coin',
         },
         {
             header: 'Existencia',
-            key: 'existencia',
+            key: 'Inventario',
             defaultWidth: '0px',
             type: 'text',
         },
         {
             header: 'Inv. minimo',
-            key: 'inv_minimo',
+            key: 'InvMinimo',
             defaultWidth: '0px',
             type: 'text',
         },
         {
             header: 'Inv. maximo',
-            key: 'inv_maximo',
+            key: 'InvMaximo',
             defaultWidth: '0px',
             type: 'text',
         }
     ]
+
+    const filterByText = (item, text) =>
+        item.Cod.toString().includes(text) ||
+        item.Descripcion.toLowerCase().includes(text);
+
+    const SearchHandle = (text) =>{
+        let c = refList.current;
+        if (text !== ''){
+            //c = c.filter((i)=>filterByText(i, text))
+            setInvList(c.filter((i)=>filterByText(i, text)));
+        }else{
+            fetchInvList();
+        }
+    }
 
     const DeleteFunction = () =>{
         alert('eliminando jsjs')        
@@ -77,16 +91,20 @@ export function Inventory(){
         navigate('/Products', { state: selected[0] })
     }
 
-    const invList = async() =>{
-        const res = await ListInv({
+    const fetchInvList = async() =>{
+        const list = await ListInv({
             "IdFerreteria": usD.Cod
         })
-        console.log(res);
+        console.log(list);
+        if(list){
+            setInvList(list);
+            refList.current = list;
+        }
     }
 
     useEffect(() => {
-        setSection('Inventario')
-        invList()
+        setSection('Inventario');
+        fetchInvList();
 
         // eslint-disable-next-line
     }, []);
@@ -104,12 +122,17 @@ export function Inventory(){
                     <div style={{marginTop: '10px'}}>
                         <label>Cantidad de articulos en el inventario</label>
                     </div>
-                    <label>{'2500'}</label>
+                    <label>{refList.current.length}</label>
                 </div>
             </div>
             <div className="Row">
                 <label style={{paddingRight: '10px'}}>Buscar:</label>
-                <input type="text" placeholder='Buscar' style={{width: '35%'}}/>
+                <input 
+                    type="text"
+                    placeholder='Buscar'
+                    style={{width: '35%'}}
+                    onChange={(e)=>{SearchHandle((e.target.value).toLowerCase())}}
+                />
                 <button className='btnStnd btn1'
                     style={{marginLeft: '20px'}}
                     onClick={()=>{navigate('/LowInv')}}
@@ -154,7 +177,7 @@ export function Inventory(){
             </div>
             <div>
                 <TableComponent
-                    data={jsonTest}
+                    data={invList}
                     headers={InvHeaders}
                     selected={selected}
                     setSelected={setSelected}

@@ -12,6 +12,49 @@
     //border-bottom-right-radius: 100px;
     gap: 10px;
 }
+.FloatingList{
+    position: absolute;
+    width: 100%;
+    overflow-y: scroll;
+    background-color: #f2f2f2;
+    margin-top: 10px;
+    padding: 6px;
+    border: solid 1px #193773;
+    border-radius: 10px;
+    z-index: 4;
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;  /* Firefox */
+    .flItem{
+        user-select: none;
+        cursor: pointer;
+        &:hover{
+            background-color: #718bbf;
+        }
+    }
+}
+
+.FloatingList::-webkit-scrollbar {
+    display: none;
+}
+
+.FLA-enter {
+    max-height: 2px;
+    opacity: 0;
+}
+.FLA-enter-active {
+    max-height: 50vh;
+    opacity: 1;
+    transition: opacity 200ms, max-height 200ms;
+}
+.FLA-exit {
+    max-height: 50vh;
+    opacity: 1;
+}
+.FLA-exit-active {
+    max-height: 2px;
+    opacity: 0;
+    transition: opacity 200ms, max-height 200ms;
+}
 //*tabs style %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 .tabs {
     margin: 10px auto;
@@ -72,3 +115,4 @@
     padding: 0px 10px;
     z-index: 3;
 }
+//*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

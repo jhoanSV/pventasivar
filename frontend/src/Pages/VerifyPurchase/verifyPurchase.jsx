@@ -5,14 +5,11 @@ import { useTheContext } from '../../TheProvider';
 import { Flatlist } from '../../Components';
 import { ChangePurchasePro } from '../../Components/Modals/ChangePurchasePro';
 //es un json de prueba
-import jsonTest from '../../order_test.json';
 import { AddPurchase, PurchaseDetail, UpdateVefiedPurchase } from '../../api';
 
 export function VerifyPurchase(){
 
     const navigate = useNavigate()
-    const [selected, setSelected] = useState([]);
-    const [multiSelect, setMultiSelect] = useState(false);
     const [order, setOrder] = useState([]);
     const [total, setTotal] = useState(0);
     const [showModalChangeprice, setShowModalChangeprice] = useState(false);
@@ -67,14 +64,14 @@ export function VerifyPurchase(){
             key: 'Inventario',
             defaultWidth: '223px',
             type: 'text',
-        },
-        {
-            header: 'verificado',
-            key: 'Verificado',
-            defaultWidth: '223px',
-            type: 'text',
         }
-    ]
+    ];
+    if(someData.Estado === 'Por ingresar')ctHeaders.push({
+        header: 'verificado',
+        key: 'Verificado',
+        defaultWidth: '223px',
+        type: 'text',
+    });
 
     const handleKeyDown = (event) => {
         if (order.length !== 0) {
@@ -138,14 +135,16 @@ export function VerifyPurchase(){
                 <td style={{width: columnsWidth[6]}}>
                     <label className={isSelected ? 'selected-label' : ''}>{item.Inventario}</label>
                 </td>
-                <td style={{width: columnsWidth[7]}}>
-                    <input
-                        id={`id${item.Cod}`}
-                        type="checkbox"
-                        defaultChecked={item.Verificado}
-                        onChange={(e)=>{handleChekedvp(e)}}
-                        />
-                </td>
+                {someData.Estado === 'Por ingresar' &&
+                    <td style={{width: columnsWidth[7]}}>
+                        <input
+                            id={`id${item.Cod}`}
+                            type="checkbox"
+                            defaultChecked={item.Verificado}
+                            onChange={(e)=>{handleChekedvp(e)}}
+                            />
+                    </td>
+                }
             </>
         )
     }
@@ -217,7 +216,7 @@ export function VerifyPurchase(){
             console.log(res);
             if(res && res.message === 'Transacción completada con éxito'){
                 alert('Producto recepcionado con éxito');
-                //navigate()...
+                navigate('/Inventory');
             } else {
                 alert('Ocurrió un error inesperado al recepcionar pedido');
             }
@@ -273,12 +272,18 @@ export function VerifyPurchase(){
                 />
             </div>
             <div>
-            <button className='btnStnd btn1'
-                    style={{marginLeft: '20px'}}
-                    onClick={()=>{recepcionar()/*navigate('/AddInventory');setSection('Agregar al inventario')*/}}
-                >
-                    Recepcionar pedido
-            </button>
+                {someData.Estado === 'Por ingresar' &&
+                    <button className='btnStnd btn1'
+                        style={{marginRight: '20px'}}
+                        onClick={()=>{someData.Estado === 'Por ingresar' && recepcionar()}}>
+                            Recepcionar pedido
+                    </button>
+                }
+                <button className='btnStnd btn1'
+                    onClick={()=>{navigate(-1)}}
+                    >
+                        cancelar
+                </button>
             </div>
             <div className='Finantialdata'>
                 <div className="Row">

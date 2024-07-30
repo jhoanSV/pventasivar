@@ -10,6 +10,19 @@ export function Login(){
     const [inputData2, setInputData2] = useState();
 
     const LoginHandle = async() => {
+        //*Veo ñero ojo con esto
+        setLogged(true);
+        setUsD({
+            "Cod": 242,
+            "Ferreteria": "Ferreteria Marley",
+            "Contacto": "Prueba ojo prro",
+            "Direccion": "",
+            "Telefono": "3219155489",
+            "Cel": "",
+            "Email": "gersonlvargas.na@gmail.com",
+            "Asesor": "Gerson"
+        })
+        return;
         const userData = await validateUser({
             "EmailUser": inputData1,
             "Password": inputData2

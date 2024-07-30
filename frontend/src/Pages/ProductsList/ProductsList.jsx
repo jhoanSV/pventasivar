@@ -22,7 +22,7 @@ export const ProductsList = () => {
     }
 
     const filterByText = (item, text) =>
-        item.Cod.toString().includes(text) ||
+        item.Cod.toString().toLowerCase().includes(text) ||
         item.Descripcion.toLowerCase().includes(text);
 
     const SearchHandle = (text) =>{
@@ -134,7 +134,7 @@ export const ProductsList = () => {
                     </button>
                     <button className='btnStnd btn1'
                         style={{marginLeft: '20px'}}
-                        onClick={()=>{navigate('/Inventory');setSection('Inventario')}}
+                        onClick={()=>{navigate('/Inventory')}}
                     >
                         Inventario
                     </button>

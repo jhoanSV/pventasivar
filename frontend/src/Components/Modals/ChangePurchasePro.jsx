@@ -4,7 +4,6 @@ import { ModifyPurchaseProduct } from '../../api';
 import { useTheContext } from '../../TheProvider';
 
 export const ChangePurchasePro = ({data, show, width}) => {
-    const [newData, setNewData] = useState(data)
     console.log(data);
     const [newPventa, setNewPventa] = useState(data.PVenta ? data.PVenta : '');
     // eslint-disable-next-line
@@ -14,7 +13,7 @@ export const ChangePurchasePro = ({data, show, width}) => {
         : 0
     )
     const { usD, someData } = useTheContext();
-    
+    console.log(someData);
     const ganancia = (ganancia) => {
         let withoutFormat = Number(ganancia.replace(/[.,]/g, (a) => (a === "," && ".")));
         let nuevoPv = (data.VrUnitarioFactura + data.VrUnitarioFactura*(withoutFormat/100)).toFixed(2);
@@ -142,20 +141,22 @@ export const ChangePurchasePro = ({data, show, width}) => {
                     </div>
                     
                 </div>
-                <div>
-                    <button className='btnStnd btn1'
-                        style={{marginLeft: '20px'}}
-                        onClick={()=>{acceptChanges()}}
+                {someData.Estado === 'Por ingresar' &&
+                    <div>
+                        <button className='btnStnd btn1'
+                            style={{marginLeft: '20px'}}
+                            onClick={()=>{acceptChanges()}}
+                                >
+                                aceptar
+                        </button>
+                        <button className='btnStnd btn1'
+                            style={{marginLeft: '20px'}}
+                            onClick={()=>{show(false)}}
                             >
-                            aceptar
-                    </button>
-                    <button className='btnStnd btn1'
-                        style={{marginLeft: '20px'}}
-                        onClick={()=>{show(false)}}
-                        >
-                            cancelar
-                    </button>
-                </div>
+                                cancelar
+                        </button>
+                    </div>
+                }
             </div>
                 </div>
             </div>

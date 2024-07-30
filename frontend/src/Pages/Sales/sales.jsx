@@ -1,5 +1,5 @@
 import React, {useEffect, useState, useRef} from 'react';
-import { TableComponent, Flatlist } from '../../Components';
+import { Flatlist, ModalBusca } from '../../Components';
 import { TheInput } from '../../Components/InputComponent/TheInput';
 import { ConfirmSaleModal } from '../../Components/Modals/ConfirmSaleModal';
 import { UserConfirm } from '../../Components/Modals/UserConfirm';
@@ -8,13 +8,14 @@ import { SalesOfTheDay } from '../../Components/Modals/SalesOfTheDay';
 import "./_sales.scss";
 import jsonTest from '../../tickets-text.json';
 import { useTheContext } from '../../TheProvider';
-
+import { Inventory } from '../../api';
+import { CSSTransition } from 'react-transition-group';
 
 export function Sales(){
     const [ buttonCount, setButtonCount] = useState(1); // Initial button count
     const [ tabindex, setTabindex] = useState(1);
     const [ total, setTotal] = useState(0);
-    const [ orderslist, setOrderslist] = useState(jsonTest[1])
+    const [ orderslist, setOrderslist] = useState(jsonTest[2])
     const [ selectedButton, setSelectedButton] = useState(1);
     const [ showConfirmar, setShowConfirmar] = useState(false);
     const [ selectedfila, setSelectedfila] = useState(0);
@@ -24,32 +25,21 @@ export function Sales(){
     const [ confirmUser, setConfirmUser] = useState(false);
     const [ searchClient, setSearchClient] = useState(false);
     const [ showSalesOfTheDay, setShowSalesOfTheDay] = useState(false);
+    const [showFL, setShowFL] = useState(false);
+    const [limit, setLimit] = useState(0);
+    const [sBText, setSBText] = useState('');
+    const [invList, setInvList] = useState([]);
+    const nodeRef = useRef(null);
+    const refList = useRef([]);
     const selectedfilaRef = useRef(selectedfila);
     const selectedTabRef = useRef(tabindex);
-    const { setSection } = useTheContext();
+    const { setSection, usD } = useTheContext();
 
-    useEffect(() => {
-        sumarTotal()
-    }, [orderslist]);
     
-    useEffect(() => {
-        setSection('Ventas')
-        window.addEventListener('keydown', handleKeyDown);
-        
-        return () => {
-            window.removeEventListener('keydown', handleKeyDown);
-        };
-    }, []);
-    
-    useEffect(() => {
-        selectedfilaRef.current = selectedfila;
-    }, [selectedfila]);
-
-    useEffect(() => {
-        selectedTabRef.current = tabindex;
-    }, [tabindex]);
 
     const changeTab =(index) => {
+        console.log(jsonTest);
+        console.log(jsonTest[index]);
         setOrderslist(jsonTest[index])
         setTabindex(index)
         setSelectedButton(index)
@@ -189,7 +179,6 @@ export function Sales(){
             defaultWidth: 131,
             type: 'text',
         },
-        ,
         {
             header: 'Descripción',
             key: 'descripcion',
@@ -249,18 +238,89 @@ export function Sales(){
         }
     };
 
+    const filterByText = (item, text) =>
+        item.Cod.toString().toLowerCase().includes(text) ||
+        item.Descripcion.toLowerCase().includes(text);
+
+    const SearchHandle = (text) =>{
+        setSBText((text))
+        let c = refList.current;
+        if (text !== ''){
+            setInvList(c.filter((i)=>filterByText(i, text)));
+        }else{
+            fetchInventoryList();
+        }
+    }
+
+    const fetchInventoryList = async() =>{
+        const list = await Inventory({
+            "IdFerreteria": usD.Cod
+        })
+        console.log(list);
+        if(list){
+            setInvList(list);
+            refList.current = list;
+        }
+    }
+
+    useEffect(() => {
+        sumarTotal();
+        // eslint-disable-next-line
+    }, [orderslist]);
+    
+    
+    useEffect(() => {
+        selectedfilaRef.current = selectedfila;
+    }, [selectedfila]);
+    
+    useEffect(() => {
+        selectedTabRef.current = tabindex;
+    }, [tabindex]);
+    
+    useEffect(() => {
+        setSection('Ventas');
+        fetchInventoryList();
+        setLimit(20);
+        window.addEventListener('keydown', handleKeyDown);
+        
+        return () => {
+            window.removeEventListener('keydown', handleKeyDown);
+        };
+        // eslint-disable-next-line
+    }, []);
+
     return (
         <section className='Sales'>
             <div className="Search">
-                <div className='elipsisText lines2' style={{maxHeight: '42px'}}>
-                    <label>Ingrese el codigo del producto</label>
+                <div style={{position: 'relative'}}>
+                    <input
+                        type="text"
+                        id='NPinput'
+                        placeholder="Codigo del producto"
+                        onChange={(e)=>{SearchHandle((e.target.value).toLowerCase())}}
+                        style={{width: '500px'}}
+                        onFocus={()=>setShowFL(true)}
+                        onBlur={()=>setShowFL(false)}
+                    />
+                    <CSSTransition
+                        timeout={200}
+                        in={sBText !== '' && showFL}
+                        nodeRef={nodeRef}
+                        classNames="FLA"
+                        unmountOnExit
+                        >
+                        <div className="FloatingList" ref={nodeRef}>
+                            {invList.slice(0,limit).map((item, index) =>
+                                <div key={index} className='flItem' onClick={(e)=>{/*document.getElementById('NPinput').value = e.currentTarget.innerText*/console.log(document.getElementById('NPinput'));console.log(e.currentTarget.innerText);}}>
+                                    {item.Descripcion}
+                                </div>
+                            )}
+                        </div>
+                    </CSSTransition>
+                    {/*(sBText !== '' && showFL) &&
+                    */}
                 </div>
-                <input
-                    type="text"
-                    id='NPinput'
-                    placeholder="Codigo del producto"
-                    style={{width: '500px'}}/>
-                <button className="btnStnd btn1">Buscar</button>
+                <ModalBusca/>
             </div>
             <div style={{padding: '0px 70px'}}>
                 <button

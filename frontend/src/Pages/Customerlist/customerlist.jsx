@@ -2,8 +2,6 @@ import React, { useEffect, useRef, useState } from 'react';
 import "./_customerlist.scss";
 import { useNavigate } from 'react-router-dom';
 import { useTheContext } from '../../TheProvider';
-//Para testeo
-import jsonTest from '../../jsonTest.json';
 import { TableComponent } from '../../Components';
 import { GeneralModal } from '../../Components/Modals/GeneralModal';
 import { Clientlist } from '../../api';

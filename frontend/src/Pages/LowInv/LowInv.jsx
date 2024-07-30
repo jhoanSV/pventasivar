@@ -12,7 +12,7 @@ export const LowInv = () => {
     const [limit, setLimit] = useState(20);
 
     const filterByText = (item, text) =>
-        item.cod.toString().includes(text) ||
+        item.cod.toString().toLowerCase().includes(text) ||
         item.cod_de_barras.toLowerCase() === (text) ||
         item.descripcion.toLowerCase().includes(text);        
 

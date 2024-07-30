@@ -8,21 +8,7 @@ import { GranelModal } from '../../Components/Modals/GranelModal';
 import { NuevoProducto, SubCategories, UpdateProduct } from '../../api';
 
 export const Newproduct = () => {
-    //*Examples
-    // example of list of categories
-    // Example dictionary
-    const categoriesList = {
-        1: 'EBANISTERIA',
-        2: 'ELECTRICOS',
-        3: 'TORNILLERIA',
-        4: 'GRIFERIA',
-        5: 'GAS',
-        6: 'LICUADORA',
-        7: 'ESTUDIANTIL',
-        8: 'MISCELANEOS'
-    };
-
-
+    
     const navigate = useNavigate()
     const { setSection, someData, setInvAdAuth, usD, productCodes } = useTheContext();
     const [imgSrc, setImgSrc] = useState(someData && `https://sivarwebresources.s3.amazonaws.com/AVIF/${someData.cod}.avif`)
