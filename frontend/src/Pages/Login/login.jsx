@@ -11,7 +11,7 @@ export function Login(){
 
     const LoginHandle = async() => {
         //*Veo ñero ojo con esto
-        setLogged(true);
+        /*setLogged(true);
         setUsD({
             "Cod": 242,
             "Ferreteria": "Ferreteria Marley",
@@ -22,7 +22,7 @@ export function Login(){
             "Email": "gersonlvargas.na@gmail.com",
             "Asesor": "Gerson"
         })
-        return;
+        return;*/
         const userData = await validateUser({
             "EmailUser": inputData1,
             "Password": inputData2

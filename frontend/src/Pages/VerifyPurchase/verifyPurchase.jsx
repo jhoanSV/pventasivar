@@ -43,7 +43,7 @@ export function VerifyPurchase(){
         },
         {
             header: 'Vr. Unitario',
-            key: 'VrUnitarioFactura',
+            key: 'PCosto',
             defaultWidth: '223px',
             type: 'text',
         },
@@ -124,13 +124,13 @@ export function VerifyPurchase(){
                     <label className={isSelected ? 'selected-label' : ''}>{item.Descripcion}</label>
                 </td>
                 <td style={{width: columnsWidth[3]}}>
-                    <label className={isSelected ? 'selected-label' : ''}>$ {Formater(item.VrUnitarioFactura)}</label>
+                    <label className={isSelected ? 'selected-label' : ''}>$ {Formater(item.PCosto)}</label>
                 </td>
                 <td style={{width: columnsWidth[4], alignItems: 'center' }}>
-                    {comparator(item.VrUnitarioFactura, item.PCosto)}
+                    {comparator(item.PCosto, item.PCostoLP)}
                 </td>
                 <td style={{width: columnsWidth[5]}}>
-                    <label className={isSelected ? 'selected-label' : ''}>$ {Formater(item.VrUnitarioFactura * item.Cantidad)}</label>
+                    <label className={isSelected ? 'selected-label' : ''}>$ {Formater(item.PCosto * item.Cantidad)}</label>
                 </td>
                 <td style={{width: columnsWidth[6]}}>
                     <label className={isSelected ? 'selected-label' : ''}>{item.Inventario}</label>
@@ -166,9 +166,12 @@ export function VerifyPurchase(){
     }
 
     const fetchOrderData = async() =>{
+        console.log('Estado: '+someData.Estado);
         const orderDetail = await PurchaseDetail({
             "IdFerreteria": usD.Cod,
-            "NPrefactura": someData.NPreFactura
+            "Consecutivo": someData.Consecutivo,
+            "NPreFactura" : someData.NPreFactura,
+            "Estado" : someData.Estado
         });
         console.log(orderDetail);
         if(orderDetail){
@@ -190,8 +193,8 @@ export function VerifyPurchase(){
                 "Cantidad": item.Cantidad,
                 "Cod": item.Cod,
                 "Descripcion": item.Descripcion,
-                "PCosto": item.VrUnitarioFactura,
-                "PCostoLP": item.PCosto,//*Precio anterior a la factura (PCosto)
+                "PCosto": item.PCosto,
+                "PCostoLP": item.PCostoLP,//*Precio anterior a la factura (PCosto)
                 "PVenta": item.PVenta,
                 "Iva": item.Iva
             }));

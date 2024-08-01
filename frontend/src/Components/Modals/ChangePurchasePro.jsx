@@ -7,23 +7,23 @@ export const ChangePurchasePro = ({data, show, width}) => {
     console.log(data);
     const [newPventa, setNewPventa] = useState(data.PVenta ? data.PVenta : '');
     // eslint-disable-next-line
-    const [theCost, setTheCost] = useState(data.PCosto ? data.PCosto : data.VrUnitarioFactura);
+    const [theCost, setTheCost] = useState(data.PCostoLP ? data.PCostoLP : data.PCosto);
     const [newGanancia, setNewGanancia] = useState(
-        data.PVenta ? ((data.PVenta - data.VrUnitarioFactura)/data.VrUnitarioFactura * 100).toFixed(2)
+        data.PVenta ? ((data.PVenta - data.PCosto)/data.PCosto * 100).toFixed(2)
         : 0
     )
     const { usD, someData } = useTheContext();
     console.log(someData);
     const ganancia = (ganancia) => {
         let withoutFormat = Number(ganancia.replace(/[.,]/g, (a) => (a === "," && ".")));
-        let nuevoPv = (data.VrUnitarioFactura + data.VrUnitarioFactura*(withoutFormat/100)).toFixed(2);
+        let nuevoPv = (data.PCosto + data.PCosto*(withoutFormat/100)).toFixed(2);
         data.PVenta = nuevoPv
         setNewPventa(nuevoPv);
     };
     
     const precioVenta = (pventa) => {
         let withoutFormat = Number(pventa.replace(/[.,]/g, (a) => (a === "," && ".")));
-        let nuevaGanancia = ((withoutFormat - data.VrUnitarioFactura)/data.VrUnitarioFactura * 100).toFixed(2);
+        let nuevaGanancia = ((withoutFormat - data.PCosto)/data.PCosto * 100).toFixed(2);
         //data.PVenta = nuevaGanancia
         data.PVenta = withoutFormat;
         setNewGanancia(nuevaGanancia);
@@ -80,7 +80,7 @@ export const ChangePurchasePro = ({data, show, width}) => {
                 <div style={{paddingBottom: '10px', borderBottom: '1px solid'}}>
                     <label className='subtitle'>{data.Descripcion}</label>
                 </div>
-                {(data.PVenta !== null && data.PCosto !== null) &&
+                {(data.PVenta !== null && data.PCostoLP !== null) &&
                     <div className='Rows' style={{paddingBottom: '10px', borderBottom: '1px solid'}}>
                         <div className='column1'>
                             <label className='subtitle'>Inventario actual:</label>
@@ -104,7 +104,7 @@ export const ChangePurchasePro = ({data, show, width}) => {
                             <label className='subtitle'>Costo actual:</label>
                         </div>
                         <div className='column2'>
-                            <label>$ {data.PCosto ? Formater(data.PCosto) : Formater(0)}</label>
+                            <label>$ {data.PCostoLP ? Formater(data.PCostoLP) : Formater(0)}</label>
                         </div>
                         <div className='column1'>
                             <label className='subtitle'>Precio Venta:</label>
@@ -121,7 +121,7 @@ export const ChangePurchasePro = ({data, show, width}) => {
                     </div>
                     <div className='form-row'>
                         <label className='subtitle'>Costo:</label>
-                        <label>$ {Formater(data.VrUnitarioFactura)}</label>
+                        <label>$ {Formater(data.PCosto)}</label>
                     </div>
                     <div className='form-row'>
                         <label className='subtitle'>Ganancia:</label>

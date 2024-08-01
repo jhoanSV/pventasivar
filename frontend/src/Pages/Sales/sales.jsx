@@ -12,16 +12,17 @@ import { Inventory } from '../../api';
 import { CSSTransition } from 'react-transition-group';
 
 export function Sales(){
-    const [ buttonCount, setButtonCount] = useState(1); // Initial button count
-    const [ tabindex, setTabindex] = useState(1);
+    //*---------------------
+    const [saleTabs, setSaleTabs] = useState(jsonTest);
+    const [currentTab, setCurrentTab] = useState(0);
+    const [tabsHistory, setTabsHistory] = useState(Object.keys(saleTabs).length);
+    //*---------------------
     const [ total, setTotal] = useState(0);
-    const [ orderslist, setOrderslist] = useState(jsonTest[2])
-    const [ selectedButton, setSelectedButton] = useState(1);
+    const [ orderslist, setOrderslist] = useState(jsonTest[1])
     const [ showConfirmar, setShowConfirmar] = useState(false);
     const [ selectedfila, setSelectedfila] = useState(0);
     const [ changeQuantity, setChangeQuantity] = useState(null);
     const [ changePventa, setChangePventa] = useState(null);
-    const [ tabButtons, setTabButtons] = useState({ 1: true }); // Dictionary to store tab buttons
     const [ confirmUser, setConfirmUser] = useState(false);
     const [ searchClient, setSearchClient] = useState(false);
     const [ showSalesOfTheDay, setShowSalesOfTheDay] = useState(false);
@@ -32,39 +33,24 @@ export function Sales(){
     const nodeRef = useRef(null);
     const refList = useRef([]);
     const selectedfilaRef = useRef(selectedfila);
-    const selectedTabRef = useRef(tabindex);
+    const selectedTabRef = useRef(currentTab);
     const { setSection, usD } = useTheContext();
-
-    
-
-    const changeTab =(index) => {
-        console.log(jsonTest);
-        console.log(jsonTest[index]);
-        setOrderslist(jsonTest[index])
-        setTabindex(index)
-        setSelectedButton(index)
-        if (jsonTest[index].length !== 0) {
-            setSelectedfila(jsonTest[index].length - 1)
-        } else if (jsonTest[index].length === 0 ) {
-            setSelectedfila(null)
-        }
-    };
 
     const handleKeyDown = (event) => {
         const currentSelectedTab = selectedTabRef.current;
-        if (jsonTest[currentSelectedTab].length !== 0) {
+        if (saleTabs[currentSelectedTab].length !== 0) {
             const currentSelectedFila = selectedfilaRef.current;
             if (event.key === '+') {
                 updateCantidad(currentSelectedFila, 1)
             } else if (event.key === '-') {
                 updateCantidad(currentSelectedFila,-1)
-            } else if (event.key === 'ArrowDown' && currentSelectedFila + 1 >= 0 && currentSelectedFila + 1 < jsonTest[tabindex].length) {
+            } else if (event.key === 'ArrowDown' && currentSelectedFila + 1 >= 0 && currentSelectedFila + 1 < saleTabs[currentTab].length) {
                 setSelectedfila(currentSelectedFila + 1)
-            } else if (event.key === 'ArrowUp' && currentSelectedFila - 1 >= 0 && currentSelectedFila - 1 < jsonTest[tabindex].length) {
+            } else if (event.key === 'ArrowUp' && currentSelectedFila - 1 >= 0 && currentSelectedFila - 1 < saleTabs[currentTab].length) {
                 setSelectedfila(currentSelectedFila - 1)
             } else if (event.key === 'Delete') {
-                jsonTest[currentSelectedTab].splice(currentSelectedFila, 1)
-                const updatedOrdersList = [...jsonTest[tabindex]];
+                saleTabs[currentSelectedTab].splice(currentSelectedFila, 1)
+                const updatedOrdersList = [...saleTabs[currentTab]];
                 // Actualiza el estado con la nueva lista
                 setOrderslist(updatedOrdersList);
             }
@@ -73,9 +59,9 @@ export function Sales(){
 
     const onblurChangeCuantity = (row, amount) => {
         if (amount > 0) {
-            jsonTest[tabindex][row].Cantidad = amount
+            saleTabs[currentTab][row].Cantidad = amount
             // Crea una copia del jsonTest[tabindex] para actualizar el estado
-            const updatedOrdersList = [...jsonTest[tabindex]];
+            const updatedOrdersList = [...saleTabs[currentTab]];
             // Actualiza el estado con la nueva lista
             setOrderslist(updatedOrdersList);
         }
@@ -86,9 +72,9 @@ export function Sales(){
         if (amount > 0) {
             const theValue = amount
             let withoutFormat = theValue.replace(/\./g, '')
-            jsonTest[tabindex][row].pVenta = withoutFormat
+            saleTabs[currentTab][row].pVenta = withoutFormat
             // Crea una copia del jsonTest[tabindex] para actualizar el estado
-            const updatedOrdersList = [...jsonTest[tabindex]];
+            const updatedOrdersList = [...saleTabs[currentTab]];
             // Actualiza el estado con la nueva lista
             setOrderslist(updatedOrdersList);
         }
@@ -156,11 +142,11 @@ export function Sales(){
     
 
     const updateCantidad = (selectedRow, amount) => {
-        if (jsonTest[tabindex][selectedRow].Cantidad + amount > 0) {
-            jsonTest[tabindex][selectedRow].Cantidad += amount
+        if (saleTabs[currentTab][selectedRow].Cantidad + amount > 0) {
+            saleTabs[currentTab][selectedRow].Cantidad += amount
             // Crea una copia del jsonTest[tabindex] para actualizar el estado
             console.log('fila al aumentar ' + selectedRow)
-            const updatedOrdersList = [...jsonTest[tabindex]];
+            const updatedOrdersList = [...saleTabs[currentTab]];
             // Actualiza el estado con la nueva lista
             setOrderslist(updatedOrdersList);
         }
@@ -205,19 +191,6 @@ export function Sales(){
         }
     ];
 
-    const createButton = () => {
-        if (Object.keys(jsonTest).length < 16) {
-            setButtonCount(prevCount => {
-                const newCount = prevCount + 1;
-                jsonTest[prevCount + 1] = [];
-                changeTab(newCount)
-                return newCount;
-            });
-            setTabButtons(prevButtons => ({ ...prevButtons, [buttonCount + 1]: true }));
-        }
-    };
-
-
     const sumarTotal = () => {
         let suma = 0;
         if (orderslist && orderslist.length > 0) {orderslist.forEach((item, index) => (
@@ -226,15 +199,64 @@ export function Sales(){
         setTotal(suma)
     };
 
-    const closeTab = (tabNumber) => {
-        console.log(tabNumber)
-        if (Object.keys(jsonTest).length > 1 && tabNumber in jsonTest) {
+    const changeTab = (Num, index) => {
+        console.log('Num: '+ Num + ' index: ' + index);
+        if(Num===null){
+            console.log('Cambio por borranding');
+            setOrderslist(Object.entries(saleTabs)[index][1]);
+        }else{
+            setOrderslist(saleTabs[Num]);
+        }
+        setCurrentTab(index);
+        if (Num !== null && saleTabs[Num].length !== 0) {
+            setSelectedfila(saleTabs[Num].length - 1);
+        } else if ( Num !== null && saleTabs[Num].length === 0 ) {
+            setSelectedfila(null);
+        }
+    };
+
+    const createButton = () => {
+        let tabLen = Object.keys(saleTabs).length
+        if (tabLen < 16) {
+            //saleTabs[tabLen + 1] = [];
+            saleTabs[tabsHistory + 1] = [{
+                    "Cantidad": 50,
+                    "Codigo": `a${tabsHistory}`,
+                    "Descripcion": "chazo anclaje 1/4 x 1 3/8",
+                    "UM": "cm",
+                    "Medida": 100,
+                    "pCosto": 100,
+                    "pVenta": 260
+                }];
+            console.log("create button: " + (tabLen));
+            changeTab((tabsHistory + 1), (Object.keys(saleTabs).length)-1);
+            setTabsHistory(tabsHistory + 1);
+            /*setButtonCount(prevCount => {
+                jsonTest[prevCount + 1] = [];
+                return (prevCount + 1);
+            });
+            setTabButtons(prevButtons => ({ ...prevButtons, [buttonCount + 1]: true }));*/
+        }
+    };
+
+    const closeTab = (tabNumber, index) => {
+        console.log('close: ' + index);
+        console.log('tab to close: ' + tabNumber);
+        console.log(saleTabs);
+        console.log('tabNumber in jsonTest ' + (tabNumber in saleTabs));
+        if (Object.keys(saleTabs).length > 1 && (tabNumber in saleTabs)) {
             console.log('entro en cerrar el tab')
-            const newTabButtons = { ...tabButtons };
-            delete newTabButtons[tabNumber];
-            setTabButtons(newTabButtons);
-            changeTab(selectedButton === tabNumber ? 1 : selectedButton)
-            setSelectedButton(selectedButton === tabNumber ? 1 : selectedButton);
+            //const newTabButtons = { ...tabButtons };
+            delete saleTabs[tabNumber];
+            console.log(saleTabs);
+            console.log('index: '+index+' current Tab: '+currentTab);
+            if(index < currentTab){
+                setCurrentTab(index-1);
+            }else if(index === currentTab){
+                if(index === 0){
+                    changeTab(null, (index))
+                }else changeTab(null, (index-1))
+            }
         }
     };
 
@@ -274,8 +296,9 @@ export function Sales(){
     }, [selectedfila]);
     
     useEffect(() => {
-        selectedTabRef.current = tabindex;
-    }, [tabindex]);
+        console.log('the current ' +currentTab);
+        selectedTabRef.current = currentTab;
+    }, [currentTab]);
     
     useEffect(() => {
         setSection('Ventas');
@@ -328,20 +351,20 @@ export function Sales(){
                     onClick={()=>setSearchClient(true)}>Asignar cliente</button>
                 <div className="tabs">
                     <div className='tabButtons'>
-                        {Object.keys(tabButtons).map(tabNumber => (
+                        {Object.keys(saleTabs).map((tabNumber, index) => (
                             <div className='tabButtonModel' key={tabNumber}>
                                 <input
                                     type="radio"
                                     id={`radio${tabNumber}`}
                                     name="dynamicRadioGroup"
                                     className='tabButton'
-                                    checked={selectedButton === parseInt(tabNumber)}
-                                    onChange={() => changeTab(parseInt(tabNumber))}
+                                    checked={currentTab === index}
+                                    onChange={() => changeTab(parseInt(tabNumber), index)}
                                 />
                                 <label className='tab-rb-label' htmlFor={`radio${tabNumber}`} style={{userSelect: 'none'}}>
                                     {tabNumber}
                                 </label>
-                                <button className="tab-btn-close"  style={{userSelect: 'none'}} onClick={() => closeTab(parseInt(tabNumber))}>x</button>
+                                <button className="tab-btn-close"  style={{userSelect: 'none'}} onClick={() => closeTab(parseInt(tabNumber), (index))}>x</button>
                             </div>
                         ))}
                             <button onClick={()=>{createButton()}} className='add-tab'>+</button>
@@ -359,7 +382,7 @@ export function Sales(){
                     <button className="btnStnd btn1" onClick={()=>setShowConfirmar(true)}>F2-Cobrar</button>
                     <label>$ {Formater(total)}</label>
                 </div>
-                <label>{jsonTest[tabindex].length} productos en el ticket actual</label>
+                <label>{orderslist.length} productos en el ticket actual</label>
                 <button className="btnStnd btn1" onClick={()=>setShowSalesOfTheDay(true)}>Ventas del dia y devoluciones</button>
                 { showConfirmar && <ConfirmSaleModal orderslist={orderslist} show={setShowConfirmar}/>}
                 { confirmUser && <UserConfirm show={setConfirmUser} confirmed={()=>setChangePventa(selectedfila)}/>}
