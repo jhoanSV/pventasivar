@@ -34,23 +34,28 @@ export function Sales(){
     const refList = useRef([]);
     const selectedfilaRef = useRef(selectedfila);
     const selectedTabRef = useRef(currentTab);
+    const isEditingRef = useRef(false), avoidfRender1 = useRef(true);
     const { setSection, usD } = useTheContext();
 
     const handleKeyDown = (event) => {
-        const currentSelectedTab = selectedTabRef.current;
-        if (saleTabs[currentSelectedTab].length !== 0) {
+        //const currentSelectedTab = selectedTabRef.current;
+        if(isEditingRef.current===true)return;
+        let theOrder = Object.entries(saleTabs)[selectedTabRef.current][1]
+        if (theOrder.length !== 0) {
             const currentSelectedFila = selectedfilaRef.current;
             if (event.key === '+') {
                 updateCantidad(currentSelectedFila, 1)
             } else if (event.key === '-') {
                 updateCantidad(currentSelectedFila,-1)
-            } else if (event.key === 'ArrowDown' && currentSelectedFila + 1 >= 0 && currentSelectedFila + 1 < saleTabs[currentTab].length) {
+            } else if (event.key === 'ArrowDown' && currentSelectedFila + 1 >= 0 && currentSelectedFila + 1 < theOrder.length) {
                 setSelectedfila(currentSelectedFila + 1)
-            } else if (event.key === 'ArrowUp' && currentSelectedFila - 1 >= 0 && currentSelectedFila - 1 < saleTabs[currentTab].length) {
+            } else if (event.key === 'ArrowUp' && currentSelectedFila - 1 >= 0 && currentSelectedFila - 1 < theOrder.length) {
                 setSelectedfila(currentSelectedFila - 1)
             } else if (event.key === 'Delete') {
-                saleTabs[currentSelectedTab].splice(currentSelectedFila, 1)
-                const updatedOrdersList = [...saleTabs[currentTab]];
+                console.log(theOrder);
+                theOrder.splice(currentSelectedFila, 1)
+                const updatedOrdersList = [...theOrder];
+                console.log(updatedOrdersList);
                 // Actualiza el estado con la nueva lista
                 setOrderslist(updatedOrdersList);
             }
@@ -58,10 +63,11 @@ export function Sales(){
     };
 
     const onblurChangeCuantity = (row, amount) => {
+        let theOrder = Object.entries(saleTabs)[selectedTabRef.current][1]
         if (amount > 0) {
-            saleTabs[currentTab][row].Cantidad = amount
+            theOrder[row].Cantidad = amount
             // Crea una copia del jsonTest[tabindex] para actualizar el estado
-            const updatedOrdersList = [...saleTabs[currentTab]];
+            const updatedOrdersList = [...theOrder];
             // Actualiza el estado con la nueva lista
             setOrderslist(updatedOrdersList);
         }
@@ -69,12 +75,14 @@ export function Sales(){
     };
 
     const onblurChangePv = (row, amount) => {
+        let theOrder = Object.entries(saleTabs)[selectedTabRef.current][1]
+        console.log(theOrder);
         if (amount > 0) {
             const theValue = amount
             let withoutFormat = theValue.replace(/\./g, '')
-            saleTabs[currentTab][row].pVenta = withoutFormat
+            theOrder[row].pVenta = withoutFormat
             // Crea una copia del jsonTest[tabindex] para actualizar el estado
-            const updatedOrdersList = [...saleTabs[currentTab]];
+            const updatedOrdersList = [...theOrder];
             // Actualiza el estado con la nueva lista
             setOrderslist(updatedOrdersList);
         }
@@ -88,14 +96,14 @@ export function Sales(){
         const rowIndex = index;
         return (
                 <>
-                    <td style={{width: columnsWidth[0]}} onDoubleClick={()=>{setChangeQuantity(index)}}>
+                    <td style={{width: columnsWidth[0]}} onDoubleClick={()=>{setChangeQuantity(index);isEditingRef.current=true}}>
                         { isEditing ? (
                             <TheInput
                                 id = {'i'+ rowIndex}
                                 numType ='nat'
                                 val = {item.Cantidad}
                                 sTyle = {{width: columnsWidth[0]}}
-                                onblur = {(e) => onblurChangeCuantity(rowIndex, e)}
+                                onblur = {(e) => {onblurChangeCuantity(rowIndex, e);isEditingRef.current=false}}
                                 autofocus={true}
                             /> ) :
                         ( 
@@ -111,14 +119,14 @@ export function Sales(){
                     <td style={{width: columnsWidth[3]}}>
                         <label>{item.UM}</label>
                     </td>
-                    <td style={{width: columnsWidth[4]}} onDoubleClick={()=>setConfirmUser(true)}>
+                    <td style={{width: columnsWidth[4]}} onDoubleClick={()=>{setConfirmUser(true);isEditingRef.current=true}}>
                         { isEditingPv ? (
                             <TheInput
                                 id = {'i'+ rowIndex}
                                 numType ='real'
                                 val = {item.pVenta}
                                 sTyle = {{width: columnsWidth[0]}}
-                                onblur = {(e) => onblurChangePv(rowIndex, e)}
+                                onblur = {(e) => {onblurChangePv(rowIndex, e);isEditingRef.current=false}}
                                 autofocus={true}
                             /> ) :
                         ( 
@@ -142,11 +150,11 @@ export function Sales(){
     
 
     const updateCantidad = (selectedRow, amount) => {
-        if (saleTabs[currentTab][selectedRow].Cantidad + amount > 0) {
-            saleTabs[currentTab][selectedRow].Cantidad += amount
+        let theOrder = Object.entries(saleTabs)[selectedTabRef.current][1]
+        if (theOrder[selectedRow].Cantidad + amount > 0) {
+            theOrder[selectedRow].Cantidad += amount
             // Crea una copia del jsonTest[tabindex] para actualizar el estado
-            console.log('fila al aumentar ' + selectedRow)
-            const updatedOrdersList = [...saleTabs[currentTab]];
+            const updatedOrdersList = [...theOrder];
             // Actualiza el estado con la nueva lista
             setOrderslist(updatedOrdersList);
         }
@@ -200,58 +208,45 @@ export function Sales(){
     };
 
     const changeTab = (Num, index) => {
-        console.log('Num: '+ Num + ' index: ' + index);
         if(Num===null){
-            console.log('Cambio por borranding');
             setOrderslist(Object.entries(saleTabs)[index][1]);
         }else{
             setOrderslist(saleTabs[Num]);
         }
-        setCurrentTab(index);
+        console.log('saleTabs[Num]', saleTabs[Num]);
         if (Num !== null && saleTabs[Num].length !== 0) {
             setSelectedfila(saleTabs[Num].length - 1);
         } else if ( Num !== null && saleTabs[Num].length === 0 ) {
             setSelectedfila(null);
         }
+        setCurrentTab(index);
     };
 
     const createButton = () => {
         let tabLen = Object.keys(saleTabs).length
         if (tabLen < 16) {
-            //saleTabs[tabLen + 1] = [];
-            saleTabs[tabsHistory + 1] = [{
-                    "Cantidad": 50,
-                    "Codigo": `a${tabsHistory}`,
-                    "Descripcion": "chazo anclaje 1/4 x 1 3/8",
-                    "UM": "cm",
-                    "Medida": 100,
-                    "pCosto": 100,
-                    "pVenta": 260
-                }];
-            console.log("create button: " + (tabLen));
+            saleTabs[tabsHistory + 1] = [];
+            // saleTabs[tabsHistory + 1] = [{
+            //         "Cantidad": 50,
+            //         "Codigo": `a${tabsHistory}`,
+            //         "Descripcion": "chazo anclaje 1/4 x 1 3/8",
+            //         "UM": "cm",
+            //         "Medida": 100,
+            //         "pCosto": 100,
+            //         "pVenta": 260
+            //     }];
             changeTab((tabsHistory + 1), (Object.keys(saleTabs).length)-1);
             setTabsHistory(tabsHistory + 1);
-            /*setButtonCount(prevCount => {
-                jsonTest[prevCount + 1] = [];
-                return (prevCount + 1);
-            });
-            setTabButtons(prevButtons => ({ ...prevButtons, [buttonCount + 1]: true }));*/
         }
     };
 
     const closeTab = (tabNumber, index) => {
-        console.log('close: ' + index);
-        console.log('tab to close: ' + tabNumber);
-        console.log(saleTabs);
-        console.log('tabNumber in jsonTest ' + (tabNumber in saleTabs));
         if (Object.keys(saleTabs).length > 1 && (tabNumber in saleTabs)) {
-            console.log('entro en cerrar el tab')
-            //const newTabButtons = { ...tabButtons };
-            delete saleTabs[tabNumber];
-            console.log(saleTabs);
-            console.log('index: '+index+' current Tab: '+currentTab);
+            const newTabButtons = {...saleTabs};
+            delete newTabButtons[tabNumber];
+            setSaleTabs(newTabButtons);
             if(index < currentTab){
-                setCurrentTab(index-1);
+                setCurrentTab(currentTab-1);
             }else if(index === currentTab){
                 if(index === 0){
                     changeTab(null, (index))
@@ -274,6 +269,15 @@ export function Sales(){
         }
     }
 
+    const addProduct = (e, item) =>{
+        let theProduct = {...item}
+        //let theOrder = [...orderslist];
+        let theOrder = Object.entries(saleTabs)[selectedTabRef.current][1];
+        theProduct.Cantidad = 1;
+        theOrder.push(theProduct);
+        setOrderslist([...theOrder]);
+    }
+
     const fetchInventoryList = async() =>{
         const list = await Inventory({
             "IdFerreteria": usD.Cod
@@ -287,6 +291,12 @@ export function Sales(){
 
     useEffect(() => {
         sumarTotal();
+        if(avoidfRender1.current){
+            avoidfRender1.current = false;
+        }else{
+            var orderElement = document.getElementById("FlastListID");
+            orderElement.scrollTop = orderElement.scrollHeight;
+        }
         // eslint-disable-next-line
     }, [orderslist]);
     
@@ -296,7 +306,6 @@ export function Sales(){
     }, [selectedfila]);
     
     useEffect(() => {
-        console.log('the current ' +currentTab);
         selectedTabRef.current = currentTab;
     }, [currentTab]);
     
@@ -322,8 +331,8 @@ export function Sales(){
                         placeholder="Codigo del producto"
                         onChange={(e)=>{SearchHandle((e.target.value).toLowerCase())}}
                         style={{width: '500px'}}
-                        onFocus={()=>setShowFL(true)}
-                        onBlur={()=>setShowFL(false)}
+                        onFocus={()=>{setShowFL(true);isEditingRef.current=true}}
+                        onBlur={()=>{setShowFL(false);isEditingRef.current=false}}
                     />
                     <CSSTransition
                         timeout={200}
@@ -334,7 +343,7 @@ export function Sales(){
                         >
                         <div className="FloatingList" ref={nodeRef}>
                             {invList.slice(0,limit).map((item, index) =>
-                                <div key={index} className='flItem' onClick={(e)=>{/*document.getElementById('NPinput').value = e.currentTarget.innerText*/console.log(document.getElementById('NPinput'));console.log(e.currentTarget.innerText);}}>
+                                <div key={index} className='flItem' onClick={(e)=>{addProduct(e, item)}}>
                                     {item.Descripcion}
                                 </div>
                             )}
@@ -382,7 +391,8 @@ export function Sales(){
                     <button className="btnStnd btn1" onClick={()=>setShowConfirmar(true)}>F2-Cobrar</button>
                     <label>$ {Formater(total)}</label>
                 </div>
-                <label>{orderslist.length} productos en el ticket actual</label>
+                {console.log(orderslist)}
+                <label>{orderslist && orderslist.length} productos en el ticket actual</label>
                 <button className="btnStnd btn1" onClick={()=>setShowSalesOfTheDay(true)}>Ventas del dia y devoluciones</button>
                 { showConfirmar && <ConfirmSaleModal orderslist={orderslist} show={setShowConfirmar}/>}
                 { confirmUser && <UserConfirm show={setConfirmUser} confirmed={()=>setChangePventa(selectedfila)}/>}

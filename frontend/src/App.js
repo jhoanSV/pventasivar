@@ -17,7 +17,6 @@ export const App = () => {
         </>
         :
         <div style={{boxShadow: 'rgb(0 0 0 / 28%) 0px 0px 15px 20px'}}>
-          <div style={{position: 'absolute', zIndex: '100'}}>{typeof(someData)}</div>
           <Header/>
           <Routes/>
         </div>
