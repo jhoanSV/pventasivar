@@ -80,7 +80,7 @@ export const ChangePurchasePro = ({data, show, width}) => {
                 <div style={{paddingBottom: '10px', borderBottom: '1px solid'}}>
                     <label className='subtitle'>{data.Descripcion}</label>
                 </div>
-                {(data.PVenta !== null && data.PCostoLP !== null) &&
+                {(data.PVenta !== null && data.PCostoLP !== null && someData.Estado !== 'Recibido') &&
                     <div className='Rows' style={{paddingBottom: '10px', borderBottom: '1px solid'}}>
                         <div className='column1'>
                             <label className='subtitle'>Inventario actual:</label>
@@ -116,28 +116,62 @@ export const ChangePurchasePro = ({data, show, width}) => {
                 }
                 <div className='form-container'>
                     <div className='form-row'>
-                        <label className='subtitle'>Cantidad de compra:</label>
-                        <label>{data.Cantidad}</label>
+                        {someData.Estado === 'Por ingresar' ?
+                            <>
+                                <label className='subtitle'>Cantidad de compra:</label>
+                                <label>{data.Cantidad}</label>
+                            </>
+                            :
+                            <>
+                                <label className='subtitle'>Costo Anterior:</label>
+                                <label>$ {Formater(data.PCostoLP)}</label>
+                            </>
+                        }
+                        
                     </div>
                     <div className='form-row'>
-                        <label className='subtitle'>Costo:</label>
+                        {someData.Estado === 'Por ingresar' ?
+                            <label className='subtitle'>Costo:</label>
+                            :
+                            <label className='subtitle'>Costo Factura:</label>
+                        }
                         <label>$ {Formater(data.PCosto)}</label>
                     </div>
                     <div className='form-row'>
                         <label className='subtitle'>Ganancia:</label>
-                        <TheInput
-                            numType='real'
-                            val={Formater(newGanancia)}
-                            onchange={(e)=>ganancia(e)}/>
+                        {someData.Estado === 'Por ingresar' ?
+                            <TheInput
+                                numType='real'
+                                val={Formater(newGanancia)}
+                                onchange={(e)=>ganancia(e)}/>
+                        :
+                            <label>
+                                {Formater(newGanancia)}
+                            </label>
+                        }
                     </div>
                     <div className='form-row'>
-                        <label className='subtitle'>Nuevo precio de venta:</label>
-                        <TheInput
-                            numType='real'
-                            val={Formater(newPventa)}
-                            pholder={'Nuevo p. Venta'}
-                            onchange={(e)=>precioVenta(e)}>
-                        </TheInput>
+                        <label className='subtitle'>
+                            { someData.Estado === 'Por ingresar' ?
+                                <>
+                                    Nuevo precio de venta:
+                                </>
+                            :
+                                <>
+                                    Precio de venta
+                                </>
+                            }
+                        </label>
+                        {someData.Estado === 'Por ingresar' ?
+                            <TheInput
+                                numType='real'
+                                val={Formater(newPventa)}
+                                pholder={'Nuevo p. Venta'}
+                                onchange={(e)=>precioVenta(e)}>
+                            </TheInput>
+                        :
+                            <label>$ {Formater(data.PVenta)}</label>
+                        }
                     </div>
                     
                 </div>

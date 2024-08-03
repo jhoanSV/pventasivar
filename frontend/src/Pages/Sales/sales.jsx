@@ -30,18 +30,20 @@ export function Sales(){
     const [limit, setLimit] = useState(0);
     const [sBText, setSBText] = useState('');
     const [invList, setInvList] = useState([]);
-    const nodeRef = useRef(null);
+    const nodeRef = useRef(null), divSRef = useRef();
     const refList = useRef([]);
     const selectedfilaRef = useRef(selectedfila);
     const selectedTabRef = useRef(currentTab);
-    const isEditingRef = useRef(false), avoidfRender1 = useRef(true);
+    const isEditingRef = useRef(false);
     const { setSection, usD } = useTheContext();
 
     const handleKeyDown = (event) => {
         //const currentSelectedTab = selectedTabRef.current;
         if(isEditingRef.current===true)return;
         let theOrder = Object.entries(saleTabs)[selectedTabRef.current][1]
-        if (theOrder.length !== 0) {
+        console.log(selectedfilaRef.current);
+        console.log(theOrder.length);
+        if (theOrder.length !== 0 && selectedfilaRef.current !== null) {
             const currentSelectedFila = selectedfilaRef.current;
             if (event.key === '+') {
                 updateCantidad(currentSelectedFila, 1)
@@ -214,6 +216,7 @@ export function Sales(){
             setOrderslist(saleTabs[Num]);
         }
         console.log('saleTabs[Num]', saleTabs[Num]);
+        console.log(index);
         if (Num !== null && saleTabs[Num].length !== 0) {
             setSelectedfila(saleTabs[Num].length - 1);
         } else if ( Num !== null && saleTabs[Num].length === 0 ) {
@@ -245,6 +248,7 @@ export function Sales(){
             const newTabButtons = {...saleTabs};
             delete newTabButtons[tabNumber];
             setSaleTabs(newTabButtons);
+            console.log('tabNumber: '+tabNumber+' index: '+index+' CurrentTab: '+currentTab);
             if(index < currentTab){
                 setCurrentTab(currentTab-1);
             }else if(index === currentTab){
@@ -269,14 +273,28 @@ export function Sales(){
         }
     }
 
-    const addProduct = (e, item) =>{
+    const addProduct = (item) =>{
         let theProduct = {...item}
-        //let theOrder = [...orderslist];
         let theOrder = Object.entries(saleTabs)[selectedTabRef.current][1];
         theProduct.Cantidad = 1;
         theOrder.push(theProduct);
-        setOrderslist([...theOrder]);
+        setOrderslist(a => {
+            var orderElement = document.getElementById("FlastListID");
+            setTimeout(() => {
+                if (orderElement) {
+                    orderElement.scrollTop = orderElement.scrollHeight;
+                }
+              }, 0);
+            return [...theOrder];
+        });
+        setShowFL(false);
     }
+
+    const handleClickOutside = (event) => {
+        if (divSRef.current && !divSRef.current.contains(event.target)) {
+          setShowFL(false);
+        }
+      };
 
     const fetchInventoryList = async() =>{
         const list = await Inventory({
@@ -291,12 +309,6 @@ export function Sales(){
 
     useEffect(() => {
         sumarTotal();
-        if(avoidfRender1.current){
-            avoidfRender1.current = false;
-        }else{
-            var orderElement = document.getElementById("FlastListID");
-            orderElement.scrollTop = orderElement.scrollHeight;
-        }
         // eslint-disable-next-line
     }, [orderslist]);
     
@@ -306,6 +318,7 @@ export function Sales(){
     }, [selectedfila]);
     
     useEffect(() => {
+        console.log('hptaaaaa: ',currentTab);
         selectedTabRef.current = currentTab;
     }, [currentTab]);
     
@@ -314,9 +327,11 @@ export function Sales(){
         fetchInventoryList();
         setLimit(20);
         window.addEventListener('keydown', handleKeyDown);
+        document.addEventListener('mousedown', handleClickOutside);
         
         return () => {
             window.removeEventListener('keydown', handleKeyDown);
+            document.removeEventListener('mousedown', handleClickOutside);
         };
         // eslint-disable-next-line
     }, []);
@@ -324,7 +339,7 @@ export function Sales(){
     return (
         <section className='Sales'>
             <div className="Search">
-                <div style={{position: 'relative'}}>
+                <div ref={divSRef} style={{position: 'relative'}}>
                     <input
                         type="text"
                         id='NPinput'
@@ -332,7 +347,8 @@ export function Sales(){
                         onChange={(e)=>{SearchHandle((e.target.value).toLowerCase())}}
                         style={{width: '500px'}}
                         onFocus={()=>{setShowFL(true);isEditingRef.current=true}}
-                        onBlur={()=>{setShowFL(false);isEditingRef.current=false}}
+                        onBlur={()=>{isEditingRef.current=false}}
+                        autoComplete='hidden'
                     />
                     <CSSTransition
                         timeout={200}
@@ -342,8 +358,8 @@ export function Sales(){
                         unmountOnExit
                         >
                         <div className="FloatingList" ref={nodeRef}>
-                            {invList.slice(0,limit).map((item, index) =>
-                                <div key={index} className='flItem' onClick={(e)=>{addProduct(e, item)}}>
+                            {invList./*slice(0,limit).*/map((item, index) =>
+                                <div key={index} className='flItem' onClick={()=>{addProduct(item)}}>
                                     {item.Descripcion}
                                 </div>
                             )}
@@ -361,22 +377,30 @@ export function Sales(){
                 <div className="tabs">
                     <div className='tabButtons'>
                         {Object.keys(saleTabs).map((tabNumber, index) => (
-                            <div className='tabButtonModel' key={tabNumber}>
+                            <div className='tabButtonModel' key={tabNumber} onClick={()=>{
+                                changeTab(parseInt(tabNumber), index);
+                                document.getElementById(`radio${tabNumber}`).checked = true;
+                                console.log('a');
+                            }}>
                                 <input
                                     type="radio"
                                     id={`radio${tabNumber}`}
                                     name="dynamicRadioGroup"
                                     className='tabButton'
                                     checked={currentTab === index}
-                                    onChange={() => changeTab(parseInt(tabNumber), index)}
+                                    readOnly
                                 />
-                                <label className='tab-rb-label' htmlFor={`radio${tabNumber}`} style={{userSelect: 'none'}}>
+
+                                <label className='tab-rb-label' style={{userSelect: 'none'}}>
                                     {tabNumber}
                                 </label>
-                                <button className="tab-btn-close"  style={{userSelect: 'none'}} onClick={() => closeTab(parseInt(tabNumber), (index))}>x</button>
+                                <button className="tab-btn-close" style={{userSelect: 'none'}} onClick={(e) => {
+                                    e.stopPropagation();
+                                    closeTab(parseInt(tabNumber), (index));
+                                }}>x</button>
                             </div>
                         ))}
-                            <button onClick={()=>{createButton()}} className='add-tab'>+</button>
+                            <button onClick={()=>{createButton()}} className='add-tab' style={{userSelect: 'none'}}>+</button>
                     </div>
                     <Flatlist
                         data={orderslist}
@@ -391,7 +415,6 @@ export function Sales(){
                     <button className="btnStnd btn1" onClick={()=>setShowConfirmar(true)}>F2-Cobrar</button>
                     <label>$ {Formater(total)}</label>
                 </div>
-                {console.log(orderslist)}
                 <label>{orderslist && orderslist.length} productos en el ticket actual</label>
                 <button className="btnStnd btn1" onClick={()=>setShowSalesOfTheDay(true)}>Ventas del dia y devoluciones</button>
                 { showConfirmar && <ConfirmSaleModal orderslist={orderslist} show={setShowConfirmar}/>}

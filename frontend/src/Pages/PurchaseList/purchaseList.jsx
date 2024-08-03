@@ -165,10 +165,11 @@ export function PurchaseList(){
 
     const handleSelectChange = (event) => {
         const value = event.target.value;
-        let c = OrdersRef;
+        let c = OrdersRef.current;
         setStateFilter(value);
         if (value!== 'Todos'){
             c = c.filter((item)=> item.Estado.toString() === value);
+            console.log(c);
             //setOrdersList(c)
             setOrdersList(c)
         } else {
@@ -176,8 +177,7 @@ export function PurchaseList(){
             setOrdersList(c)
         }
         // Execute your custom logic here
-        console.log(`Selected value: ${value}`)
-        ;
+        console.log(`Selected value: ${value}`);
     };
 
     // const filterText = (item, text) => { //* No se para que es esta funcion jsjs
@@ -206,8 +206,9 @@ export function PurchaseList(){
     
     useEffect(() => {
         SearchHandle(getInputValue());
+        setSomeData(null);
         // eslint-disable-next-line
-    }, [date1, date2, stateFilter]);
+    }, [date1, date2]);
 
     useEffect(() => {
         selectedfilaRef.current = selectedfila;

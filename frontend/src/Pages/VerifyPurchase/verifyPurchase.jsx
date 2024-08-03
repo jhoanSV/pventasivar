@@ -160,7 +160,7 @@ export function VerifyPurchase(){
     const totalSum = () => {
         let suma = 0;
         order.map((item, index) => (
-            suma += item.cantidad * item.vrUnitario
+            suma += item.Cantidad * item.PCosto
         ))
         setTotal(suma)
     }
@@ -176,7 +176,6 @@ export function VerifyPurchase(){
         console.log(orderDetail);
         if(orderDetail){
             setOrder(orderDetail)
-            totalSum();
         }
     }
 
@@ -219,7 +218,7 @@ export function VerifyPurchase(){
             console.log(res);
             if(res && res.message === 'Transacción completada con éxito'){
                 alert('Producto recepcionado con éxito');
-                navigate('/Inventory');
+                navigate(-1);
             } else {
                 alert('Ocurrió un error inesperado al recepcionar pedido');
             }
@@ -237,7 +236,8 @@ export function VerifyPurchase(){
     }, [dataSelected]);
 
     useEffect(() => {
-        console.log(order);
+        totalSum();
+        // eslint-disable-next-line
     }, [order]);
 
     useEffect(() => {
@@ -262,7 +262,11 @@ export function VerifyPurchase(){
                     disabled={(selectedfila.length === 0)}>
                     <i className='bi bi-eye-fill'/>
                 </button>
-                <label>Modificar</label>
+                {someData.Estado === 'Por ingresar' ?
+                    <label>Modificar</label>
+                :
+                    <label>Detalles</label>
+                }
             </div>
             <div className='Table'>
                 <Flatlist
@@ -274,7 +278,7 @@ export function VerifyPurchase(){
                     doubleClick={()=>{verifyProduct()}}
                 />
             </div>
-            <div>
+            <div style={{marginTop: '10px'}}>
                 {someData.Estado === 'Por ingresar' &&
                     <button className='btnStnd btn1'
                         style={{marginRight: '20px'}}

@@ -224,6 +224,7 @@ export const Newproduct = () => {
     }
 
     const handleCodVali = () =>{
+        if(!someData)return;
         const codeFind = productCodes.map(code => code.toLowerCase()).includes(productData.Cod.toLowerCase());
         if(modificarProducto){
             if((productData.Cod !== someData.Cod) && codeFind){

@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import './_App.scss';
 import { Header } from './Layouts';
 import { Login } from './Pages';
@@ -7,6 +8,10 @@ import { useTheContext } from './TheProvider';
 export const App = () => {
   
   const { logged, someData } = useTheContext();
+
+  useEffect(() => {
+    console.log('someData', someData);
+  }, [someData]);
   
   return (
     <>

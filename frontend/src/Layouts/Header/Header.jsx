@@ -5,7 +5,7 @@ import React, { useEffect } from 'react';
 
 export const Header = () => {
 
-    const { setLogged, section, usD } = useTheContext()
+    const { setLogged, section, usD, setSomeData } = useTheContext()
     //const [currentPage, setCurrentPage] = useState();
     
     function updateTime() {
@@ -94,6 +94,7 @@ export const Header = () => {
                                 LISTADO
                             </Link>
                             <Link to={'/NewProduct'} id='minuevoproducto' className='genLink' onClick={()=>{
+                                setSomeData(null)
                                 hideSideBar()
                             }}>
                                 NUEVO
@@ -124,14 +125,13 @@ export const Header = () => {
                                 LISTADO
                             </Link>
                             <Link to={'/NewCustomer'} id='minuevocliente' className='genLink' onClick={(e)=>{
+                                setSomeData(null)
                                 hideSideBar()
-                                e.target.classList.toggle('m-selected')
                             }}>
                                 NUEVO
                             </Link>
                             <Link to={'/BalanceReport'} id='mireportedesaldos' className='genLink' onClick={(e)=>{
                                 hideSideBar()
-                                e.target.classList.toggle('m-selected')
                             }}>
                                 REPORTE DE SALDOS
                             </Link>
