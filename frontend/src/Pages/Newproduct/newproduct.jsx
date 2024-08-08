@@ -23,7 +23,7 @@ export const Newproduct = () => {
         'PCosto': '',
         'PVenta': '',
         'IdSubCategoria':'',
-        'PrecioUM': '',
+        'PVentaUM': '',
         'Ubicacion': '',
         'Detalle': '',
         'Medida': '',
@@ -114,7 +114,7 @@ export const Newproduct = () => {
         let d = { ...productData }
         d.PVenta = NPToNumber(d['PVenta'])
         d.PCosto = NPToNumber(d.PCosto)
-        d.PrecioUM = NPToNumber(d['PrecioUM'])
+        d.PVentaUM = NPToNumber(d['PVentaUM'])
         d.Inventario = NPToNumber(d['Inventario'])
         d.InvMinimo = NPToNumber(d['InvMinimo'])
         d.InvMaximo = NPToNumber(d['InvMaximo'])
@@ -132,7 +132,7 @@ export const Newproduct = () => {
             if ((key !== 'Detalle' &&
                 key !== 'Ubicacion' &&
                 key !== 'UMedida' &&
-                key !== 'PrecioUM' &&
+                key !== 'PVentaUM' &&
                 key !== 'Clase' &&
                 key !== 'Medida'
             ) && productData[key] === '') {
@@ -154,13 +154,13 @@ export const Newproduct = () => {
         let a = prepData();
         console.log(productData);
         console.log(a);
-        if(productData.PrecioUM ===''){
-            a.PrecioUM = a.PCosto
+        if(productData.PVentaUM ===''){
+            a.PVentaUM = a.PVenta;
         }
         a.IdFerreteria = usD.Cod;
-        const fecha = new Date()
-        const today = fecha.getFullYear() + '-' + (fecha.getMonth() + 1) + '-' + fecha.getDate() + ' ' + fecha.getHours() + ':' + fecha.getMinutes() + ':' + fecha.getSeconds()
-        a.Fecha = today
+        const fecha = new Date();
+        const today = fecha.getFullYear() + '-' + (fecha.getMonth() + 1) + '-' + fecha.getDate() + ' ' + fecha.getHours() + ':' + fecha.getMinutes() + ':' + fecha.getSeconds();
+        a.Fecha = today;
         // *Determinadas----------------------------
         a.CodResponsable = usD.Cod;
         a.Responsable = usD.Ferreteria;
@@ -170,8 +170,8 @@ export const Newproduct = () => {
         const res = await NuevoProducto(a);
         console.log(res);
         if(res && res.message === 'Transacción completada con éxito'){
-            navigate('/ProductsList')
-            alert('Producto creado con éxito')
+            navigate('/ProductsList');
+            alert('Producto creado con éxito');
         } else {
             alert('Ocurrió un error inesperado al crear el producto');
         }
@@ -184,7 +184,7 @@ export const Newproduct = () => {
             if ((key !== 'Detalle' &&
                 key !== 'Ubicacion' &&
                 key !== 'UMedida' &&
-                key !== 'PrecioUM' &&
+                key !== 'PVentaUM' &&
                 key !== 'Clase' &&
                 key !== 'Medida'
             ) && productData[key] === '') {
@@ -224,7 +224,6 @@ export const Newproduct = () => {
     }
 
     const handleCodVali = () =>{
-        if(!someData)return;
         const codeFind = productCodes.map(code => code.toLowerCase()).includes(productData.Cod.toLowerCase());
         if(modificarProducto){
             if((productData.Cod !== someData.Cod) && codeFind){
@@ -252,7 +251,7 @@ export const Newproduct = () => {
             }
             data.PVenta = Formater(data.PVenta);
             data.PCosto = Formater(data.PCosto);
-            data.PrecioUM = Formater(data.PrecioUM);
+            data.PVentaUM = Formater(data.PVentaUM);
             data.UMedida = Formater(data.UMedida);
             data.Inventario = Formater(data.Inventario);
             data.InvMinimo = Formater(data.InvMinimo);
@@ -346,7 +345,7 @@ export const Newproduct = () => {
                         <label>Sub-Categor&iacute;a</label>
                     </div>
                     <div className='Colmn2'>
-                        <select value={productData.IdSubCategoria} onChange={(e)=>{handleSelectedCategory(e)}}>
+                        <select value={productData.IdSubCategoria} onChange={(e)=>{handleSelectedCategory(e)}} style={{width: '41%'}}>
                             <option value="">Seleccione...</option>
                             {subCatList.map(sc => (
                                 <option key={sc.IdSubCategoria} value={sc.IdSubCategoria}>{sc.SubCategoria}</option>
@@ -387,7 +386,7 @@ export const Newproduct = () => {
                         </label>
                         <label className="custom-label">
                             <input type="radio" className="custom-radio" name="uniorpack"
-                                checked={productData.Clase===1}
+                                checked={productData.Clase!==0}
                                 onChange={() => { changeValuesProducts("Clase", 1) }}
                                 onClick={() => { setShow2(true) }}
                             />

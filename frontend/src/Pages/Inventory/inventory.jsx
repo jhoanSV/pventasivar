@@ -4,13 +4,15 @@ import { useNavigate } from 'react-router-dom';
 import { useTheContext } from '../../TheProvider';
 import { TableComponent } from '../../Components';
 import { Inventory as ListInv } from '../../api';
+import { Formater } from '../../App';
 
 export function Inventory(){
 
     const navigate = useNavigate()
     const [invList, setInvList] = useState([]);
-    const refList = useRef([]);
     const [selected, setSelected] = useState([]);
+    const [inventoryCost, setInventoryCost] = useState(0);
+    const refList = useRef([]);
     //const [multiSelect, setMultiSelect] = useState(false);
     const { setSection, usD } = useTheContext();
 
@@ -79,6 +81,14 @@ export function Inventory(){
         }
     }
 
+    const sumInventoryCost = (theList) => {
+        let suma = 0;
+        if (theList && theList.length > 0) {theList.forEach((item, index) => (
+            suma += item.PCosto * item.Inventario
+        ))}
+        setInventoryCost(suma)
+    };
+
     const DeleteFunction = () =>{
         alert('eliminando jsjs')        
     }
@@ -99,12 +109,14 @@ export function Inventory(){
         if(list){
             setInvList(list);
             refList.current = list;
+            sumInventoryCost(list);
         }
     }
 
     useEffect(() => {
         setSection('Inventario');
         fetchInvList();
+        sumInventoryCost();
 
         // eslint-disable-next-line
     }, []);
@@ -116,7 +128,7 @@ export function Inventory(){
                     <div>
                         <label>Costo del inventario</label>
                     </div>
-                    <label>$000.000,00</label>
+                    <label>$ {Formater(inventoryCost)}</label>
                 </div>
                 <div style={{textAlign: 'center', fontSize: '20px'}}>
                     <div style={{marginTop: '10px'}}>

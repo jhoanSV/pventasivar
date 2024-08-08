@@ -1,11 +1,12 @@
 import { Link } from 'react-router-dom';
 import { useTheContext } from '../../TheProvider';
 import './_Header.scss';
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 
 export const Header = () => {
 
     const { setLogged, section, usD, setSomeData } = useTheContext()
+    const divSideBarRef = useRef(null);
     //const [currentPage, setCurrentPage] = useState();
     
     function updateTime() {
@@ -40,6 +41,12 @@ export const Header = () => {
         document.getElementById('lgId2').classList.remove('show')
     }
 
+    const handleClickOutside = (event) => {
+        if (divSideBarRef.current && !divSideBarRef.current.contains(event.target)) {
+          hideSideBar();
+        }
+    };
+
     useEffect(() => {
         const prevS = document.querySelector('.m-selected');
         if(prevS){
@@ -52,6 +59,15 @@ export const Header = () => {
         }
         //document.getElementById('mi'+(s)).classList.add('m-selected')
     }, [ section ]);
+
+    useEffect(() => {
+        document.addEventListener('mousedown', handleClickOutside);
+        
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside);
+        };
+        // eslint-disable-next-line
+    }, []);
 
     return (
         <section className='headContainer'>
@@ -73,7 +89,7 @@ export const Header = () => {
                     alt='MainLogo'
                     onClick={()=>{hideSideBar()}}
                 />
-                <div className='side-menu'>
+                <div className='side-menu' ref={divSideBarRef}>
                     <div>
                         <Link to={'/'} id='miventas' className='genLink' onClick={(e)=>{
                             hideSideBar()

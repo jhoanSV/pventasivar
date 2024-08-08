@@ -100,6 +100,7 @@ export const ProductsList = () => {
         })
         if(listado){
             let codes = []
+            console.log(listado);
             setContentList(listado);
             refList.current = listado;
             for(let a in listado){

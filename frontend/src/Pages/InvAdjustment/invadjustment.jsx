@@ -33,15 +33,26 @@ export function InvAdjustment(){
     }
 
     const modifyCant = async() =>{
+        const fecha = new Date()
+        const today = fecha.getFullYear() + '-' + (fecha.getMonth() + 1) + '-' + fecha.getDate() + ' ' + fecha.getHours() + ':' + fecha.getMinutes() + ':' + fecha.getSeconds()
         let d = someData;
         d.Inventario = Number(newCant.replace(/\./g, ''));
+        console.log({
+            "IdFerreteria": someData.IdFerreteria,
+            "CodResponsable": usD.Cod,
+            "Responsable": usD.Ferreteria,
+            "ConsecutivoProd": someData.Consecutivo,
+            "Cantidad": d.Inventario,
+            "Fecha": today,
+            "Motivo": taValue
+        });
         const res = await postUpdateInventory({
             "IdFerreteria": someData.IdFerreteria,
             "CodResponsable": usD.Cod,
             "Responsable": usD.Ferreteria,
             "ConsecutivoProd": someData.Consecutivo,
             "Cantidad": d.Inventario,
-            "Fecha": "2024-04-07 11:49:35",
+            "Fecha": today,
             "Motivo": taValue
         });
         console.log(res);

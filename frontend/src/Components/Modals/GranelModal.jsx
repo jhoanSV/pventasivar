@@ -14,8 +14,8 @@ export const GranelModal = ({show, productData, pctGan, updtState}) => {
     //console.log(Number(pctGan.replace(/[.,]/g, (a) => (a === "." ? "" : "."))))
     console.log(productData.PCosto.replace(/[.,]/g, (a) => (a === "." ? "" : "."))/productData.UMedida.replace(/\./g, ''));
     const [cUnit, setcUnit] = useState((typeof(productData.PCosto) !== 'number') ? (productData.PCosto.replace(/[.,]/g, (a) => (a === "." ? "" : "."))/productData.UMedida.replace(/\./g, '')) : Formater(productData.PCosto/productData.UMedida));
-    const [pVentaUnit, setPVentaUnit] = useState(productData.PrecioUM);
-    const [pctUnit, setPctUnit] = useState(productData.PrecioUM ? 
+    const [pVentaUnit, setPVentaUnit] = useState(productData.PVentaUM);
+    const [pctUnit, setPctUnit] = useState(productData.PVentaUM ? 
         Formater((((pVentaUnit.replace(/\./g, '')-cUnit)/cUnit)*100).toFixed(2))
         :
         ''
@@ -39,7 +39,7 @@ export const GranelModal = ({show, productData, pctGan, updtState}) => {
         let thepct = Number(e.replace(/[.,]/g, (a) => (a === "," && ".")));
         let thePcosto = Number(cUnit);
         let newPventa = (thePcosto + (thePcosto*thepct/100)).toFixed(2).toString();
-        updtState('PrecioUM', Formater(newPventa));
+        updtState('PVentaUM', Formater(newPventa));
         setPVentaUnit(Formater(newPventa));
     }
 
@@ -53,8 +53,8 @@ export const GranelModal = ({show, productData, pctGan, updtState}) => {
                     <h1>{productData.Descripcion}</h1>
                     <h1>{productData.Cod}</h1>
                     <div className='Row' style={{marginBottom: '10px'}}>
-                        <span style={{width: '114px', textAlign: 'end', marginRight: '10px'}}>
-                            Medida
+                        <span style={{width: '131px', textAlign: 'end', marginRight: '10px'}}>
+                            Unidad de medida
                         </span>
                         <select value={productData.Medida} name='medida' onChange={(e)=>{updtState('Medida', e.target.value)}}>
                             <option value='Metros'>Metros</option>
@@ -63,7 +63,7 @@ export const GranelModal = ({show, productData, pctGan, updtState}) => {
                         </select>
                     </div>
                     <div className="Row">
-                        <span style={{marginRight: '10px'}}>
+                        <span style={{width: '131px', marginRight: '10px'}}>
                             Medida Unitaria
                         </span>
                         <TheInput
@@ -97,7 +97,7 @@ export const GranelModal = ({show, productData, pctGan, updtState}) => {
                                             numType='real'
                                             val={pVentaUnit}
                                             pholder={Formater(Number(cUnit) + (Number(cUnit)*Number(pctGan.replace(/,/g, '.'))/100))}
-                                            onchange={(e)=>{updtState('PrecioUM', e);calpct(e)}}
+                                            onchange={(e)=>{updtState('PVentaUM', e);calpct(e)}}
                                         />
                                     </td>
                                     <td>

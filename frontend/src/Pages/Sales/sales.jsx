@@ -18,7 +18,7 @@ export function Sales(){
     const [tabsHistory, setTabsHistory] = useState(Object.keys(saleTabs).length);
     //*---------------------
     const [ total, setTotal] = useState(0);
-    const [ orderslist, setOrderslist] = useState(jsonTest[1])
+    const [ orderslist, setOrderslist] = useState(saleTabs[1])
     const [ showConfirmar, setShowConfirmar] = useState(false);
     const [ selectedfila, setSelectedfila] = useState(0);
     const [ changeQuantity, setChangeQuantity] = useState(null);
@@ -27,7 +27,7 @@ export function Sales(){
     const [ searchClient, setSearchClient] = useState(false);
     const [ showSalesOfTheDay, setShowSalesOfTheDay] = useState(false);
     const [showFL, setShowFL] = useState(false);
-    const [limit, setLimit] = useState(0);
+    //const [limit, setLimit] = useState(0);
     const [sBText, setSBText] = useState('');
     const [invList, setInvList] = useState([]);
     const nodeRef = useRef(null), divSRef = useRef();
@@ -76,13 +76,13 @@ export function Sales(){
         setChangeQuantity(null)
     };
 
-    const onblurChangePv = (row, amount) => {
+    const onblurChangePv = (row, amount, theKey) => {
         let theOrder = Object.entries(saleTabs)[selectedTabRef.current][1]
         console.log(theOrder);
         if (amount > 0) {
             const theValue = amount
             let withoutFormat = theValue.replace(/\./g, '')
-            theOrder[row].pVenta = withoutFormat
+            theOrder[row][theKey] = withoutFormat
             // Crea una copia del jsonTest[tabindex] para actualizar el estado
             const updatedOrdersList = [...theOrder];
             // Actualiza el estado con la nueva lista
@@ -113,30 +113,32 @@ export function Sales(){
                         )}
                     </td>
                     <td style={{width: columnsWidth[1]}}>
-                        <label>{item.Codigo}</label>
+                        <label>{item.Cod}</label>
                     </td>
                     <td style={{width: columnsWidth[2]}}>
                         <label>{item.Descripcion}</label>
                     </td>
                     <td style={{width: columnsWidth[3]}}>
-                        <label>{item.UM}</label>
+                        <label>{item.Medida}</label>
                     </td>
                     <td style={{width: columnsWidth[4]}} onDoubleClick={()=>{setConfirmUser(true);isEditingRef.current=true}}>
                         { isEditingPv ? (
                             <TheInput
                                 id = {'i'+ rowIndex}
                                 numType ='real'
-                                val = {item.pVenta}
+                                val = {item.Medida !== '' ? item.PVentaUM : item.PVenta}
                                 sTyle = {{width: columnsWidth[0]}}
-                                onblur = {(e) => {onblurChangePv(rowIndex, e);isEditingRef.current=false}}
+                                onblur = {(e) => {
+                                    onblurChangePv(rowIndex, e, (item.Medida !== '' ? 'PVentaUM': 'PVenta'));
+                                    isEditingRef.current=false}}
                                 autofocus={true}
                             /> ) :
                         ( 
-                            <label>$ {Formater(item.pVenta)}</label>
+                            <label>$ {Formater(item.Medida !== '' ? item.PVentaUM : item.PVenta)}</label>
                         )}
                     </td>
                     <td style={{width: columnsWidth[5]}}>
-                        <label>$ {Formater(item.pVenta * item.Cantidad)}</label>
+                        <label>$ {Formater(item.Medida !== '' ? (item.PVentaUM * item.Cantidad) : item.PVenta * item.Cantidad)}</label>
                     </td>
                 </>
         );
@@ -204,7 +206,8 @@ export function Sales(){
     const sumarTotal = () => {
         let suma = 0;
         if (orderslist && orderslist.length > 0) {orderslist.forEach((item, index) => (
-            suma += item.pVenta * item.Cantidad
+            //suma += item.pVenta * item.Cantidad
+            suma += item.Medida !== '' ? item.PVentaUM * item.Cantidad : item.PVenta * item.Cantidad
         ))}
         setTotal(suma)
     };
@@ -294,7 +297,7 @@ export function Sales(){
         if (divSRef.current && !divSRef.current.contains(event.target)) {
           setShowFL(false);
         }
-      };
+    };
 
     const fetchInventoryList = async() =>{
         const list = await Inventory({
@@ -318,14 +321,12 @@ export function Sales(){
     }, [selectedfila]);
     
     useEffect(() => {
-        console.log('hptaaaaa: ',currentTab);
         selectedTabRef.current = currentTab;
     }, [currentTab]);
     
     useEffect(() => {
         setSection('Ventas');
         fetchInventoryList();
-        setLimit(20);
         window.addEventListener('keydown', handleKeyDown);
         document.addEventListener('mousedown', handleClickOutside);
         
@@ -358,8 +359,12 @@ export function Sales(){
                         unmountOnExit
                         >
                         <div className="FloatingList" ref={nodeRef}>
-                            {invList./*slice(0,limit).*/map((item, index) =>
-                                <div key={index} className='flItem' onClick={()=>{addProduct(item)}}>
+                            {invList.slice(0,20).map((item, index) =>
+                                <div key={index}
+                                    className='flItem'
+                                    onClick={()=>{Number(item.Inventario)!==0 ? addProduct(item) : alert('No hay invetario suficiente')}}
+                                    style={{color: Number(item.Inventario)===0 && 'red'}}
+                                >
                                     {item.Descripcion}
                                 </div>
                             )}
@@ -413,7 +418,7 @@ export function Sales(){
                 </div>
                 <div>
                     <button className="btnStnd btn1" onClick={()=>setShowConfirmar(true)}>F2-Cobrar</button>
-                    <label>$ {Formater(total)}</label>
+                    <label style={{marginLeft: '10px'}}>$ {Formater(total)}</label>
                 </div>
                 <label>{orderslist && orderslist.length} productos en el ticket actual</label>
                 <button className="btnStnd btn1" onClick={()=>setShowSalesOfTheDay(true)}>Ventas del dia y devoluciones</button>
