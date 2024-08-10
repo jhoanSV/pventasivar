@@ -23,12 +23,10 @@ export const Newproduct = () => {
         'PCosto': '',
         'PVenta': '',
         'IdSubCategoria':'',
-        'PVentaUM': '',
         'Ubicacion': '',
+        'Medidas': [],
         'Detalle': '',
-        'Medida': '',
-        'UMedida': '1',
-        'Clase': 0,
+        'Clase': '',
     });
     const [modificarProducto, setModificarProducto] = useState(false);
     const [pctGan, setpctGan] = useState('');
@@ -114,11 +112,9 @@ export const Newproduct = () => {
         let d = { ...productData }
         d.PVenta = NPToNumber(d['PVenta'])
         d.PCosto = NPToNumber(d.PCosto)
-        d.PVentaUM = NPToNumber(d['PVentaUM'])
         d.Inventario = NPToNumber(d['Inventario'])
         d.InvMinimo = NPToNumber(d['InvMinimo'])
         d.InvMaximo = NPToNumber(d['InvMaximo'])
-        d.UMedida = NPToNumber(d['UMedida'])
         return d;
         /*
             Here FIRST CHANGE THE PCOSTO, PVENTA and others TO NUMBERS
@@ -131,9 +127,7 @@ export const Newproduct = () => {
         for (let key in productData) {
             if ((key !== 'Detalle' &&
                 key !== 'Ubicacion' &&
-                key !== 'UMedida' &&
-                key !== 'PVentaUM' &&
-                key !== 'Clase' &&
+                //key !== 'Clase' &&
                 key !== 'Medida'
             ) && productData[key] === '') {
                 emptValue = key; // Si algún campo está vacío, la validación falla
@@ -154,9 +148,6 @@ export const Newproduct = () => {
         let a = prepData();
         console.log(productData);
         console.log(a);
-        if(productData.PVentaUM ===''){
-            a.PVentaUM = a.PVenta;
-        }
         a.IdFerreteria = usD.Cod;
         const fecha = new Date();
         const today = fecha.getFullYear() + '-' + (fecha.getMonth() + 1) + '-' + fecha.getDate() + ' ' + fecha.getHours() + ':' + fecha.getMinutes() + ':' + fecha.getSeconds();
@@ -183,9 +174,7 @@ export const Newproduct = () => {
         for (let key in productData) {
             if ((key !== 'Detalle' &&
                 key !== 'Ubicacion' &&
-                key !== 'UMedida' &&
-                key !== 'PVentaUM' &&
-                key !== 'Clase' &&
+                //key !== 'Clase' &&
                 key !== 'Medida'
             ) && productData[key] === '') {
                 emptValue = key; // Si algún campo está vacío, la validación falla
@@ -251,8 +240,6 @@ export const Newproduct = () => {
             }
             data.PVenta = Formater(data.PVenta);
             data.PCosto = Formater(data.PCosto);
-            data.PVentaUM = Formater(data.PVentaUM);
-            data.UMedida = Formater(data.UMedida);
             data.Inventario = Formater(data.Inventario);
             data.InvMinimo = Formater(data.InvMinimo);
             data.InvMaximo = Formater(data.InvMaximo);
@@ -386,8 +373,8 @@ export const Newproduct = () => {
                         </label>
                         <label className="custom-label">
                             <input type="radio" className="custom-radio" name="uniorpack"
-                                checked={productData.Clase!==0}
-                                onChange={() => { changeValuesProducts("Clase", 1) }}
+                                checked={productData.Clase!==0 && productData.Clase!==''}
+                                onChange={() => { changeValuesProducts("Clase", productData.Clase) }}
                                 onClick={() => { setShow2(true) }}
                             />
                             <i></i>
