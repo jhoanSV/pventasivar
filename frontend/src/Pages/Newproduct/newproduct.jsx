@@ -39,7 +39,6 @@ export const Newproduct = () => {
     const fetchCat = async() =>{
         const res = await SubCategories()
         setSubCatList(res)
-        console.log(res)
     }
 
     const calpctC = (e) => {

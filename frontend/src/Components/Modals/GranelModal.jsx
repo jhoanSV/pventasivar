@@ -41,7 +41,7 @@ export const GranelModal = ({show, productData, pctGan, updtState}) => {
                 {
                     Medida: 'Paquete',
                     UMedida: '1',
-                    PVentaUM: productData.PCosto
+                    PVentaUM: productData.PCosto.replace(/[.,]/g, (a) => (a === "." ? "" : "."))
                 },
                 {
                     Medida: 'Unidades',
@@ -276,13 +276,26 @@ export const GranelModal = ({show, productData, pctGan, updtState}) => {
                                     <td>{Formater(pctGan)}</td>
                                 </tr>}
                                 {/*medidas.slice(1).map((Med, index) =>*/}
-                                {productData.Medidas.slice(1).map((Med, index) =>
+                                {productData.Medidas.slice(1).map((Med, index) =>{
+                                    
+                                    let pcosto = productData.PCosto.replace(/[.,]/g, (a) => (a === "." ? "" : "."))
+                                    let pcostoUnit = pcosto/Med.UMedida;
+                                    Med.PVentaUM = Med.PVentaUM.toString();
+                                    
+                                    /*const calpventa = (e) => {
+                                        let Epct = e.replace(/[.,]/g, (a) => (a === "," && "."))
+                                        let thePcosto = Number(productData.PCosto.replace(/[.,]/g, (a) => (a === "." ? "" : ".")))
+                                        let newPventa = (thePcosto + (thePcosto * Epct / 100)).toFixed(2).toString();
+                                        changeValuesProducts('PVenta', Formater(newPventa));
+                                    }*/
+
+                                    return (
                                     <tr key={index}>
                                         <td>{Med.Medida}</td>
                                         <td>
                                             <TheInput
                                                 numType='real'
-                                                val={Formater(Med.UMedida)}
+                                                val={Med.UMedida}
                                                 //onchange={(e)=>updtState(`Medidas[${index}].PVentaUM`, e)}
                                                 onchange={(e)=>{
                                                     let a = {...productData}
@@ -292,28 +305,33 @@ export const GranelModal = ({show, productData, pctGan, updtState}) => {
                                             />
                                         </td>
                                         <td>
-                                            {Formater(productData.PCosto/Med.UMedida)}
+                                            {Formater(pcostoUnit)}
                                         </td>
                                         <td>
                                             <TheInput
                                                 numType='real'
-                                                val={Formater(Med.PVentaUM)}
+                                                val={Med.PVentaUM}
                                                 pholder={Formater(
-                                                    productData.PCosto/Med.UMedida + 
-                                                    productData.PCosto/Med.UMedida*Number(pctGan.replace(/,/g, '.'))/100
+                                                    pcostoUnit + pcostoUnit*Number(pctGan.replace(/,/g, '.'))/100
                                                 )}
-                                                onchange={(e)=>updtState(`Medidas[${index}].PVentaUM`, e)}
+                                                onchange={(e)=>{
+                                                    let a = {...productData};
+                                                    a.Medidas[index+1].PVentaUM = e;
+                                                    updtState('Medidas', a.Medidas);
+                                                }}
                                             />
                                         </td>
                                         <td>
                                             <TheInput
+                                                id={`idpct${index}`}
+                                                val={Med.PVentaUM ? Formater(((Med.PVentaUM - pcostoUnit)/pcostoUnit)*100) : ''}
                                                 numType='real'
-                                                val={''}
                                                 pholder={Formater(pctGan)}
-                                                onchange={(e)=>updtState(`Medidas[${index}].PVentaUM`, e)}
+                                                onchange={(e)=>console.log('jsjs')}
                                             />
                                         </td>
                                     </tr>
+                                    )}
                                 )}
                                 {/*<tr>
                                     <td>{productData.Medida ? productData.Medida : updtState('Medida', 'Metros')}</td>
@@ -339,7 +357,22 @@ export const GranelModal = ({show, productData, pctGan, updtState}) => {
                         </table>
                     </div>
                     <div style={{display: 'flex', gap: '5px'}}>
-                        <button className='btnStnd btn1' onClick={() => show(false)}>Guardar</button>{/*desseleccionar radio cuando cancelar*/}
+                        <button className='btnStnd btn1' onClick={() =>{
+                            show(false);
+                            let a = {...productData}
+
+                            a.Medidas.map((item) => {
+                                if (item.PVentaUM==='') {
+                                    item.PVentaUM = productData.PCosto.replace(/[.,]/g, (a) => (a === "." ? "" : ".")) / 
+                                        item.UMedida + 
+                                        productData.PCosto.replace(/[.,]/g, (a) => (a === "." ? "" : ".")) / 
+                                        item.UMedida*Number(pctGan.replace(/,/g, '.'))/100
+                                }
+                            });
+                            updtState('Medidas', a.Medidas);
+                        }}>
+                        Guardar
+                        </button>
                     </div>
                 </div>
             </div>
