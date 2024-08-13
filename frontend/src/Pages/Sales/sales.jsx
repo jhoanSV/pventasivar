@@ -14,11 +14,12 @@ import { CSSTransition } from 'react-transition-group';
 export function Sales(){
     //*---------------------
     const [saleTabs, setSaleTabs] = useState(jsonTest);
-    const [currentTab, setCurrentTab] = useState(0);
+    const [currentTab, setCurrentTab] = useState({"index": 0, "key": 1});
     const [tabsHistory, setTabsHistory] = useState(Object.keys(saleTabs).length);
     //*---------------------
     const [ total, setTotal] = useState(0);
-    const [ orderslist, setOrderslist] = useState(saleTabs[1])
+    const [ orderslist, setOrderslist] = useState(saleTabs[1]["Order"])
+    const [ customer, setCustomer] = useState("Por asignar");
     const [ showConfirmar, setShowConfirmar] = useState(false);
     const [ selectedfila, setSelectedfila] = useState(0);
     const [ changeQuantity, setChangeQuantity] = useState(null);
@@ -26,10 +27,10 @@ export function Sales(){
     const [ confirmUser, setConfirmUser] = useState(false);
     const [ searchClient, setSearchClient] = useState(false);
     const [ showSalesOfTheDay, setShowSalesOfTheDay] = useState(false);
-    const [showFL, setShowFL] = useState(false);
+    const [ showFL, setShowFL] = useState(false);
     //const [limit, setLimit] = useState(0);
-    const [sBText, setSBText] = useState('');
-    const [invList, setInvList] = useState([]);
+    const [ sBText, setSBText] = useState('');
+    const [ invList, setInvList] = useState([]);
     const nodeRef = useRef(null), divSRef = useRef();
     const refList = useRef([]);
     const selectedfilaRef = useRef(selectedfila);
@@ -134,11 +135,11 @@ export function Sales(){
                                 autofocus={true}
                             /> ) :
                         ( 
-                            <label>$ {Formater(item.Medida !== '' ? item.PVentaUM : item.PVenta)}</label>
+                            <label>$ {Formater(item.PVenta)}</label>
                         )}
                     </td>
                     <td style={{width: columnsWidth[5]}}>
-                        <label>$ {Formater(item.Medida !== '' ? (item.PVentaUM * item.Cantidad) : item.PVenta * item.Cantidad)}</label>
+                        <label>$ {Formater(item.PVenta * item.Cantidad)}</label>
                     </td>
                 </>
         );
@@ -206,8 +207,8 @@ export function Sales(){
     const sumarTotal = () => {
         let suma = 0;
         if (orderslist && orderslist.length > 0) {orderslist.forEach((item, index) => (
-            //suma += item.pVenta * item.Cantidad
-            suma += item.Medida !== '' ? item.PVentaUM * item.Cantidad : item.PVenta * item.Cantidad
+            suma += item.PVenta * item.Cantidad
+            //suma += item.Medida !== '' ? item.PVentaUM * item.Cantidad : item.PVenta * item.Cantidad
         ))}
         setTotal(suma)
     };
@@ -216,7 +217,7 @@ export function Sales(){
         if(Num===null){
             setOrderslist(Object.entries(saleTabs)[index][1]);
         }else{
-            setOrderslist(saleTabs[Num]);
+            setOrderslist(saleTabs[Num].Order);
         }
         console.log('saleTabs[Num]', saleTabs[Num]);
         console.log(index);
@@ -225,22 +226,19 @@ export function Sales(){
         } else if ( Num !== null && saleTabs[Num].length === 0 ) {
             setSelectedfila(null);
         }
-        setCurrentTab(index);
+        setCurrentTab({"index": index,
+                       "key": Num});
+        console.log(saleTabs[Num].Customer.Nombre !== null);
+        const custromerName = saleTabs[Num].Customer.Nombre !== null ?
+        saleTabs[Num].Customer.Nombre: 'Por asignar';
+        setCustomer(custromerName)
     };
 
     const createButton = () => {
         let tabLen = Object.keys(saleTabs).length
         if (tabLen < 16) {
-            saleTabs[tabsHistory + 1] = [];
-            // saleTabs[tabsHistory + 1] = [{
-            //         "Cantidad": 50,
-            //         "Codigo": `a${tabsHistory}`,
-            //         "Descripcion": "chazo anclaje 1/4 x 1 3/8",
-            //         "UM": "cm",
-            //         "Medida": 100,
-            //         "pCosto": 100,
-            //         "pVenta": 260
-            //     }];
+            saleTabs[tabsHistory + 1] = {"Customer": {},
+                                         "Order": []};
             changeTab((tabsHistory + 1), (Object.keys(saleTabs).length)-1);
             setTabsHistory(tabsHistory + 1);
         }
@@ -278,7 +276,7 @@ export function Sales(){
 
     const addProduct = (item) =>{
         let theProduct = {...item}
-        let theOrder = Object.entries(saleTabs)[selectedTabRef.current][1];
+        let theOrder = saleTabs[currentTab.key].Order
         theProduct.Cantidad = 1;
         theOrder.push(theProduct);
         setOrderslist(a => {
@@ -291,6 +289,16 @@ export function Sales(){
             return [...theOrder];
         });
         setShowFL(false);
+    }
+
+    const askToAddProduct = (item) => {
+        console.log(item)
+        if (item.Clase === 0){
+            item.Medida = 'Unidad'
+            addProduct(item)
+        } else if (item.Clase !== 0){
+            console.log("Deberia esto abrir un cuadro para escoger la medida del producto")
+        }
     }
 
     const handleClickOutside = (event) => {
@@ -310,6 +318,12 @@ export function Sales(){
         }
     }
 
+    const AsingCustomerToOrder = (item) => {
+        jsonTest[currentTab.key].Customer = item[0]
+        setCustomer(jsonTest[currentTab.key].Customer.Nombre + " " + jsonTest[currentTab.key].Customer.Apellido)
+        setSaleTabs(jsonTest)
+    }
+
     useEffect(() => {
         sumarTotal();
         // eslint-disable-next-line
@@ -321,7 +335,8 @@ export function Sales(){
     }, [selectedfila]);
     
     useEffect(() => {
-        selectedTabRef.current = currentTab;
+        selectedTabRef.current = currentTab.index;
+        console.log(saleTabs)
     }, [currentTab]);
     
     useEffect(() => {
@@ -362,7 +377,7 @@ export function Sales(){
                             {invList.slice(0,20).map((item, index) =>
                                 <div key={index}
                                     className='flItem'
-                                    onClick={()=>{Number(item.Inventario)!==0 ? addProduct(item) : alert('No hay invetario suficiente')}}
+                                    onClick={()=>{Number(item.Inventario)!==0 ? askToAddProduct(item) : alert('No hay invetario suficiente')}}
                                     style={{color: Number(item.Inventario)===0 && 'red'}}
                                 >
                                     {item.Descripcion}
@@ -378,7 +393,12 @@ export function Sales(){
             <div style={{padding: '0px 70px'}}>
                 <button
                     className="btnStnd btn1"
-                    onClick={()=>setSearchClient(true)}>Asignar cliente</button>
+                    onClick={()=>setSearchClient(true)}
+                    >Asignar cliente
+                </button>
+                <div>
+                    <label>Cliente: {customer}</label>
+                </div>
                 <div className="tabs">
                     <div className='tabButtons'>
                         {Object.keys(saleTabs).map((tabNumber, index) => (
@@ -392,7 +412,7 @@ export function Sales(){
                                     id={`radio${tabNumber}`}
                                     name="dynamicRadioGroup"
                                     className='tabButton'
-                                    checked={currentTab === index}
+                                    checked={currentTab.index === index}
                                     readOnly
                                 />
 
@@ -422,9 +442,9 @@ export function Sales(){
                 </div>
                 <label>{orderslist && orderslist.length} productos en el ticket actual</label>
                 <button className="btnStnd btn1" onClick={()=>setShowSalesOfTheDay(true)}>Ventas del dia y devoluciones</button>
-                { showConfirmar && <ConfirmSaleModal orderslist={orderslist} show={setShowConfirmar}/>}
+                { showConfirmar && <ConfirmSaleModal orderslist={saleTabs[currentTab.key]} show={setShowConfirmar}/>}
                 { confirmUser && <UserConfirm show={setConfirmUser} confirmed={()=>setChangePventa(selectedfila)}/>}
-                { searchClient && <SignClient show={setSearchClient} retornar={()=>{}}/>}
+                { searchClient && <SignClient show={setSearchClient} retornar={(i)=>AsingCustomerToOrder(i)}/>}
                 { showSalesOfTheDay && <SalesOfTheDay show={setShowSalesOfTheDay} />}
             </div>
         </section>

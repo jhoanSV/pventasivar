@@ -1,15 +1,17 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useState, useRef} from 'react';
 import { TableComponent } from '../../Components';
 import { useTheContext } from '../../TheProvider';
 import { useNavigate } from 'react-router-dom';
+import { Clientlist } from '../../api';
 import jsonTest from '../../jsonTest.json';
 
 export const SignClient = ({show, retornar, width='50%', height='80%'}) => {
     const [ selected, setSelected] = useState([]);
     const [ multiSelect, setMultiSelect] = useState(false);
     const [ contentList, setContentList] = useState(jsonTest);
-    const { setSection, setSomeData } = useTheContext();
+    const { setSection, setSomeData, usD } = useTheContext();
     const [ showCustomerList , setShowCustomerList] = useState(true)
+    const refList = useRef([]);
     // para crear un nuevo cliente
     const [cType, setCType] = useState();
     const [conCredito, setConCredito] = useState(false);
@@ -20,63 +22,75 @@ export const SignClient = ({show, retornar, width='50%', height='80%'}) => {
     const ctHeaders = [
         {
             header: 'ID/NIT',//*Nombre de cabecera
-            key: 'id_nit',//*llave para acceder al dato del JSON
+            key: 'NitCC',//*llave para acceder al dato del JSON
             defaultWidth: '131px',//*Ancho por defecto
             type: 'text',//*Tipo de celda
         },
         {
             header: 'Nombre',
-            key: 'nombre',
+            key: 'Nombre',
             defaultWidth: '223px',
             type: 'text',
         },
         {
             header: 'Apellidos',
-            key: 'apellido',
+            key: 'Apellido',
             defaultWidth: '223px',
             type: 'text',
         },
         {
             header: 'Telefono 1',
-            key: 'telefono1',
+            key: 'Telefono1',
             defaultWidth: '135.5px',
             type: 'text',
         },
         {
             header: 'E-mail',
-            key: 'email',
+            key: 'Correo',
             defaultWidth: '135.5px',
             type: 'text',
         }
     ]
 
     const filterByText = (item, text) =>
-        item.id_nit.toLowerCase().includes(text) ||
-        item.nombre.toLowerCase().includes(text) ||
-        item.apellido.toLowerCase().includes(text) ||
-        item.barrio.toLowerCase().includes(text) ||
-        item.email.toLowerCase().includes(text);
+        item.NitCC.toLowerCase().includes(text) ||
+        item.Nombre.toLowerCase().includes(text) ||
+        item.Apellido.toLowerCase().includes(text) ||
+        item.Barrio.toLowerCase().includes(text) ||
+        item.Correo.toLowerCase().includes(text);
 
-    const SearchHandle = (text) =>{
-        let c = jsonTest;
+    const SearchHandle = async(text) =>{
+        const AllCustomerList = await Clientlist({
+            "IdFerreteria" : usD.Cod
+        })
+        let c = AllCustomerList;
         if (text !== ''){
             c = c.filter((i)=>filterByText(i, text))
             setContentList(c)
         }else{
-            setContentList(jsonTest)
+            setContentList(AllCustomerList)
         }
     }
 
     useEffect(() => {
-        setSection('Lista de Clientes')
         setSomeData(null)
-
+        CustomerFetch()
         // eslint-disable-next-line
     }, []);
 
     const verFunction = (item) => {
-        retornar(item)
+        retornar(selected)
         show(false)
+    }
+
+    const CustomerFetch = async() =>{
+        const listado = await Clientlist({
+            "IdFerreteria" : usD.Cod
+        })
+        if(listado){
+            setContentList(listado)
+            refList.current = listado;
+        };
     }
 
     const customerList = () => {

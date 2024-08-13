@@ -1,8 +1,10 @@
 import React, {useState, useEffect} from 'react';
 import { TheInput } from '../InputComponent/TheInput';
+import { useTheContext } from '../../TheProvider';
 import { TableComponent, Flatlist } from '../../Components';
 import './_SalesOfTheDay.scss';
 import jsonTest from '../../sales_per_day.json';
+import { SalesPerDay } from '../../api';
 
 export const SalesOfTheDay = ({show, orderslist, width='70%', height='80%'}) => {
     const [ paga, setPaga] = useState(0);
@@ -11,8 +13,18 @@ export const SalesOfTheDay = ({show, orderslist, width='70%', height='80%'}) => 
     const [ selectedfila, setSelectedfila] = useState(0);
     const [ selectedfilaOrder, setSelectedfilaOrder] = useState(0);
     const [ selectedOrder, setSelectedOrder] = useState(null);
-    const [ orders, setOrders ] = useState(jsonTest);
-    const [ ordersPerDay, setOrdersPerDay ] = useState(jsonTest);
+    const [ orders, setOrders ] = useState([]);
+    const [ ordersPerDay, setOrdersPerDay ] = useState([]);
+    const { setSection, setSomeData, usD } = useTheContext();
+
+    const getOrdersPerday = async() => {
+        const response = await SalesPerDay({
+            'IdFerreteria' : usD.Cod,
+            'Fecha': '2024-04-07'
+        });
+        setOrders(response);
+        console.log(response);
+    }
 
     useEffect(() => {
         if (paga >= total) {
@@ -23,30 +35,18 @@ export const SalesOfTheDay = ({show, orderslist, width='70%', height='80%'}) => 
     }, [paga])
 
     useEffect(() => {
-        sumarTotal()
+        //sumarTotal()
+        getOrdersPerday()
     }, [])
 
     useEffect(() => {
-        Orders()
-        console.log(selectedOrder.ticket)
-    }, [])
+        sumarTotal()
+    }, [selectedOrder])
 
     const ChangueSelectedOrder = (Nticket) => {
-        const filteredOrders = orders.filter(order => order.ticket === Nticket);
-        setSelectedOrder(filteredOrders)
-    }
-
-    const Orders = () => {
-        const uniqueTickets = {};
-        orders.forEach(order => {
-        if (!uniqueTickets[order.ticket]) {
-            uniqueTickets[order.ticket] = { ticket: order.ticket, fecha: order.fecha, total: 0};
-        }
-        uniqueTickets[order.ticket].total += order.Cantidad * order.pVenta;
-        });
-
-        const uniqueTicketList = Object.values(uniqueTickets);
-        setOrdersPerDay(uniqueTicketList)
+        const filteredOrders = orders.filter(order => order.Consecutivo = Nticket);
+        console.log(filteredOrders[0])
+        setSelectedOrder(filteredOrders[0])
     }
 
     const Formater = (number) =>{
@@ -59,29 +59,35 @@ export const SalesOfTheDay = ({show, orderslist, width='70%', height='80%'}) => 
 
     const sumarTotal = () => {
         let suma = 0;
-        if (orderslist && orderslist.length > 0) {orderslist.forEach((item, index) => (
-            suma += item.pVenta * item.Cantidad
+        if (selectedOrder && selectedOrder.length > 0) {selectedOrder.Orden.forEach((item, index) => (
+            suma += item.PVenta * item.Cantidad
         ))}
         setTotal(suma)
     };
 
     const ctHeaders = [
         {
-            header: 'N° venta',
-            key: 'NVenta',
+            header: 'Consecutivo',
+            key: 'Consecutivo',
+            defaultWidth: 50,
+            type: 'text',
+        },
+        {
+            header: 'Folio',
+            key: 'Folio',
             defaultWidth: 131,
             type: 'text',
         },
         {
-            header: 'Art',
-            key: 'Art',
+            header: 'Cliente',
+            key: 'Nombre',
             defaultWidth: 131,
             type: 'text',
-        },
+        }
         ,
         {
             header: 'Hora',
-            key: 'hora',
+            key: 'Fecha',
             defaultWidth: 131,
             type: 'text',
         },
@@ -126,20 +132,23 @@ export const SalesOfTheDay = ({show, orderslist, width='70%', height='80%'}) => 
         //const [changeVrVenta, setChangeVrVenta] = useState(false)
         const rowIndex = index;
         return (
-                <div onClick={()=>ChangueSelectedOrder(item.ticket)}>
+                <tr onClick={()=>ChangueSelectedOrder(item.Consecutivo)}>
                     <td style={{width: columnsWidth[0]}}>
-                        <label>{item.ticket}</label>
+                        <label>{item.Consecutivo}</label>
                     </td>
                     <td style={{width: columnsWidth[1]}}>
-                        <label>Art</label>
+                        <label>{item.Folio}</label>
                     </td>
                     <td style={{width: columnsWidth[2]}}>
-                        <label>Hora</label>
+                        <label>{item.Nombre}</label>
                     </td>
                     <td style={{width: columnsWidth[3]}}>
-                        <label>${Formater(item.total)}</label>
+                        <label>{item.Fecha.split('T')[1].split('.')[0]}</label>
                     </td>
-                </div>
+                    <td style={{width: columnsWidth[4]}}>
+                        <label>${Formater(item.Total)}</label>
+                    </td>
+                </tr>
         );
     };
 
@@ -182,7 +191,7 @@ export const SalesOfTheDay = ({show, orderslist, width='70%', height='80%'}) => 
                             </div>
                             <div className='Table'>               
                                 <Flatlist
-                                    data={ordersPerDay}
+                                    data={orders}
                                     row={RowOrder}
                                     headers={ctHeaders}
                                     selectedRow={selectedfila}
@@ -194,15 +203,19 @@ export const SalesOfTheDay = ({show, orderslist, width='70%', height='80%'}) => 
                             <div className='data_of_sale'>
                                 <div className='Col'>
                                     <label>Venta:</label>
-                                    <lavel>Cajero:</lavel>
                                     <label>Cliente:</label>
-                                    <label>Fecha:</label>
+                                    <label>Hora:</label>
                                 </div>
                                 <div className='Col'>
-                                    <label>{selectedOrder.ticket}</label>
-                                    <label>{selectedOrder.ticket}</label>
-                                    <label>{selectedOrder.ticket}</label>
-                                    <label>{selectedOrder.ticket}</label>
+                                    {selectedOrder !== null ? (
+                                        <>
+                                            <label>{selectedOrder.Consecutivo}</label>
+                                            <label>{selectedOrder.Nombre + ' ' + selectedOrder.Apellido}</label>
+                                            <label>{selectedOrder.Fecha.split('T')[1].split('.')[0]}</label>
+                                        </>
+                                    ) : (
+                                        <label>Seleccione una venta</label> // Mostrar un mensaje por defecto o dejar el espacio vacío
+                                    )}
                                 </div>
                             </div>
                             <div className='Table'>
@@ -219,7 +232,7 @@ export const SalesOfTheDay = ({show, orderslist, width='70%', height='80%'}) => 
                                 <label>Total:</label>
                                 <label>Pago con:</label>
                                 <label>Forma de pago:</label>
-                                <lavel>$ Formater</lavel>
+                                <label>$ Formater</label>
                             </div>
                         </div>
                         <button className="btnStnd btn1" onClick={()=>{}}>Cancelar venta</button>
