@@ -137,7 +137,6 @@ export const Inventory = async(InventoryValues) => {
     }
 }
 
-
 export const postUpdateInventory = async(postupdateinventory) => {
     /*send the new amount to the server to adjust the inventry
     you have to send a json of the form:
@@ -371,6 +370,26 @@ export const ModifyPurchaseProduct = async(modifypurchaseproduct) => {
             method: 'POST',
             headers: { Accept: 'application/json','Content-Type': 'application/json'},
             body: JSON.stringify(modifypurchaseproduct)
+        })
+        return await res.json()
+    }catch(error) {
+        console.log('TheError: '+ error)
+    }
+}
+//*All related to sales %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+export const SalesPerDay = async(salesperday) => {
+    /*return the list of sales per day
+    you have to send a json of the form:
+    {
+        "IdFerreteria": 242,
+        "Fecha": "2024-04-07"
+    }
+    */
+    try {
+        const res = await fetch(`${API_POS}/salesperday`,{
+            method: 'POST',
+            headers: { Accept: 'application/json','Content-Type': 'application/json'},
+            body: JSON.stringify(salesperday)
         })
         return await res.json()
     }catch(error) {
