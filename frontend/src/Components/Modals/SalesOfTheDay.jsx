@@ -14,7 +14,7 @@ export const SalesOfTheDay = ({show, orderslist, width='70%', height='80%'}) => 
     const [ selectedfilaOrder, setSelectedfilaOrder] = useState(0);
     const [ selectedOrder, setSelectedOrder] = useState(null);
     const [ orders, setOrders ] = useState([]);
-    const [ ordersPerDay, setOrdersPerDay ] = useState([]);
+    const [ headerSales, setHeaderSales ] = useState(null);
     const { setSection, setSomeData, usD } = useTheContext();
 
     const getOrdersPerday = async() => {
@@ -35,7 +35,6 @@ export const SalesOfTheDay = ({show, orderslist, width='70%', height='80%'}) => 
     }, [paga])
 
     useEffect(() => {
-        //sumarTotal()
         getOrdersPerday()
     }, [])
 
@@ -43,10 +42,10 @@ export const SalesOfTheDay = ({show, orderslist, width='70%', height='80%'}) => 
         sumarTotal()
     }, [selectedOrder])
 
-    const ChangueSelectedOrder = (Nticket) => {
-        const filteredOrders = orders.filter(order => order.Consecutivo = Nticket);
-        console.log(filteredOrders[0])
-        setSelectedOrder(filteredOrders[0])
+    const ChangueSelectedOrder = (item) => {
+        setHeaderSales(item);
+        setSelectedOrder(item.Orden)
+        console.log(item.Orden);
     }
 
     const Formater = (number) =>{
@@ -59,8 +58,8 @@ export const SalesOfTheDay = ({show, orderslist, width='70%', height='80%'}) => 
 
     const sumarTotal = () => {
         let suma = 0;
-        if (selectedOrder && selectedOrder.length > 0) {selectedOrder.Orden.forEach((item, index) => (
-            suma += item.PVenta * item.Cantidad
+        if (selectedOrder && selectedOrder.length > 0) {selectedOrder.forEach((item, index) => (
+            suma += item.VrUnitario * item.Cantidad
         ))}
         setTotal(suma)
     };
@@ -130,25 +129,24 @@ export const SalesOfTheDay = ({show, orderslist, width='70%', height='80%'}) => 
 
     const RowOrder = (item, index, columnsWidth) => {
         //const [changeVrVenta, setChangeVrVenta] = useState(false)
-        const rowIndex = index;
         return (
-                <tr onClick={()=>ChangueSelectedOrder(item.Consecutivo)}>
-                    <td style={{width: columnsWidth[0]}}>
+                <>
+                    <td style={{width: columnsWidth[0]}} onClick={()=>ChangueSelectedOrder(item)}>
                         <label>{item.Consecutivo}</label>
                     </td>
-                    <td style={{width: columnsWidth[1]}}>
+                    <td style={{width: columnsWidth[1]}} onClick={()=>ChangueSelectedOrder(item)}>
                         <label>{item.Folio}</label>
                     </td>
-                    <td style={{width: columnsWidth[2]}}>
+                    <td style={{width: columnsWidth[2]}} onClick={()=>ChangueSelectedOrder(item)}>
                         <label>{item.Nombre}</label>
                     </td>
-                    <td style={{width: columnsWidth[3]}}>
+                    <td style={{width: columnsWidth[3]}} onClick={()=>ChangueSelectedOrder(item)}>
                         <label>{item.Fecha.split('T')[1].split('.')[0]}</label>
                     </td>
-                    <td style={{width: columnsWidth[4]}}>
+                    <td style={{width: columnsWidth[4]}} onClick={()=>ChangueSelectedOrder(item)}>
                         <label>${Formater(item.Total)}</label>
                     </td>
-                </tr>
+                </>
         );
     };
 
@@ -164,10 +162,10 @@ export const SalesOfTheDay = ({show, orderslist, width='70%', height='80%'}) => 
                         <label>{item.Descripcion}</label>
                     </td>
                     <td style={{width: columnsWidth[2]}}>
-                        <label>${Formater(item.pVenta)}</label>
+                        <label>${Formater(item.VrUnitario)}</label>
                     </td>
                     <td style={{width: columnsWidth[3]}}>
-                        <label>${Formater(item.Cantidad * item.pVenta)}</label>
+                        <label>${Formater(item.Cantidad * item.VrUnitario)}</label>
                     </td>
                 </>
         );
@@ -207,11 +205,11 @@ export const SalesOfTheDay = ({show, orderslist, width='70%', height='80%'}) => 
                                     <label>Hora:</label>
                                 </div>
                                 <div className='Col'>
-                                    {selectedOrder !== null ? (
+                                    {headerSales !== null ? (
                                         <>
-                                            <label>{selectedOrder.Consecutivo}</label>
-                                            <label>{selectedOrder.Nombre + ' ' + selectedOrder.Apellido}</label>
-                                            <label>{selectedOrder.Fecha.split('T')[1].split('.')[0]}</label>
+                                            <label>{headerSales.Consecutivo}</label>
+                                            <label>{headerSales.Nombre + ' ' + headerSales.Apellido}</label>
+                                            <label>{headerSales.Fecha.split('T')[1].split('.')[0]}</label>
                                         </>
                                     ) : (
                                         <label>Seleccione una venta</label> // Mostrar un mensaje por defecto o dejar el espacio vacío
@@ -230,6 +228,7 @@ export const SalesOfTheDay = ({show, orderslist, width='70%', height='80%'}) => 
                             <button className="btnStnd btn1" onClick={()=>{}}>Devolver articulo</button>
                             <div>
                                 <label>Total:</label>
+                                <label>${Formater(total)}</label>
                                 <label>Pago con:</label>
                                 <label>Forma de pago:</label>
                                 <label>$ Formater</label>

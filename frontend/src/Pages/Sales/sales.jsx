@@ -5,6 +5,7 @@ import { ConfirmSaleModal } from '../../Components/Modals/ConfirmSaleModal';
 import { UserConfirm } from '../../Components/Modals/UserConfirm';
 import { SignClient } from '../../Components/Modals/SignClient';
 import { SalesOfTheDay } from '../../Components/Modals/SalesOfTheDay';
+import { ProductMeasures } from '../../Components/Modals/ProductMeasures';
 import "./_sales.scss";
 import jsonTest from '../../tickets-text.json';
 import { useTheContext } from '../../TheProvider';
@@ -27,6 +28,8 @@ export function Sales(){
     const [ confirmUser, setConfirmUser] = useState(false);
     const [ searchClient, setSearchClient] = useState(false);
     const [ showSalesOfTheDay, setShowSalesOfTheDay] = useState(false);
+    const [ showProductMeasures, setShowProductMeasures] = useState(false);
+    const [ selectProduct, setSelectProduct] = useState(null);
     const [ showFL, setShowFL] = useState(false);
     //const [limit, setLimit] = useState(0);
     const [ sBText, setSBText] = useState('');
@@ -275,10 +278,10 @@ export function Sales(){
     }
 
     const addProduct = (item) =>{
-        let theProduct = {...item}
         let theOrder = saleTabs[currentTab.key].Order
-        theProduct.Cantidad = 1;
-        theOrder.push(theProduct);
+        const productAlreadyExists = theOrder.filter(prod => prod.Cod === item.Cod && prod.Medida === item.Medida);
+        if(productAlreadyExists.length === 0){
+        theOrder.push(item);
         setOrderslist(a => {
             var orderElement = document.getElementById("FlastListID");
             setTimeout(() => {
@@ -288,16 +291,24 @@ export function Sales(){
               }, 0);
             return [...theOrder];
         });
-        setShowFL(false);
+        setShowFL(false);}
+        else {
+            console.log("El producto ya se encuentra en la lista")
+            setShowFL(false);
+        }
     }
 
     const askToAddProduct = (item) => {
-        console.log(item)
+        //console.log(item)
         if (item.Clase === 0){
-            item.Medida = 'Unidad'
+            let theProduct = {...item}
+            theProduct.Medida = 'Unidad'
+            theProduct.Cantidad = 1;
             addProduct(item)
         } else if (item.Clase !== 0){
-            console.log("Deberia esto abrir un cuadro para escoger la medida del producto")
+            console.log("entro a mas medidas del producto")
+            setSelectProduct(item)
+            setShowProductMeasures(true)
         }
     }
 
@@ -446,6 +457,7 @@ export function Sales(){
                 { confirmUser && <UserConfirm show={setConfirmUser} confirmed={()=>setChangePventa(selectedfila)}/>}
                 { searchClient && <SignClient show={setSearchClient} retornar={(i)=>AsingCustomerToOrder(i)}/>}
                 { showSalesOfTheDay && <SalesOfTheDay show={setShowSalesOfTheDay} />}
+                { showProductMeasures && <ProductMeasures show={setShowProductMeasures} product={selectProduct} aceptar={addProduct}/>}
             </div>
         </section>
     );

@@ -5,3 +5,4 @@ export * from './ConfirmSaleModal';
 export * from './SignClient';
 export * from './SalesOfTheDay';
 export * from './ModalBusca';
+export * from './ProductMeasures';

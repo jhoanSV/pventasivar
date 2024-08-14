@@ -105,7 +105,7 @@ export const ConfirmSaleModal = ({show, orderslist, width='50%', height='50%'}) 
                                         <div className='column2'>
                                             <TheInput
                                                 numType='real'
-                                                value={efectivo}
+                                                val={efectivo}
                                                 onchange={(e)=>setEfectivo(e)}
                                             />
                                         </div>
