@@ -1,10 +1,12 @@
-import React, { useEffect, useState } from 'react';
+import React, {useState } from 'react';
 import "./_login.scss";
 import { useTheContext } from '../../TheProvider';
 import { validateUser } from '../../api';
-
 export function Login(){
-    
+    const [showPassword, setShowPassword] = useState(false);
+    const togglePasswordVisibility = () => {
+      setShowPassword(prev => !prev);
+    };
     const { setLogged, setUsD } = useTheContext()
     const [inputData1, setInputData1] = useState();
     const [inputData2, setInputData2] = useState();
@@ -45,29 +47,50 @@ export function Login(){
     // }, []);
 
     return (
-        <div className="_About">
-            <header className="_About-header">
-                <h1 className="_About-header-title">Iniciar Sesi&oacute;n</h1>
-            </header>
-            <label>
-                Nombre de usuario
-            </label>
+        <section className="login">
+            <div className="inic">
+            <img src={require('../../Assets/AVIF/LogoSivarB.avif')} alt="Descripción de la imagen" className='img1' />
+            <img src={require('../../Assets/AVIF/LlaveSivar.avif')} alt="Descripción de la imagen" className='img2' />
+            <span className="_About-header">
+                <h1 className="Titulo">¡Bienvenido!</h1>
+            </span>
+
             <input
                 id='linput1'
                 type='text'
+                placeholder='Usuario'
                 onChange={(e)=>setInputData1(e.target.value)}
             />
-            <label>
-                Contraseña
-            </label>
             <input
                 id='linput2'
-                type='text'
+                type={showPassword ? 'text' : 'password'}
+                placeholder='Contraseña'
                 onChange={(e)=>setInputData2(e.target.value)}
             />
-            <button onClick={()=>{LoginHandle()}}>
-                {'-->'}
+            <label className='mostrar'>
+                <input
+                    className="verC"
+                    type="checkbox"
+                    checked={showPassword}
+                    onChange={togglePasswordVisibility}
+                />
+                Mostrar contraseña
+            </label>
+            <button className='btnStnd btn1' onClick={()=>{LoginHandle()}}>
+                
+                {'Iniciar Sesión'}
             </button>
-        </div>
+            <span className="aviso"onClick>
+                <label>
+                    reportar un problema
+                </label>
+            </span>
+            </div>
+            <div className="cuadroV">
+                <video className="mi-video" src="https://sivarwebresources.s3.amazonaws.com/video1.mp4" loop autoPlay muted />
+            </div>
+            
+            </section>
     );
 }
+export default Login;
