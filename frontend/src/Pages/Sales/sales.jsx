@@ -399,7 +399,7 @@ export function Sales(){
                     {/*(sBText !== '' && showFL) &&
                     */}
                 </div>
-                <ModalBusca/>
+                {/*<ModalBusca/>*/}
             </div>
             <div style={{padding: '0px 70px'}}>
                 <button
