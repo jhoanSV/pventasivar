@@ -9,18 +9,20 @@ export const LowInv = () => {
     const { setSection } = useTheContext();
     const navigate = useNavigate()
     const [lista, setLista] = useState();
+    //const [imgSrc, setImgSrc] = useState();
     const [limit, setLimit] = useState(20);
+    let timeout;
 
     const filterByText = (item, text) =>
-        item.cod.toString().toLowerCase().includes(text) ||
-        item.cod_de_barras.toLowerCase() === (text) ||
-        item.descripcion.toLowerCase().includes(text);        
+        item.Cod.toString().toLowerCase().includes(text) ||
+        item.Cod_de_barras.toLowerCase() === (text) ||
+        item.Descripcion.toLowerCase().includes(text);
 
     const SearchHandle = (text) =>{
-        let c = p_json;
+        let list = p_json;
         if (text !== ''){
-            c = c.filter((i)=>filterByText(i, text))
-            setLista(c)
+            list = list.filter((itemL)=>filterByText(itemL, text))
+            setLista(list)
             setLimit(20)
         }else{
             setLista(p_json)
@@ -67,25 +69,23 @@ export const LowInv = () => {
                     <>
                         {lista.slice(0,limit).map((product, index) => {
                             return (
-                                <div key={index} style={{position: 'relative', width: '154px', height: '200px'}}>
+                                <div key={index + '' + product.Cod} style={{position: 'relative', width: '154px', height: '200px'}}>
                                     <div className='caja-product'>
-                                        <div className='detailBox' key={index}>
+                                        <div className='detailBox'>
                                             <div className='MBimgContainer'>
                                                 <picture>
-                                                    {/* {<source
+                                                    <source
                                                         type="image/avif"
-                                                        //srcSet={imgSrc}
-                                                    />} */}
+                                                        srcSet={`https://sivarwebresources.s3.amazonaws.com/AVIF/${product.Cod}.avif`}
+                                                    />
                                                     <img
-                                                        //src='https://random-image-pepebigotes.vercel.app/api/random-image'
-                                                        //src='https://picsum.photos/300/200'
-                                                        src={`https://picsum.photos/300/20${index}`}
+                                                        src={`https://sivarwebresources.s3.amazonaws.com/AVIF/${product.Cod}.avif`}
                                                         alt="imgProducto"
                                                         decoding="async"
                                                     />
                                                 </picture>
                                             </div>
-                                            <strong>{product.descripcion}</strong>
+                                            <strong>{product.Descripcion}</strong>
                                         </div>
                                     </div>
                                 </div>
