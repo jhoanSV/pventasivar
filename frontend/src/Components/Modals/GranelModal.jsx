@@ -223,25 +223,14 @@ export const GranelModal = ({show, productData, pctGan, updtState}) => {
                     <h1>{productData.Descripcion}</h1>
                     <h1>{productData.Cod}</h1>
                     <div className='Row' style={{marginBottom: '10px'}}>
-                        <span style={{width: '134px', textAlign: 'end', marginRight: '10px'}}>
+                        {/* {<span style={{width: '134px', textAlign: 'end', marginRight: '10px'}}>
                             Unidad de medida:
-                        </span>
-                        {productData.Clase !== 4 ?
-                            <>
-                                <select value={productData.Clase} name='medida'
-                                    onChange={(e)=>{handleMeasureChange(e)}}
-                                >
-                                    <option value=''>seleccione...</option>
-                                    <option value='1'>Unidad de paquete</option>
-                                    <option value='2'>Metros</option>
-                                    <option value='3'>Kilos</option>
-                                </select>
-                            </>
-                            :
+                        </span>} */}
+                        {/*productData.Clase !== 4 &&
                             <label>
                                 Paladas
                             </label>
-                        }
+                        */}
                     </div>
                     {/*<div className="Row">
                         <span style={{width: '131px', marginRight: '10px'}}>

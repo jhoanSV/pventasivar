@@ -362,6 +362,7 @@ export const Newproduct = () => {
                         <label>Se vende:</label>
                     </div>
                     <div className='Row'>
+                        { productData.IdFerreteria !== 0 &&
                         <label className="custom-label">
                             <input type="radio" className="custom-radio" name="uniorpack"
                                 checked={productData.Clase===0}
@@ -369,11 +370,11 @@ export const Newproduct = () => {
                             />
                             <i></i>
                             por unidad
-                        </label>
+                        </label>}
                         <label className="custom-label">
                             <input type="radio" className="custom-radio" name="uniorpack"
                                 checked={productData.Clase!==0 && productData.Clase!==''}
-                                onChange={() => { changeValuesProducts("Clase", productData.Clase) }}
+                                onChange={() => { changeValuesProducts("Clase", 1) }}
                                 onClick={() => { setShow2(true) }}
                             />
                             <i></i>
