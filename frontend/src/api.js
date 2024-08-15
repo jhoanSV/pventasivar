@@ -396,3 +396,47 @@ export const SalesPerDay = async(salesperday) => {
         console.log('TheError: '+ error)
     }
 }
+
+export const NewSale = async(newsale) => {
+    /*Send the data to the databse to register the new sale
+    you have to send a json of the form:
+    {
+        "IdFerreteria": "242",
+        "Folio": 1,
+        "IdCliente": 1,
+        "Fecha": "2024-04-07 11:49:35",
+        "CodResponsable": "242",
+        "Responsable": "Ferreteria marly",
+        "Order": [{
+            "ConsecutivoProd": 8,
+            "Cantidad": 5,
+            "Cod": "bla",
+            "Descripcion": "Producto de prueba para el pos",
+            "VrCosto": 500.00,
+            "VrUnitario": 1000.00,
+            "Iva": 19.0,
+            "Motivo": "Venta por caja"
+            },
+            {
+            "ConsecutivoProd": 9,
+            "Cantidad": 10,
+            "Cod": "bla",
+            "Descripcion": "Segundo producto de prueba para el pos",
+            "VrCosto": 500.00,
+            "VrUnitario": 1000.00,
+            "Iva": 19.0,
+            "Motivo": "Venta por caja"
+            }]
+    }
+    */
+    try {
+        const res = await fetch(`${API_POS}/newsale`,{
+            method: 'POST',
+            headers: { Accept: 'application/json','Content-Type': 'application/json'},
+            body: JSON.stringify(newsale)
+        })
+        return await res.json()
+    }catch(error) {
+        console.log('TheError: '+ error)
+    }
+}
