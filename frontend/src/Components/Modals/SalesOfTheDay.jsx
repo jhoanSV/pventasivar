@@ -5,6 +5,7 @@ import { TableComponent, Flatlist } from '../../Components';
 import './_SalesOfTheDay.scss';
 import jsonTest from '../../sales_per_day.json';
 import { SalesPerDay } from '../../api';
+import { ReturnProduct } from './ReturnProduct';
 
 export const SalesOfTheDay = ({show, orderslist, width='70%', height='80%'}) => {
     const [ paga, setPaga] = useState(0);
@@ -16,6 +17,8 @@ export const SalesOfTheDay = ({show, orderslist, width='70%', height='80%'}) => 
     const [ orders, setOrders ] = useState([]);
     const [ headerSales, setHeaderSales ] = useState(null);
     const { setSection, setSomeData, usD } = useTheContext();
+    // for modals
+    const [showReturnModal, setShowReturnModal] = useState(false);
 
     const getOrdersPerday = async() => {
         const response = await SalesPerDay({
@@ -225,7 +228,7 @@ export const SalesOfTheDay = ({show, orderslist, width='70%', height='80%'}) => 
                                     setSelectedRow={setSelectedfilaOrder}
                                 />
                             </div>
-                            <button className="btnStnd btn1" onClick={()=>{}}>Devolver articulo</button>
+                            <button className="btnStnd btn1" onClick={()=>setShowReturnModal(true)}>Devolver articulo</button>
                             <div>
                                 <label>Total:</label>
                                 <label>${Formater(total)}</label>
@@ -238,6 +241,8 @@ export const SalesOfTheDay = ({show, orderslist, width='70%', height='80%'}) => 
                         <button className="btnStnd btn1" onClick={()=>{}}>Imprimir copia</button>
                     </div>
                 </div>
+
+                {showReturnModal && <ReturnProduct show={setShowReturnModal} row={orders[selectedfila]} index={selectedfilaOrder}/>}
             </div>
         </div>
     );

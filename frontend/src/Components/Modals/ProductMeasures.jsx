@@ -44,9 +44,10 @@ export const ProductMeasures = ({show, product, aceptar, width='50%', height='50
         if (selectedOption === '' || cantidad === 0 || cantidad === ''){
             alert('No tiene cantidad'); 
         } else {
+            const verdaderaCantidad = Number(cantidad)
             const valor = product.Medidas.filter(med=> med.Medida === selectedOption)
             let theProduct = {...product}
-            theProduct.Cantidad = cantidad
+            theProduct.Cantidad = verdaderaCantidad
             theProduct.PCosto = product.PCosto / valor[0].UMedida * cantidad
             theProduct.Medida = selectedOption
             theProduct.PVenta = valor[0].PVentaUM

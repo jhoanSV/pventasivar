@@ -48,8 +48,8 @@ export function Sales(){
         //const currentSelectedTab = selectedTabRef.current;
         if(isEditingRef.current===true)return;
         let theOrder = saleTabs[currentTab.key].Order//Object.entries(saleTabs)[selectedTabRef.current][1]
-        console.log(selectedfilaRef.current);
-        console.log(theOrder.length);
+        //console.log(selectedfilaRef.current);
+        //console.log(theOrder.length);
         if (theOrder.length !== 0 && selectedfilaRef.current !== null) {
             const currentSelectedFila = selectedfilaRef.current;
             if (event.key === '+') {
@@ -61,11 +61,14 @@ export function Sales(){
             } else if (event.key === 'ArrowUp' && currentSelectedFila - 1 >= 0 && currentSelectedFila - 1 < theOrder.length) {
                 setSelectedfila(currentSelectedFila - 1)
             } else if (event.key === 'Delete') {
-                console.log(theOrder);
+                //console.log(theOrder);
                 theOrder.splice(currentSelectedFila, 1)
-                const updatedOrdersList = [...theOrder];
-                console.log(updatedOrdersList);
+                if (selectedfila === theOrder.length - 1 && selectedfila !== 0){
+                    setSelectedfila(currentSelectedFila - 1)
+                }
+                //console.log(updatedOrdersList);
                 // Actualiza el estado con la nueva lista
+                const updatedOrdersList = [...theOrder];
                 setOrderslist(updatedOrdersList);
             }
         }
@@ -85,7 +88,7 @@ export function Sales(){
 
     const onblurChangePv = (row, amount, theKey) => {
         let theOrder = Object.entries(saleTabs)[selectedTabRef.current][1]
-        console.log(theOrder);
+        //console.log(theOrder);
         if (amount > 0) {
             const theValue = amount
             let withoutFormat = theValue.replace(/\./g, '')
@@ -356,8 +359,12 @@ export function Sales(){
         setSaleTabs(jsonTest)
     }
 
-    const sendSale = (order) => {
-        console.log(jsonTest[currentTab.key])
+    const confirmarVenta = () => {
+        if (orderslist.length > 0) {
+            setShowConfirmar(true)
+        } else {
+            alert('Debe seleccionar al menos un producto')
+        }
     }
 
     useEffect(() => {
@@ -435,8 +442,13 @@ export function Sales(){
                 </button>
                 <button
                     className="btnStnd btn1"
-                    onClick={()=>setShowMoneyFlow(true)}
+                    onClick={()=>{setTypeMoneyFlow(false);setShowMoneyFlow(true)}}
                     >Entradas de dinero
+                </button>
+                <button
+                    className="btnStnd btn1"
+                    onClick={()=>{setTypeMoneyFlow(true); setShowMoneyFlow(true)}}
+                    >Salidas de dinero
                 </button>
                 <div>
                     <label>Cliente: {customer}</label>
@@ -479,7 +491,7 @@ export function Sales(){
                     />
                 </div>
                 <div>
-                    <button className="btnStnd btn1" onClick={()=>setShowConfirmar(true)}>F2-Cobrar</button>
+                    <button className="btnStnd btn1" onClick={()=>confirmarVenta()}>F2-Cobrar</button>
                     <label style={{marginLeft: '10px'}}>$ {Formater(total)}</label>
                 </div>
                 <label>{orderslist && orderslist.length} productos en el ticket actual</label>
@@ -489,7 +501,7 @@ export function Sales(){
                 { searchClient && <SignClient show={setSearchClient} retornar={(i)=>AsingCustomerToOrder(i)}/>}
                 { showSalesOfTheDay && <SalesOfTheDay show={setShowSalesOfTheDay} />}
                 { showProductMeasures && <ProductMeasures show={setShowProductMeasures} product={selectProduct} aceptar={addProduct}/>}
-                { showMoneyFlow && <MoneyFlow show={setShowMoneyFlow} typeOfFlow= {typeMoneyFlow}></MoneyFlow>}
+                { showMoneyFlow && <MoneyFlow show={setShowMoneyFlow} typeOfFlow={typeMoneyFlow}></MoneyFlow>}
             </div>
         </section>
     );

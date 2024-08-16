@@ -37,6 +37,7 @@ export const ConfirmSaleModal = ({show, sendSale , folio , orderslist, width='50
 
     useEffect(() => {
         if (tipoDePago === 'Efectivo') {
+            console.log('Entro en efectivo')
             setEfectivo(total)
             setTransferencia(0)
             setCambio(efectivo - total)
@@ -201,7 +202,8 @@ export const ConfirmSaleModal = ({show, sendSale , folio , orderslist, width='50
                                         Efectivo: efectivo,
                                         Transferencia: transferencia,
                                         Motivo: "Venta por caja",
-                                        Comentarios: ''
+                                        Comentarios: '',
+                                        Activo: true
                                         }
                     console.log(usD)
                     NewSale(orderslist)
@@ -275,7 +277,7 @@ export const ConfirmSaleModal = ({show, sendSale , folio , orderslist, width='50
                                         <div className='column2'>
                                             <TheInput
                                                 numType='real'
-                                                value={transferencia}
+                                                val={transferencia}
                                                 onchange={(e)=>setTransferencia(e)}
                                             />
                                         </div>

@@ -440,3 +440,71 @@ export const NewSale = async(newsale) => {
         console.log('TheError: '+ error)
     }
 }
+
+export const CashFlow = async(cashflow) => {
+    /*return the list of sales per day
+    you have to send a json of the form:
+    {
+        "IdFerreteria": 242,
+        "Fecha": "2024-04-07"
+        "TipoDeFlujo" : false // if is false then is an entry and if is true then it is an output
+    }
+    */
+    try {
+        const res = await fetch(`${API_POS}/cashflow`,{
+            method: 'POST',
+            headers: { Accept: 'application/json','Content-Type': 'application/json'},
+            body: JSON.stringify(cashflow)
+        })
+        return await res.json()
+    }catch(error) {
+        console.log('TheError: '+ error)
+    }
+}
+
+export const NewMoneyFlow = async(newmoneyflow) => {
+    /*return the list of sales per day
+    you have to send a json of the form:
+    {
+        ConsecutivoCV: 0,
+        IdFerreteria: usD.Cod,
+        Fecha: date + ' ' + time,
+        Referencia: 0,
+        Efectivo: cantidad,
+        Transferencia: 0,
+        Motivo: 'Ingreso por caja',
+        Comentarios: comentario,
+        TipoDeFlujo: true
+    }
+    */
+    try {
+        const res = await fetch(`${API_POS}/newmoneyflow`,{
+            method: 'POST',
+            headers: { Accept: 'application/json','Content-Type': 'application/json'},
+            body: JSON.stringify(newmoneyflow)
+        })
+        return await res.json()
+    }catch(error) {
+        console.log('TheError: '+ error)
+    }
+}
+
+export const RemoveFlow = async(removeflow) => {
+    /*return the list of sales per day
+    you have to send a json of the form:
+    {
+        IdFerreteria: usD.Cod,
+        ConsecutivoCV: 0
+    }
+    */
+    try {
+        const res = await fetch(`${API_POS}/removeflow`,{
+            method: 'POST',
+            headers: { Accept: 'application/json','Content-Type': 'application/json'},
+            body: JSON.stringify(removeflow)
+        })
+        return await res.json()
+    }catch(error) {
+        console.log('TheError: '+ error)
+    }
+}
