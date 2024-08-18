@@ -1,0 +1,42 @@
+.productsContainer{
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    padding: 10px 8%;
+    justify-content: space-between;
+}
+
+.caja-product{
+    padding: 4%;
+    width: 100%;
+    max-height: 205px;
+    min-height: 200px;
+    border: solid 1px black;
+    background-color: #f2f2f2;
+    cursor: pointer;
+    .detailBox{
+        overflow: hidden;
+        display: -webkit-box;
+        -webkit-line-clamp: 3;
+        line-clamp: 3;
+        -webkit-box-orient: vertical;
+    }
+    &:hover{
+        position: absolute;
+        transform: scale(1.025);
+        z-index: 9;
+        max-height: unset;
+        .detailBox{
+            -webkit-line-clamp: unset;
+            line-clamp: unset;
+        }
+    }
+}
+
+.BimgContainer{
+    img{        
+        width: 100%;
+        aspect-ratio: 1 / 1;
+        object-fit: contain;
+    }
+}

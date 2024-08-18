@@ -3,6 +3,8 @@ import React, { useEffect, useState } from 'react';
 import { useTheContext } from '../../TheProvider';
 import p_json from '../../products_json_test.json'
 import { useNavigate } from 'react-router-dom';
+import { BoxItem } from '../../Components/Others/BoxItem';
+import { AddPurchaseModal } from '../../Components';
 
 export const LowInv = () => {
     
@@ -11,6 +13,7 @@ export const LowInv = () => {
     const [lista, setLista] = useState();
     //const [imgSrc, setImgSrc] = useState();
     const [limit, setLimit] = useState(20);
+    const [show, setShow] = useState(false);
     let timeout;
 
     const filterByText = (item, text) =>
@@ -68,28 +71,18 @@ export const LowInv = () => {
                 { lista &&
                     <>
                         {lista.slice(0,limit).map((product, index) => {
-                            return (
-                                <div key={index + '' + product.Cod} style={{position: 'relative', width: '154px', height: '200px'}}>
-                                    <div className='caja-product'>
-                                        <div className='detailBox'>
-                                            <div className='MBimgContainer'>
-                                                <picture>
-                                                    <source
-                                                        type="image/avif"
-                                                        srcSet={`https://sivarwebresources.s3.amazonaws.com/AVIF/${product.Cod}.avif`}
-                                                    />
-                                                    <img
-                                                        src={`https://sivarwebresources.s3.amazonaws.com/AVIF/${product.Cod}.avif`}
-                                                        alt="imgProducto"
-                                                        decoding="async"
-                                                    />
-                                                </picture>
-                                            </div>
-                                            <strong>{product.Descripcion}</strong>
-                                        </div>
-                                    </div>
-                                </div>
-                            );
+                            return(
+                                <BoxItem
+                                    key={index+''+product.Cod}
+                                    Codigo={product.Cod}
+                                    Descripcion={product.Descripcion}
+                                    IdFerreteria={product.IdFerreteria}
+                                    showModal={(show)=><AddPurchaseModal
+                                        P={product}
+                                        Show={show}
+                                    />}
+                                />
+                            )
                         })}                        
                     </>
                 }

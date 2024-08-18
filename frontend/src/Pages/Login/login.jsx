@@ -80,7 +80,7 @@ export function Login(){
                 
                 {'Iniciar Sesión'}
             </button>
-            <span className="aviso"onClick>
+            <span className="aviso">
                 <label>
                     reportar un problema
                 </label>
