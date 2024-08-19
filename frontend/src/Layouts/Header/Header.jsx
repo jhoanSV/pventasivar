@@ -74,7 +74,7 @@ export const Header = () => {
             <img
                 id='lgId'
                 className='mainLogoHead'
-                src={require('../../Assets/icono2.png')}
+                src={require('../../Assets/PNG/icono2.png')}
                 alt='MainLogo'
                 onClick={(e)=>{showSideBar(e)}}
             />
@@ -85,7 +85,7 @@ export const Header = () => {
                 <img
                     id='lgId2'
                     className='Ins-mlh'
-                    src={require('../../Assets/icono2.png')}
+                    src={require('../../Assets/PNG/icono2.png')}
                     alt='MainLogo'
                     onClick={()=>{hideSideBar()}}
                 />

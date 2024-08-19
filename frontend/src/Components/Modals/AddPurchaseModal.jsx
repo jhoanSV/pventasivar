@@ -1,10 +1,13 @@
-import React, { useEffect } from 'react';
-import './_AddPurchaseModal.scss'
+import React, { useEffect, useState } from 'react';
+import './_AddPurchaseModal.scss';
+import imgPlaceHolder from '../../Assets/PNG/placeHolderProduct.png';
 
 export const AddPurchaseModal = ({P, Show}) => {
+                                    
+    const [img, setImg] = useState(`https://sivarwebresources.s3.amazonaws.com/AVIF/${P.Cod}.avif`);
 
     const handleClickOutside = (event) => {
-        let dmc = document.getElementById(`ModalCont${P.Codigo}`);
+        let dmc = document.getElementById(`ModalCont${P.Cod}`);
         if (dmc && !dmc.contains(event.target)) {
             Show(false);
             document.removeEventListener('mousedown', handleClickOutside);
@@ -13,15 +16,16 @@ export const AddPurchaseModal = ({P, Show}) => {
 
     useEffect(() => {
         document.addEventListener('mousedown', handleClickOutside);
+        // eslint-disable-next-line
     }, []);
 
     return (
         <div className='theModalContainer'>
-            <div id={`ModalCont${P.Codigo}`} className='theModal-content addPurchMo'>
+            <div id={`ModalCont${P.Cod}`} className='theModal-content addPurchMo'>
                 <div className='Row TMCD3'>
-                    <div className="col d-flex flex-column">
+                    <div style={{width: '50%', paddingRight: '20px'}}>
                         <div className={`imgModal C${P.Categoria}`}>
-                            <picture style={{position: 'relative', overflow: 'hidden'}}>
+                            <picture>
                                 { P.Agotado &&
                                     <div className='soldOutMod'>
                                         AGOTADO
@@ -29,10 +33,11 @@ export const AddPurchaseModal = ({P, Show}) => {
                                 }
                                 <source
                                     type="image/avif"
-                                    //srcSet={img}
+                                    srcSet={img}
                                 />
                                 <img
-                                    //src={img}
+                                    src={img}
+                                    onError={()=>{setImg(imgPlaceHolder)}}
                                     alt="productImg"
                                     decoding="async"
                                 />
@@ -49,7 +54,7 @@ export const AddPurchaseModal = ({P, Show}) => {
                             </div>
                         </div>
                     </div>
-                    <div className="col d-flex flex-column">
+                    <div style={{width: '50%'}}>
                         <div className="mainFeatures">
                             <div className="theLogo">
                                 <picture>
@@ -60,13 +65,14 @@ export const AddPurchaseModal = ({P, Show}) => {
                                     <img
                                         //src={catSource}                                        
                                         alt="logo"
+                                        style={{width: '100%'}}
                                         decoding="async"
                                     />
                                 </picture>
                             </div>
                             <h1 id="productolLabel">
                                 {P.Descripcion}<br/>
-                                <span className="smolText">Cod: {P.Codigo}</span>
+                                <span className="smolText">Cod: {P.Cod}</span>
                             </h1>
                         </div>
                         <div className='mt-auto'>
