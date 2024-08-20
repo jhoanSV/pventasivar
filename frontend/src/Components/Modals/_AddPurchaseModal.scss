@@ -1,8 +1,19 @@
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button
+{
+  -webkit-appearance: none;
+  margin: 0;
+  border-style: none;
+}
+
 .addPurchMo{
     width: 65vw;
     height: min-content;
     position: relative;
     padding: 30px;
+    h1{
+        margin-top: 0;
+    }
     .imgModal{
         display: flex;
         justify-content: center;
@@ -21,6 +32,38 @@
             border: solid;
             border-radius: 25%;
             object-fit: contain;
+        }
+    }
+    .quantity{
+        text-align: center;
+        font-size: 18px;
+        background-color: unset;
+    }
+    .btnAddCart{
+        width: 100%;
+        font-size: 18px;
+        font-weight: 700;
+        height: 65px;
+        background-color: #F2CB05;
+        box-shadow: 0px 4px 0px 0px rgb(197 176 74);
+        color: #193773;
+        &.btn1:active{
+            box-shadow: none;
+            transform: translateY(4px);
+        }
+    }
+    .description {
+        overflow-y: auto;
+        background-color: #d9d9d9;
+        height: 120px;
+    }
+    .theLogo{
+        display: flex;
+        justify-content: left;
+        overflow: hidden;
+        position: relative;
+        picture{
+            width: 3.625rem;
         }
     }
 }

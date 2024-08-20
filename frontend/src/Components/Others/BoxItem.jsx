@@ -1,15 +1,20 @@
 import React, { useState } from 'react';
 import './_BoxItem.scss';
+import imgPlaceHolder from '../../Assets/AVIF/placeHolderProduct.avif';
 
 export const BoxItem = ({Codigo, Descripcion, simpleFunct, showModal, IdFerreteria}) => {
 
     const [show, setShow] = useState(false);
+    
+    const [img, setImg] = useState(`https://sivarwebresources.s3.amazonaws.com/AVIF/${Codigo}.avif`);
 
     const handleClickBox = () =>{
         if(simpleFunct){
             simpleFunct();
         }
         if(showModal && (IdFerreteria === 0)){
+            document.body.style.overflow = 'hidden';
+            document.body.style.paddingRight = '17px'
             setShow(true);
         }
     }
@@ -23,10 +28,11 @@ export const BoxItem = ({Codigo, Descripcion, simpleFunct, showModal, IdFerreter
                             <picture>
                                 <source
                                     type="image/avif"
-                                    srcSet={`https://sivarwebresources.s3.amazonaws.com/AVIF/${Codigo}.avif`}
+                                    srcSet={img}
                                 />
                                 <img
-                                    src={`https://sivarwebresources.s3.amazonaws.com/AVIF/${Codigo}.avif`}
+                                    src={img}
+                                    onError={()=>{setImg(imgPlaceHolder)}}
                                     alt="imgProducto"
                                     decoding="async"
                                 />
@@ -36,7 +42,7 @@ export const BoxItem = ({Codigo, Descripcion, simpleFunct, showModal, IdFerreter
                     </div>
                 </div>
             </div>
-            {show && showModal(setShow)}
+            {show && showModal(setShow, img)}
         </>
     );
 }

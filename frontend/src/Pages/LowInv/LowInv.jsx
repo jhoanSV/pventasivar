@@ -77,9 +77,10 @@ export const LowInv = () => {
                                     Codigo={product.Cod}
                                     Descripcion={product.Descripcion}
                                     IdFerreteria={product.IdFerreteria}
-                                    showModal={(show)=><AddPurchaseModal
+                                    showModal={(show, theImg)=><AddPurchaseModal
                                         P={product}
                                         Show={show}
+                                        img={theImg}
                                     />}
                                 />
                             )
