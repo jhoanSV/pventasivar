@@ -8,3 +8,4 @@ export * from './ModalBusca';
 export * from './ProductMeasures';
 export * from './MoneyFlow';
 export * from './ReturnProduct';
+export * from './StartOfCash';

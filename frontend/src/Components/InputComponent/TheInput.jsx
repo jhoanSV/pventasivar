@@ -10,7 +10,9 @@ export const TheInput = ({
     onfocus=false,
     autofocus=false,
     sTyle={},
-    pholder=''}) => {
+    pholder='',
+    Min=null,
+    Max=null}) => {
 
     const [value, setValue] = useState(val);
     
@@ -22,6 +24,7 @@ export const TheInput = ({
     }
     
     const handleChange = (e) => {
+        //gives the format of the number
         const characters = (numType==='nat') ? //*for natural numbers
             ['1','2','3','4','5','6','7','8','9','0','']
             : (numType==='ent') ? //*for integer numbers
@@ -33,8 +36,16 @@ export const TheInput = ({
             let a = e.target.value;
             //if(a.slice(-1) === '.') a = a.slice(0, -1) + ','; //*If you enter ".", it changes to ","
             if(e.nativeEvent.data === '.') a = a.replace(/\./g, ",") //*If you enter ".", it changes to ","
+            if (Min !== null && a < Min) {
+                a = Min
+            }
+            if (Max !== null && a > Max) {
+                a = Max
+            }
             setValue(a)
-            if(onchange)onchange(a)
+            if(onchange){
+                onchange(a)
+            }
         }
     }
 

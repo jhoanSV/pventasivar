@@ -508,3 +508,35 @@ export const RemoveFlow = async(removeflow) => {
         console.log('TheError: '+ error)
     }
 }
+
+export const NewOutput = async(newoutput) => {
+    /*return the list of sales per day
+    you have to send a json of the form:
+    {
+        CodInterno:,
+        IdFerreteria:,
+        ConsecutivoProd:,
+        Cantidad:,
+        Cod:,
+        Descripcion:,
+        PCosto:,
+        PCostoLP:,
+        Fecha:,
+        Iva:,
+        CodResponsable:,
+        Responsable:,
+        Motivo:,
+        ConsecutivoCompra:
+    }
+    */
+    try {
+        const res = await fetch(`${API_POS}/newoutput`,{
+            method: 'POST',
+            headers: { Accept: 'application/json','Content-Type': 'application/json'},
+            body: JSON.stringify(newoutput)
+        })
+        return await res.json()
+    }catch(error) {
+        console.log('TheError: '+ error)
+    }
+}

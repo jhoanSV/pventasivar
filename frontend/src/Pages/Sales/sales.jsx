@@ -7,10 +7,11 @@ import { SignClient } from '../../Components/Modals/SignClient';
 import { SalesOfTheDay } from '../../Components/Modals/SalesOfTheDay';
 import { ProductMeasures } from '../../Components/Modals/ProductMeasures';
 import { MoneyFlow } from '../../Components/Modals/MoneyFlow';
+import { StartOfCash } from '../../Components/Modals/StartOfCash';
 import "./_sales.scss";
 import jsonTest from '../../tickets-text.json';
 import { useTheContext } from '../../TheProvider';
-import { Inventory } from '../../api';
+import { CashFlow, Inventory } from '../../api';
 import { CSSTransition } from 'react-transition-group';
 
 export function Sales(){
@@ -20,7 +21,7 @@ export function Sales(){
     const [tabsHistory, setTabsHistory] = useState(Object.keys(saleTabs).length);
     //*---------------------
     const [ total, setTotal] = useState(0);
-    const [ orderslist, setOrderslist] = useState(saleTabs[1]["Order"])
+    const [ orderslist, setOrderslist] = useState(saleTabs[Object.keys(saleTabs)[0]]["Order"])
     const [ customer, setCustomer] = useState("Por asignar");
     const [ showConfirmar, setShowConfirmar] = useState(false);
     const [ selectedfila, setSelectedfila] = useState(0);
@@ -30,6 +31,7 @@ export function Sales(){
     const [ searchClient, setSearchClient] = useState(false);
     const [ showSalesOfTheDay, setShowSalesOfTheDay] = useState(false);
     const [ showProductMeasures, setShowProductMeasures] = useState(false);
+    const [ showStartCahs, setShowStartCahs ] = useState(false);
     const [ showMoneyFlow, setShowMoneyFlow ] = useState(false);
     const [ typeMoneyFlow, setTypeMoneyFlow ] = useState(false);
     const [ selectProduct, setSelectProduct] = useState(null);
@@ -129,7 +131,7 @@ export function Sales(){
                         <label>{item.Descripcion}</label>
                     </td>
                     <td style={{width: columnsWidth[3]}}>
-                        <label>{item.Medida}</label>
+                        <label>{item.Medida === '' ? 'Unidad': item.Medida}</label>
                     </td>
                     <td style={{width: columnsWidth[4]}} onDoubleClick={()=>{setConfirmUser(true);isEditingRef.current=true}}>
                         { isEditingPv ? (
@@ -225,9 +227,16 @@ export function Sales(){
 
     const changeTab = (Num, index) => {
         if(Num===null){
+            console.log(currentTab.key);
+            
+
             setOrderslist(saleTabs[currentTab.key].Order);
+            setCurrentTab({"index": index,
+                "key": currentTab.key});
         }else{
             setOrderslist(saleTabs[Num].Order);
+            setCurrentTab({"index": index,
+                "key": Num});
         }
         console.log(index);
         if (Num !== null && saleTabs[Num].Order.length !== 0) {
@@ -247,12 +256,10 @@ export function Sales(){
         } else if ( Num !== null && saleTabs[Num].Order.length === 0 ) {
             setSelectedfila(null);
         }
-        setCurrentTab({"index": index,
-                       "key": Num});
-        console.log(saleTabs[Num].Customer.Nombre !== null);
-        const custromerName = saleTabs[Num].Customer.Nombre === '' ?
-        saleTabs[Num].Customer.Nombre: 'Por asignar';
-        setCustomer(custromerName)
+        
+        //console.log(saleTabs[Num].Customer.Nombre !== null);
+        //const custromerName = saleTabs[Num].Customer.Nombre === '' ? saleTabs[Num].Customer.Nombre: 'Por asignar';
+        //setCustomer(custromerName)
     };
 
     const createButton = () => {
@@ -271,13 +278,23 @@ export function Sales(){
             delete newTabButtons[tabNumber];
             setSaleTabs(newTabButtons);
             console.log('tabNumber: '+tabNumber+' index: '+index+' CurrentTab: '+currentTab);
-            if(index < currentTab){
-                setCurrentTab(currentTab-1);
-            }else if(index === currentTab){
+            if(index < currentTab.index) {
+                setCurrentTab({"index": currentTab.index-1,
+                                "key": tabNumber});
+            }else if(index === currentTab.index){
                 if(index === 0){
-                    changeTab(null, (index))
-                }else changeTab(null, (index-1))
+                    changeTab(Object.keys(saleTabs)[index+1], (index))
+                }else {
+                    changeTab(Object.keys(saleTabs)[index-1], (index-1))
+                }
             }
+        } else {
+            createButton()
+            const newTabButtons = {...saleTabs};
+            delete newTabButtons[tabNumber];
+            setSaleTabs(newTabButtons)
+            setCurrentTab({"index": 0,
+                             "key": Object.keys(newTabButtons)[0]})
         }
     };
 
@@ -301,6 +318,7 @@ export function Sales(){
         const productAlreadyExistsIndex = theOrder.findIndex(
             (prod) => prod.Cod === item.Cod && prod.Medida === item.Medida
         );
+        console.log(item);
         if(productAlreadyExistsIndex === -1){
         theOrder.push(item);
         setOrderslist(a => {
@@ -327,8 +345,9 @@ export function Sales(){
         //console.log(item)
         if (item.Clase === 0){
             let theProduct = {...item}
-            theProduct.Medida = 'Unidad'
+            theProduct.Medida = ''
             theProduct.Cantidad = 1;
+            theProduct.UMedida = 1;
             addProduct(theProduct)
         } else if (item.Clase !== 0){
             setSelectProduct(item)
@@ -379,16 +398,29 @@ export function Sales(){
     
     useEffect(() => {
         selectedTabRef.current = currentTab.index;
-
-        console.log(saleTabs)
+        //console.log(saleTabs)
     }, [currentTab]);
     
     useEffect(() => {
+        const now = new Date();
+        // Obtener la fecha en formato YYYY-MM-DD
+        const date = now.toISOString().split('T')[0];
+        // Obtener la hora en formato HH:MM:SS
+        const time = now.toTimeString().split(' ')[0];
         setSection('Ventas');
         fetchInventoryList();
         window.addEventListener('keydown', handleKeyDown);
         document.addEventListener('mousedown', handleClickOutside);
         
+        const StartCahs = async() => {
+            const cashFlow = await CashFlow({
+                IdFerreteria: usD.Cod,
+                Fecha: new Date().toISOString().split('T')[0],
+            })
+            console.log('cashFlow: ', cashFlow)
+            if (cashFlow.length === 0) setShowStartCahs(true);
+        }
+        StartCahs()
         return () => {
             window.removeEventListener('keydown', handleKeyDown);
             document.removeEventListener('mousedown', handleClickOutside);
@@ -496,12 +528,13 @@ export function Sales(){
                 </div>
                 <label>{orderslist && orderslist.length} productos en el ticket actual</label>
                 <button className="btnStnd btn1" onClick={()=>setShowSalesOfTheDay(true)}>Ventas del dia y devoluciones</button>
-                { showConfirmar && <ConfirmSaleModal orderslist={saleTabs[currentTab.key]} show={setShowConfirmar} folio={currentTab.key}/>}
+                { showConfirmar && <ConfirmSaleModal orderslist={saleTabs[currentTab.key]} show={setShowConfirmar} folio={currentTab.key} sendSale={()=>closeTab(currentTab.key, currentTab.index)} totalE={total}/>}
                 { confirmUser && <UserConfirm show={setConfirmUser} confirmed={()=>setChangePventa(selectedfila)}/>}
                 { searchClient && <SignClient show={setSearchClient} retornar={(i)=>AsingCustomerToOrder(i)}/>}
                 { showSalesOfTheDay && <SalesOfTheDay show={setShowSalesOfTheDay} />}
                 { showProductMeasures && <ProductMeasures show={setShowProductMeasures} product={selectProduct} aceptar={addProduct}/>}
                 { showMoneyFlow && <MoneyFlow show={setShowMoneyFlow} typeOfFlow={typeMoneyFlow}></MoneyFlow>}
+                { showStartCahs && <StartOfCash show={setShowStartCahs}></StartOfCash>}
             </div>
         </section>
     );

@@ -4,8 +4,8 @@ import { useTheContext } from '../../TheProvider';
 import { NewSale } from '../../api';
 import './_ConfirmSaleModal.scss';
 
-export const ConfirmSaleModal = ({show, sendSale , folio , orderslist, width='50%', height='50%'}) => {
-    const [ efectivo, setEfectivo] = useState(0)
+export const ConfirmSaleModal = ({show, sendSale , folio , orderslist, width='50%', height='50%', totalE}) => {
+    const [ efectivo, setEfectivo] = useState(5000)
     const [ transferencia, setTransferencia] = useState(0);
     const [ cambio, setCambio] = useState(0)
     const [ total, setTotal] = useState(0)
@@ -53,8 +53,14 @@ export const ConfirmSaleModal = ({show, sendSale , folio , orderslist, width='50
     }, [tipoDePago])
 
     useEffect(() => {
-        sumarTotal()
-        setEfectivo(total)
+        let suma = 0;
+        //console.log('orderslist.Order: ' + JSON.stringify(orderslist.Order))
+        if (orderslist.Order && orderslist.Order.length > 0) {orderslist.Order.forEach((item, index) => {
+            suma += item.PVenta * item.Cantidad
+        })}
+        setTotal(suma)
+        setEfectivo(suma)
+        console.log('Total: ', suma)
     }, [])
 
     const Formater = (number) =>{
@@ -67,9 +73,8 @@ export const ConfirmSaleModal = ({show, sendSale , folio , orderslist, width='50
 
     const sumarTotal = () => {
         let suma = 0;
-        console.log('orderslist.Order: ' + JSON.stringify(orderslist.Order))
+        //console.log('orderslist.Order: ' + JSON.stringify(orderslist.Order))
         if (orderslist.Order && orderslist.Order.length > 0) {orderslist.Order.forEach((item, index) => {
-            console.log(item.PVenta);
             suma += item.PVenta * item.Cantidad
         })}
         setTotal(suma)
@@ -205,8 +210,10 @@ export const ConfirmSaleModal = ({show, sendSale , folio , orderslist, width='50
                                         Comentarios: '',
                                         Activo: true
                                         }
-                    console.log(usD)
+                    console.log('orderlist: ', orderslist)
                     NewSale(orderslist)
+                    sendSale()
+                    show(false)
                 }
             }
     }
