@@ -1,0 +1,185 @@
+.theCart{
+    display: flex;
+    position: relative;
+    flex-wrap: wrap;
+    padding: 60px 30px;
+    min-height: 455px;
+}
+
+.itemsCart.grayContainer{
+    width: 55%;
+    min-height: 545.95px;
+    max-height: 550px;
+    overflow-x: hidden;
+    overflow-y: auto;
+    margin-top: 0;
+    border-radius: 20px;
+    padding: 18px;
+}
+.dtlCart.grayContainer{
+    display: flex;
+    flex-direction: column;
+    width: 36%;
+    margin-top: 0;
+    margin-left: auto;
+    border-radius: 20px;
+    padding: 18px;
+    align-self: flex-start;
+    align-items: flex-start;
+    font-weight: 600;
+    scrollbar-width: thin;
+    scrollbar-color: #F2CB05 #d9d9d9;
+}
+
+.itemsCart.grayContainer::-webkit-scrollbar {
+    width: 1vw;    
+}
+  
+.itemsCart.grayContainer::-webkit-scrollbar-track {    
+    background-color: transparent;
+    border-radius: 100px;
+}
+  
+.itemsCart.grayContainer::-webkit-scrollbar-thumb {
+    background-color: #F2CB05;
+    border-radius: 100px;
+}
+
+.btnSendOrd.boton {
+    background-color: #F2CB05;
+    color: #193773;
+    max-width: none;
+    width: 100%;
+    font-size: 20px;
+    letter-spacing: 0;
+    border-radius: 20px;
+}
+
+.dtlCart .subTit{
+    color: #193773;
+}
+
+.sendOrd{
+    display: flex;
+    min-height: 239px;
+}
+.sendOrd > *{
+    display: flex;
+}
+
+.btnModal{
+    width: auto;
+    min-width: 122px;
+    height: auto;
+    border: none;
+    border-radius: 10px;
+    background-color: #F2CB05;
+    color: #193773;
+    font-size: 20px;
+    font-weight: bold;
+    margin: auto;
+    padding: 8px;
+}
+.btnModal.btnBack{
+    background-color: #d9d9d9;
+}
+
+.btnConfirm:disabled, .btnSendOrd:disabled{
+    opacity: 0.5;
+}
+
+.textAreaModal{
+    min-height: 162px;
+    width: 100%;
+    resize: none;
+    background-color: #d9d9d9;
+}
+.banner1{
+    width: 100%;
+    position: absolute;
+    background-color: #F2CB05;
+    color: #193773;
+    font-size: 1.5rem;
+    font-weight: bold;
+    top: 0;
+    left: 0;
+    overflow: hidden;
+    text-wrap: nowrap;
+}
+.textBanner1Container{
+    width: max-content;
+    animation: moveText 12s linear infinite;
+}
+
+.reminderContainer{
+    display: flex;
+    flex-direction: column;    
+}
+.reminder{
+    width: 75%;
+    min-width: 344.5px;
+    padding: 10px;
+    display: flex;
+    aspect-ratio: 1 / 1;
+    border: 2px #193773 solid;
+    margin: auto;
+    flex-direction: column;
+    -webkit-user-select: none; /* Safari */
+    -ms-user-select: none; /* IE 10 and IE 11 */
+    user-select: none;
+    picture{
+        width: 35%;
+        margin-right: 10px;
+        img{
+            width: 100%;
+        }
+    }
+}
+
+.reminder > div{
+    color: #193773;
+}
+
+@keyframes moveText {
+    0% {
+        opacity: 1;
+        margin-left: 100%;
+    }
+    99% {
+        opacity: 1;
+        margin-left: -589.33px;
+    }
+    
+    100% {
+        opacity: 0;
+        margin-left: -589.33px;
+    }
+}
+
+@media screen and (max-width: 900px) {
+    .btnModal{
+        font-size: 16px;
+    }
+    .itemsCart.grayContainer{
+        width: 100%;
+        max-height: none;
+    }
+    .dtlCart.grayContainer{
+        background-color: white;
+        margin-top: 15px;
+        border-radius: 0;
+        border-top: solid 1px;
+        width: 100%;
+    }
+}
+
+@media screen and (max-width: 600px) {
+    .theCart{
+        padding: 45px 10px;
+    }
+    .itemsCart.grayContainer{
+        background-color: white;
+        padding: 0;
+    }
+    
+}
