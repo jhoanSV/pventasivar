@@ -77,8 +77,7 @@ export function Login(){
                 Mostrar contraseña
             </label>
             <button className='btnStnd btn1' onClick={()=>{LoginHandle()}}>
-                
-                {'Iniciar Sesión'}
+                <i className="bi bi-arrow-right"></i>
             </button>
             <span className="aviso">
                 <label>
@@ -90,7 +89,7 @@ export function Login(){
                 <video className="mi-video" src="https://sivarwebresources.s3.amazonaws.com/video1.mp4" loop autoPlay muted />
             </div>
             
-            </section>
+        </section>
     );
 }
 export default Login;

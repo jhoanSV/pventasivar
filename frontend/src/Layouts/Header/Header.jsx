@@ -177,7 +177,7 @@ export const Header = () => {
             <label>{section}</label>
             <div className='htud'>
                 <div style={{marginRight: '12px'}}>
-                    <Link to="/carrito" type="button" className='btnCart'>
+                    <Link to="/Cart" type="button" className='btnCart'>
                         <i className="bi bi-cart4"></i>
                         
                         {/* (nItemsCart!==0) &&

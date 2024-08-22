@@ -47,6 +47,7 @@ input[type=number]::-webkit-outer-spin-button
         background-color: #F2CB05;
         box-shadow: 0px 4px 0px 0px rgb(197 176 74);
         color: #193773;
+        margin: auto 0px 4px 0px;
         &.btn1:active{
             box-shadow: none;
             transform: translateY(4px);
