@@ -6,10 +6,12 @@ import { UserConfirm } from '../../Components/Modals/UserConfirm';
 import { SignClient } from '../../Components/Modals/SignClient';
 import { SalesOfTheDay } from '../../Components/Modals/SalesOfTheDay';
 import { ProductMeasures } from '../../Components/Modals/ProductMeasures';
+import { MoneyFlow } from '../../Components/Modals/MoneyFlow';
+import { StartOfCash } from '../../Components/Modals/StartOfCash';
 import "./_sales.scss";
 import jsonTest from '../../tickets-text.json';
 import { useTheContext } from '../../TheProvider';
-import { Inventory } from '../../api';
+import { CashFlow, Inventory } from '../../api';
 import { CSSTransition } from 'react-transition-group';
 
 export function Sales(){
@@ -19,7 +21,7 @@ export function Sales(){
     const [tabsHistory, setTabsHistory] = useState(Object.keys(saleTabs).length);
     //*---------------------
     const [ total, setTotal] = useState(0);
-    const [ orderslist, setOrderslist] = useState(saleTabs[1]["Order"])
+    const [ orderslist, setOrderslist] = useState(saleTabs[Object.keys(saleTabs)[0]]["Order"])
     const [ customer, setCustomer] = useState("Por asignar");
     const [ showConfirmar, setShowConfirmar] = useState(false);
     const [ selectedfila, setSelectedfila] = useState(0);
@@ -29,6 +31,9 @@ export function Sales(){
     const [ searchClient, setSearchClient] = useState(false);
     const [ showSalesOfTheDay, setShowSalesOfTheDay] = useState(false);
     const [ showProductMeasures, setShowProductMeasures] = useState(false);
+    const [ showStartCahs, setShowStartCahs ] = useState(false);
+    const [ showMoneyFlow, setShowMoneyFlow ] = useState(false);
+    const [ typeMoneyFlow, setTypeMoneyFlow ] = useState(false);
     const [ selectProduct, setSelectProduct] = useState(null);
     const [ showFL, setShowFL] = useState(false);
     //const [limit, setLimit] = useState(0);
@@ -44,9 +49,9 @@ export function Sales(){
     const handleKeyDown = (event) => {
         //const currentSelectedTab = selectedTabRef.current;
         if(isEditingRef.current===true)return;
-        let theOrder = Object.entries(saleTabs)[selectedTabRef.current][1]
-        console.log(selectedfilaRef.current);
-        console.log(theOrder.length);
+        let theOrder = saleTabs[currentTab.key].Order//Object.entries(saleTabs)[selectedTabRef.current][1]
+        //console.log(selectedfilaRef.current);
+        //console.log(theOrder.length);
         if (theOrder.length !== 0 && selectedfilaRef.current !== null) {
             const currentSelectedFila = selectedfilaRef.current;
             if (event.key === '+') {
@@ -58,11 +63,14 @@ export function Sales(){
             } else if (event.key === 'ArrowUp' && currentSelectedFila - 1 >= 0 && currentSelectedFila - 1 < theOrder.length) {
                 setSelectedfila(currentSelectedFila - 1)
             } else if (event.key === 'Delete') {
-                console.log(theOrder);
+                //console.log(theOrder);
                 theOrder.splice(currentSelectedFila, 1)
-                const updatedOrdersList = [...theOrder];
-                console.log(updatedOrdersList);
+                if (selectedfila === theOrder.length - 1 && selectedfila !== 0){
+                    setSelectedfila(currentSelectedFila - 1)
+                }
+                //console.log(updatedOrdersList);
                 // Actualiza el estado con la nueva lista
+                const updatedOrdersList = [...theOrder];
                 setOrderslist(updatedOrdersList);
             }
         }
@@ -82,7 +90,7 @@ export function Sales(){
 
     const onblurChangePv = (row, amount, theKey) => {
         let theOrder = Object.entries(saleTabs)[selectedTabRef.current][1]
-        console.log(theOrder);
+        //console.log(theOrder);
         if (amount > 0) {
             const theValue = amount
             let withoutFormat = theValue.replace(/\./g, '')
@@ -123,7 +131,7 @@ export function Sales(){
                         <label>{item.Descripcion}</label>
                     </td>
                     <td style={{width: columnsWidth[3]}}>
-                        <label>{item.Medida}</label>
+                        <label>{item.Medida === '' ? 'Unidad': item.Medida}</label>
                     </td>
                     <td style={{width: columnsWidth[4]}} onDoubleClick={()=>{setConfirmUser(true);isEditingRef.current=true}}>
                         { isEditingPv ? (
@@ -158,7 +166,8 @@ export function Sales(){
     
 
     const updateCantidad = (selectedRow, amount) => {
-        let theOrder = Object.entries(saleTabs)[selectedTabRef.current][1]
+        console.log(saleTabs[currentTab.key].Order)
+        let theOrder = saleTabs[currentTab.key].Order//Object.entries(saleTabs.Orden)[selectedTabRef.current][1]
         if (theOrder[selectedRow].Cantidad + amount > 0) {
             theOrder[selectedRow].Cantidad += amount
             // Crea una copia del jsonTest[tabindex] para actualizar el estado
@@ -218,23 +227,39 @@ export function Sales(){
 
     const changeTab = (Num, index) => {
         if(Num===null){
-            setOrderslist(Object.entries(saleTabs)[index][1]);
+            console.log(currentTab.key);
+            
+
+            setOrderslist(saleTabs[currentTab.key].Order);
+            setCurrentTab({"index": index,
+                "key": currentTab.key});
         }else{
             setOrderslist(saleTabs[Num].Order);
+            setCurrentTab({"index": index,
+                "key": Num});
         }
-        console.log('saleTabs[Num]', saleTabs[Num]);
         console.log(index);
-        if (Num !== null && saleTabs[Num].length !== 0) {
-            setSelectedfila(saleTabs[Num].length - 1);
-        } else if ( Num !== null && saleTabs[Num].length === 0 ) {
+        if (Num !== null && saleTabs[Num].Order.length !== 0) {
+            setSelectedfila(() => {
+                //send the scrollbar to the bottom
+                setTimeout(() => {
+                    var orderElement = document.getElementById("FlastListID");
+                    if (orderElement) {
+                        orderElement.scrollTop = orderElement.scrollHeight;
+                        console.log(orderElement);
+                    }
+                }, 0);
+                return saleTabs[Num].Order.length - 1
+            }
+            );
+            
+        } else if ( Num !== null && saleTabs[Num].Order.length === 0 ) {
             setSelectedfila(null);
         }
-        setCurrentTab({"index": index,
-                       "key": Num});
-        console.log(saleTabs[Num].Customer.Nombre !== null);
-        const custromerName = saleTabs[Num].Customer.Nombre !== null ?
-        saleTabs[Num].Customer.Nombre: 'Por asignar';
-        setCustomer(custromerName)
+        
+        //console.log(saleTabs[Num].Customer.Nombre !== null);
+        //const custromerName = saleTabs[Num].Customer.Nombre === '' ? saleTabs[Num].Customer.Nombre: 'Por asignar';
+        //setCustomer(custromerName)
     };
 
     const createButton = () => {
@@ -253,13 +278,23 @@ export function Sales(){
             delete newTabButtons[tabNumber];
             setSaleTabs(newTabButtons);
             console.log('tabNumber: '+tabNumber+' index: '+index+' CurrentTab: '+currentTab);
-            if(index < currentTab){
-                setCurrentTab(currentTab-1);
-            }else if(index === currentTab){
+            if(index < currentTab.index) {
+                setCurrentTab({"index": currentTab.index-1,
+                                "key": tabNumber});
+            }else if(index === currentTab.index){
                 if(index === 0){
-                    changeTab(null, (index))
-                }else changeTab(null, (index-1))
+                    changeTab(Object.keys(saleTabs)[index+1], (index))
+                }else {
+                    changeTab(Object.keys(saleTabs)[index-1], (index-1))
+                }
             }
+        } else {
+            createButton()
+            const newTabButtons = {...saleTabs};
+            delete newTabButtons[tabNumber];
+            setSaleTabs(newTabButtons)
+            setCurrentTab({"index": 0,
+                             "key": Object.keys(newTabButtons)[0]})
         }
     };
 
@@ -279,10 +314,15 @@ export function Sales(){
 
     const addProduct = (item) =>{
         let theOrder = saleTabs[currentTab.key].Order
-        const productAlreadyExists = theOrder.filter(prod => prod.Cod === item.Cod && prod.Medida === item.Medida);
-        if(productAlreadyExists.length === 0){
+            // Verificar si el producto ya existe en theOrder
+        const productAlreadyExistsIndex = theOrder.findIndex(
+            (prod) => prod.Cod === item.Cod && prod.Medida === item.Medida
+        );
+        console.log(item);
+        if(productAlreadyExistsIndex === -1){
         theOrder.push(item);
         setOrderslist(a => {
+            //send the scrollbar to the bottom
             var orderElement = document.getElementById("FlastListID");
             setTimeout(() => {
                 if (orderElement) {
@@ -291,9 +331,12 @@ export function Sales(){
               }, 0);
             return [...theOrder];
         });
-        setShowFL(false);}
+            setShowFL(false);
+            setSelectedfila(saleTabs[currentTab.key].Order.length - 1)
+        }
         else {
-            console.log("El producto ya se encuentra en la lista")
+            saleTabs[currentTab.key].Order[productAlreadyExistsIndex].Cantidad = theOrder[productAlreadyExistsIndex].Cantidad + item.Cantidad
+            setSelectedfila(productAlreadyExistsIndex)
             setShowFL(false);
         }
     }
@@ -302,11 +345,11 @@ export function Sales(){
         //console.log(item)
         if (item.Clase === 0){
             let theProduct = {...item}
-            theProduct.Medida = 'Unidad'
+            theProduct.Medida = ''
             theProduct.Cantidad = 1;
-            addProduct(item)
+            theProduct.UMedida = 1;
+            addProduct(theProduct)
         } else if (item.Clase !== 0){
-            console.log("entro a mas medidas del producto")
             setSelectProduct(item)
             setShowProductMeasures(true)
         }
@@ -335,6 +378,14 @@ export function Sales(){
         setSaleTabs(jsonTest)
     }
 
+    const confirmarVenta = () => {
+        if (orderslist.length > 0) {
+            setShowConfirmar(true)
+        } else {
+            alert('Debe seleccionar al menos un producto')
+        }
+    }
+
     useEffect(() => {
         sumarTotal();
         // eslint-disable-next-line
@@ -347,15 +398,29 @@ export function Sales(){
     
     useEffect(() => {
         selectedTabRef.current = currentTab.index;
-        console.log(saleTabs)
+        //console.log(saleTabs)
     }, [currentTab]);
     
     useEffect(() => {
+        const now = new Date();
+        // Obtener la fecha en formato YYYY-MM-DD
+        const date = now.toISOString().split('T')[0];
+        // Obtener la hora en formato HH:MM:SS
+        const time = now.toTimeString().split(' ')[0];
         setSection('Ventas');
         fetchInventoryList();
         window.addEventListener('keydown', handleKeyDown);
         document.addEventListener('mousedown', handleClickOutside);
         
+        const StartCahs = async() => {
+            const cashFlow = await CashFlow({
+                IdFerreteria: usD.Cod,
+                Fecha: new Date().toISOString().split('T')[0],
+            })
+            console.log('cashFlow: ', cashFlow)
+            if (cashFlow.length === 0) setShowStartCahs(true);
+        }
+        StartCahs()
         return () => {
             window.removeEventListener('keydown', handleKeyDown);
             document.removeEventListener('mousedown', handleClickOutside);
@@ -407,6 +472,16 @@ export function Sales(){
                     onClick={()=>setSearchClient(true)}
                     >Asignar cliente
                 </button>
+                <button
+                    className="btnStnd btn1"
+                    onClick={()=>{setTypeMoneyFlow(false);setShowMoneyFlow(true)}}
+                    >Entradas de dinero
+                </button>
+                <button
+                    className="btnStnd btn1"
+                    onClick={()=>{setTypeMoneyFlow(true); setShowMoneyFlow(true)}}
+                    >Salidas de dinero
+                </button>
                 <div>
                     <label>Cliente: {customer}</label>
                 </div>
@@ -448,16 +523,18 @@ export function Sales(){
                     />
                 </div>
                 <div>
-                    <button className="btnStnd btn1" onClick={()=>setShowConfirmar(true)}>F2-Cobrar</button>
+                    <button className="btnStnd btn1" onClick={()=>confirmarVenta()}>F2-Cobrar</button>
                     <label style={{marginLeft: '10px'}}>$ {Formater(total)}</label>
                 </div>
                 <label>{orderslist && orderslist.length} productos en el ticket actual</label>
                 <button className="btnStnd btn1" onClick={()=>setShowSalesOfTheDay(true)}>Ventas del dia y devoluciones</button>
-                { showConfirmar && <ConfirmSaleModal orderslist={saleTabs[currentTab.key]} show={setShowConfirmar}/>}
+                { showConfirmar && <ConfirmSaleModal orderslist={saleTabs[currentTab.key]} show={setShowConfirmar} folio={currentTab.key} sendSale={()=>closeTab(currentTab.key, currentTab.index)} totalE={total}/>}
                 { confirmUser && <UserConfirm show={setConfirmUser} confirmed={()=>setChangePventa(selectedfila)}/>}
                 { searchClient && <SignClient show={setSearchClient} retornar={(i)=>AsingCustomerToOrder(i)}/>}
                 { showSalesOfTheDay && <SalesOfTheDay show={setShowSalesOfTheDay} />}
                 { showProductMeasures && <ProductMeasures show={setShowProductMeasures} product={selectProduct} aceptar={addProduct}/>}
+                { showMoneyFlow && <MoneyFlow show={setShowMoneyFlow} typeOfFlow={typeMoneyFlow}></MoneyFlow>}
+                { showStartCahs && <StartOfCash show={setShowStartCahs}></StartOfCash>}
             </div>
         </section>
     );

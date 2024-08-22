@@ -396,3 +396,190 @@ export const SalesPerDay = async(salesperday) => {
         console.log('TheError: '+ error)
     }
 }
+
+export const NewSale = async(newsale) => {
+    /*Send the data to the databse to register the new sale
+    you have to send a json of the form:
+    {
+        "IdFerreteria": "242",
+        "Folio": 1,
+        "IdCliente": 1,
+        "Fecha": "2024-04-07 11:49:35",
+        "CodResponsable": "242",
+        "Responsable": "Ferreteria marly",
+        "Order": [{
+            "ConsecutivoProd": 8,
+            "Cantidad": 5,
+            "Cod": "bla",
+            "Descripcion": "Producto de prueba para el pos",
+            "VrCosto": 500.00,
+            "VrUnitario": 1000.00,
+            "Iva": 19.0,
+            "Motivo": "Venta por caja"
+            },
+            {
+            "ConsecutivoProd": 9,
+            "Cantidad": 10,
+            "Cod": "bla",
+            "Descripcion": "Segundo producto de prueba para el pos",
+            "VrCosto": 500.00,
+            "VrUnitario": 1000.00,
+            "Iva": 19.0,
+            "Motivo": "Venta por caja"
+            }]
+    }
+    */
+    try {
+        const res = await fetch(`${API_POS}/newsale`,{
+            method: 'POST',
+            headers: { Accept: 'application/json','Content-Type': 'application/json'},
+            body: JSON.stringify(newsale)
+        })
+        return await res.json()
+    }catch(error) {
+        console.log('TheError: '+ error)
+    }
+}
+
+export const CashFlow = async(cashflow) => {
+    /*return the list of sales per day
+    you have to send a json of the form:
+    {
+        "IdFerreteria": 242,
+        "Fecha": "2024-04-07"
+        "TipoDeFlujo" : false // if is false then is an entry and if is true then it is an output
+    }
+    */
+    try {
+        const res = await fetch(`${API_POS}/cashflow`,{
+            method: 'POST',
+            headers: { Accept: 'application/json','Content-Type': 'application/json'},
+            body: JSON.stringify(cashflow)
+        })
+        return await res.json()
+    }catch(error) {
+        console.log('TheError: '+ error)
+    }
+}
+
+export const NewMoneyFlow = async(newmoneyflow) => {
+    /*return the list of sales per day
+    you have to send a json of the form:
+    {
+        ConsecutivoCV: 0,
+        IdFerreteria: usD.Cod,
+        Fecha: date + ' ' + time,
+        Referencia: 0,
+        Efectivo: cantidad,
+        Transferencia: 0,
+        Motivo: 'Ingreso por caja',
+        Comentarios: comentario,
+        TipoDeFlujo: true
+    }
+    */
+    try {
+        const res = await fetch(`${API_POS}/newmoneyflow`,{
+            method: 'POST',
+            headers: { Accept: 'application/json','Content-Type': 'application/json'},
+            body: JSON.stringify(newmoneyflow)
+        })
+        return await res.json()
+    }catch(error) {
+        console.log('TheError: '+ error)
+    }
+}
+
+export const RemoveFlow = async(removeflow) => {
+    /*return the list of sales per day
+    you have to send a json of the form:
+    {
+        IdFerreteria: usD.Cod,
+        ConsecutivoCV: 0
+    }
+    */
+    try {
+        const res = await fetch(`${API_POS}/removeflow`,{
+            method: 'POST',
+            headers: { Accept: 'application/json','Content-Type': 'application/json'},
+            body: JSON.stringify(removeflow)
+        })
+        return await res.json()
+    }catch(error) {
+        console.log('TheError: '+ error)
+    }
+}
+
+export const NewOutput = async(newoutput) => {
+    /*return the list of sales per day
+    you have to send a json of the form:
+    {
+        CodInterno:,
+        IdFerreteria:,
+        ConsecutivoProd:,
+        Cantidad:,
+        Cod:,
+        Descripcion:,
+        PCosto:,
+        PCostoLP:,
+        Fecha:,
+        Iva:,
+        CodResponsable:,
+        Responsable:,
+        Motivo:,
+        ConsecutivoCompra:
+    }
+    */
+    try {
+        const res = await fetch(`${API_POS}/newoutput`,{
+            method: 'POST',
+            headers: { Accept: 'application/json','Content-Type': 'application/json'},
+            body: JSON.stringify(newoutput)
+        })
+        return await res.json()
+    }catch(error) {
+        console.log('TheError: '+ error)
+    }
+}
+
+export const CancelTheSale = async(cancelthesale) => {
+    /*return the product to the table entradas
+    you have to send a json of the form:
+    {
+        Apellido: "Sierra vargas arreglado",
+        CodResponsable: 242,
+        Consecutivo: 24,
+        Correo: "correodeprueba@gmail.com",
+        Cufe: "000",
+        Direccion: "calle 71 sur N° 14 B-78",
+        FacturaElectronica: "000",
+        Fecha: "2024-08-21T14:31:19.000Z",
+        FechaActual : "2024-08-21T14:31:19.000Z",
+        Folio: 1,
+        IdCliente: 1,
+        Nombre: "Jhoan Sebastian arreglado",
+        Orden: [ {CantidadEn: "0"
+                CantidadSa: "4",
+                Cod: "bla2",
+                ConsecutivoProd: 9,
+                ConsecutivoVenta: 24,
+                Descripcion: "Segundo producto de prueba para el pos",
+                Iva: 19,
+                Medida: "",
+                UMedida: 1,
+                VrCosto: 800,
+                VrUnitario: 1155.2},...]
+        Telefono1: "3227804602",
+        Total: 1155.2
+    }
+    */
+    try {
+        const res = await fetch(`${API_POS}/cancelthesale`,{
+            method: 'POST',
+            headers: { Accept: 'application/json','Content-Type': 'application/json'},
+            body: JSON.stringify(cancelthesale)
+        })
+        return await res.json()
+    }catch(error) {
+        console.log('TheError: '+ error)
+    }
+}
