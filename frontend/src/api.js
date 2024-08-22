@@ -540,3 +540,46 @@ export const NewOutput = async(newoutput) => {
         console.log('TheError: '+ error)
     }
 }
+
+export const CancelTheSale = async(cancelthesale) => {
+    /*return the product to the table entradas
+    you have to send a json of the form:
+    {
+        Apellido: "Sierra vargas arreglado",
+        CodResponsable: 242,
+        Consecutivo: 24,
+        Correo: "correodeprueba@gmail.com",
+        Cufe: "000",
+        Direccion: "calle 71 sur N° 14 B-78",
+        FacturaElectronica: "000",
+        Fecha: "2024-08-21T14:31:19.000Z",
+        FechaActual : "2024-08-21T14:31:19.000Z",
+        Folio: 1,
+        IdCliente: 1,
+        Nombre: "Jhoan Sebastian arreglado",
+        Orden: [ {CantidadEn: "0"
+                CantidadSa: "4",
+                Cod: "bla2",
+                ConsecutivoProd: 9,
+                ConsecutivoVenta: 24,
+                Descripcion: "Segundo producto de prueba para el pos",
+                Iva: 19,
+                Medida: "",
+                UMedida: 1,
+                VrCosto: 800,
+                VrUnitario: 1155.2},...]
+        Telefono1: "3227804602",
+        Total: 1155.2
+    }
+    */
+    try {
+        const res = await fetch(`${API_POS}/cancelthesale`,{
+            method: 'POST',
+            headers: { Accept: 'application/json','Content-Type': 'application/json'},
+            body: JSON.stringify(cancelthesale)
+        })
+        return await res.json()
+    }catch(error) {
+        console.log('TheError: '+ error)
+    }
+}

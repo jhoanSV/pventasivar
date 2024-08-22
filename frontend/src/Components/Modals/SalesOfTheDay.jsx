@@ -1,11 +1,13 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, useRef} from 'react';
 import { TheInput } from '../InputComponent/TheInput';
 import { useTheContext } from '../../TheProvider';
 import { TableComponent, Flatlist } from '../../Components';
 import './_SalesOfTheDay.scss';
 import jsonTest from '../../sales_per_day.json';
-import { SalesPerDay } from '../../api';
+import { SalesPerDay, CancelTheSale } from '../../api';
 import { ReturnProduct } from './ReturnProduct';
+import { UserConfirm } from './UserConfirm';
+
 
 export const SalesOfTheDay = ({show, orderslist, width='90%', height='80%'}) => {
     const [ paga, setPaga] = useState(0);
@@ -17,9 +19,46 @@ export const SalesOfTheDay = ({show, orderslist, width='90%', height='80%'}) => 
     const [ orders, setOrders ] = useState([]);
     const [ headerSales, setHeaderSales ] = useState(null);
     const [ dateSearch, setDateSearch ] = useState(new Date());
+    const [ showConfirm, setShowConfirm ] = useState(false);
     const { setSection, setSomeData, usD } = useTheContext();
+    // for the tables of the order and the selected order
+    const isEditingRef = useRef(false);
+    const ordersRef = useRef([]);
+    const selectedfilaRef = useRef(0);
+    const selectedOrderRef = useRef([]);
+    const selectedfilaOrderRef = useRef(0);
     // for modals
     const [showReturnModal, setShowReturnModal] = useState(false);
+
+    const handleKeyDown = (event) => {
+        if (!isEditingRef.current) { // is edditing only the order
+            const maxIndex = ordersRef.current.length;
+            if (event.key === 'ArrowDown') {
+                if (selectedfilaRef.current + 1 < maxIndex) {
+                    setSelectedfila(prevFila => prevFila + 1);
+                    ChangueSelectedOrder(ordersRef.current[selectedfilaRef.current + 1]);
+                }
+            } else if (event.key === 'ArrowUp') {
+                if (selectedfilaRef.current - 1 > -1) {
+                    setSelectedfila(prevFila => prevFila - 1);
+                    ChangueSelectedOrder(ordersRef.current[selectedfilaRef.current - 1]);
+                }
+            }
+        } else {
+            const maxIndex = selectedOrderRef.current.length;
+            console.log('entra a editar el detalle del pedido')
+            if (event.key === 'ArrowDown') {
+                if (selectedfilaOrderRef.current + 1 < maxIndex) {
+                    setSelectedfilaOrder(prevFila => prevFila + 1);
+                }
+            } else if (event.key === 'ArrowUp') {
+                if (selectedfilaOrderRef.current - 1 > -1) {
+                    setSelectedfilaOrder(prevFila => prevFila - 1);
+                }
+            }
+        }
+    };
+    
 
     const getOrdersPerday = async() => {
         const now = new Date();
@@ -32,6 +71,7 @@ export const SalesOfTheDay = ({show, orderslist, width='90%', height='80%'}) => 
             'Fecha': dateSearch.toISOString().split('T')[0]
         });
         setOrders(response);
+        ordersRef.current = response
     }
 
     useEffect(() => {
@@ -44,11 +84,27 @@ export const SalesOfTheDay = ({show, orderslist, width='90%', height='80%'}) => 
 
     useEffect(() => {
         getOrdersPerday()
+        window.addEventListener('keydown', handleKeyDown);
+        return () => {
+            window.removeEventListener('keydown', handleKeyDown);
+        };
     }, [])
 
     useEffect(() => {
         sumarTotal()
     }, [selectedOrder])
+
+    useEffect(() => {
+        selectedfilaRef.current = selectedfila
+    }, [selectedfila])
+
+    useEffect(() => {
+        selectedOrderRef.current = selectedOrder
+    }, [selectedOrder])
+
+    useEffect(() => {
+        selectedfilaOrderRef.current = selectedfilaOrder
+    }, [selectedfilaOrder])
 
     const ChangueSelectedOrder = (item) => {
         setHeaderSales(item);
@@ -152,21 +208,26 @@ export const SalesOfTheDay = ({show, orderslist, width='90%', height='80%'}) => 
         item.Orden.forEach(valor => {
             suma += valor.VrUnitario * (valor.CantidadSa - valor.CantidadEn);
         });
+        console.log(item)
+        const styles = {
+            textDecoration: suma === 0 ? 'line-through' : 'none',
+            color: suma === 0 ? '#999999' : '#000000',
+        };
         return (
                 <>
-                    <td style={{width: columnsWidth[0]}} onClick={()=>ChangueSelectedOrder(item)}>
+                    <td style={{...styles, width: columnsWidth[0]}} onClick={()=>{ChangueSelectedOrder(item); isEditingRef.current = false}}>
                         <label>{item.Consecutivo}</label>
                     </td>
-                    <td style={{width: columnsWidth[1]}} onClick={()=>ChangueSelectedOrder(item)}>
+                    <td style={{...styles, width: columnsWidth[1]}} onClick={()=>{ChangueSelectedOrder(item); isEditingRef.current = false}}>
                         <label>{item.Folio}</label>
                     </td>
-                    <td style={{width: columnsWidth[2]}} onClick={()=>ChangueSelectedOrder(item)}>
+                    <td style={{...styles, width: columnsWidth[2]}} onClick={()=>{ChangueSelectedOrder(item); isEditingRef.current = false}}>
                         <label>{item.Nombre}</label>
                     </td>
-                    <td style={{width: columnsWidth[3]}} onClick={()=>ChangueSelectedOrder(item)}>
+                    <td style={{...styles, width: columnsWidth[3]}} onClick={()=>{ChangueSelectedOrder(item); isEditingRef.current = false}}>
                         <label>{item.Fecha.split('T')[1].split('.')[0]}</label>
                     </td>
-                    <td style={{width: columnsWidth[4]}} onClick={()=>ChangueSelectedOrder(item)}>
+                    <td style={{...styles, width: columnsWidth[4]}} onClick={()=>{ChangueSelectedOrder(item); isEditingRef.current = false}}>
                         <label>${Formater(suma)}</label>
                     </td>
                 </>
@@ -182,23 +243,23 @@ export const SalesOfTheDay = ({show, orderslist, width='90%', height='80%'}) => 
         };
         return (
                 <>
-                    <td style={{...styles, width: columnsWidth[0]}}>
-                        <label>{item.CantidadSa - item.CantidadEn}</label>
+                    <td style={{...styles, width: columnsWidth[0]}} onClick={()=>isEditingRef.current = true}>
+                        <label>{(item.CantidadSa - item.CantidadEn) !== 0 ? item.CantidadSa - item.CantidadEn: item.CantidadSa}</label>
                     </td>
-                    <td style={{...styles, width: columnsWidth[1]}}>
+                    <td style={{...styles, width: columnsWidth[1]}} onClick={()=>isEditingRef.current = true}>
                         <label>{item.Cod}</label>
                     </td>
-                    <td style={{...styles, width: columnsWidth[2]}}>
+                    <td style={{...styles, width: columnsWidth[2]}} onClick={()=>isEditingRef.current = true}>
                         <label>{item.Descripcion}</label>
                     </td>
-                    <td style={{...styles, width: columnsWidth[3]}}>
+                    <td style={{...styles, width: columnsWidth[3]}} onClick={()=>isEditingRef.current = true}>
                         <label>{item.Medida === '' ? 'Unidad': item.Medida}</label>
                     </td>
-                    <td style={{...styles, width: columnsWidth[4]}}>
+                    <td style={{...styles, width: columnsWidth[4]}} onClick={()=>isEditingRef.current = true}>
                         <label>${Formater(item.VrUnitario)}</label>
                     </td>
-                    <td style={{...styles, width: columnsWidth[5]}}>
-                        <label>${Formater((item.CantidadSa - item.CantidadEn) * item.VrUnitario)}</label>
+                    <td style={{...styles, width: columnsWidth[5]}} onClick={()=>isEditingRef.current = true}>
+                        <label>${Formater((item.CantidadSa - item.CantidadEn) !== 0 ? (item.CantidadSa - item.CantidadEn) * item.VrUnitario: item.CantidadSa * item.VrUnitario)}</label>
                     </td>
                 </>
         );
@@ -212,6 +273,24 @@ export const SalesOfTheDay = ({show, orderslist, width='90%', height='80%'}) => 
         } else {
             setShowReturnModal(true)
         }
+    }
+
+    const returnTheOrder = () => {
+        const now = new Date();
+        // Obtener la fecha en formato YYYY-MM-DD
+        const date = now.toISOString().split('T')[0];
+        // Obtener la hora en formato HH:MM:SS
+        const time = now.toTimeString().split(' ')[0];
+        const fila = {...orders[selectedfila]}
+        let suma = 0
+        fila.Orden.forEach(valor => {
+            suma += valor.VrUnitario * (valor.CantidadSa - valor.CantidadEn);
+        });
+        fila.FechaActual = date + ' ' + time
+        fila.Total = suma
+        fila.IdFerreteria = usD.Cod
+        fila.Responsable = usD.Contacto
+        CancelTheSale(fila)
     }
 
     return (
@@ -273,12 +352,13 @@ export const SalesOfTheDay = ({show, orderslist, width='90%', height='80%'}) => 
                             <label>${Formater(total)}</label>
                             
                         </div>
-                        <button className="btnStnd btn1" onClick={()=>{}}>Cancelar venta</button>
+                        <button className="btnStnd btn1" onClick={()=>returnTheOrder()}>Cancelar venta</button>
                         <button className="btnStnd btn1" onClick={()=>{}}>Imprimir copia</button>
                     </div>
                 </div>
 
                 {showReturnModal && <ReturnProduct show={setShowReturnModal} row={orders[selectedfila]} index={selectedfilaOrder} updateOrders={ChangueSelectedOrder}/>}
+                {showConfirm && <UserConfirm show={setShowConfirm} confirm={returnTheOrder} />}
             </div>
         </div>
     );

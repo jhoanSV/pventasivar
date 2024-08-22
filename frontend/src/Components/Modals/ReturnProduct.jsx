@@ -51,9 +51,6 @@ export const ReturnProduct = ({show, row, updateOrders, index, width='50%', heig
         NewMoneyFlow(dataToSendMoneyFlow)
         NewOutput(dataToSendProduct)
         updateOrders()
-        console.log('entra al returnP')
-        console.log('dataToSendMoneyFlow: ', dataToSendMoneyFlow)
-        console.log('dataToSendProduct: ', dataToSendProduct)
         show(false)
     }
 
@@ -105,7 +102,7 @@ export const ReturnProduct = ({show, row, updateOrders, index, width='50%', heig
                 <label>Valor a devolver:</label>
                 <label>$ {Formater(value)}</label>
                 </div>
-                <button className='btnStnd btn1' onClick={() => returnP()}>Aceptar</button>
+                <button className='btnStnd btn1' onClick={() => setShowConfirm(true)}>Aceptar</button>
                 <button className='btnStnd btn1'>Cancelar</button>
             </div>
             {showConfirm && <UserConfirm show={setShowConfirm} confirm={returnP} />}
