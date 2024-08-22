@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import './_AddPurchaseModal.scss';
-//import imgPlaceHolder from '../../Assets/PNG/placeHolderProduct.png';
+import { Formater } from '../../App';
 
 export const AddPurchaseModal = ({P, Show, img}) => {
 
@@ -8,6 +8,15 @@ export const AddPurchaseModal = ({P, Show, img}) => {
     const [catSource, setCatSource] = useState(require(`../../Assets/AVIF/LogCats/${(P.Categoria).toLowerCase()}.avif`));
     const [cant, setCant] = useState(0);
     const [totalPrice, setTotalPrice] = useState(P.PVenta*cant);
+    const [tab1, setTab1] = useState('Inventario');
+
+    let quantity = null
+    
+    if( P.EsUnidadOpaquete > 1 ){
+        quantity = 'Paquete de ' + P.EsUnidadOpaquete + ' unidades';
+    }else{
+        quantity = 'Unidad';
+    }
 
     const handleClickOutside = (event) => {
         let dmc = document.getElementById(`ModalCont${P.Cod}`);
@@ -22,6 +31,17 @@ export const AddPurchaseModal = ({P, Show, img}) => {
         document.removeEventListener('mousedown', handleClickOutside);
     }
 
+    const toggle1 = (e) =>{
+        if(e.target.classList.contains('active'))return;
+        const node = document.querySelector('.btn2.active');
+        if(node){
+            node.classList.remove('active');
+            e.target.classList.add('active');
+            if(tab1==='Inventario')setTab1('Descripcion')
+            else setTab1('Inventario')
+        }else return;
+    }
+
     useEffect(() => {
         document.addEventListener('mousedown', handleClickOutside);
         // eslint-disable-next-line
@@ -31,7 +51,7 @@ export const AddPurchaseModal = ({P, Show, img}) => {
         <div className='theModalContainer'>
             <div id={`ModalCont${P.Cod}`} className='theModal-content addPurchMo'>
                 <div className='Row TMCD3'>
-                    <div style={{width: '50%', paddingRight: '20px'}}>
+                    <div style={{width: '50%', paddingRight: '20px', display: 'flex', flexDirection: 'column'}}>
                         <div className={`imgModal C${P.Categoria}`}>
                             <picture>
                                 { P.Agotado &&
@@ -53,12 +73,27 @@ export const AddPurchaseModal = ({P, Show, img}) => {
                         <div className="commingsoon">
                             {/*Para después*/}
                         </div>
-                        <div className="mt-auto">                                        
-                            <p className="subTit"><strong>Descripcion:</strong></p>
-                            <div className="description">
-                                {/* {descripcionComp}.<br/> */}
-                                Acá va descripcion completa
+                        <div style={{marginTop: 'auto'}}>
+                            <div style={{display: 'flex', margin: '10px 0px', gap: '10px'}}>
+                                <button className='btnStnd btn2 active'onClick={(e)=>toggle1(e)}>
+                                    Inventario
+                                </button>
+                                <button className='btnStnd btn2' onClick={(e)=>toggle1(e)}>
+                                    Descripcion
+                                </button>
                             </div>
+                            {tab1==='Inventario' ?
+                                <div className="description">
+                                    <div>Cantidad actual: {Formater(P.Inventario)}</div>
+                                    <div>Inv. Maximo: {Formater(P.InvMaximo)}</div>
+                                    <div>Inv. Mínimo: {Formater(P.InvMinimo)}</div>
+                                </div>
+                                :
+                                <div className="description">
+                                    {/* {descripcionComp}.<br/> */}
+                                    Acá va descripcion completa
+                                </div>
+                            }
                         </div>
                     </div>
                     <div style={{width: '50%', display: 'flex', flexDirection: 'column'}}>
@@ -83,7 +118,7 @@ export const AddPurchaseModal = ({P, Show, img}) => {
                                 <span className="smolText">Cod: {P.Cod}</span>
                             </h1>
                         </div>
-                        {/* <span className="smolText quantityText">{quantity}</span> */}
+                        <span className="smolText quantityText">{quantity}</span>
                         <div style={{
                             color: '#193773',
                             fontSize: '1.5rem',
@@ -92,10 +127,10 @@ export const AddPurchaseModal = ({P, Show, img}) => {
                         </div>
                         <div className="quantityBox">
                             <button className="btnStnd btn1" onClick={() => {
-                                /*if((cant-unitPaq)>=0){
-                                    setCant(cant-unitPaq)
-                                    setTotalPrice(unitPrice*(cant-unitPaq))
-                                }*/
+                                if((cant-P.EsUnidadOpaquete)>=0){
+                                    setCant(cant-P.EsUnidadOpaquete)
+                                    setTotalPrice(P.PCosto*(cant-P.EsUnidadOpaquete))
+                                }
                             }}>
                                 -
                             </button>
@@ -116,8 +151,8 @@ export const AddPurchaseModal = ({P, Show, img}) => {
                                 }}*/
                             />
                             <button className="btnStnd btn1" onClick={() => {
-                                /*setCant(parseInt(cant)+unitPaq)
-                                setTotalPrice(unitPrice*(parseInt(cant)+unitPaq))*/
+                                setCant(parseInt(cant)+P.EsUnidadOpaquete)
+                                setTotalPrice(P.PCosto*(parseInt(cant)+P.EsUnidadOpaquete))
                             }}>
                                 +
                             </button>
@@ -127,16 +162,14 @@ export const AddPurchaseModal = ({P, Show, img}) => {
                                 <strong>Valor:&nbsp;</strong>
                             </span>
                             <span className="fw-bold">
-                                {/* ${Formater(unitPrice)} */}
-                                $ 00.000
+                                $ {Formater(P.PCosto)}
                             </span>
                         </div>
                         <h1>
                             <div className="totalPrice mainBlue">
                                 <div className='subTit fw-bold'>Total:</div>
                                 <span className='text-black Tit'>
-                                    {/* ${Formater(totalPrice)} */}
-                                    $ 00.000
+                                    $ {Formater(totalPrice)}
                                 </span>
                             </div>
                         </h1>

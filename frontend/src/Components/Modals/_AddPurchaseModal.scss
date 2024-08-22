@@ -73,6 +73,17 @@ input[type=number]::-webkit-outer-spin-button
     flex-grow: 1;
 }
 
+.btn2{
+    color: white;
+    background-color: #193773;
+    box-shadow: 0px 3px 0px 0px rgb(16, 35, 73);
+    &.active{
+        background-color: #2454B5;
+        box-shadow: none;
+        transform: translateY(3px);
+    }
+}
+
 @media screen and (max-width: 900px) {
     .addPurchMo{
         h1{
