@@ -9,3 +9,4 @@ export * from './ProductMeasures';
 export * from './MoneyFlow';
 export * from './ReturnProduct';
 export * from './StartOfCash';
+export * from './AddPurchaseModal';

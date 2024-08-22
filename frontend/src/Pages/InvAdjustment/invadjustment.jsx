@@ -29,6 +29,7 @@ export function InvAdjustment(){
             setNewCant(Formater(((currCant+Number(e))).toString()))
         }else if(op==='nc'){
             setCantAdj(Formater((-(currCant-Number(e))).toString()))
+            setNewCant(Formater(Number(e)))
         }
     }
 

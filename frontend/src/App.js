@@ -15,9 +15,12 @@ export const Formater = (number) =>{
 
 export const App = () => {
   
-  const { logged, someData } = useTheContext();
+  const { logged, someData, setNItemsCart } = useTheContext();
+
+  if(!localStorage.getItem('cart')) localStorage.setItem('cart', JSON.stringify([]));
 
   useEffect(() => {
+    if(localStorage.getItem('cart')) setNItemsCart(JSON.parse(localStorage.getItem('cart')).length)
     console.log('someData', someData);
   }, [someData]);
   
