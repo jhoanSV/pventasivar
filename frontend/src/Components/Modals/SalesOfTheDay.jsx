@@ -27,8 +27,30 @@ export const SalesOfTheDay = ({show, orderslist, width='90%', height='80%'}) => 
     const selectedfilaRef = useRef(0);
     const selectedOrderRef = useRef([]);
     const selectedfilaOrderRef = useRef(0);
+    const allOrdersRef = useRef([]);
+    // For the search function
+    const [searchText, setSearchText ] = useState('');
     // for modals
     const [showReturnModal, setShowReturnModal] = useState(false);
+
+
+    const searchOrder = (text) => {
+        const data = allOrdersRef.current
+        const filtro = data.filter((order) => {
+            const filterByHead = order.Consecutivo.toString().toLowerCase().includes(text.toString().toLowerCase()) || order.Nombre.toString().toLowerCase().includes(text.toString().toLowerCase());
+            const filterByBody = order.Orden.some(item => item.Cod.toString().toLowerCase().includes(text.toString().toLowerCase()) || item.Descripcion.toString().toLowerCase().includes(text.toString().toLowerCase()));
+            return filterByHead || filterByBody;
+        });
+        console.log('filtro: ', filtro)
+        if (filtro.length > 0){
+            setOrders(filtro);
+            setSelectedfila(0);
+            ChangueSelectedOrder(filtro[0]);
+            setSelectedfilaOrder(0);
+            //console.log('entro al filtro: ', filtro[0]);
+        }
+        setSearchText(text)
+    }
 
     const handleKeyDown = (event) => {
         if (!isEditingRef.current) { // is edditing only the order
@@ -71,7 +93,8 @@ export const SalesOfTheDay = ({show, orderslist, width='90%', height='80%'}) => 
             'Fecha': dateSearch.toISOString().split('T')[0]
         });
         setOrders(response);
-        ordersRef.current = response
+        allOrdersRef.current = response;
+        ordersRef.current = response;
     }
 
     useEffect(() => {
@@ -306,7 +329,11 @@ export const SalesOfTheDay = ({show, orderslist, width='90%', height='80%'}) => 
                     <div className='twoColumnsContainer'>
                         <div>
                             <div>
-                                <input type='text' placeholder='Buscar ventas del dia'>
+                                <input
+                                    type='text'
+                                    placeholder='Buscar ventas del dia'
+                                    value={searchText}
+                                    onChange={(text)=>searchOrder(text.target.value)}>
                                 </input>
                             </div>
                             <div className='Table'>               
