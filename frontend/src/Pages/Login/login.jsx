@@ -1,13 +1,13 @@
 import React, {useState } from 'react';
 import "./_login.scss";
 import { useTheContext } from '../../TheProvider';
-import { validateUser } from '../../api';
+import { SubCategories, validateUser } from '../../api';
 export function Login(){
     const [showPassword, setShowPassword] = useState(false);
     const togglePasswordVisibility = () => {
       setShowPassword(prev => !prev);
     };
-    const { setLogged, setUsD } = useTheContext()
+    const { setLogged, setUsD, setSubC, setCategories } = useTheContext()
     const [inputData1, setInputData1] = useState();
     const [inputData2, setInputData2] = useState();
 
@@ -35,6 +35,17 @@ export function Login(){
             return;
         }
         if(userData.Cod){
+            const res = await SubCategories()
+            const uniqueData = Array.from(
+                res.reduce((map, item) => {
+                    if (!map.has((item.Categoria.toLowerCase()))) {
+                        map.set(item.Categoria.toLowerCase(), { IdCategoria: item.IdCategoria, Categoria: item.Categoria.toLowerCase() });
+                    }
+                    return map;
+                }, new Map()).values()
+            );
+            setSubC(res)
+            setCategories(uniqueData)
             setLogged(true);
             setUsD(userData);
         }else{

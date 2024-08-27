@@ -1,4 +1,5 @@
 @import "../node_modules/bootstrap-icons/font/bootstrap-icons.scss";
+@import "./Fonts_CSS/fontello.css";
 
 .genLink{
   text-decoration: none;
@@ -106,6 +107,11 @@ input[type="text"], input[type="number"], input[type="password"] {
 
 .d-none{
   display: none;
+}
+
+.modalOpen{
+  overflow: hidden;
+  //padding-right: 17px; idk
 }
 
 html{

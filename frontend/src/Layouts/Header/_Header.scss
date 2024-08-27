@@ -100,7 +100,9 @@
         .bi-cart4{
             line-height: 1;
         }
-        &:hover{
+    }
+    .fdhtud:hover{
+        .btnCart{
             animation: rotar 0.6s ease forwards;
         }
     }
@@ -123,6 +125,18 @@
 }
 .m-open > .bi-caret-right-fill::before{
     transform: rotate(90deg);
+}
+
+.floatingNumber{
+    aspect-ratio: 1 / 1;
+    border-radius: 25px;
+    line-height: 1;
+    font-size: 17px;
+    padding: 2px;
+    position: absolute;
+    right: -10%;
+    top: -17%;
+    width: max-content;
 }
 
 #ud{

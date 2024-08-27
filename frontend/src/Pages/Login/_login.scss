@@ -1,5 +1,6 @@
 .login{
     display: flex;
+    min-height: 100vh;
     .inic{
         width: 25%;
         display: flex;
@@ -49,18 +50,7 @@
         }
       }
     .btn1{
-        width: 45%;
-        height: 40px;
         font-size: 22px;
-        transition: transform 0.3s;
-        margin-top: 2px;
-        &:hover {
-            transform: scale(1.1);
-          }
-    }
-    .verC{ margin-right: 8px; 
-        transform: scale(1.2);
-       
     }
 }
 #linput1{

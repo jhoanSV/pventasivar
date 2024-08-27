@@ -14,31 +14,6 @@ input[type=number]::-webkit-outer-spin-button
     h1{
         margin-top: 0;
     }
-    .imgModal{
-        display: flex;
-        justify-content: center;
-        overflow: hidden;
-        padding: 10px;
-        position: relative;
-        picture{
-            overflow: hidden;
-            display: flex;
-            width: 90%;
-        }
-        img{
-            aspect-ratio: 1 / 1;
-            width: 80%;
-            margin: auto;
-            border: solid;
-            border-radius: 25%;
-            object-fit: contain;
-        }
-    }
-    .quantity{
-        text-align: center;
-        font-size: 18px;
-        background-color: unset;
-    }
     .btnAddCart{
         width: 100%;
         font-size: 18px;
@@ -51,6 +26,9 @@ input[type=number]::-webkit-outer-spin-button
         &.btn1:active{
             box-shadow: none;
             transform: translateY(4px);
+        }
+        &.btn1:disabled{
+            opacity: .5;
         }
     }
     .description {
@@ -67,6 +45,33 @@ input[type=number]::-webkit-outer-spin-button
             width: 3.625rem;
         }
     }
+}
+
+.imgWB{
+    display: flex;
+    justify-content: center;
+    overflow: hidden;
+    padding: 10px;
+    position: relative;
+    picture{
+        overflow: hidden;
+        display: flex;
+        width: 90%;
+    }
+    img{
+        aspect-ratio: 1 / 1;
+        width: 80%;
+        margin: auto;
+        border: solid;
+        border-radius: 25%;
+        object-fit: contain;
+    }
+}
+
+.quantityBox .quantity{
+    text-align: center;
+    font-size: 18px;
+    background-color: unset;
 }
 
 .TMCD3 .Col{
