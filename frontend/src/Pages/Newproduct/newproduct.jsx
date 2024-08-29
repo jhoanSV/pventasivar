@@ -405,7 +405,7 @@ export const Newproduct = () => {
                         <label className="custom-label">
                             <input type="radio" className="custom-radio" name="uniorpack"
                                 checked={productData.Clase!==0 && productData.Clase!==''}
-                                onChange={() => { changeValuesProducts("Clase", 1) }}
+                                //onChange={() => { changeValuesProducts("Clase", 1) }}
                                 onClick={() => { setShow2(true) }}
                             />
                             <i></i>
@@ -413,7 +413,7 @@ export const Newproduct = () => {
                         </label>
                     </div>
                 </div>
-                {show2 && <GranelModal show={setShow2} productData={productData} pctGan={pctGan} updtState={changeValuesProducts}/>}
+                {show2 && <GranelModal show={setShow2} productData={{...productData}} pctGan={pctGan} updtState={changeValuesProducts}/>}
                 <div className="Row" style={{ padding: '35px' }}>
                     {modificarProducto ?
                         <div className="ProImgContainer">
