@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import './_ProductMeasures.scss';
+import './_MoneyFlow.scss';
 import { TheInput } from '../InputComponent/TheInput';
 import { useTheContext } from '../../TheProvider';
 import { Flatlist, ModalBusca } from '../../Components';
@@ -16,6 +16,7 @@ export const MoneyFlow = ({show, typeOfFlow , aceptar, width='50%', height='50%'
     const [ moneyFlow, setMoneyFlow ] = useState([]);
     const [ selectedfila, setSelectedfila ] = useState(0);
     const { setSection, setSomeData, usD } = useTheContext();
+    const [ colores, setColores ] = useState({ principal: '#1a7124', seleccionado: 'rgba(26, 113, 36, 0.58)'});
 
     const ctHeaders = [
         {
@@ -63,6 +64,7 @@ export const MoneyFlow = ({show, typeOfFlow , aceptar, width='50%', height='50%'
 
         } else {
             setTitle('Salida');
+            setColores({principal: '#900C3F', seleccionado: 'rgba(144, 12, 63, 0.58)'})
         }
         const cashFlow = await CashFlow({
             IdFerreteria: usD.Cod,
@@ -150,7 +152,9 @@ export const MoneyFlow = ({show, typeOfFlow , aceptar, width='50%', height='50%'
         const styles = {
             textDecoration: item.Activo === 0 ? 'line-through' : 'none',
             color: item.Activo === 0 ? '#999999' : '#000000',
-            iconColor: item.Activo === 0 ? 'grey' : 'red'
+            iconColor: item.Activo === 0 ? 'grey' : 'red',
+            whiteSpace: 'normal',
+            wordWrap: 'break-word'
         };
         const removeFlow = () => {
             if (item.Activo === 0) {
@@ -190,35 +194,51 @@ export const MoneyFlow = ({show, typeOfFlow , aceptar, width='50%', height='50%'
                 <button className='btn1Stnd' onClick={() => {show(false)}} style={{position: 'absolute', top: '0px', right: '0px'}}>
                     <i className='bi bi-x-lg'/>
                 </button>
-                <div>
+                <div className='subTittle' style={{background: `linear-gradient(to right, ${colores.principal}, #FFFFFF)`}}>
                     <h1>{title} de efectivo</h1>
                 </div>
-                <label>Cantidad:</label>
-                <TheInput
-                    numType='real'
-                    val={cantidad}
-                    onchange={(e)=>setCantidad(e)}
-                >
-                </TheInput>
-                <label>Comentarios:</label>
-                <input
-                    type='text'
-                    value={comentario}
-                    onChange={e => handleInputChange(e)}>
-                </input>
-                <div>
-                    {showPrevio && <Flatlist
-                                        data={moneyFlow}
-                                        row={RowMoneyFlow}
-                                        headers={ctHeaders}
-                                        selectedRow={selectedfila}
-                                        setSelectedRow={setSelectedfila}
-                                    />
-                                }
+                <div className='TwoColumnsMFlow'>
                     <div>
-                        <button onClick={()=>addMoneyFlow()}>Guardar</button>
-                        <button onClick={()=>show(false)}>Cancelar</button>
-                        <button onClick={()=>setShowPrevio(!showPrevio)}>{previo}</button>
+                        <div className='Column1'>
+                            <div>
+                                <div>
+                                    <label>Cantidad:</label>
+                                </div>
+                                <div>
+                                    <label>Comentarios:</label>
+                                </div>
+                            </div>
+                            <div>
+                                <TheInput
+                                    numType='real'
+                                    val={cantidad}
+                                    onchange={(e)=>setCantidad(e)}
+                                >
+                                </TheInput>
+                                <input
+                                    type='text'
+                                    value={comentario}
+                                    onChange={e => handleInputChange(e)}>
+                                </input>
+                            </div>
+                        </div>
+                        <div>
+                            {showPrevio && <Flatlist
+                                                data={moneyFlow}
+                                                row={RowMoneyFlow}
+                                                headers={ctHeaders}
+                                                selectedRow={selectedfila}
+                                                setSelectedRow={setSelectedfila}
+                                                principalColor={colores.principal}
+                                                selectedRowColor={colores.seleccionado}
+                                                />
+                                        }
+                        </div>
+                    </div>
+                    <div className='ActionButtons'>
+                        <button className="btnStnd btn1" onClick={()=>addMoneyFlow()}>Guardar</button>
+                        <button className="btnStnd btn1" onClick={()=>show(false)}>Cancelar</button>
+                        <button className="btnStnd btn1" onClick={()=>setShowPrevio(!showPrevio)}>{previo}</button>
                     </div>
                 </div>
             </div>

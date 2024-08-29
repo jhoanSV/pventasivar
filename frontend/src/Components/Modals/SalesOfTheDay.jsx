@@ -9,7 +9,7 @@ import { ReturnProduct } from './ReturnProduct';
 import { UserConfirm } from './UserConfirm';
 
 
-export const SalesOfTheDay = ({show, orderslist, width='90%', height='80%'}) => {
+export const SalesOfTheDay = ({show, orderslist, width='90%', height='90%'}) => {
     const [ paga, setPaga] = useState(0);
     const [ cambio, setCambio] = useState(0);
     const [ total, setTotal] = useState(0);
@@ -263,6 +263,8 @@ export const SalesOfTheDay = ({show, orderslist, width='90%', height='80%'}) => 
         const styles = {
             textDecoration: item.CantidadSa - item.CantidadEn === 0 ? 'line-through' : 'none',
             color: item.CantidadSa - item.CantidadEn === 0 ? '#999999' : '#000000',
+            whiteSpace: 'normal',
+            wordWrap: 'break-word'
         };
         return (
                 <>
@@ -343,6 +345,7 @@ export const SalesOfTheDay = ({show, orderslist, width='90%', height='80%'}) => 
                                     headers={ctHeaders}
                                     selectedRow={selectedfila}
                                     setSelectedRow={setSelectedfila}
+                                    Height='200'
                                 />
                             </div>
                         </div>
@@ -372,6 +375,7 @@ export const SalesOfTheDay = ({show, orderslist, width='90%', height='80%'}) => 
                                     headers={HeadersOrderSelected}
                                     selectedRow={selectedfilaOrder}
                                     setSelectedRow={setSelectedfilaOrder}
+                                    Height='140'
                                 />
                             </div>
                             <button className="btnStnd btn1" onClick={()=>returnProductM()}>Devolver articulo</button>

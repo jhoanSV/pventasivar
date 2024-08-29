@@ -1,8 +1,17 @@
 import React, { useEffect, useState } from 'react';
 import './_flatlist.scss';
 
-export const Flatlist = ({ data, row, Width = '100%', /*Height,*/ headers = [], selectedRow, setSelectedRow,
-    doubleClick = ()=>{}}) => {
+export const Flatlist = ({ data,
+                            row,
+                            Width = '100%',
+                            Height = '100%',
+                            headers = [],
+                            selectedRow,
+                            setSelectedRow,
+                            principalColor = '#193773',  // Color predeterminado para la cabecera,
+                            selectedRowColor = 'rgba(39, 83, 172, 0.58)',  // Color predeterminado para la fila seleccionada,
+                            hoverColor = 'rgba(0, 0, 0, 0.1)',  // Color predeterminado para el hover,
+                            doubleClick = ()=>{}}) => {
     //const [selectedRow, setSelectedRow] = useState(null);
     //const [width, setWidth] = useState(Width);
     //const [height, setHeight] = useState(Height);
@@ -30,12 +39,12 @@ export const Flatlist = ({ data, row, Width = '100%', /*Height,*/ headers = [], 
     };
 
     return (
-        <div className='Flatlist' id='FlastListID'>
-            <table className='theTable'>
+        <div className='Flatlist' id='FlastListID' style={{height: Height}}>
+            <table className='theTable' >
                 <thead style={{position: 'sticky', top: '0'}}>
                     <tr>
                         {headers.map((item, index) =>
-                            <th key={index} style={{width: item['defaultWidth']}}>
+                            <th key={index} style={{width: item['defaultWidth'] , backgroundColor: principalColor}} >
                                 <div className='cellContent'>{item['header']}</div>
                             </th>
                         )}
@@ -48,6 +57,10 @@ export const Flatlist = ({ data, row, Width = '100%', /*Height,*/ headers = [], 
                             className={`rowflatlist ${selectedRow === index ? 'selected' : ''}`}
                             onClick={() => handleRowClick(index)}
                             onDoubleClick={()=>doubleClick()}
+                            style={{
+                                backgroundColor: selectedRow === index ? selectedRowColor : 'inherit',
+                                color: selectedRow === index ? '#fff' : 'inherit'
+                            }}
                         >
                         {row(item, index, columnsWidth)}
                         </tr>
