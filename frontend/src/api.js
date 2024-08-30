@@ -623,3 +623,23 @@ export const SalesByCategory = async(salesbycategory) => {
         console.log('TheError: '+ error)
     }
 }
+
+export const BestProducts = async(bestproducts) => {
+    /*return the product to the table entradas
+    you have to send a json of the form:
+    {
+        IdFerreteria: 242,
+        Fecha: '2024-08-22'
+    }
+    */
+    try {
+        const res = await fetch(`${API_POS}/bestProducts`,{
+            method: 'POST',
+            headers: { Accept: 'application/json','Content-Type': 'application/json'},
+            body: JSON.stringify(bestproducts)
+        })
+        return await res.json()
+    }catch(error) {
+        console.log('TheError: '+ error)
+    }
+}

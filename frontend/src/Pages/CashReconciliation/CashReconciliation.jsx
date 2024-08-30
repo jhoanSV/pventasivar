@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useTheContext } from '../../TheProvider';
 import './_CashReconciliation.scss'
 import { Flatlist} from '../../Components';
-import { CRDetail, CashFlow, SalesByCategory } from '../../api';
+import { CRDetail, CashFlow, SalesByCategory, BestProducts } from '../../api';
 import { Chart, ArcElement } from 'chart.js';
 import { Pie } from 'react-chartjs-2';
 Chart.register(ArcElement);
@@ -89,8 +89,11 @@ export function CashReconciliation() {
             ]
         }
         setDataPie(data)
-        
-        //setBestPData()
+        const bestProductData = await BestProducts({
+            IdFerreteria: usD.Cod,
+            Fecha: date
+        })
+        setBestPData(bestProductData)
     }
 
     const PieChart = () => {
@@ -310,21 +313,23 @@ export function CashReconciliation() {
                     />
             </div>
         </div>
-        <div>
-            <h1>Cuentas por categoria</h1>
-            <PieChart/>
-        </div>
-        <h2>mejores productos</h2>
+        <div className='TwoColumns' style={{gap: '20%'}}>
+            <div>
+                <h1>Cuentas por categoria</h1>
+                <PieChart/>
+            </div>
+            <div>
+                <h2>mejores productos</h2>
                     <Flatlist
                         data={bestPData}
                         headers={HeadersBestProducts}
                         row={RowBestProducts}
                         selectedRow={selectedPData}
                         setSelectedRow={setSelectedPData}
-                        principalColor={'#900C3F'}
-                        selectedRowColor={'rgba(144, 12, 63, 0.50)'}
                         Height='150 px'
                     />
+            </div>
+        </div>
       </div>
     )
 }
