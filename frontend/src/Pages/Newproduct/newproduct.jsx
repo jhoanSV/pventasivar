@@ -86,6 +86,7 @@ export const Newproduct = () => {
                 console.log(e.target.value);
                 console.log(subC[e.target.value-1].IdCategoria);
                 setSelectedCategory(subC[e.target.value-1].IdCategoria);
+                setSubCatList(subC.filter(c => c.IdCategoria === Number(subC[e.target.value-1].IdCategoria)));
                 changeValuesProducts('IdSubCategoria', Number(e.target.value));
             }else{
                 //changeValuesProducts('Categoria', '');
@@ -121,6 +122,21 @@ export const Newproduct = () => {
 
     const prepData = () => {
         let d = { ...productData }
+        if(d.Medidas.length !== 0){
+            d.Medidas.forEach((item) => {
+                if (item.PVentaUM==='') {
+                    let v = NPToNumber(productData.PCosto) / NPToNumber(item.UMedida) + 
+                        NPToNumber(productData.PCosto) / 
+                        NPToNumber(item.UMedida)*Number(pctGan.replace(/,/g, '.'))/100;
+                    v = v % 1 === 0 ? v.toString() : v.toFixed(2);
+                    item.PVentaUM = Number(v);
+                }else{
+                    item.PVentaUM = NPToNumber(item.PVentaUM);
+                }
+                item.UMedida = NPToNumber(item.UMedida);
+                delete item.pctUM
+            });
+        }
         d.PVenta = NPToNumber(d['PVenta'])
         d.PCosto = NPToNumber(d.PCosto)
         d.Inventario = NPToNumber(d['Inventario'])
@@ -247,6 +263,16 @@ export const Newproduct = () => {
                 let pct = (((data.PVenta - data.PCosto) / data.PCosto) * 100).toFixed(2).toString();
                 pct = pct.replace(/\./g, ',');
                 setpctGan(pct);
+            }
+            if (data.Medidas.length !== 0){
+                data.Medidas.forEach((medida) => {
+                    let pctum = (medida.PVentaUM - data.PCosto/medida.UMedida) / (data.PCosto/medida.UMedida) * 100
+                    console.log(data.PCosto, medida.UMedida, );
+                    pctum = pctum % 1 === 0 ? pctum : pctum.toFixed(2);
+                    medida.pctUM = Formater(pctum);
+                    medida.UMedida = Formater(medida.UMedida);
+                    medida.PVentaUM = Formater(medida.PVentaUM);
+                })
             }
             data.PVenta = Formater(data.PVenta);
             data.PCosto = Formater(data.PCosto);
@@ -413,7 +439,7 @@ export const Newproduct = () => {
                         </label>
                     </div>
                 </div>
-                {show2 && <GranelModal show={setShow2} productData={{...productData}} pctGan={pctGan} updtState={changeValuesProducts}/>}
+                {show2 && <GranelModal show={setShow2} productData={productData} pctGan={pctGan} updtState={changeValuesProducts}/>}
                 <div className="Row" style={{ padding: '35px' }}>
                     {modificarProducto ?
                         <div className="ProImgContainer">

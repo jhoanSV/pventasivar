@@ -31,17 +31,6 @@ export const GranelModal = ({show, productData, pctGan, updtState}) => {
         updtState('UMedida', e);
         (typeof(productData.PCosto) !== 'number') ? setcUnit(productData.PCosto.replace(/[.,]/g, (a) => (a === "." ? "" : "."))/e) : setcUnit(productData.PCosto/e)
     }*/
-   
-    if(frstRender){
-        console.log('-->', productData.Medidas);
-        if(productData.Medidas.length !== 0){
-            productData.Medidas.forEach(med => {
-                med.UMedida = Formater(med.UMedida);
-                med.PVentaUM = Formater(med.PVentaUM);
-            });
-        }
-        setFrstRender(false);
-    }
 
     const handleMeasureChange = (e) =>{
         updtState('Clase', Number(e.target.value));
@@ -313,7 +302,6 @@ export const GranelModal = ({show, productData, pctGan, updtState}) => {
                                     
                                     let pcosto = productData.PCosto.replace(/[.,]/g, (a) => (a === "." ? "" : "."));
                                     let pcostoUnit = pcosto/(Med.UMedida.replace(/[.,]/g, (a) => (a === "," && ".")));
-                                    console.log(pcostoUnit);
                                     //Med.PVentaUM = Med.PVentaUM.toString();
                                     
                                     /*const calpventa = (e) => {
@@ -336,14 +324,13 @@ export const GranelModal = ({show, productData, pctGan, updtState}) => {
                                                     let um = e.replace(/[.,]/g, (a) => (a === "," && "."));
                                                     let meds = {...productData}.Medidas;
                                                     let a = meds[index+1];
-                                                    //a.UMedida = e
                                                     if(a.PVentaUM!==''){
                                                         let pct = (((a.PVentaUM.replace(/[.,]/g, (a) => (a === "." ? "" : ".")) - (pcosto/um)) / (pcosto/um)) * 100);
                                                         console.log(Med.PVentaUM, pcosto/um, pct);
                                                         pct = pct % 1 === 0 ? pct.toString() : pct.toFixed(2);
                                                         a.pctUM = Formater(pct);//Si hay pventaum cambia el pctGanancia
                                                     }
-                                                    //updtState('Medidas', meds);//Modifica la unidad en la medida
+                                                    updtState('Medidas', meds);//Modifica la unidad en la medida
                                                 }}
                                             />
                                         </td>
@@ -362,7 +349,6 @@ export const GranelModal = ({show, productData, pctGan, updtState}) => {
                                                     let pv = e.replace(/[.,]/g, (a) => (a === "," && "."));
                                                     let meds = {...productData}.Medidas;
                                                     let a = meds[index+1];
-                                                    //a.PVentaUM = pv;
                                                     if(a.UMedida!==''){
                                                         let pct = (((pv - pcostoUnit) / pcostoUnit) * 100);
                                                         pct = pct % 1 === 0 ? pct.toString() : pct.toFixed(2);
@@ -422,35 +408,6 @@ export const GranelModal = ({show, productData, pctGan, updtState}) => {
                     <div style={{display: 'flex', gap: '5px'}}>
                         <button className='btnStnd btn1' onClick={() =>{
                             show(false);
-                            let a = {...productData}.Medidas;
-                            console.log('a', a);
-                            if(a.length !== 0){
-                                a.forEach((item) => {
-                                    if (item.PVentaUM==='') {
-                                        let v = productData.PCosto.replace(/[.,]/g, (a) => (a === "." ? "" : ".")) / 
-                                            item.UMedida.replace(/[.,]/g, (a) => (a === "." ? "" : ".")) + 
-                                            productData.PCosto.replace(/[.,]/g, (a) => (a === "." ? "" : ".")) / 
-                                            item.UMedida.replace(/[.,]/g, (a) => (a === "." ? "" : "."))*Number(pctGan.replace(/,/g, '.'))/100;
-                                        v = v % 1 === 0 ? v.toString() : v.toFixed(2);
-                                        item.PVentaUM = v;
-                                    }
-                                    item.UMedida = item.UMedida.replace(/[.,]/g, (a) => (a === "." ? "" : "."));
-                                    console.log(item.UMedida.replace(/[.,]/g, (a) => (a === "." ? "" : ".")));
-                                });
-                                updtState('Medidas', a);
-                            }
-                            /*
-                            return () => {
-                                console.log('primero esto ', productData.Medidas);
-                                let Meds = {...productData}.Medidas;
-                                if(){
-                                    Meds.forEach(med => {
-                                        
-                                    })
-                                    
-                                }
-                            };
-                            updtState('Medidas', a.Medidas);*/
                         }}>
                         Guardar
                         </button>
