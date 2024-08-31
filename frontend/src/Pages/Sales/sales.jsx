@@ -467,21 +467,23 @@ export function Sales(){
                 {/*<ModalBusca/>*/}
             </div>
             <div style={{padding: '0px 70px'}}>
-                <button
-                    className="btnStnd btn1"
-                    onClick={()=>setSearchClient(true)}
-                    >Asignar cliente
-                </button>
-                <button
-                    className="btnStnd btn1"
-                    onClick={()=>{setTypeMoneyFlow(false);setShowMoneyFlow(true)}}
-                    >Entradas de dinero
-                </button>
-                <button
-                    className="btnStnd btn1"
-                    onClick={()=>{setTypeMoneyFlow(true); setShowMoneyFlow(true)}}
-                    >Salidas de dinero
-                </button>
+                <div style={{display: 'flex', gap: '5px', marginTop: '10px'}}>
+                    <button
+                        className="btnStnd btn1"
+                        onClick={()=>setSearchClient(true)}
+                        >Asignar cliente
+                    </button>
+                    <button
+                        className="btnStnd btn1"
+                        onClick={()=>{setTypeMoneyFlow(false);setShowMoneyFlow(true)}}
+                        >Entradas de dinero
+                    </button>
+                    <button
+                        className="btnStnd btn1"
+                        onClick={()=>{setTypeMoneyFlow(true); setShowMoneyFlow(true)}}
+                        >Salidas de dinero
+                    </button>
+                </div>
                 <div>
                     <label>Cliente: {customer}</label>
                 </div>

@@ -5,6 +5,7 @@ export const Flatlist = ({ data,
                             row,
                             Width = '100%',
                             Height = '100%',
+                            maxHeight = 'none',
                             headers = [],
                             selectedRow,
                             setSelectedRow,
@@ -39,7 +40,7 @@ export const Flatlist = ({ data,
     };
 
     return (
-        <div className='Flatlist' id='FlastListID' style={{height: Height}}>
+        <div className='Flatlist' id='FlastListID' style={{height: Height, maxHeight: maxHeight}}>
             <table className='theTable' >
                 <thead style={{position: 'sticky', top: '0'}}>
                     <tr>

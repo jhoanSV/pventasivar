@@ -5,7 +5,7 @@ import { useTheContext } from '../../TheProvider';
 import { Flatlist, ModalBusca } from '../../Components';
 import { CashFlow, NewMoneyFlow, RemoveFlow } from '../../api';
 
-export const MoneyFlow = ({show, typeOfFlow , aceptar, width='50%', height='50%'}) => {
+export const MoneyFlow = ({show, typeOfFlow , aceptar }) => {
     //if typeOfFlow is false then is an influx of money
     //if typeOfFlow is true then is an waste of money
     const [ cantidad, setCantidad ] = useState(0);
@@ -22,13 +22,13 @@ export const MoneyFlow = ({show, typeOfFlow , aceptar, width='50%', height='50%'
         {
             header: 'Monto',
             key: 'Efectivo',
-            defaultWidth: 150,
+            defaultWidth: 128,
             type: 'text',
         },
         {
             header: 'Comentarios',
             key: 'Comentarios',
-            defaultWidth: 200,
+            defaultWidth: 328,
             type: 'text',
         },
         {
@@ -170,7 +170,10 @@ export const MoneyFlow = ({show, typeOfFlow , aceptar, width='50%', height='50%'
                         <label>$ {Formater(item.Efectivo)}</label>
                     </td>
                     <td style={{...styles, width: columnsWidth[1]}}>
-                        <label>{item.Comentarios}</label>
+                        <textarea
+                            defaultValue={item.Comentarios}
+                            className='taTMf'
+                        />
                     </td>
                     <td style={{...styles, width: columnsWidth[2]}}>
                         <label>{date.toLocaleTimeString('en-GB', { hour12: false })}</label>
@@ -178,7 +181,9 @@ export const MoneyFlow = ({show, typeOfFlow , aceptar, width='50%', height='50%'
                     <td
                         style={{...styles, width: columnsWidth[3]}}
                         onClick={()=>removeFlow(item)}>
-                        <div><i className="bi bi-trash-fill" style={{color: styles.iconColor}}></i></div>
+                        <button className='btn1Stnd'>
+                            <i className="bi bi-trash-fill" style={{color: styles.iconColor, fontSize: '18px'}}/>
+                        </button>
                     </td>
                 </>
         );
@@ -190,55 +195,55 @@ export const MoneyFlow = ({show, typeOfFlow , aceptar, width='50%', height='50%'
 
     return (
         <div className='theModalContainer'>
-            <div className='theModal-content' style={{width: width, height: height, position: 'relative'}}>
+            <div className='theModal-content mfws' style={{position: 'relative'}}>
                 <button className='btn1Stnd' onClick={() => {show(false)}} style={{position: 'absolute', top: '0px', right: '0px'}}>
                     <i className='bi bi-x-lg'/>
                 </button>
                 <div className='subTittle' style={{background: `linear-gradient(to right, ${colores.principal}, #FFFFFF)`}}>
                     <h1>{title} de efectivo</h1>
                 </div>
-                <div className='TwoColumnsMFlow'>
-                    <div>
-                        <div className='Column1'>
-                            <div>
-                                <div>
-                                    <label>Cantidad:</label>
-                                </div>
-                                <div>
-                                    <label>Comentarios:</label>
-                                </div>
-                            </div>
-                            <div>
-                                <TheInput
-                                    numType='real'
-                                    val={cantidad}
-                                    onchange={(e)=>setCantidad(e)}
-                                >
-                                </TheInput>
-                                <input
-                                    type='text'
-                                    value={comentario}
-                                    onChange={e => handleInputChange(e)}>
-                                </input>
-                            </div>
-                        </div>
-                        <div>
-                            {showPrevio && <Flatlist
-                                                data={moneyFlow}
-                                                row={RowMoneyFlow}
-                                                headers={ctHeaders}
-                                                selectedRow={selectedfila}
-                                                setSelectedRow={setSelectedfila}
-                                                principalColor={colores.principal}
-                                                selectedRowColor={colores.seleccionado}
-                                                />
-                                        }
+                <div style={{padding: '0px 10px 10px'}}>
+                    <div style={{display: 'flex', justifyContent: 'space-around', marginBottom: '10px'}}>
+                        <table className='semiTable'>{/*semiTable*/}
+                            <tr>
+                                <td>Cantidad:</td>
+                                <td>
+                                    <TheInput
+                                        numType='real'
+                                        val={cantidad}
+                                        onchange={(e)=>setCantidad(e)}
+                                    />
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Comentarios:</td>
+                                <td>
+                                    <textarea
+                                        type='text'
+                                        value={comentario}
+                                        style={{backgroundColor: '#d9d9d9', resize: 'none', width: '130%'}}
+                                        onChange={e => handleInputChange(e)}/>
+                                </td>
+                            </tr>
+                        </table>
+                        <div className='ActionButtons'>
+                            <button className="btnStnd btn1" onClick={()=>addMoneyFlow()}>Guardar</button>
+                            <button className="btnStnd btn1" onClick={()=>show(false)}>Cancelar</button>
+                            <button className="btnStnd btn1" onClick={()=>setShowPrevio(!showPrevio)}>{previo}</button>
                         </div>
                     </div>
-                    <div className='ActionButtons'>
-                        <button className="btnStnd btn1" onClick={()=>addMoneyFlow()}>Guardar</button>
-                        <button className="btnStnd btn1" onClick={()=>show(false)}>Cancelar</button>
-                        <button className="btnStnd btn1" onClick={()=>setShowPrevio(!showPrevio)}>{previo}</button>
+                    <div style={{minHeight: showPrevio && '100px'}}>
+                        {showPrevio && <Flatlist
+                                            data={moneyFlow}
+                                            row={RowMoneyFlow}
+                                            headers={ctHeaders}
+                                            selectedRow={selectedfila}
+                                            setSelectedRow={setSelectedfila}
+                                            principalColor={colores.principal}
+                                            selectedRowColor={colores.seleccionado}
+                                            maxHeight='242px'
+                                            />
+                        }
                     </div>
                 </div>
             </div>
