@@ -1,4 +1,5 @@
 @import "../node_modules/bootstrap-icons/font/bootstrap-icons.scss";
+@import "./Fonts_CSS/fontello.css";
 
 .genLink{
   text-decoration: none;
@@ -39,6 +40,7 @@
   aspect-ratio: 1 / 1;
 }
 .btn1:active{
+  background-color: #2454B5;
   box-shadow: none;
   transform: translateY(3px);
 }
@@ -105,6 +107,11 @@ input[type="text"], input[type="number"], input[type="password"] {
 
 .d-none{
   display: none;
+}
+
+.modalOpen{
+  overflow: hidden;
+  //padding-right: 17px; idk
 }
 
 html{

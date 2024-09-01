@@ -13,8 +13,7 @@ export const BoxItem = ({Codigo, Descripcion, simpleFunct, showModal, IdFerreter
             simpleFunct();
         }
         if(showModal && (IdFerreteria === 0)){
-            document.body.style.overflow = 'hidden';
-            document.body.style.paddingRight = '17px'
+            document.body.classList.add('modalOpen');
             setShow(true);
         }
     }

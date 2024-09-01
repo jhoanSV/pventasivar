@@ -11,8 +11,10 @@ export const ItemCart = ({id, nombre, cod, unitPrice, unitPaq, category, cantida
     const [fontResize, setFontResize] = useState('');
     const [imgSrc, setImgSrc] = useState(`https://sivarwebresources.s3.amazonaws.com/AVIF/${cod}.avif`);
 
-    const handleDelete = () =>{        
-        onDelete(id)
+    const handleDelete = () =>{
+        if(window.confirm('¿Desea eliminar este producto?')){
+            onDelete(id)
+        }
     }
     
     const resize_ob = new ResizeObserver(()=>{
@@ -26,8 +28,7 @@ export const ItemCart = ({id, nombre, cod, unitPrice, unitPaq, category, cantida
     }, []);
 
     useEffect(() => {        
-        if(screenWidth<431){
-            console.log(screenWidth);
+        if(screenWidth < 431){
             setFontResize('1.7rem')
         }else{
             setFontResize('')
@@ -49,14 +50,11 @@ export const ItemCart = ({id, nombre, cod, unitPrice, unitPaq, category, cantida
 
     return (
         <div className='itemCartStyle' id={`a${id}`} >
-            <div className='delContainer' role='button' 
-                data-bs-toggle="modal"
-                data-bs-target={`#verifyDel${id}`}
-            >
+            <div className='delContainer' role='button' onClick={()=>handleDelete()}>
                 <i className="bi bi-trash3"></i>
             </div>
             <div className='itemCartImgContainer'>
-                <div className={`imgProducto itemCartImg C${category}`}>
+                <div className={`imgWB imgProducto itemCartImg C${category}`}>
                     <picture>
                         <source
                             type="image/avif"
@@ -79,7 +77,7 @@ export const ItemCart = ({id, nombre, cod, unitPrice, unitPaq, category, cantida
                     V.U: $ {Formater(unitPrice)}
                 </div>
                 <div className="quantityBox">
-                    <button className="btnQuantity" onClick={() => {
+                    <button className="btnStnd btn1" onClick={() => {
                         if((cant-unitPaq)>0){
                             updtC(id, parseInt(cant)-unitPaq)
                             setCant(cant-unitPaq)
@@ -104,7 +102,7 @@ export const ItemCart = ({id, nombre, cod, unitPrice, unitPaq, category, cantida
                             updtC(id, theCant)
                         }}
                     />
-                    <button className="btnQuantity" onClick={() => {
+                    <button className="btnStnd btn1" onClick={() => {
                         updtC(id, parseInt(cant)+unitPaq)
                         setCant(parseInt(cant)+unitPaq)
                         setTotalPrice(unitPrice*(parseInt(cant)+unitPaq))                        
@@ -119,23 +117,6 @@ export const ItemCart = ({id, nombre, cod, unitPrice, unitPaq, category, cantida
                             ${Formater(totalPrice)}
                         </span>
                     </h1>
-                </div>
-            </div>
-            <div className="modal fade" id={`verifyDel${id}`} tabIndex="-1" aria-labelledby="VerifyDel" aria-hidden="true">
-                <div className="modal-dialog modal-sm">
-                    <div className="modal-content">
-                        <div className="modal-header">
-                            <h1 className="modal-title fs-5" id="exampleModalLabel">Desea eliminar este producto?</h1>
-                            <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                        </div>
-                        <div className="modal-footer">
-                            <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                            <button type="button" className="btn btn-primary"
-                                data-bs-dismiss="modal"
-                                onClick={handleDelete}
-                            >Aceptar</button>
-                        </div>
-                    </div>
                 </div>
             </div>
         </div>

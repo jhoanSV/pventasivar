@@ -3,13 +3,24 @@
     position: relative;
     flex-wrap: wrap;
     padding: 60px 30px;
-    min-height: 455px;
+}
+
+.grayContainer{
+    align-items: center;
+    background-color: #d9d9d9;
+    border-radius: 66px;
+    display: flex;
+    flex-direction: column;
+    margin-top: 5%;
+    padding: 123px 41px 73px;
+    position: relative;
+    width: 517px;
 }
 
 .itemsCart.grayContainer{
     width: 55%;
-    min-height: 545.95px;
-    max-height: 550px;
+    min-height: 312px;
+    max-height: 74vh;
     overflow-x: hidden;
     overflow-y: auto;
     margin-top: 0;
@@ -45,14 +56,24 @@
     border-radius: 100px;
 }
 
-.btnSendOrd.boton {
-    background-color: #F2CB05;
-    color: #193773;
-    max-width: none;
+.btnSendOrd{
     width: 100%;
-    font-size: 20px;
-    letter-spacing: 0;
-    border-radius: 20px;
+    font-size: 18px;
+    font-weight: 700;
+    height: 65px;
+    background-color: #F2CB05;
+    box-shadow: 0px 4px 0px 0px rgb(197 176 74);
+    color: #193773;
+    margin: auto 0px 4px 0px;
+    &.btn1:disabled{
+        background-color: #F2CB05;
+        box-shadow: 0px 4px 0px 0px rgb(197 176 74);
+    }
+    &.btn1:active{
+        background-color: #F2CB05;
+        box-shadow: none;
+        transform: translateY(4px);
+    }
 }
 
 .dtlCart .subTit{
@@ -74,14 +95,24 @@
     border: none;
     border-radius: 10px;
     background-color: #F2CB05;
+    box-shadow: 0px 3px 0px 0px rgb(197 176 74);
     color: #193773;
-    font-size: 20px;
+    font-size: 16px;
     font-weight: bold;
     margin: auto;
     padding: 8px;
+    cursor: pointer;
+    &:active{
+        box-shadow: none;
+        transform: translateY(3px);
+    }
 }
 .btnModal.btnBack{
     background-color: #d9d9d9;
+    box-shadow: 0px 3px 0px 0px rgb(175 175 175);
+    &:active{
+        box-shadow: none;
+    }
 }
 
 .btnConfirm:disabled, .btnSendOrd:disabled{
@@ -98,6 +129,7 @@
     width: 100%;
     position: absolute;
     background-color: #F2CB05;
+    border-radius: 0px 0px 24px 24px;
     color: #193773;
     font-size: 1.5rem;
     font-weight: bold;
@@ -113,7 +145,8 @@
 
 .reminderContainer{
     display: flex;
-    flex-direction: column;    
+    flex-direction: column;
+    padding: 20px 8px 8px;
 }
 .reminder{
     width: 75%;
@@ -138,6 +171,7 @@
 
 .reminder > div{
     color: #193773;
+    font-size: 1.25rem;
 }
 
 @keyframes moveText {
@@ -157,9 +191,6 @@
 }
 
 @media screen and (max-width: 900px) {
-    .btnModal{
-        font-size: 16px;
-    }
     .itemsCart.grayContainer{
         width: 100%;
         max-height: none;

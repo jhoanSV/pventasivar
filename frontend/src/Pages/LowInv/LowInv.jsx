@@ -1,40 +1,49 @@
 import './_LowInv.scss';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useTheContext } from '../../TheProvider';
-import p_json from '../../products_json_test.json'
+//import p_json from '../../products_json_test.json'
 import { useNavigate } from 'react-router-dom';
 import { BoxItem } from '../../Components/Others/BoxItem';
 import { AddPurchaseModal } from '../../Components';
+import { ShoppingList } from '../../api';
 
 export const LowInv = () => {
     
-    const { setSection } = useTheContext();
+    const { setSection, usD } = useTheContext();
     const navigate = useNavigate()
     const [lista, setLista] = useState();
     //const [imgSrc, setImgSrc] = useState();
     const [limit, setLimit] = useState(20);
-    const [show, setShow] = useState(false);
-    let timeout;
+    //const [show, setShow] = useState(false);
+    const refList = useRef([]);
 
     const filterByText = (item, text) =>
         item.Cod.toString().toLowerCase().includes(text) ||
-        item.Cod_de_barras.toLowerCase() === (text) ||
         item.Descripcion.toLowerCase().includes(text);
 
     const SearchHandle = (text) =>{
-        let list = p_json;
+        let list = refList.current;
         if (text !== ''){
             list = list.filter((itemL)=>filterByText(itemL, text))
-            setLista(list)
-            setLimit(20)
+            setLista(list);
+            setLimit(20);
         }else{
-            setLista(p_json)
-            setLimit(20)
+            lInv_query();
+            setLimit(20);
         }
     }
 
-    const lInv_query = () =>{
-        setLista(p_json)
+    const lInv_query = async() =>{
+        const shppList = await ShoppingList({
+            "IdFerreteria": usD.Cod,
+            "Compras": true
+        })
+        if(shppList){
+            setLista(shppList);
+            refList.current = shppList;
+        }
+        console.log('a: ', shppList);
+        //setLista(p_json)
     }    
 
     const observeT3 = () =>{

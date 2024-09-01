@@ -5,13 +5,13 @@ import { useTheContext } from '../../TheProvider';
 import { TheInput, UserConfirm } from '../../Components';
 import imgPlaceHolder from '../../Assets/AVIF/placeHolderProduct.avif'
 import { GranelModal } from '../../Components/Modals/GranelModal';
-import { NuevoProducto, SubCategories, UpdateProduct } from '../../api';
+import { NuevoProducto, UpdateProduct } from '../../api';
 
 export const Newproduct = () => {
     
     const navigate = useNavigate()
-    const { setSection, someData, setInvAdAuth, usD, productCodes } = useTheContext();
-    const [imgSrc, setImgSrc] = useState(someData && `https://sivarwebresources.s3.amazonaws.com/AVIF/${someData.cod}.avif`)
+    const { setSection, someData, setInvAdAuth, usD, productCodes, subC, categories } = useTheContext();
+    const [imgSrc, setImgSrc] = useState(someData && `https://sivarwebresources.s3.amazonaws.com/AVIF/${someData.Cod}.avif`)
     const [selectedCategory, setSelectedCategory] = useState(''); // set the selected category
     const [buttons, setButtons] = useState("Crear producto");
     const [productData, setProductData] = useState({
@@ -34,12 +34,7 @@ export const Newproduct = () => {
     const [show2, setShow2] = useState(false);
     // eslint-disable-next-line
     const [productsDataShow, setproductsDataShow] = useState({});
-    const [subCatList, setSubCatList] = useState([]);
-
-    const fetchCat = async() =>{
-        const res = await SubCategories()
-        setSubCatList(res)
-    }
+    const [subCatList, setSubCatList] = useState(/*productData.Categoria ?  : */subC);
 
     const calpctC = (e) => {
         let thePcosto = Number(e.replace(/[.,]/g, (a) => (a === "," && ".")));
@@ -72,14 +67,32 @@ export const Newproduct = () => {
         }));
     }
 
-    const handleSelectedCategory = (e) => {
+    const handleSelectedCategory = (value2Ch, e) => {
         //*This function handles the selected category and
-        if(e.target.value!==''){
-            changeValuesProducts('IdSubCategoria', Number(e.target.value))
-            setSelectedCategory(subCatList[e.target.value-1].Categoria);
+        console.log(value2Ch, e.target.value);
+        if(value2Ch === 'Categoria'){
+            if(e.target.value!==''){
+                setSelectedCategory(e.target.value);
+                //changeValuesProducts('Categoria', categories.find(c => c.IdCategoria === Number(e.target.value)).Categoria);
+                setSubCatList(subC.filter(c => c.IdCategoria === Number(e.target.value)));
+                console.log(subC.filter(c => c.IdCategoria === Number(e.target.value)));
+            }else{
+                //changeValuesProducts('Categoria', '');
+                setSelectedCategory('');
+                setSubCatList(subC);
+            }
         }else{
-            changeValuesProducts('IdSubCategoria', '')
-            setSelectedCategory('')
+            if(e.target.value!==''){
+                console.log(e.target.value);
+                console.log(subC[e.target.value-1].IdCategoria);
+                setSelectedCategory(subC[e.target.value-1].IdCategoria);
+                setSubCatList(subC.filter(c => c.IdCategoria === Number(subC[e.target.value-1].IdCategoria)));
+                changeValuesProducts('IdSubCategoria', Number(e.target.value));
+            }else{
+                //changeValuesProducts('Categoria', '');
+                changeValuesProducts('IdSubCategoria', '')
+                //setSelectedCategory('')
+            }
         }
     };
 
@@ -93,8 +106,11 @@ export const Newproduct = () => {
         return Intl.NumberFormat('de-DE').format(numberfromat);
     }
 
-    const handleError = () => {
+    const handleError = (e) => {
+        console.log('error?', e);
+        
         setImgSrc(imgPlaceHolder)
+
     }
 
     const NPToNumber = (num) => {
@@ -109,6 +125,21 @@ export const Newproduct = () => {
 
     const prepData = () => {
         let d = { ...productData }
+        if(d.Medidas.length !== 0){
+            d.Medidas.forEach((item) => {
+                if (item.PVentaUM==='') {
+                    let v = NPToNumber(productData.PCosto) / NPToNumber(item.UMedida) + 
+                        NPToNumber(productData.PCosto) / 
+                        NPToNumber(item.UMedida)*Number(pctGan.replace(/,/g, '.'))/100;
+                    v = v % 1 === 0 ? v.toString() : v.toFixed(2);
+                    item.PVentaUM = Number(v);
+                }else{
+                    item.PVentaUM = NPToNumber(item.PVentaUM);
+                }
+                item.UMedida = NPToNumber(item.UMedida);
+                delete item.pctUM
+            });
+        }
         d.PVenta = NPToNumber(d['PVenta'])
         d.PCosto = NPToNumber(d.PCosto)
         d.Inventario = NPToNumber(d['Inventario'])
@@ -229,7 +260,6 @@ export const Newproduct = () => {
     }
 
     useEffect(() => {
-        fetchCat();
         if (someData) {
             let data = { ...someData }
             if (data.PVenta && data.PCosto) {
@@ -237,12 +267,22 @@ export const Newproduct = () => {
                 pct = pct.replace(/\./g, ',');
                 setpctGan(pct);
             }
+            if (data.Medidas.length !== 0){
+                data.Medidas.forEach((medida) => {
+                    let pctum = (medida.PVentaUM - data.PCosto/medida.UMedida) / (data.PCosto/medida.UMedida) * 100
+                    console.log(data.PCosto, medida.UMedida, );
+                    pctum = pctum % 1 === 0 ? pctum : pctum.toFixed(2);
+                    medida.pctUM = Formater(pctum);
+                    medida.UMedida = Formater(medida.UMedida);
+                    medida.PVentaUM = Formater(medida.PVentaUM);
+                })
+            }
             data.PVenta = Formater(data.PVenta);
             data.PCosto = Formater(data.PCosto);
             data.Inventario = Formater(data.Inventario);
             data.InvMinimo = Formater(data.InvMinimo);
             data.InvMaximo = Formater(data.InvMaximo);
-            setSelectedCategory(data.Categoria);
+            setSelectedCategory(data.Categoria.toLowerCase());
             setProductData(data);
             setSection('Modificar producto');
             setButtons("Modificar producto");
@@ -328,23 +368,43 @@ export const Newproduct = () => {
                 </div>
                 <div className='Row'>
                     <div className='Colmn1'>
-                        <label>Sub-Categor&iacute;a</label>
+                        <label>Categoria</label>
                     </div>
                     <div className='Colmn2'>
-                        <select value={productData.IdSubCategoria} onChange={(e)=>{handleSelectedCategory(e)}} style={{width: '41%'}}>
-                            <option value="">Seleccione...</option>
-                            {subCatList.map(sc => (
-                                <option key={sc.IdSubCategoria} value={sc.IdSubCategoria}>{sc.SubCategoria}</option>
+                        {/*selectedCategory*/}
+                        {/*['tornilleria', 'estudiantil', 'gas', 'griferia', 'electricos', 'ebanisteria'].map((item, index) => (
+                            <label key={index} className="catIconLabel">
+                                <input type="radio" name="catPack"
+                                className={`cr${item}`}
+                                checked={handleCatChecked(item)}
+                                onChange={()=>{
+                                    setSelectedCategory(item);
+                                }}
+                                />
+                                <i className={`icon-${item}`}></i>
+                            </label>
+                        ))*/}
+                        <select value={selectedCategory} onChange={(e)=>{handleSelectedCategory('Categoria', e)}} style={{width: '41%'}}>
+                            <option value="">Categoria...</option>
+                            {categories.map(c => (
+                                <option key={c.IdCategoria} value={c.IdCategoria}>
+                                    {c.Categoria.charAt(0).toUpperCase() + c.Categoria.slice(1).toLowerCase()}
+                                </option>
                             ))}
                         </select>
                     </div>
                 </div>
                 <div className='Row'>
                     <div className='Colmn1'>
-                        <label>Categoria</label>
+                        <label>Sub-Categor&iacute;a</label>
                     </div>
                     <div className='Colmn2'>
-                        {selectedCategory}
+                        <select value={productData.IdSubCategoria} onChange={(e)=>{handleSelectedCategory('subCat', e)}} style={{width: '41%'}}>
+                            <option value="">Seleccione...</option>
+                            {subCatList.map(sc => (
+                                <option key={sc.IdSubCategoria} value={sc.IdSubCategoria}>{sc.SubCategoria}</option>
+                            ))}
+                        </select>
                     </div>
                 </div>
                 {/* {modificarProducto && //* For the next step
@@ -374,7 +434,7 @@ export const Newproduct = () => {
                         <label className="custom-label">
                             <input type="radio" className="custom-radio" name="uniorpack"
                                 checked={productData.Clase!==0 && productData.Clase!==''}
-                                onChange={() => { changeValuesProducts("Clase", 1) }}
+                                onChange={() => { }}
                                 onClick={() => { setShow2(true) }}
                             />
                             <i></i>
@@ -384,7 +444,7 @@ export const Newproduct = () => {
                 </div>
                 {show2 && <GranelModal show={setShow2} productData={productData} pctGan={pctGan} updtState={changeValuesProducts}/>}
                 <div className="Row" style={{ padding: '35px' }}>
-                    {modificarProducto ?
+                    {(modificarProducto && productData.IdFerreteria === 0) ?
                         <div className="ProImgContainer">
                             <picture>
                                 <source
@@ -392,7 +452,7 @@ export const Newproduct = () => {
                                     srcSet={imgSrc}
                                 />
                                 <img
-                                    onError={handleError}
+                                    onError={(e)=>handleError(e)}
                                     alt="imgProducto"
                                     decoding="async"
                                 />

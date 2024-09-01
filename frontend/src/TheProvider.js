@@ -15,6 +15,8 @@ export const TheProvider = ({ children }) => {
     const [productCodes, setProductCodes] = useState([]);
     const [invAdAuth, setInvAdAuth] = useState(false);
     const [nItemsCart, setNItemsCart] = useState(0);
+    const [subC, setSubC] = useState([]);
+    const [categories, setCategories] = useState([]);
   
     return (
       <TheContext.Provider value={{
@@ -24,6 +26,8 @@ export const TheProvider = ({ children }) => {
           someData, setSomeData,
           invAdAuth, setInvAdAuth,
           productCodes, setProductCodes,
+          subC, setSubC,
+          categories, setCategories,
           nItemsCart, setNItemsCart,
         }}>
         {children}

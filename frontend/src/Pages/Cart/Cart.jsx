@@ -4,19 +4,13 @@ import { useTheContext } from '../../TheProvider';
 import { useNavigate } from 'react-router-dom';
 import { Formater } from '../../App';
 import { ItemCart } from './ItemCart';
+import { EnviarVenta } from '../../api';
+import html2canvas from 'html2canvas';
 
 export const Cart = () => {
 
-    const closeRef = useRef();
     const dateChosen = useRef();
     const theTextArea = useRef();
-    /*let tempTotalCost = 0, theSendCost = 0
-    JSON.parse(localStorage.getItem('cart')).forEach((item) => {
-        tempTotalCost += item.PVenta * item.Cant;
-    });
-    if(tempTotalCost>300000) theSendCost = 0
-    else theSendCost = 5000
-    console.log(theSendCost);*/
 
     const [cart, setCart] = useState(JSON.parse(localStorage.getItem('cart')));
     const [sendCost, setSendCost] = useState(5000);
@@ -28,12 +22,12 @@ export const Cart = () => {
     const [consecutive, setConsecutive] = useState(0);
     const [sendDate, setSendDate] = useState('');
     const [theTotal, setTheTotal] = useState();
-    const { setNItemsCart } = useTheContext()
+    const [show1, setShow1] = useState(false);
+    const { setNItemsCart, setSection, usD } = useTheContext()
     const navigate = useNavigate()
     const LaFecha = new Date()
     const tomorrow = new Date(LaFecha)
     tomorrow.setDate(tomorrow.getDate() + 1);
-    let theUserCod = 0
 
     const deleteItemCart = (id) =>{
         const newCart = [...cart]
@@ -54,6 +48,8 @@ export const Cart = () => {
         setCurrentDiv(0);
         setBtnDis2(true);
         setRoute(false);
+        setShow1(false);
+        document.body.classList.remove('modalOpen');
     }
 
     const handleSendOrder = async() =>{
@@ -61,8 +57,8 @@ export const Cart = () => {
         const today = fecha.getFullYear() + '-' + (fecha.getMonth()+1) + '-' + fecha.getDate() + ' ' + fecha.getHours() + ':' + fecha.getMinutes() + ':' + fecha.getSeconds()        
         let TIngresados = [], notes = theTextArea.current.value, total=0, thisSendDate
         cart.forEach((element) => {
-            TIngresados.push(`${element['Cant']},${element['Cod']},${element['PVenta']}`)
-            total = total + (element['PVenta']*element['Cant'])
+            TIngresados.push(`${element['Cant']},${element['Cod']},${element['PCosto']}`)
+            total = total + (element['PCosto']*element['Cant'])
         });
         TIngresados = TIngresados.join(';');
         if(route){
@@ -74,8 +70,8 @@ export const Cart = () => {
             setSendDate(dateChosen.current.value)
         }
         setTheTotal(total+sendCost)
-        /*const orderReq  = await EnviarVenta({
-            "CodCliente": theUserCod,
+        const orderReq  = await EnviarVenta({
+            "CodCliente": usD.Cod,
             "FechaFactura": today,
             "FechaDeEstado": today,
             "FechaDeEntrega": thisSendDate,
@@ -92,10 +88,10 @@ export const Cart = () => {
             localStorage.setItem('cart',JSON.stringify([]))
         }else{
             alert('Ocurrió un error, intente de nuevo más tarde')
-        }*/
+        }
     }
 
-    /*const saveReminder = (divId, filename, windowWidth=550, windowHeight=550) => {
+    const saveReminder = (divId, filename, windowWidth=550, windowHeight=550) => {
         const divToExport = document.getElementById(divId);
       
         html2canvas(divToExport, {windowWidth, windowHeight})
@@ -106,7 +102,7 @@ export const Cart = () => {
             link.download = filename;
             link.click();
           });
-    }*/
+    }
 
     const dateFunct = () =>{
         const theDate = new Date(sendDate)
@@ -128,7 +124,7 @@ export const Cart = () => {
         let totalCost = 0;
     
         cart.forEach((item) => {
-            totalCost += item.PVenta * item.Cant;
+            totalCost += item.PCosto * item.Cant;
         });
         
         setSubTotalC(totalCost);
@@ -141,30 +137,16 @@ export const Cart = () => {
         // eslint-disable-next-line
     }, [cart, route]);
 
-    /*useEffect(() => {
-        if(route){
-            setSendCost(0)
-        }else{
-            setSendCost(5000)
-        }
-    }, [route]);*/
     useEffect(() => {
-        return () => {
-            try {
-                document.getElementsByTagName("body")[0].removeAttribute("style");
-                document.getElementsByTagName("body")[0].classList.remove("modal-open")
-                document.querySelector('.modal-backdrop').remove()
-            } catch (error) {
-
-            }
-        };
+        setSection('Carrito de compras');
+        // eslint-disable-next-line
     }, []);
 
     return (
         <section className='theCart'>
             <div className='banner1'>
                 <div className='textBanner1Container'>
-                    Por compras superiores a $300,000 el env&iacute;o es gratis
+                    Por compras superiores a $300.000 el env&iacute;o es gratis
                 </div>
             </div>
             <div className='itemsCart grayContainer'>
@@ -176,7 +158,7 @@ export const Cart = () => {
                                 id={index}
                                 nombre={item.Descripcion}
                                 cod={item.Cod}
-                                unitPrice={item.PVenta}
+                                unitPrice={item.PCosto}
                                 unitPaq={item.EsUnidadOpaquete}
                                 category={(item.Categoria).toLowerCase()}
                                 cantidad={item.Cant}
@@ -195,20 +177,22 @@ export const Cart = () => {
             <div className='dtlCart grayContainer'>
                 <div>SubTotal: $ {Formater(subTotalC)}</div>
                 <div>Envio: $ {Formater(sendCost)}</div>
-                <div className='subTit' style={{marginTop: '10px'}}>
+                <div style={{marginTop: '10px', fontWeight: 'bold', fontSize: '20px', color: '#193773'}}>
                     Total: {' '}
-                    <span className='cBlack'>${Formater(subTotalC+sendCost)}</span>
+                    <span style={{color: 'black'}}>${Formater(subTotalC+sendCost)}</span>
                 </div>
-                <button className="btnSendOrd boton" data-bs-toggle="modal" data-bs-target={`#sendOrderMod`} disabled={btnDis}>
+                <button className="btnSendOrd btnStnd btn1" onClick={()=>{setShow1(true);document.body.classList.add('modalOpen')}} disabled={btnDis}>
                     Enviar pedido
                 </button>
             </div>
 
-            {/* {<div className="modal fade" id='sendOrderMod' data-bs-backdrop="static" data-bs-keyboard="false" tabIndex="-1" aria-labelledby="idkLabel" aria-hidden="true">
-                <div className="modal-dialog" style={{marginTop: '25vh'}}>
+            
+            { show1 && 
+            <div className='theModalContainer'>
+                <div className="theModal-content" style={{width: '361.67px', position: 'relative'}}>
                     <div className="modal-content">
-                        <button className="xButton" data-bs-dismiss="modal" aria-label="Close" onClick={()=>{handleModalClose()}} ref={closeRef}>
-                            <i className="bi bi-x-circle-fill"></i>
+                        <button className="btn1Stnd" style={{position: 'absolute', top: '0px', right: '0px'}} onClick={()=>{handleModalClose()}}>
+                            <i className="bi bi-x-lg"></i>
                         </button>
                         <div className='modal-body'>
                             <div className='sendOrd genFont'>
@@ -253,9 +237,9 @@ export const Cart = () => {
                                     </div>
                                     <div>SubTotal: $ {Formater(subTotalC)}</div>
                                     <div>Env&iacute;o: $ {Formater(sendCost)}</div>
-                                    <div className='Tit fw-bold' style={{color: '#193773'}}>
+                                    <div style={{color: '#193773', fontWeight: 'bold', fontSize: '20px'}}>
                                         Total: {' '}
-                                        <span className='cBlack'>${Formater(subTotalC+sendCost)}</span>
+                                        <span style={{color: 'black'}}>${Formater(subTotalC+sendCost)}</span>
                                     </div>
                                     <div style={{display: 'flex', marginTop: '15px'}}>
                                         <button type="button" className="btnModal btnBack"
@@ -276,10 +260,10 @@ export const Cart = () => {
                                             <picture>
                                                 <source
                                                     type="image/avif"
-                                                    srcSet={require('../../Assets/avif/LogoSivarAzul.avif')}
+                                                    srcSet={require('../../Assets/AVIF/LogoSivarB.avif')}
                                                 />
                                                 <img
-                                                    srcSet={require('../../Assets/png/LogoSivarAzul.png')}
+                                                    src={require('../../Assets/AVIF/LogoSivarB.avif')}
                                                     alt='LogoSivar'
                                                     decoding="async"
                                                 />
@@ -288,7 +272,7 @@ export const Cart = () => {
                                         </div>
                                         <div style={{fontWeight: 'bold'}}>N° de pedido: {consecutive}</div>
                                         <div style={{fontWeight: 'bold'}}>Empresa:</div>
-                                        <div>{JSON.parse(secureLocalStorage.getItem('userData'))['Ferreteria']}</div>
+                                        <div>{usD.Ferreteria}</div>
                                         <div style={{fontWeight: 'bold'}}>Valor:</div>
                                         <div>$ {Formater(theTotal)}</div>
                                         <div style={{fontWeight: 'bold'}}>Fecha de entrega estimada:</div>
@@ -298,7 +282,7 @@ export const Cart = () => {
                                         <div>{dateFunct()} O a m&aacute;s tarde un d&iacute;a habil despu&eacute;s</div>
                                         }
                                         <div style={{fontWeight: 'bold'}}>www.sivar.com.co</div>
-                                        <div><strong>Asesor:</strong> {JSON.parse(secureLocalStorage.getItem('userData'))['Asesor']}</div>
+                                        <div><strong>Asesor:</strong> {usD.Asesor}</div>
                                     </div>
                                     <button className='btnModal' style={{margin:'5px auto'}}
                                         onClick={()=>{saveReminder('theReminder', `S${consecutive}.png`)}}>
@@ -310,7 +294,7 @@ export const Cart = () => {
                         </div>
                     </div>
                 </div>
-            </div>} */}
+            </div>}
         </section>
     );
 }

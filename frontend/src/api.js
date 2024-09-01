@@ -173,6 +173,53 @@ export const SubCategories = async() => {
     }
 }
 
+export const ShoppingList = async(shoppinglist) => {
+    /*return the low inventory list or the full list of products of sivar deppending on the 
+    you have to send a json of the form:
+    {
+        IdFerreteria: 242,
+        Compras: false, //if it is false then is because is the low inventory list but if it's true then is the full list of products of sivar
+    }
+    */
+   console.log('this try', shoppinglist);
+   
+    try {
+        const res = await fetch(`${API_POS}/shoppinglist` ,{
+            method: 'POST',
+            headers: { Accept: 'application/json','Content-Type': 'application/json'},
+            body: JSON.stringify(shoppinglist)
+        })
+        return await res.json()
+    }catch(error) {
+        console.log('TheError: '+ error)
+    }
+}
+
+export const EnviarVenta = async(Order) => {
+    /*Send the Order to the database.
+    you have to send a json of the form:
+    {
+        "CodCliente": "493",
+        "FechaFactura": "2024-02-20 00:00:00",
+        "FechaDeEstado": "2024-02-20 00:00:00",
+        "FechaDeEntrega": "2024-02-23",
+        "FechaVencimiento" : "2024-02-23",
+        "NotaVenta": "",
+        "VECommerce": "1",
+        "TIngresados": "12(cantidad),CIT05(codigo),950(PVenta);6,SP136,3500"
+    }*/
+    try {
+        const res = await fetch(`${API}/SendSale`,{
+            method: 'POST',
+            headers: { Accept: 'application/json','Content-Type': 'application/json'},
+            body: JSON.stringify(Order)
+        })
+        return await res.json()
+    }catch(error) {
+        console.log(error)
+    }
+}
+
 //*All related to clients %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 export const Clientlist = async(ClientlistValues) => {
     /*get the list of clientes deppending on the hardware store

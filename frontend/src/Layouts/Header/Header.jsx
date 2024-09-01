@@ -5,7 +5,7 @@ import React, { useEffect, useRef } from 'react';
 
 export const Header = () => {
 
-    const { setLogged, section, usD, setSomeData } = useTheContext()
+    const { setLogged, section, usD, setSomeData, nItemsCart } = useTheContext()
     const divSideBarRef = useRef(null);
     //const [currentPage, setCurrentPage] = useState();
     
@@ -176,13 +176,13 @@ export const Header = () => {
             </div>
             <label>{section}</label>
             <div className='htud'>
-                <div style={{marginRight: '12px'}}>
+                <div className='fdhtud' style={{marginRight: '12px'}}>
                     <Link to="/Cart" type="button" className='btnCart'>
                         <i className="bi bi-cart4"></i>
                         
-                        {/* (nItemsCart!==0) &&
+                        { (nItemsCart !== 0) &&
                             <span className='floatingNumber'>{nItemsCart}</span>
-                        */}
+                        }
                     </Link>
                 </div>
                 <div>
