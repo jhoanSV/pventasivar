@@ -19,10 +19,11 @@
 
 .theTable tbody tr {
     border-bottom: 1px solid #dddddd;
+    background-color: #f3f3f3;
 }
 
-.theTable tbody tr:nth-of-type(even) {
-    background-color: #f3f3f3;
+.theTable tbody tr:nth-of-type(odd) {
+    background-color: #d9d9d9;
 }
 
 .theTable tbody tr:last-of-type {

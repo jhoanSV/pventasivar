@@ -88,6 +88,24 @@
 
 .htud{
     display: flex;
+    .btnCart{
+        position: relative;
+        display: flex;
+        color: #f6e501;
+        font-size: 40px;
+        font-weight: bold;
+        text-decoration: none;
+        transition: transform 0.3s ease;
+        transform-origin: bottom left;
+        .bi-cart4{
+            line-height: 1;
+        }
+    }
+    .fdhtud:hover{
+        .btnCart{
+            animation: rotar 0.6s ease forwards;
+        }
+    }
 }
 
 .m-selected{
@@ -109,6 +127,18 @@
     transform: rotate(90deg);
 }
 
+.floatingNumber{
+    aspect-ratio: 1 / 1;
+    border-radius: 25px;
+    line-height: 1;
+    font-size: 17px;
+    padding: 2px;
+    position: absolute;
+    right: -10%;
+    top: -17%;
+    width: max-content;
+}
+
 #ud{
     display: flex;
     font-size: 20px;
@@ -122,5 +152,17 @@
     .headContainer{
         font-size: 20px;
         padding: 10px 25px 10px 154px;
+    }
+}
+
+@keyframes rotar {
+    0% {
+      transform: rotate(0deg);
+    }
+    50% {
+      transform: rotate(-8deg);
+    }
+    100% {
+      transform: rotate(0deg);
     }
 }

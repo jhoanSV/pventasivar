@@ -1,20 +1,20 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import "./_customerlist.scss";
 import { useNavigate } from 'react-router-dom';
 import { useTheContext } from '../../TheProvider';
-//Para testeo
-import jsonTest from '../../jsonTest.json';
 import { TableComponent } from '../../Components';
 import { GeneralModal } from '../../Components/Modals/GeneralModal';
-
+import { Clientlist } from '../../api';
+import * as XLSX from 'xlsx';
 export function Customerlist(){
 
     const [selected, setSelected] = useState([]);
     const [multiSelect, setMultiSelect] = useState(false);
     const [show1, setShow1] = useState(false);
-    const [contentList, setContentList] = useState(jsonTest);
-    const navigate = useNavigate()
-    const { setSection, setSomeData } = useTheContext();
+    const [contentList, setContentList] = useState([]);
+    const refList = useRef([]);
+    const navigate = useNavigate();
+    const { setSection, setSomeData, usD } = useTheContext();
 
     const Popop1 = () => {
         
@@ -45,57 +45,76 @@ export function Customerlist(){
 
     const ctHeaders = [
         {
-            header: 'ID/NIT',//*Nombre de cabecera
-            key: 'id_nit',//*llave para acceder al dato del JSON
+            header: 'NIT/CC',//*Nombre de cabecera
+            key: 'NitCC',//*llave para acceder al dato del JSON
             defaultWidth: '131px',//*Ancho por defecto
             type: 'text',//*Tipo de celda
         },
         {
             header: 'Nombre',
-            key: 'nombre',
+            key: 'Nombre',
             defaultWidth: '223px',
             type: 'text',
         },
         {
             header: 'Apellidos',
-            key: 'apellido',
+            key: 'Apellido',
             defaultWidth: '223px',
             type: 'text',
         },
         {
             header: 'Telefono 1',
-            key: 'telefono1',
+            key: 'Telefono1',
             defaultWidth: '135.5px',
             type: 'text',
         },
         {
             header: 'E-mail',
-            key: 'email',
+            key: 'Correo',
             defaultWidth: '135.5px',
             type: 'text',
         }
     ]
 
     const filterByText = (item, text) =>
-        item.id_nit.toLowerCase().includes(text) ||
-        item.nombre.toLowerCase().includes(text) ||
-        item.apellido.toLowerCase().includes(text) ||
-        item.barrio.toLowerCase().includes(text) ||
-        item.email.toLowerCase().includes(text);
+        item.NitCC.toLowerCase().includes(text) ||
+        item.Nombre.toLowerCase().includes(text) ||
+        item.Apellido.toLowerCase().includes(text) ||
+        item.Barrio.toLowerCase().includes(text) ||
+        item.Correo.toLowerCase().includes(text);
 
     const SearchHandle = (text) =>{
-        let c = jsonTest;
+        let c = refList.current;
         if (text !== ''){
-            c = c.filter((i)=>filterByText(i, text))
-            setContentList(c)
-        }else{
-            setContentList(jsonTest)
+            setContentList(c.filter((i)=>filterByText(i, text)));
+        }else{            
+            CustomerFetch()
         }
+    }
+
+    const CustomerFetch = async() =>{
+        const listado = await Clientlist({
+            "IdFerreteria" : usD.Cod
+        })
+        if(listado){
+            setContentList(listado)
+            refList.current = listado;
+        };
+        console.log(listado);
+    }
+
+    const exportXl = () =>{
+        const theList = contentList.map(({ NitCC, Nombre, Apellidos, Telefono1, Correo }) => ({ NitCC, Nombre, Apellidos, Telefono1, Correo }));
+        const worksheet = XLSX.utils.json_to_sheet(theList);
+        const workbook = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(workbook, worksheet, "Clientes");
+        XLSX.writeFile(workbook, "Lista Clientes.xlsx",);
     }
 
     useEffect(() => {
         setSection('Lista de Clientes')
         setSomeData(null)
+        CustomerFetch()
 
         // eslint-disable-next-line
     }, []);
@@ -105,12 +124,12 @@ export function Customerlist(){
             <div className='actionsContainer'>
                 <div className='CLdiv1'>
                     <div>
-                        <label>Filtrar/Buscar: </label>
+                        <label style={{marginRight: '10px'}}>Filtrar/Buscar: </label>
                     </div>
                     <input type="text" style={{width: '56%'}}
                         onChange={(e)=>{SearchHandle((e.target.value).toLowerCase())}}
                     />
-                    <button className='btnStnd btn1' onClick={()=>{navigate('/BalanceReport')}}>Reporte de saldos</button>
+                    {/* {<button className='btnStnd btn1' onClick={()=>{navigate('/BalanceReport')}}>Reporte de saldos</button>} */}
                 </div>
                 <div className='CLdiv2' style={{position: 'relative'}}>
                     <button className='btn1Stnd' onClick={()=>(deselect())}
@@ -143,9 +162,14 @@ export function Customerlist(){
                 multiSelect={multiSelect}
                 doubleClickFunct={verFunction}
             />
-            
-            <button className='btnStnd btn1' onClick={()=>{navigate('/Newcustomer')}}>Crear nuevo cliente</button>
-            <button className='btnStnd btn1'>Exportar a Excel</button>
+            <div style={{marginTop: '10px'}}>
+                <button
+                    className='btnStnd btn1'
+                    onClick={()=>{navigate('/Newcustomer')}}
+                    style={{marginRight: '20px'}}
+                >Crear nuevo cliente</button>
+                <button className='btnStnd btn1' onClick={()=>exportXl()}>Exportar a Excel</button>
+            </div>
         </section>
     );
 }

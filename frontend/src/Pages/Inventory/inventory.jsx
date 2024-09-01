@@ -1,42 +1,39 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import "./_inventory.scss";
 import { useNavigate } from 'react-router-dom';
 import { useTheContext } from '../../TheProvider';
 import { TableComponent } from '../../Components';
-//es un json de prueba
-import jsonTest from '../../products_json_test.json';
+import { Inventory as ListInv } from '../../api';
+import { Formater } from '../../App';
 
 export function Inventory(){
 
     const navigate = useNavigate()
+    const [invList, setInvList] = useState([]);
     const [selected, setSelected] = useState([]);
+    const [inventoryCost, setInventoryCost] = useState(0);
+    const refList = useRef([]);
     //const [multiSelect, setMultiSelect] = useState(false);
-    const { setSection } = useTheContext();
-
-    useEffect(() => {
-        setSection('Inventario')
-
-        // eslint-disable-next-line
-    }, []);
+    const { setSection, usD } = useTheContext();
 
     const InvHeaders = [
         {
             header: 'Cod',
-            key: 'cod',
+            key: 'Cod',
             defaultWidth: '131px',
             type: 'text',
         },
         {
             header: 'Descripción',
-            key: 'descripcion',
+            key: 'Descripcion',
             defaultWidth: '223px',
             type: 'text',
         },
         {
             header: 'Costo',
-            key: 'costo',
+            key: 'PCosto',
             defaultWidth: '223px',
-            type: 'text',
+            type: 'coin',
         },
         {
             header: 'Total',
@@ -46,29 +43,51 @@ export function Inventory(){
         },
         {
             header: 'Precio venta',
-            key: 'precio_venta',
+            key: 'PVenta',
             defaultWidth: '0px',
-            type: 'text',
+            type: 'coin',
         },
         {
             header: 'Existencia',
-            key: 'existencia',
+            key: 'Inventario',
             defaultWidth: '0px',
             type: 'text',
         },
         {
             header: 'Inv. minimo',
-            key: 'inv_minimo',
+            key: 'InvMinimo',
             defaultWidth: '0px',
             type: 'text',
         },
         {
             header: 'Inv. maximo',
-            key: 'inv_maximo',
+            key: 'InvMaximo',
             defaultWidth: '0px',
             type: 'text',
         }
     ]
+
+    const filterByText = (item, text) =>
+        item.Cod.toString().includes(text) ||
+        item.Descripcion.toLowerCase().includes(text);
+
+    const SearchHandle = (text) =>{
+        let c = refList.current;
+        if (text !== ''){
+            //c = c.filter((i)=>filterByText(i, text))
+            setInvList(c.filter((i)=>filterByText(i, text)));
+        }else{
+            fetchInvList();
+        }
+    }
+
+    const sumInventoryCost = (theList) => {
+        let suma = 0;
+        if (theList && theList.length > 0) {theList.forEach((item, index) => (
+            suma += item.PCosto * item.Inventario
+        ))}
+        setInventoryCost(suma)
+    };
 
     const DeleteFunction = () =>{
         alert('eliminando jsjs')        
@@ -81,6 +100,26 @@ export function Inventory(){
     const verFunction = () =>{
         navigate('/Products', { state: selected[0] })
     }
+
+    const fetchInvList = async() =>{
+        const list = await ListInv({
+            "IdFerreteria": usD.Cod
+        })
+        console.log(list);
+        if(list){
+            setInvList(list);
+            refList.current = list;
+            sumInventoryCost(list);
+        }
+    }
+
+    useEffect(() => {
+        setSection('Inventario');
+        fetchInvList();
+        sumInventoryCost();
+
+        // eslint-disable-next-line
+    }, []);
     
     return (
         <section className="Inventory">
@@ -89,18 +128,23 @@ export function Inventory(){
                     <div>
                         <label>Costo del inventario</label>
                     </div>
-                    <label>$000.000,00</label>
+                    <label>$ {Formater(inventoryCost)}</label>
                 </div>
                 <div style={{textAlign: 'center', fontSize: '20px'}}>
                     <div style={{marginTop: '10px'}}>
                         <label>Cantidad de articulos en el inventario</label>
                     </div>
-                    <label>{'2500'}</label>
+                    <label>{refList.current.length}</label>
                 </div>
             </div>
             <div className="Row">
                 <label style={{paddingRight: '10px'}}>Buscar:</label>
-                <input type="text" placeholder='Buscar' style={{width: '35%'}}/>
+                <input 
+                    type="text"
+                    placeholder='Buscar'
+                    style={{width: '35%'}}
+                    onChange={(e)=>{SearchHandle((e.target.value).toLowerCase())}}
+                />
                 <button className='btnStnd btn1'
                     style={{marginLeft: '20px'}}
                     onClick={()=>{navigate('/LowInv')}}
@@ -145,7 +189,7 @@ export function Inventory(){
             </div>
             <div>
                 <TableComponent
-                    data={jsonTest}
+                    data={invList}
                     headers={InvHeaders}
                     selected={selected}
                     setSelected={setSelected}

@@ -6,7 +6,7 @@
     height: 65vh;
     overflow-y: auto;
     .rowflatlist.selected {
-      background-color: rgba(39, 83, 172, 0.5803921569); // Color for the selected row
+      //background-color: rgba(39, 83, 172, 0.5803921569); // Color for the selected row
 
       .selected-label {
         font-weight: 600; // Apply bold font weight to the label in the selected row
@@ -20,18 +20,12 @@
 }
 
 .Flatlist thead tr{
-    background-color: #193773;
+    //background-color: #193773;
     color: #ffffff;
     text-align: left;
 }
 
-.Flatlist tbody {
-    // display: block;
-    // overflow-y: auto; // Enable vertical scrolling when content exceeds the height
-    //? This did nothing, for this the scroll is placed in the container. For the head fix above we set sticky.
-}
-
 .Flatlist tbody tr:hover{
-    background-color: rgba(0, 0, 0, 0.1);
+    //background-color: rgba(0, 0, 0, 0.1);
     box-shadow: inset -5px -13px 15px 0px rgba(0, 0, 0, 0.15);
 }

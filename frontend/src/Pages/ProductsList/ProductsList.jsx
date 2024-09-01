@@ -1,19 +1,19 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import "./_ProductsList.scss";
 import { useNavigate } from 'react-router-dom';
 import { useTheContext } from '../../TheProvider';
 import { TableComponent } from '../../Components';
-//es un json de prueba
-import jsonTest from '../../products_json_test.json';
-import { ModalBusca } from '../../Components/Modals/ModalBusca';
+import { ProductList } from '../../api';
+//import { ModalBusca } from '../../Components/Modals/ModalBusca';
 
 export const ProductsList = () => {
 
     const navigate = useNavigate()
     const [selected, setSelected] = useState([]);
-    const [contentList, setContentList] = useState(jsonTest);
+    const [contentList, setContentList] = useState([]);
+    const refList = useRef([])
     //const [multiSelect, setMultiSelect] = useState(false);//* De momento se omite esto
-    const { setSection, setSomeData} = useTheContext();
+    const { setSection, setSomeData, usD, setProductCodes} = useTheContext();
 
     const verFunction = () =>{
         //navigate('/NewProduct', { state: selected[0]})        
@@ -22,24 +22,23 @@ export const ProductsList = () => {
     }
 
     const filterByText = (item, text) =>
-        item.cod.toString().includes(text) ||
-        item.cod_de_barras.toLowerCase() === (text) ||
-        item.descripcion.toLowerCase().includes(text);        
+        item.Cod.toString().toLowerCase().includes(text) ||
+        item.Descripcion.toLowerCase().includes(text);
 
     const SearchHandle = (text) =>{
-        let c = jsonTest;
+        let c = refList.current;
         if (text !== ''){
-            c = c.filter((i)=>filterByText(i, text))
-            setContentList(c)
+            //c = c.filter((i)=>filterByText(i, text))
+            setContentList(c.filter((i)=>filterByText(i, text)));
         }else{
-            setContentList(jsonTest)
+            ProductsFetch();
         }
     }
 
     const Test1 = (i) =>{
         return(
             <>
-                {i['item']['cod'] &&
+                {!(i['item']['IdFerreteria']) &&
                     <picture>
                         <source
                             type="image/avif"
@@ -59,51 +58,64 @@ export const ProductsList = () => {
     const ctHeaders = [
         {
             header: 'Cod',
-            key: 'cod',
-            defaultWidth: '131px',
-            type: 'text',
-        },
-        {
-            header: 'Cod de barras',
-            key: 'cod_de_barras',
+            key: 'Cod',
             defaultWidth: '131px',
             type: 'text',
         },
         {
             header: 'Descripción',
-            key: 'descripcion',
+            key: 'Descripcion',
             defaultWidth: '223px',
             type: 'text',
         },
         {
             header: 'Categoria',
-            key: 'categoria',
+            key: 'Categoria',
             defaultWidth: '223px',
             type: 'text',
         },
         {
             header: 'P. Costo',
-            key: 'pcosto',
+            key: 'PCosto',
             defaultWidth: '135.5px',
-            type: 'text',
+            type: 'coin',
         },
         {
             header: 'P. Venta',
-            key: 'pventa',
+            key: 'PVenta',
             defaultWidth: '135.5px',
-            type: 'text',
+            type: 'coin',
         },
         {
             header: 'Pre Compra',
-            key: 'pre_compra',
+            key: '',
             defaultWidth: '0px',
             type: 'other',
         }
     ]
 
+    const ProductsFetch = async() =>{
+        const listado = await ProductList({
+            "IdFerreteria" : usD.Cod
+        })
+        if(listado){
+            let codes = []
+            console.log(listado);
+            setContentList(listado);
+            refList.current = listado;
+            for(let a in listado){
+                codes.push(listado[a].Cod);
+            }
+            setProductCodes(codes);
+            console.log(codes);
+        }
+        console.log(listado)
+    }
+
     useEffect(() => {
         setSomeData(null)
         setSection('Listado de productos')
+        ProductsFetch()
         // eslint-disable-next-line
     }, []);
 
@@ -123,7 +135,7 @@ export const ProductsList = () => {
                     </button>
                     <button className='btnStnd btn1'
                         style={{marginLeft: '20px'}}
-                        onClick={()=>{navigate('/Inventory');setSection('Inventario')}}
+                        onClick={()=>{navigate('/Inventory')}}
                     >
                         Inventario
                     </button>

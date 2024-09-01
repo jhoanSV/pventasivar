@@ -1,104 +1,102 @@
 import React, {useEffect, useState, useRef} from 'react';
-import { TableComponent, Flatlist } from '../../Components';
+import { Flatlist, ModalBusca } from '../../Components';
 import { TheInput } from '../../Components/InputComponent/TheInput';
 import { ConfirmSaleModal } from '../../Components/Modals/ConfirmSaleModal';
 import { UserConfirm } from '../../Components/Modals/UserConfirm';
 import { SignClient } from '../../Components/Modals/SignClient';
 import { SalesOfTheDay } from '../../Components/Modals/SalesOfTheDay';
+import { ProductMeasures } from '../../Components/Modals/ProductMeasures';
+import { MoneyFlow } from '../../Components/Modals/MoneyFlow';
+import { StartOfCash } from '../../Components/Modals/StartOfCash';
 import "./_sales.scss";
 import jsonTest from '../../tickets-text.json';
 import { useTheContext } from '../../TheProvider';
-
+import { CashFlow, Inventory } from '../../api';
+import { CSSTransition } from 'react-transition-group';
 
 export function Sales(){
-    const [ buttonCount, setButtonCount] = useState(1); // Initial button count
-    const [ tabindex, setTabindex] = useState(1);
+    //*---------------------
+    const [saleTabs, setSaleTabs] = useState(jsonTest);
+    const [currentTab, setCurrentTab] = useState({"index": 0, "key": 1});
+    const [tabsHistory, setTabsHistory] = useState(Object.keys(saleTabs).length);
+    //*---------------------
     const [ total, setTotal] = useState(0);
-    const [ orderslist, setOrderslist] = useState(jsonTest[1])
-    const [ selectedButton, setSelectedButton] = useState(1);
+    const [ orderslist, setOrderslist] = useState(saleTabs[Object.keys(saleTabs)[0]]["Order"])
+    const [ customer, setCustomer] = useState("Por asignar");
     const [ showConfirmar, setShowConfirmar] = useState(false);
     const [ selectedfila, setSelectedfila] = useState(0);
     const [ changeQuantity, setChangeQuantity] = useState(null);
     const [ changePventa, setChangePventa] = useState(null);
-    const [ tabButtons, setTabButtons] = useState({ 1: true }); // Dictionary to store tab buttons
     const [ confirmUser, setConfirmUser] = useState(false);
     const [ searchClient, setSearchClient] = useState(false);
     const [ showSalesOfTheDay, setShowSalesOfTheDay] = useState(false);
+    const [ showProductMeasures, setShowProductMeasures] = useState(false);
+    const [ showStartCahs, setShowStartCahs ] = useState(false);
+    const [ showMoneyFlow, setShowMoneyFlow ] = useState(false);
+    const [ typeMoneyFlow, setTypeMoneyFlow ] = useState(false);
+    const [ selectProduct, setSelectProduct] = useState(null);
+    const [ showFL, setShowFL] = useState(false);
+    //const [limit, setLimit] = useState(0);
+    const [ sBText, setSBText] = useState('');
+    const [ invList, setInvList] = useState([]);
+    const nodeRef = useRef(null), divSRef = useRef();
+    const refList = useRef([]);
     const selectedfilaRef = useRef(selectedfila);
-    const selectedTabRef = useRef(tabindex);
-    const { setSection } = useTheContext();
-
-    useEffect(() => {
-        sumarTotal()
-    }, [orderslist]);
-    
-    useEffect(() => {
-        setSection('Ventas')
-        window.addEventListener('keydown', handleKeyDown);
-        
-        return () => {
-            window.removeEventListener('keydown', handleKeyDown);
-        };
-    }, []);
-    
-    useEffect(() => {
-        selectedfilaRef.current = selectedfila;
-    }, [selectedfila]);
-
-    useEffect(() => {
-        selectedTabRef.current = tabindex;
-    }, [tabindex]);
-
-    const changeTab =(index) => {
-        setOrderslist(jsonTest[index])
-        setTabindex(index)
-        setSelectedButton(index)
-        if (jsonTest[index].length !== 0) {
-            setSelectedfila(jsonTest[index].length - 1)
-        } else if (jsonTest[index].length === 0 ) {
-            setSelectedfila(null)
-        }
-    };
+    const selectedTabRef = useRef(currentTab);
+    const isEditingRef = useRef(false);
+    const { setSection, usD } = useTheContext();
 
     const handleKeyDown = (event) => {
-        const currentSelectedTab = selectedTabRef.current;
-        if (jsonTest[currentSelectedTab].length !== 0) {
+        //const currentSelectedTab = selectedTabRef.current;
+        if(isEditingRef.current===true)return;
+        let theOrder = saleTabs[currentTab.key].Order//Object.entries(saleTabs)[selectedTabRef.current][1]
+        //console.log(selectedfilaRef.current);
+        //console.log(theOrder.length);
+        if (theOrder.length !== 0 && selectedfilaRef.current !== null) {
             const currentSelectedFila = selectedfilaRef.current;
             if (event.key === '+') {
                 updateCantidad(currentSelectedFila, 1)
             } else if (event.key === '-') {
                 updateCantidad(currentSelectedFila,-1)
-            } else if (event.key === 'ArrowDown' && currentSelectedFila + 1 >= 0 && currentSelectedFila + 1 < jsonTest[tabindex].length) {
+            } else if (event.key === 'ArrowDown' && currentSelectedFila + 1 >= 0 && currentSelectedFila + 1 < theOrder.length) {
                 setSelectedfila(currentSelectedFila + 1)
-            } else if (event.key === 'ArrowUp' && currentSelectedFila - 1 >= 0 && currentSelectedFila - 1 < jsonTest[tabindex].length) {
+            } else if (event.key === 'ArrowUp' && currentSelectedFila - 1 >= 0 && currentSelectedFila - 1 < theOrder.length) {
                 setSelectedfila(currentSelectedFila - 1)
             } else if (event.key === 'Delete') {
-                jsonTest[currentSelectedTab].splice(currentSelectedFila, 1)
-                const updatedOrdersList = [...jsonTest[tabindex]];
+                //console.log(theOrder);
+                theOrder.splice(currentSelectedFila, 1)
+                if (selectedfila === theOrder.length - 1 && selectedfila !== 0){
+                    setSelectedfila(currentSelectedFila - 1)
+                }
+                //console.log(updatedOrdersList);
                 // Actualiza el estado con la nueva lista
+                const updatedOrdersList = [...theOrder];
                 setOrderslist(updatedOrdersList);
             }
         }
     };
 
     const onblurChangeCuantity = (row, amount) => {
+        let theOrder = Object.entries(saleTabs)[selectedTabRef.current][1]
         if (amount > 0) {
-            jsonTest[tabindex][row].Cantidad = amount
+            theOrder[row].Cantidad = amount
             // Crea una copia del jsonTest[tabindex] para actualizar el estado
-            const updatedOrdersList = [...jsonTest[tabindex]];
+            const updatedOrdersList = [...theOrder];
             // Actualiza el estado con la nueva lista
             setOrderslist(updatedOrdersList);
         }
         setChangeQuantity(null)
     };
 
-    const onblurChangePv = (row, amount) => {
+    const onblurChangePv = (row, amount, theKey) => {
+        let theOrder = Object.entries(saleTabs)[selectedTabRef.current][1]
+        //console.log(theOrder);
         if (amount > 0) {
             const theValue = amount
             let withoutFormat = theValue.replace(/\./g, '')
-            jsonTest[tabindex][row].pVenta = withoutFormat
+            theOrder[row][theKey] = withoutFormat
             // Crea una copia del jsonTest[tabindex] para actualizar el estado
-            const updatedOrdersList = [...jsonTest[tabindex]];
+            const updatedOrdersList = [...theOrder];
             // Actualiza el estado con la nueva lista
             setOrderslist(updatedOrdersList);
         }
@@ -112,14 +110,14 @@ export function Sales(){
         const rowIndex = index;
         return (
                 <>
-                    <td style={{width: columnsWidth[0]}} onDoubleClick={()=>{setChangeQuantity(index)}}>
+                    <td style={{width: columnsWidth[0]}} onDoubleClick={()=>{setChangeQuantity(index);isEditingRef.current=true}}>
                         { isEditing ? (
                             <TheInput
                                 id = {'i'+ rowIndex}
                                 numType ='nat'
                                 val = {item.Cantidad}
                                 sTyle = {{width: columnsWidth[0]}}
-                                onblur = {(e) => onblurChangeCuantity(rowIndex, e)}
+                                onblur = {(e) => {onblurChangeCuantity(rowIndex, e);isEditingRef.current=false}}
                                 autofocus={true}
                             /> ) :
                         ( 
@@ -127,30 +125,32 @@ export function Sales(){
                         )}
                     </td>
                     <td style={{width: columnsWidth[1]}}>
-                        <label>{item.Codigo}</label>
+                        <label>{item.Cod}</label>
                     </td>
                     <td style={{width: columnsWidth[2]}}>
                         <label>{item.Descripcion}</label>
                     </td>
                     <td style={{width: columnsWidth[3]}}>
-                        <label>{item.UM}</label>
+                        <label>{item.Medida === '' ? 'Unidad': item.Medida}</label>
                     </td>
-                    <td style={{width: columnsWidth[4]}} onDoubleClick={()=>setConfirmUser(true)}>
+                    <td style={{width: columnsWidth[4]}} onDoubleClick={()=>{setConfirmUser(true);isEditingRef.current=true}}>
                         { isEditingPv ? (
                             <TheInput
                                 id = {'i'+ rowIndex}
                                 numType ='real'
-                                val = {item.pVenta}
+                                val = {item.Medida !== '' ? item.PVentaUM : item.PVenta}
                                 sTyle = {{width: columnsWidth[0]}}
-                                onblur = {(e) => onblurChangePv(rowIndex, e)}
+                                onblur = {(e) => {
+                                    onblurChangePv(rowIndex, e, (item.Medida !== '' ? 'PVentaUM': 'PVenta'));
+                                    isEditingRef.current=false}}
                                 autofocus={true}
                             /> ) :
                         ( 
-                            <label>$ {Formater(item.pVenta)}</label>
+                            <label>$ {Formater(item.PVenta)}</label>
                         )}
                     </td>
                     <td style={{width: columnsWidth[5]}}>
-                        <label>$ {Formater(item.pVenta * item.Cantidad)}</label>
+                        <label>$ {Formater(item.PVenta * item.Cantidad)}</label>
                     </td>
                 </>
         );
@@ -166,11 +166,12 @@ export function Sales(){
     
 
     const updateCantidad = (selectedRow, amount) => {
-        if (jsonTest[tabindex][selectedRow].Cantidad + amount > 0) {
-            jsonTest[tabindex][selectedRow].Cantidad += amount
+        console.log(saleTabs[currentTab.key].Order)
+        let theOrder = saleTabs[currentTab.key].Order//Object.entries(saleTabs.Orden)[selectedTabRef.current][1]
+        if (theOrder[selectedRow].Cantidad + amount > 0) {
+            theOrder[selectedRow].Cantidad += amount
             // Crea una copia del jsonTest[tabindex] para actualizar el estado
-            console.log('fila al aumentar ' + selectedRow)
-            const updatedOrdersList = [...jsonTest[tabindex]];
+            const updatedOrdersList = [...theOrder];
             // Actualiza el estado con la nueva lista
             setOrderslist(updatedOrdersList);
         }
@@ -189,7 +190,6 @@ export function Sales(){
             defaultWidth: 131,
             type: 'text',
         },
-        ,
         {
             header: 'Descripción',
             key: 'descripcion',
@@ -216,77 +216,304 @@ export function Sales(){
         }
     ];
 
-    const createButton = () => {
-        if (Object.keys(jsonTest).length < 16) {
-            setButtonCount(prevCount => {
-                const newCount = prevCount + 1;
-                jsonTest[prevCount + 1] = [];
-                changeTab(newCount)
-                return newCount;
-            });
-            setTabButtons(prevButtons => ({ ...prevButtons, [buttonCount + 1]: true }));
-        }
-    };
-
-
     const sumarTotal = () => {
         let suma = 0;
         if (orderslist && orderslist.length > 0) {orderslist.forEach((item, index) => (
-            suma += item.pVenta * item.Cantidad
+            suma += item.PVenta * item.Cantidad
+            //suma += item.Medida !== '' ? item.PVentaUM * item.Cantidad : item.PVenta * item.Cantidad
         ))}
         setTotal(suma)
     };
 
-    const closeTab = (tabNumber) => {
-        console.log(tabNumber)
-        if (Object.keys(jsonTest).length > 1 && tabNumber in jsonTest) {
-            console.log('entro en cerrar el tab')
-            const newTabButtons = { ...tabButtons };
-            delete newTabButtons[tabNumber];
-            setTabButtons(newTabButtons);
-            changeTab(selectedButton === tabNumber ? 1 : selectedButton)
-            setSelectedButton(selectedButton === tabNumber ? 1 : selectedButton);
+    const changeTab = (Num, index) => {
+        if(Num===null){
+            console.log(currentTab.key);
+            
+
+            setOrderslist(saleTabs[currentTab.key].Order);
+            setCurrentTab({"index": index,
+                "key": currentTab.key});
+        }else{
+            setOrderslist(saleTabs[Num].Order);
+            setCurrentTab({"index": index,
+                "key": Num});
+        }
+        console.log(index);
+        if (Num !== null && saleTabs[Num].Order.length !== 0) {
+            setSelectedfila(() => {
+                //send the scrollbar to the bottom
+                setTimeout(() => {
+                    var orderElement = document.getElementById("FlastListID");
+                    if (orderElement) {
+                        orderElement.scrollTop = orderElement.scrollHeight;
+                        console.log(orderElement);
+                    }
+                }, 0);
+                return saleTabs[Num].Order.length - 1
+            }
+            );
+            
+        } else if ( Num !== null && saleTabs[Num].Order.length === 0 ) {
+            setSelectedfila(null);
+        }
+        
+        //console.log(saleTabs[Num].Customer.Nombre !== null);
+        //const custromerName = saleTabs[Num].Customer.Nombre === '' ? saleTabs[Num].Customer.Nombre: 'Por asignar';
+        //setCustomer(custromerName)
+    };
+
+    const createButton = () => {
+        let tabLen = Object.keys(saleTabs).length
+        if (tabLen < 16) {
+            saleTabs[tabsHistory + 1] = {"Customer": {},
+                                         "Order": []};
+            changeTab((tabsHistory + 1), (Object.keys(saleTabs).length)-1);
+            setTabsHistory(tabsHistory + 1);
         }
     };
+
+    const closeTab = (tabNumber, index) => {
+        if (Object.keys(saleTabs).length > 1 && (tabNumber in saleTabs)) {
+            const newTabButtons = {...saleTabs};
+            delete newTabButtons[tabNumber];
+            setSaleTabs(newTabButtons);
+            console.log('tabNumber: '+tabNumber+' index: '+index+' CurrentTab: '+currentTab);
+            if(index < currentTab.index) {
+                setCurrentTab({"index": currentTab.index-1,
+                                "key": tabNumber});
+            }else if(index === currentTab.index){
+                if(index === 0){
+                    changeTab(Object.keys(saleTabs)[index+1], (index))
+                }else {
+                    changeTab(Object.keys(saleTabs)[index-1], (index-1))
+                }
+            }
+        } else {
+            createButton()
+            const newTabButtons = {...saleTabs};
+            delete newTabButtons[tabNumber];
+            setSaleTabs(newTabButtons)
+            setCurrentTab({"index": 0,
+                             "key": Object.keys(newTabButtons)[0]})
+        }
+    };
+
+    const filterByText = (item, text) =>
+        item.Cod.toString().toLowerCase().includes(text) ||
+        item.Descripcion.toLowerCase().includes(text);
+
+    const SearchHandle = (text) =>{
+        setSBText((text))
+        let c = refList.current;
+        if (text !== ''){
+            setInvList(c.filter((i)=>filterByText(i, text)));
+        }else{
+            fetchInventoryList();
+        }
+    }
+
+    const addProduct = (item) =>{
+        let theOrder = saleTabs[currentTab.key].Order
+            // Verificar si el producto ya existe en theOrder
+        const productAlreadyExistsIndex = theOrder.findIndex(
+            (prod) => prod.Cod === item.Cod && prod.Medida === item.Medida
+        );
+        console.log(item);
+        if(productAlreadyExistsIndex === -1){
+        theOrder.push(item);
+        setOrderslist(a => {
+            //send the scrollbar to the bottom
+            var orderElement = document.getElementById("FlastListID");
+            setTimeout(() => {
+                if (orderElement) {
+                    orderElement.scrollTop = orderElement.scrollHeight;
+                }
+              }, 0);
+            return [...theOrder];
+        });
+            setShowFL(false);
+            setSelectedfila(saleTabs[currentTab.key].Order.length - 1)
+        }
+        else {
+            saleTabs[currentTab.key].Order[productAlreadyExistsIndex].Cantidad = theOrder[productAlreadyExistsIndex].Cantidad + item.Cantidad
+            setSelectedfila(productAlreadyExistsIndex)
+            setShowFL(false);
+        }
+    }
+
+    const askToAddProduct = (item) => {
+        //console.log(item)
+        if (item.Clase === 0){
+            let theProduct = {...item}
+            theProduct.Medida = ''
+            theProduct.Cantidad = 1;
+            theProduct.UMedida = 1;
+            addProduct(theProduct)
+        } else if (item.Clase !== 0){
+            setSelectProduct(item)
+            setShowProductMeasures(true)
+        }
+    }
+
+    const handleClickOutside = (event) => {
+        if (divSRef.current && !divSRef.current.contains(event.target)) {
+          setShowFL(false);
+        }
+    };
+
+    const fetchInventoryList = async() =>{
+        const list = await Inventory({
+            "IdFerreteria": usD.Cod
+        })
+        console.log(list);
+        if(list){
+            setInvList(list);
+            refList.current = list;
+        }
+    }
+
+    const AsingCustomerToOrder = (item) => {
+        jsonTest[currentTab.key].Customer = item[0]
+        setCustomer(jsonTest[currentTab.key].Customer.Nombre + " " + jsonTest[currentTab.key].Customer.Apellido)
+        setSaleTabs(jsonTest)
+    }
+
+    const confirmarVenta = () => {
+        if (orderslist.length > 0) {
+            setShowConfirmar(true)
+        } else {
+            alert('Debe seleccionar al menos un producto')
+        }
+    }
+
+    useEffect(() => {
+        sumarTotal();
+        // eslint-disable-next-line
+    }, [orderslist]);
+    
+    
+    useEffect(() => {
+        selectedfilaRef.current = selectedfila;
+    }, [selectedfila]);
+    
+    useEffect(() => {
+        selectedTabRef.current = currentTab.index;
+        //console.log(saleTabs)
+    }, [currentTab]);
+    
+    useEffect(() => {
+        const now = new Date();
+        // Obtener la fecha en formato YYYY-MM-DD
+        const date = now.toISOString().split('T')[0];
+        // Obtener la hora en formato HH:MM:SS
+        const time = now.toTimeString().split(' ')[0];
+        setSection('Ventas');
+        fetchInventoryList();
+        window.addEventListener('keydown', handleKeyDown);
+        document.addEventListener('mousedown', handleClickOutside);
+        
+        const StartCahs = async() => {
+            const cashFlow = await CashFlow({
+                IdFerreteria: usD.Cod,
+                Fecha: new Date().toISOString().split('T')[0],
+            })
+            console.log('cashFlow: ', cashFlow)
+            if (cashFlow.length === 0) setShowStartCahs(true);
+        }
+        StartCahs()
+        return () => {
+            window.removeEventListener('keydown', handleKeyDown);
+            document.removeEventListener('mousedown', handleClickOutside);
+        };
+        // eslint-disable-next-line
+    }, []);
 
     return (
         <section className='Sales'>
             <div className="Search">
-                <div className='elipsisText lines2' style={{maxHeight: '42px'}}>
-                    <label>Ingrese el codigo del producto</label>
-                </div>
-                <div className='inputSearchPContainer'>
+                <div ref={divSRef} style={{position: 'relative'}}>
                     <input
                         type="text"
                         id='NPinput'
                         placeholder="Codigo del producto"
-                        style={{width: '500px'}}/>
+                        onChange={(e)=>{SearchHandle((e.target.value).toLowerCase())}}
+                        style={{width: '500px'}}
+                        onFocus={()=>{setShowFL(true);isEditingRef.current=true}}
+                        onBlur={()=>{isEditingRef.current=false}}
+                        autoComplete='hidden'
+                    />
+                    <CSSTransition
+                        timeout={200}
+                        in={sBText !== '' && showFL}
+                        nodeRef={nodeRef}
+                        classNames="FLA"
+                        unmountOnExit
+                        >
+                        <div className="FloatingList" ref={nodeRef}>
+                            {invList.slice(0,20).map((item, index) =>
+                                <div key={index}
+                                    className='flItem'
+                                    onClick={()=>{Number(item.Inventario)!==0 ? askToAddProduct(item) : alert('No hay invetario suficiente')}}
+                                    style={{color: Number(item.Inventario)===0 && 'red'}}
+                                >
+                                    {item.Descripcion}
+                                </div>
+                            )}
+                        </div>
+                    </CSSTransition>
+                    {/*(sBText !== '' && showFL) &&
+                    */}
                 </div>
-                <button className="btnStnd btn1">Buscar</button>
+                {/*<ModalBusca/>*/}
             </div>
             <div style={{padding: '0px 70px'}}>
-                <button
-                    className="btnStnd btn1"
-                    onClick={()=>setSearchClient(true)}>Asignar cliente</button>
+                <div style={{display: 'flex', gap: '5px', marginTop: '10px'}}>
+                    <button
+                        className="btnStnd btn1"
+                        onClick={()=>setSearchClient(true)}
+                        >Asignar cliente
+                    </button>
+                    <button
+                        className="btnStnd btn1"
+                        onClick={()=>{setTypeMoneyFlow(false);setShowMoneyFlow(true)}}
+                        >Entradas de dinero
+                    </button>
+                    <button
+                        className="btnStnd btn1"
+                        onClick={()=>{setTypeMoneyFlow(true); setShowMoneyFlow(true)}}
+                        >Salidas de dinero
+                    </button>
+                </div>
+                <div>
+                    <label>Cliente: {customer}</label>
+                </div>
                 <div className="tabs">
                     <div className='tabButtons'>
-                        {Object.keys(tabButtons).map(tabNumber => (
-                            <div className='tabButtonModel' key={tabNumber}>
+                        {Object.keys(saleTabs).map((tabNumber, index) => (
+                            <div className='tabButtonModel' key={tabNumber} onClick={()=>{
+                                changeTab(parseInt(tabNumber), index);
+                                document.getElementById(`radio${tabNumber}`).checked = true;
+                                console.log('a');
+                            }}>
                                 <input
                                     type="radio"
                                     id={`radio${tabNumber}`}
                                     name="dynamicRadioGroup"
                                     className='tabButton'
-                                    checked={selectedButton === parseInt(tabNumber)}
-                                    onChange={() => changeTab(parseInt(tabNumber))}
+                                    checked={currentTab.index === index}
+                                    readOnly
                                 />
-                                <label className='tab-rb-label' htmlFor={`radio${tabNumber}`} style={{userSelect: 'none'}}>
+
+                                <label className='tab-rb-label' style={{userSelect: 'none'}}>
                                     {tabNumber}
                                 </label>
-                                <button className="tab-btn-close"  style={{userSelect: 'none'}} onClick={() => closeTab(parseInt(tabNumber))}>x</button>
+                                <button className="tab-btn-close" style={{userSelect: 'none'}} onClick={(e) => {
+                                    e.stopPropagation();
+                                    closeTab(parseInt(tabNumber), (index));
+                                }}>x</button>
                             </div>
                         ))}
-                            <button onClick={()=>{createButton()}} className='add-tab'>+</button>
+                            <button onClick={()=>{createButton()}} className='add-tab' style={{userSelect: 'none'}}>+</button>
                     </div>
                     <Flatlist
                         data={orderslist}
@@ -298,15 +525,18 @@ export function Sales(){
                     />
                 </div>
                 <div>
-                    <button className="btnStnd btn1" onClick={()=>setShowConfirmar(true)}>F2-Cobrar</button>
-                    <label>$ {Formater(total)}</label>
+                    <button className="btnStnd btn1" onClick={()=>confirmarVenta()}>F2-Cobrar</button>
+                    <label style={{marginLeft: '10px'}}>$ {Formater(total)}</label>
                 </div>
-                <label>{jsonTest[tabindex].length} productos en el ticket actual</label>
+                <label>{orderslist && orderslist.length} productos en el ticket actual</label>
                 <button className="btnStnd btn1" onClick={()=>setShowSalesOfTheDay(true)}>Ventas del dia y devoluciones</button>
-                { showConfirmar && <ConfirmSaleModal orderslist={orderslist} show={setShowConfirmar}/>}
+                { showConfirmar && <ConfirmSaleModal orderslist={saleTabs[currentTab.key]} show={setShowConfirmar} folio={currentTab.key} sendSale={()=>closeTab(currentTab.key, currentTab.index)} totalE={total}/>}
                 { confirmUser && <UserConfirm show={setConfirmUser} confirmed={()=>setChangePventa(selectedfila)}/>}
-                { searchClient && <SignClient show={setSearchClient} retornar={()=>{}}/>}
+                { searchClient && <SignClient show={setSearchClient} retornar={(i)=>AsingCustomerToOrder(i)}/>}
                 { showSalesOfTheDay && <SalesOfTheDay show={setShowSalesOfTheDay} />}
+                { showProductMeasures && <ProductMeasures show={setShowProductMeasures} product={selectProduct} aceptar={addProduct}/>}
+                { showMoneyFlow && <MoneyFlow show={setShowMoneyFlow} typeOfFlow={typeMoneyFlow}></MoneyFlow>}
+                { showStartCahs && <StartOfCash show={setShowStartCahs}></StartOfCash>}
             </div>
         </section>
     );

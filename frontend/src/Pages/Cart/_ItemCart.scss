@@ -1,0 +1,62 @@
+.itemCartStyle{
+    display: flex;
+    position: relative;
+    background-color: white;
+    width: 100%;
+    border-radius: 20px;
+    padding: 18px;
+    margin-bottom: 18px;
+    box-shadow: 1px 7px 9px 0px rgba(0, 0, 0, 0.75);
+}
+.delContainer{
+    display: flex;
+    flex-wrap: wrap;
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    background-color: #193773;
+    color: white;
+    width: 30px;
+    height: 30px;
+    border-radius: 25px;
+    align-content: center;
+    justify-content: center;
+    cursor: pointer;
+    i{
+        font-size: 20px;
+        line-height: 1;
+    }
+}
+
+.itemCartImgContainer{
+    display: flex;
+    width: min-content;
+    padding-right: 18px;
+}
+
+.imgProducto.itemCartImg {
+    align-self: center;
+    padding: 0;
+    picture{
+        width: 100%;
+    }
+    img{
+        width: 114px;
+    }
+}
+
+.totalPrice.inItemCart{
+    position: absolute;
+    text-align: center;
+    top: 35%;
+    left: 63%;
+}
+
+@media screen and (max-width: 900px) {
+    .imgProducto.itemCartImg {
+        img{
+            width: 90px;
+        }
+    }
+    
+}

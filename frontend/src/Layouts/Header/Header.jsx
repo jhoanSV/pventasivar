@@ -1,11 +1,12 @@
 import { Link } from 'react-router-dom';
 import { useTheContext } from '../../TheProvider';
 import './_Header.scss';
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 
 export const Header = () => {
 
-    const { setLogged, section } = useTheContext()
+    const { setLogged, section, usD, setSomeData, nItemsCart } = useTheContext()
+    const divSideBarRef = useRef(null);
     //const [currentPage, setCurrentPage] = useState();
     
     function updateTime() {
@@ -18,11 +19,15 @@ export const Header = () => {
         const formattedTime = `${hours}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
 
         // Update the content of the <span> element
-        document.getElementById('clock').textContent = formattedTime;
+        try {
+            document.getElementById('clock').textContent = formattedTime;
+        } catch (error) {
+            clearInterval(Interval)
+        }
     }
 
     // Update time every second
-    setInterval(updateTime, 1000);
+    const Interval = setInterval(updateTime, 1000);
 
     const showSideBar = (e) =>{
         e.target.classList.add('mlh-selected')
@@ -36,10 +41,15 @@ export const Header = () => {
         document.getElementById('lgId2').classList.remove('show')
     }
 
+    const handleClickOutside = (event) => {
+        if (divSideBarRef.current && !divSideBarRef.current.contains(event.target)) {
+          hideSideBar();
+        }
+    };
+
     useEffect(() => {
         const prevS = document.querySelector('.m-selected');
         if(prevS){
-            console.log(prevS);
             prevS.classList.remove('m-selected')
         }
         const s = section.replace(/\s+/g, "").toLowerCase();
@@ -50,12 +60,21 @@ export const Header = () => {
         //document.getElementById('mi'+(s)).classList.add('m-selected')
     }, [ section ]);
 
+    useEffect(() => {
+        document.addEventListener('mousedown', handleClickOutside);
+        
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside);
+        };
+        // eslint-disable-next-line
+    }, []);
+
     return (
         <section className='headContainer'>
             <img
                 id='lgId'
                 className='mainLogoHead'
-                src={require('../../Assets/icono2.png')}
+                src={require('../../Assets/PNG/icono2.png')}
                 alt='MainLogo'
                 onClick={(e)=>{showSideBar(e)}}
             />
@@ -66,11 +85,11 @@ export const Header = () => {
                 <img
                     id='lgId2'
                     className='Ins-mlh'
-                    src={require('../../Assets/icono2.png')}
+                    src={require('../../Assets/PNG/icono2.png')}
                     alt='MainLogo'
                     onClick={()=>{hideSideBar()}}
                 />
-                <div className='side-menu'>
+                <div className='side-menu' ref={divSideBarRef}>
                     <div>
                         <Link to={'/'} id='miventas' className='genLink' onClick={(e)=>{
                             hideSideBar()
@@ -91,6 +110,7 @@ export const Header = () => {
                                 LISTADO
                             </Link>
                             <Link to={'/NewProduct'} id='minuevoproducto' className='genLink' onClick={()=>{
+                                setSomeData(null)
                                 hideSideBar()
                             }}>
                                 NUEVO
@@ -121,14 +141,13 @@ export const Header = () => {
                                 LISTADO
                             </Link>
                             <Link to={'/NewCustomer'} id='minuevocliente' className='genLink' onClick={(e)=>{
+                                setSomeData(null)
                                 hideSideBar()
-                                e.target.classList.toggle('m-selected')
                             }}>
                                 NUEVO
                             </Link>
                             <Link to={'/BalanceReport'} id='mireportedesaldos' className='genLink' onClick={(e)=>{
                                 hideSideBar()
-                                e.target.classList.toggle('m-selected')
                             }}>
                                 REPORTE DE SALDOS
                             </Link>
@@ -140,7 +159,7 @@ export const Header = () => {
                         </Link>
                     </div>
                     <div>
-                        <Link to={'/'} className='genLink' onClick={()=>{hideSideBar()}}>
+                        <Link to={'/CashReconciliation'} className='genLink' onClick={()=>{hideSideBar()}}>
                             ADMINISTRACION
                         </Link>                            
                     </div>
@@ -157,6 +176,15 @@ export const Header = () => {
             </div>
             <label>{section}</label>
             <div className='htud'>
+                <div className='fdhtud' style={{marginRight: '12px'}}>
+                    <Link to="/Cart" type="button" className='btnCart'>
+                        <i className="bi bi-cart4"></i>
+                        
+                        { (nItemsCart !== 0) &&
+                            <span className='floatingNumber'>{nItemsCart}</span>
+                        }
+                    </Link>
+                </div>
                 <div>
                     <a href="https://sivar.com.co" target="_blank" rel="noreferrer">
                         <picture onClick={()=>{}}>
@@ -174,7 +202,7 @@ export const Header = () => {
                     </a>
                 </div>
                 <div id='ud' style={{display: 'flex', fontSize: '20px', flexDirection: 'column', justifyContent: 'center', alignItems: 'center'}}>
-                    <span>Elkin Clementino Zapata Lopera</span>
+                    <span>{usD.Contacto}</span>
                     <span id='clock'></span>
                 </div>
             </div>
