@@ -11,7 +11,7 @@ export const Newproduct = () => {
     
     const navigate = useNavigate()
     const { setSection, someData, setInvAdAuth, usD, productCodes, subC, categories } = useTheContext();
-    const [imgSrc, setImgSrc] = useState(someData && `https://sivarwebresources.s3.amazonaws.com/AVIF/${someData.cod}.avif`)
+    const [imgSrc, setImgSrc] = useState(someData && `https://sivarwebresources.s3.amazonaws.com/AVIF/${someData.Cod}.avif`)
     const [selectedCategory, setSelectedCategory] = useState(''); // set the selected category
     const [buttons, setButtons] = useState("Crear producto");
     const [productData, setProductData] = useState({
@@ -106,8 +106,11 @@ export const Newproduct = () => {
         return Intl.NumberFormat('de-DE').format(numberfromat);
     }
 
-    const handleError = () => {
+    const handleError = (e) => {
+        console.log('error?', e);
+        
         setImgSrc(imgPlaceHolder)
+
     }
 
     const NPToNumber = (num) => {
@@ -431,7 +434,7 @@ export const Newproduct = () => {
                         <label className="custom-label">
                             <input type="radio" className="custom-radio" name="uniorpack"
                                 checked={productData.Clase!==0 && productData.Clase!==''}
-                                //onChange={() => { changeValuesProducts("Clase", 1) }}
+                                onChange={() => { }}
                                 onClick={() => { setShow2(true) }}
                             />
                             <i></i>
@@ -441,7 +444,7 @@ export const Newproduct = () => {
                 </div>
                 {show2 && <GranelModal show={setShow2} productData={productData} pctGan={pctGan} updtState={changeValuesProducts}/>}
                 <div className="Row" style={{ padding: '35px' }}>
-                    {modificarProducto ?
+                    {(modificarProducto && productData.IdFerreteria === 0) ?
                         <div className="ProImgContainer">
                             <picture>
                                 <source
@@ -449,7 +452,7 @@ export const Newproduct = () => {
                                     srcSet={imgSrc}
                                 />
                                 <img
-                                    onError={handleError}
+                                    onError={(e)=>handleError(e)}
                                     alt="imgProducto"
                                     decoding="async"
                                 />
