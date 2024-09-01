@@ -159,7 +159,7 @@ export const Header = () => {
                         </Link>
                     </div>
                     <div>
-                        <Link to={'/'} className='genLink' onClick={()=>{hideSideBar()}}>
+                        <Link to={'/CashReconciliation'} className='genLink' onClick={()=>{hideSideBar()}}>
                             ADMINISTRACION
                         </Link>                            
                     </div>

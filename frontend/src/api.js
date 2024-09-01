@@ -583,3 +583,43 @@ export const CancelTheSale = async(cancelthesale) => {
         console.log('TheError: '+ error)
     }
 }
+
+export const CRDetail = async(crdetail) => {
+    /*return the product to the table entradas
+    you have to send a json of the form:
+    {
+        IdFerreteria: 242,
+        Fecha: '2024-08-22'
+    }
+    */
+    try {
+        const res = await fetch(`${API_POS}/crdetail`,{
+            method: 'POST',
+            headers: { Accept: 'application/json','Content-Type': 'application/json'},
+            body: JSON.stringify(crdetail)
+        })
+        return await res.json()
+    }catch(error) {
+        console.log('TheError: '+ error)
+    }
+}
+
+export const SalesByCategory = async(salesbycategory) => {
+    /*return the product to the table entradas
+    you have to send a json of the form:
+    {
+        IdFerreteria: 242,
+        Fecha: '2024-08-22'
+    }
+    */
+    try {
+        const res = await fetch(`${API_POS}/salesbycategory`,{
+            method: 'POST',
+            headers: { Accept: 'application/json','Content-Type': 'application/json'},
+            body: JSON.stringify(salesbycategory)
+        })
+        return await res.json()
+    }catch(error) {
+        console.log('TheError: '+ error)
+    }
+}
