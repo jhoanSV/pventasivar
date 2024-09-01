@@ -36,7 +36,7 @@ export const LowInv = () => {
     const lInv_query = async() =>{
         const shppList = await ShoppingList({
             "IdFerreteria": usD.Cod,
-            "Compras": true
+            "Compras": false
         })
         if(shppList){
             setLista(shppList);
