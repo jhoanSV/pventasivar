@@ -6,6 +6,7 @@
   "author": "SivarDevs",
   "license": "MIT",
   "repository": "https://github.com/jhoanSV/SivarPos",
+  "homepage": "./",
   "publish": {
     "provider": "github",
     "releaseType": "release"
