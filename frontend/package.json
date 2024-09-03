@@ -1,15 +1,24 @@
 {
-  "name": "frontend",
-  "version": "0.1.0",
+  "name": "sivar_pos",
+  "version": "0.0.1",
   "private": true,
-  "main": "electron-main.js",
+  "main": "public/electron.js",
+  "author": "SivarDevs",
+  "license": "MIT",
+  "repository": "https://github.com/jhoanSV/SivarPos",
+  "publish": {
+    "provider": "github",
+    "releaseType": "release"
+  },
   "dependencies": {
     "@testing-library/jest-dom": "^5.17.0",
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
     "bootstrap-icons": "^1.11.3",
     "chart.js": "^4.4.4",
+    "concurrently": "^8.2.2",
     "cors": "^2.8.5",
+    "electron-updater": "^6.2.1",
     "express": "^4.19.2",
     "html2canvas": "^1.4.1",
     "open": "^10.1.0",
@@ -19,6 +28,7 @@
     "react-router-dom": "^6.22.3",
     "react-scripts": "5.0.1",
     "react-transition-group": "^4.4.5",
+    "wait-on": "^8.0.0",
     "web-vitals": "^2.1.4",
     "xlsx": "https://cdn.sheetjs.com/xlsx-0.20.3/xlsx-0.20.3.tgz"
   },
@@ -27,7 +37,9 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "electron": "react-scripts build && electron ."
+    "electron": "electron .",
+    "electron-dev": "concurrently \"SET BROWSER=none && yarn run start\" \"wait-on http://localhost:3000 && electron .\"",
+    "dist": "electron-builder"
   },
   "eslintConfig": {
     "extends": [
@@ -53,10 +65,21 @@
     "@types/webpack": "^5.28.5",
     "@vitejs/plugin-react": "^4.3.1",
     "electron": "^30.0.0",
+    "electron-builder": "^24.13.3",
     "sass": "^1.75.0",
     "sass-loader": "^14.2.1",
     "vite": "^5.3.1",
     "vite-plugin-simple-html": "^0.1.2",
     "webpack": "^5.91.0"
+  },
+  "build": {
+    "appId": "com.sivarpos.app",
+    "productName": "Sivar POS",
+    "target": "nsis",
+    "icon": "assets/Boceto2.ico",
+    "nsis": {
+      "allowToChangeInstallationDirectory": true,
+      "oneClick": false
+    }
   }
 }

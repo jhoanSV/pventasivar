@@ -2,6 +2,7 @@ import React, {useState } from 'react';
 import "./_login.scss";
 import { useTheContext } from '../../TheProvider';
 import { SubCategories, validateUser } from '../../api';
+import pckjson from '../../../package.json';
 export function Login(){
     const [showPassword, setShowPassword] = useState(false);
     const togglePasswordVisibility = () => {
@@ -60,41 +61,42 @@ export function Login(){
     return (
         <section className="login">
             <div className="inic">
-            <img src={require('../../Assets/AVIF/LogoSivarB.avif')} alt="Descripción de la imagen" className='img1' />
-            <img src={require('../../Assets/AVIF/LlaveSivar.avif')} alt="Descripción de la imagen" className='img2' />
-            <span className="_About-header">
-                <h1 className="Titulo">¡Bienvenido!</h1>
-            </span>
+                <img src={require('../../Assets/AVIF/LogoSivarB.avif')} alt="Descripción de la imagen" className='img1' />
+                <img src={require('../../Assets/AVIF/LlaveSivar.avif')} alt="Descripción de la imagen" className='img2' />
+                <span className="_About-header">
+                    <h1 className="Titulo">¡Bienvenido!</h1>
+                </span>
 
-            <input
-                id='linput1'
-                type='text'
-                placeholder='Usuario'
-                onChange={(e)=>setInputData1(e.target.value)}
-            />
-            <input
-                id='linput2'
-                type={showPassword ? 'text' : 'password'}
-                placeholder='Contraseña'
-                onChange={(e)=>setInputData2(e.target.value)}
-            />
-            <label className='mostrar'>
                 <input
-                    className="verC"
-                    type="checkbox"
-                    checked={showPassword}
-                    onChange={togglePasswordVisibility}
+                    id='linput1'
+                    type='text'
+                    placeholder='Usuario'
+                    onChange={(e)=>setInputData1(e.target.value)}
                 />
-                Mostrar contraseña
-            </label>
-            <button className='btnStnd btn1' onClick={()=>{LoginHandle()}}>
-                <i className="bi bi-arrow-right"></i>
-            </button>
-            <span className="aviso">
-                <label>
-                    reportar un problema
+                <input
+                    id='linput2'
+                    type={showPassword ? 'text' : 'password'}
+                    placeholder='Contraseña'
+                    onChange={(e)=>setInputData2(e.target.value)}
+                />
+                <label className='mostrar'>
+                    <input
+                        className="verC"
+                        type="checkbox"
+                        checked={showPassword}
+                        onChange={togglePasswordVisibility}
+                    />
+                    Mostrar contraseña
                 </label>
-            </span>
+                <button className='btnStnd btn1' onClick={()=>{LoginHandle()}}>
+                    <i className="bi bi-arrow-right"></i>
+                </button>
+                <span className="aviso">
+                    <label>
+                        reportar un problema
+                    </label>
+                </span>
+                Version {pckjson.version}
             </div>
             <div className="cuadroV">
                 <video className="mi-video" src="https://sivarwebresources.s3.amazonaws.com/video1.mp4" loop autoPlay muted />

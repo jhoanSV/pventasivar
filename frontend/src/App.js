@@ -23,6 +23,29 @@ export const App = () => {
     if(localStorage.getItem('cart')) setNItemsCart(JSON.parse(localStorage.getItem('cart')).length)
     console.log('someData', someData);
   }, [someData]);
+
+  useEffect(() => {
+    const handleUpdateAvailable = () => {
+      //setUpdateAvailable(true);
+      alert('aja si')
+    };
+
+    const handleUpdateNotAvailable = () => {
+      alert('aja no');
+      //setUpdateAvailable(false);
+    };
+    window.electron.onUpdateAvailable(handleUpdateAvailable);
+    window.electron.onUpdateNotAvailable(handleUpdateNotAvailable);
+    window.electron.onUpdateError(()=>{
+      alert('Cant check versions');
+    });
+
+    // Cleanup the event listeners on component unmount
+    return () => {
+      window.electron.onUpdateAvailable(() => {});
+      window.electron.onUpdateNotAvailable(() => {});
+    };
+  }, []);
   
   return (
     <>
