@@ -1,4 +1,4 @@
-import React, {useState } from 'react';
+import React, {useEffect, useState } from 'react';
 import "./_login.scss";
 import { useTheContext } from '../../TheProvider';
 import { SubCategories, validateUser } from '../../api';
@@ -54,10 +54,6 @@ export function Login(){
         }
     }
 
-    // useEffect(() => {
-        
-    // }, []);
-
     return (
         <section className="login">
             <div className="inic">
@@ -100,8 +96,7 @@ export function Login(){
             </div>
             <div className="cuadroV">
                 <video className="mi-video" src="https://sivarwebresources.s3.amazonaws.com/video1.mp4" loop autoPlay muted />
-            </div>
-            
+            </div>         
         </section>
     );
 }

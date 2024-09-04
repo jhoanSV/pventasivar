@@ -1,6 +1,6 @@
 {
   "name": "sivar_pos",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "private": true,
   "main": "public/electron.js",
   "author": "SivarDevs",
@@ -19,6 +19,7 @@
     "chart.js": "^4.4.4",
     "concurrently": "^8.2.2",
     "cors": "^2.8.5",
+    "electron-log": "^5.1.7",
     "electron-updater": "^6.2.1",
     "express": "^4.19.2",
     "html2canvas": "^1.4.1",
@@ -40,7 +41,7 @@
     "eject": "react-scripts eject",
     "electron": "electron .",
     "electron-dev": "concurrently \"SET BROWSER=none && yarn run start\" \"wait-on http://localhost:3000 && electron .\"",
-    "dist": "electron-builder"
+    "dist": "yarn build && electron-builder"
   },
   "eslintConfig": {
     "extends": [

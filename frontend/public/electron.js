@@ -2,6 +2,7 @@
 const { app, BrowserWindow, ipcMain } = require("electron");
 const {autoUpdater, AppUpdater} = require("electron-updater");
 const path = require("path");
+const log = require("electron-log");
 /*const express = require("express");
 const cors = require("cors");
 const localServerApp = express();
@@ -59,26 +60,32 @@ app.whenReady().then(() => {
   });
   if (app.isPackaged) {
     autoUpdater.checkForUpdates();
-    console.log("Verifying updates...");
+    log.info("Verifying updates...");
   } else {
-    console.log("Application in development mode. Skipping update verification.");
+    log.info("Application in development mode. Skipping update verification.");
   }
 });
 
 autoUpdater.on("update-available", (info)=>{
-  console.log('update available');
+  log.info('update available');
   let pth = autoUpdater.downloadUpdate();
+  log.info(pth);
   mainWindow.webContents.send('update-available');
 });
 
 autoUpdater.on("update-not-available", (info)=>{
-  console.log('no updates');
+  log.info('no updates');
   mainWindow.webContents.send('update-not-available');
 });
 
 autoUpdater.on("error", (info)=>{
-  console.log(info);
+  log.info(info);
   mainWindow.webContents.send('error');
+})
+
+autoUpdater.on("update-downloaded", (info)=>{
+  mainWindow.webContents.send('downloaded');
+  autoUpdater.quitAndInstall();
 })
 
 // Quit when all windows are closed, except on macOS. There, it's common

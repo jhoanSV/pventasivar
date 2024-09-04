@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import './_App.scss';
 import { Header } from './Layouts';
 import { Login } from './Pages';
@@ -16,6 +16,7 @@ export const Formater = (number) =>{
 export const App = () => {
   
   const { logged, someData, setNItemsCart } = useTheContext();
+  const [updateAvailable, setUpdateAvailable] = useState('');
 
   if(!localStorage.getItem('cart')) localStorage.setItem('cart', JSON.stringify([]));
 
@@ -26,40 +27,78 @@ export const App = () => {
 
   useEffect(() => {
     const handleUpdateAvailable = () => {
-      //setUpdateAvailable(true);
-      alert('aja si')
+      setTimeout(() => {
+          setUpdateAvailable('available');
+      }, 2000);
     };
-
     const handleUpdateNotAvailable = () => {
-      alert('aja no');
-      //setUpdateAvailable(false);
+      setTimeout(() => {
+        setUpdateAvailable('unavailable');
+      }, 2000);
     };
+    const handleUpdateDownloaded = () => {
+      setTimeout(() => {
+        setUpdateAvailable('downloaded');
+      }, 2000);
+    };
+    //handleUpdateNotAvailable();
+      
     window.electron.onUpdateAvailable(handleUpdateAvailable);
     window.electron.onUpdateNotAvailable(handleUpdateNotAvailable);
+    window.electron.onUpdateDownloaded(handleUpdateDownloaded);
     window.electron.onUpdateError(()=>{
-      alert('Cant check versions');
+        alert('Cant check versions');
     });
 
     // Cleanup the event listeners on component unmount
     return () => {
-      window.electron.onUpdateAvailable(() => {});
-      window.electron.onUpdateNotAvailable(() => {});
+        window.electron.onUpdateAvailable(() => {});
+        window.electron.onUpdateNotAvailable(() => {});
+        window.electron.onUpdateError(()=>{});
+        window.electron.onUpdateDownloaded(()=>{});
     };
-  }, []);
+}, []);
   
   return (
     <>
-      {(!logged) ?
+      {updateAvailable === '' ?
+        <div className='BPContainer'>
+          <div className='BegPage'>
+            <div style={{textAlign: 'center'}}>Buscando actualizaciones</div>
+            {['tornilleria', 'estudiantil', 'gas', 'griferia', 'electricos', 'ebanisteria'].map((item, index) => (
+                <i key={index} className={`icon-${item} cr${item} iconBegPage`}></i>
+            ))}
+          </div>
+        </div>
+      :updateAvailable === 'available' ?
+        <div className='BPContainer'>
+          <div className='BegPage'>
+            <div style={{textAlign: 'center'}}>Se encontr&oacute; una actualizaci&oacute;n. Descargando...</div>
+          </div>
+        </div>
+      :updateAvailable === 'downloaded' ?
+        <div className='BPContainer'>
+          <div className='BegPage'>
+            <div style={{textAlign: 'center'}}>Se reiniciar&aacute; el programa para instalar la actualizaci&oacute;n</div>
+          </div>
+        </div>
+      :updateAvailable === 'unavailable' ?
         <>
-          <Login
-          />
+          {  (!logged) ?
+            <>
+              <Login
+              />
+            </>
+            :
+            <div style={{boxShadow: 'rgb(0 0 0 / 28%) 0px 0px 15px 20px'}}>
+              <Header/>
+              <Routes/>
+            </div> 
+          }
         </>
         :
-        <div style={{boxShadow: 'rgb(0 0 0 / 28%) 0px 0px 15px 20px'}}>
-          <Header/>
-          <Routes/>
-        </div>
-      }      
+        <></>
+      }
     </>
   );
 }
