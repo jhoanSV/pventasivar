@@ -41,9 +41,11 @@ export const App = () => {
         setUpdateAvailable('downloaded');
       }, 2000);
     };
-    //handleUpdateNotAvailable();
+    //! Care with this, window.electron doesnt works on devMode, only in production
+    //? To solve this comment all windoe.electron lines and uncomment the line handleUpdateNotAvailable();
+    handleUpdateNotAvailable();
       
-    window.electron.onUpdateAvailable(handleUpdateAvailable);
+    /*window.electron.onUpdateAvailable(handleUpdateAvailable);
     window.electron.onUpdateNotAvailable(handleUpdateNotAvailable);
     window.electron.onUpdateDownloaded(handleUpdateDownloaded);
     window.electron.onUpdateError(()=>{
@@ -56,7 +58,7 @@ export const App = () => {
         window.electron.onUpdateNotAvailable(() => {});
         window.electron.onUpdateError(()=>{});
         window.electron.onUpdateDownloaded(()=>{});
-    };
+    };*/
 }, []);
   
   return (
