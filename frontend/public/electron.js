@@ -85,7 +85,7 @@ autoUpdater.on("error", (info)=>{
 
 autoUpdater.on("update-downloaded", (info)=>{
   mainWindow.webContents.send('downloaded');
-  autoUpdater.quitAndInstall();
+  autoUpdater.quitAndInstall(true, true);
 })
 
 // Quit when all windows are closed, except on macOS. There, it's common
