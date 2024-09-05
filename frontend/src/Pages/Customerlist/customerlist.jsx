@@ -32,7 +32,7 @@ export function Customerlist(){
 
     const verFunction = () =>{
         setSomeData({...selected[0]})
-        navigate('/Newcustomer')
+        navigate('/NewCustomer')
     }
 
     const DeleteFunction = () =>{

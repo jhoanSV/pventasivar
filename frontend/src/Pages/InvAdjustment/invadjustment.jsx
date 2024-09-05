@@ -56,10 +56,10 @@ export function InvAdjustment(){
             "Fecha": today,
             "Motivo": taValue
         });
-        console.log(res);
+        //console.log(res);
         if(res && res.message === 'Transacción completada con éxito'){
-            navigate('/NewProduct')
             alert('Cantidad modificada correctamente')
+            navigate(-1, {repalce: true})
         } else {
             alert('Ocurrió un error inesperado, intente de nuevo más tarde');
         }
@@ -72,9 +72,11 @@ export function InvAdjustment(){
             setCurrentC(Formater(someData.Inventario))
         }else{
             navigate('/', {replace: true});
+            console.log('idontunderstand this');
+            
         }
         return () => {
-            setInvAdAuth(false)
+            setInvAdAuth(false);
         }
         // eslint-disable-next-line
     }, []);
@@ -82,7 +84,7 @@ export function InvAdjustment(){
     return (
         invAdAuth && 
         <section className='InvAdjustment'>
-            <h1>{someData.Descripcion}</h1>
+            <h1 style={{marginTop: '0px'}}>{someData.Descripcion}</h1>
             <div className='Row'>
                 <div className='Colmn1'>
                     <label>Cantidad actual:</label>

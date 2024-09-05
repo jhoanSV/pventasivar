@@ -440,7 +440,7 @@ export function Sales(){
                         style={{width: '500px'}}
                         onFocus={()=>{setShowFL(true);isEditingRef.current=true}}
                         onBlur={()=>{isEditingRef.current=false}}
-                        autoComplete='hidden'
+                        autoComplete='off'
                     />
                     <CSSTransition
                         timeout={200}

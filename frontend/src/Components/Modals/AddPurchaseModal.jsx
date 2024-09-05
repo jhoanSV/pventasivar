@@ -6,7 +6,14 @@ import { useTheContext } from '../../TheProvider';
 export const AddPurchaseModal = ({P, Show, img}) => {
 
     console.log(P);
-    const [catSource, setCatSource] = useState(require(`../../Assets/AVIF/LogCats/${(P.Categoria).toLowerCase()}.avif`));
+     // eslint-disable-next-line
+    const [catSource, setCatSource] = useState(()=>{
+        if(['ebanisteria', 'electricos', 'estudiantil', 'gas', 'griferia', 'tornilleria'].includes((P.Categoria).toLowerCase())){
+            return require(`../../Assets/AVIF/LogCats/${(P.Categoria).toLowerCase()}.avif`);
+        }else{
+            return require('../../Assets/PNG/LlaveSierra2.png');
+        }
+    });
     const [cant, setCant] = useState(0);
     const [totalPrice, setTotalPrice] = useState(P.PCosto*cant);
     const [tab1, setTab1] = useState('Inventario');
@@ -135,7 +142,6 @@ export const AddPurchaseModal = ({P, Show, img}) => {
                                     />
                                     <img
                                         src={catSource}
-                                        //onError={()=>setCatSource()}
                                         alt="logo"
                                         style={{width: '100%'}}
                                         decoding="async"

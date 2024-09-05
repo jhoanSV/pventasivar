@@ -5,7 +5,7 @@ import React, { useEffect, useRef } from 'react';
 
 export const Header = () => {
 
-    const { setLogged, section, usD, setSomeData, nItemsCart } = useTheContext()
+    const { setLogged, section, setSection, usD, setSomeData, nItemsCart } = useTheContext()
     const divSideBarRef = useRef(null);
     //const [currentPage, setCurrentPage] = useState();
     
@@ -121,7 +121,8 @@ export const Header = () => {
                                 INVENTARIO
                             </Link>
                             <Link to={'/LowInv'} id='mibajosdeinventario' className='genLink' onClick={()=>{
-                                hideSideBar()
+                                hideSideBar();
+                                setSection('Bajos de inventario');
                             }}>
                                 BAJO INVENTARIO
                             </Link>
@@ -186,8 +187,11 @@ export const Header = () => {
                     </Link>
                 </div>
                 <div>
-                    <a href="https://sivar.com.co" target="_blank" rel="noreferrer">
-                        <picture onClick={()=>{}}>
+                    <Link to={'/LowInv'} onClick={()=>{
+                        hideSideBar();
+                        setSection('Nueva Compra');
+                    }}>
+                        <picture>
                             <source
                                 type="image/avif"
                                 srcSet={require('../../Assets/AVIF/LlaveSivar.avif')}
@@ -199,7 +203,7 @@ export const Header = () => {
                                 decoding="async"
                             />
                         </picture>
-                    </a>
+                    </Link>
                 </div>
                 <div id='ud' style={{display: 'flex', fontSize: '20px', flexDirection: 'column', justifyContent: 'center', alignItems: 'center'}}>
                     <span>{usD.Contacto}</span>

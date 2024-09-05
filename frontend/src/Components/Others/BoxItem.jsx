@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import './_BoxItem.scss';
 import imgPlaceHolder from '../../Assets/AVIF/placeHolderProduct.avif';
+import { useTheContext } from '../../TheProvider';
 
 export const BoxItem = ({Codigo, Descripcion, simpleFunct, showModal, IdFerreteria}) => {
 
@@ -8,11 +9,13 @@ export const BoxItem = ({Codigo, Descripcion, simpleFunct, showModal, IdFerreter
     
     const [img, setImg] = useState(`https://sivarwebresources.s3.amazonaws.com/AVIF/${Codigo}.avif`);
 
+    const {section, } = useTheContext();
+
     const handleClickBox = () =>{
         if(simpleFunct){
             simpleFunct();
         }
-        if(showModal && (IdFerreteria === 0)){
+        if((showModal && (IdFerreteria === 0)) || (section==='Nueva Compra')){
             document.body.classList.add('modalOpen');
             setShow(true);
         }

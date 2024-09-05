@@ -274,7 +274,7 @@ export function PurchaseList(){
                 </button>
                 <button className='btnStnd btn1'
                         style={{marginLeft: '20px'}}
-                        onClick={()=>{window.location.href = 'https://www.sivar.com.co/';}}
+                        onClick={()=>{navigate('/LowInv');setSection('Nueva Compra')}}
                     >
                         Nueva compra
                 </button>

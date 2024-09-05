@@ -100,16 +100,13 @@ export const ProductsList = () => {
         })
         if(listado){
             let codes = []
-            console.log(listado);
             setContentList(listado);
             refList.current = listado;
             for(let a in listado){
                 codes.push(listado[a].Cod);
             }
             setProductCodes(codes);
-            console.log(codes);
         }
-        console.log(listado)
     }
 
     useEffect(() => {

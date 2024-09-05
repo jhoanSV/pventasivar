@@ -9,7 +9,7 @@ import { ShoppingList } from '../../api';
 
 export const LowInv = () => {
     
-    const { setSection, usD } = useTheContext();
+    const { usD, section } = useTheContext();
     const navigate = useNavigate()
     const [lista, setLista] = useState();
     //const [imgSrc, setImgSrc] = useState();
@@ -36,7 +36,7 @@ export const LowInv = () => {
     const lInv_query = async() =>{
         const shppList = await ShoppingList({
             "IdFerreteria": usD.Cod,
-            "Compras": false
+            "Compras": section === 'Nueva Compra' ? true : section === 'Bajos de inventario' ? false : true
         })
         if(shppList){
             setLista(shppList);
@@ -57,7 +57,12 @@ export const LowInv = () => {
     }
 
     useEffect(() => {
-        setSection('Bajos de inventario');
+        console.log('cambia section');
+        lInv_query();
+        // eslint-disable-next-line
+    }, [section]);
+
+    useEffect(() => {
         lInv_query();
         setLimit(20);
         observeT3();

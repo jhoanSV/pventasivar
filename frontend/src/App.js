@@ -4,6 +4,7 @@ import { Header } from './Layouts';
 import { Login } from './Pages';
 import { Routes } from "./Routes";
 import { useTheContext } from './TheProvider';
+import { ProductList } from './api';
 
 export const Formater = (number) =>{
   //it gives a number format
@@ -15,7 +16,7 @@ export const Formater = (number) =>{
 
 export const App = () => {
   
-  const { logged, someData, setNItemsCart } = useTheContext();
+  const { logged, someData, setNItemsCart, setProductCodes, usD } = useTheContext();
   const [updateAvailable, setUpdateAvailable] = useState('');
 
   if(!localStorage.getItem('cart')) localStorage.setItem('cart', JSON.stringify([]));
@@ -24,6 +25,26 @@ export const App = () => {
     if(localStorage.getItem('cart')) setNItemsCart(JSON.parse(localStorage.getItem('cart')).length)
     console.log('someData', someData);
   }, [someData]);
+
+  useEffect(() => {
+    if(logged){
+      const ProductsFetch = async() =>{
+        const listado = await ProductList({
+            "IdFerreteria" : usD.Cod
+        })
+        if(listado){
+            let codes = []
+            for(let a in listado){
+                codes.push(listado[a].Cod);
+            }
+            setProductCodes(codes);
+            console.log('........--- see no se');
+        }
+      }
+      ProductsFetch();
+    }
+    // eslint-disable-next-line
+  }, [logged]);
 
   useEffect(() => {
     const handleUpdateAvailable = () => {

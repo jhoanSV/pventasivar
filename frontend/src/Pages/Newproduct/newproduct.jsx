@@ -244,7 +244,7 @@ export const Newproduct = () => {
 
     const handleCodVali = () =>{
         const codeFind = productCodes.map(code => code.toLowerCase()).includes(productData.Cod.toLowerCase());
-        if(modificarProducto){
+        if(modificarProducto && someData){
             if((productData.Cod !== someData.Cod) && codeFind){
                 return true
             }else{
@@ -544,7 +544,7 @@ export const Newproduct = () => {
                         {show1 &&
                             <UserConfirm
                                 show={setShow1}
-                                confirmed={(e) => { if (e) { setInvAdAuth(true); navigate('/InvAdjustment') } }}
+                                confirmed={(e) => { if (e) { setInvAdAuth(true); navigate('/InvAdjustment')}}}
                             />
                         }
                     </>
