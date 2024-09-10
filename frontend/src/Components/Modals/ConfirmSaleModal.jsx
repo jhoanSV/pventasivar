@@ -2,6 +2,8 @@ import React, {useState, useEffect} from 'react';
 import { TheInput } from '../../Components/InputComponent/TheInput';
 import { useTheContext } from '../../TheProvider';
 import { NewSale } from '../../api';
+import { TicketPrint } from '../TickerPrint';
+import ReactDOMServer from 'react-dom/server';
 import './_ConfirmSaleModal.scss';
 
 export const ConfirmSaleModal = ({show, sendSale , folio , orderslist, width='50%', height='50%', totalE}) => {
@@ -11,6 +13,7 @@ export const ConfirmSaleModal = ({show, sendSale , folio , orderslist, width='50
     const [ total, setTotal] = useState(0)
     const [ tipoDePago, setTipoDePago] = useState("Efectivo");
     const [ referencia, setReferencia] = useState('');
+    const [ showTicket, setShowTicket] = useState(false)
     const { setSection, setSomeData, usD } = useTheContext();
 
     useEffect(() => {
@@ -218,6 +221,45 @@ export const ConfirmSaleModal = ({show, sendSale , folio , orderslist, width='50
             }
     }
 
+    const printOrder = () => {
+        const now = new Date();
+        // Obtener la fecha en formato YYYY-MM-DD
+        const date = now.toISOString().split('T')[0];
+        // Obtener la hora en formato HH:MM:SS
+        const time = now.toTimeString().split(' ')[0];
+        
+        if (tipoDePago !== 'Efectivo' &&  referencia === '') {
+            alert('Debe ingresar una referencia para este tipo de pago')
+        } else { if (efectivo === 0 && transferencia === '') {
+            alert('Debe ingresar el efectivo o la transferencia para este tipo de pago')} else {
+                orderslist.RCData = {IdFerreteria: usD.Cod,
+                                    CodResponsable: usD.Cod,
+                                    Responsable: usD.Contacto,
+                                    Folio: folio,
+                                    Fecha: date + ' ' + time,
+                                    Referencia: referencia,
+                                    MedioDePago: tipoDePago,
+                                    Efectivo: efectivo,
+                                    Transferencia: transferencia,
+                                    Motivo: "Venta por caja",
+                                    Comentarios: '',
+                                    Activo: true
+                                    }
+                console.log('orderlist: ', orderslist)
+                // Render the component as HTML
+                const ticketHTML = ReactDOMServer.renderToString(<TicketPrint data={orderslist} usD={usD}/>);
+                //console.log(ticketHTML)
+                //setShowTicket(true)
+                // Send the HTML to Electron for printing
+                //window.electron.send('print-ticket', ticketHTML);
+                
+                //NewSale(orderslist)
+                //sendSale()
+                show(false)
+            }
+        }
+    }
+
     return (
         <div className='theModalContainer'>
             <div className='theModal-content' style={{width: width, height: height, position: 'relative'}}>
@@ -311,7 +353,7 @@ export const ConfirmSaleModal = ({show, sendSale , folio , orderslist, width='50
                                 <button className="btnStnd btn1" onClick={()=>chargeTheOrder()}>Solo cobrar</button>
                             </div>
                             <div>
-                                <button className="btnStnd btn1" onClick={()=>{}}>Cobrar e imprimir</button>
+                                <button className="btnStnd btn1" onClick={()=>printOrder()}>Cobrar e imprimir</button>
                             </div>
                             <div>
                                 <label>Total de articulos:</label>
