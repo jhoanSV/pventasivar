@@ -132,13 +132,13 @@ export function Customerlist(){
                     {/* {<button className='btnStnd btn1' onClick={()=>{navigate('/BalanceReport')}}>Reporte de saldos</button>} */}
                 </div>
                 <div className='CLdiv2' style={{position: 'relative'}}>
-                    <button className='btn1Stnd' onClick={()=>(deselect())}
+                    {/* {<button className='btn1Stnd' onClick={()=>(deselect())}
                         disabled={selected.length === 0}>
                         <i className='bi bi-x'/>
                     </button>
                     <label style={{marginRight: '8px', padding: '3px', color: selected.length === 0 ? 'rgb(183 183 183)' : 'black'}}>
                         Seleccionados: {selected.length}
-                    </label>
+                    </label>} //?Para después */}
                     <button className='btn1Stnd' onClick={()=>(verFunction())}
                         disabled={(selected.length === 0 || selected.length > 1)}>
                         <i className='bi bi-eye-fill'/>
@@ -148,10 +148,10 @@ export function Customerlist(){
                         <i className='bi bi-trash-fill'/>
                     </button>
                     {show1 && <GeneralModal show={setShow1} Contenido={Popop1}/>}
-                    <input id='checkmlsct' type="checkbox" className="" onChange={()=>{setMultiSelect(a=>!a);setSelected([])}}/>
+                    {/* {<input id='checkmlsct' type="checkbox" className="" onChange={()=>{setMultiSelect(a=>!a);setSelected([])}}/>
                     <label className='noSelect' style={{padding: '3px'}} htmlFor='checkmlsct'>
                         Seleccionar Varios
-                    </label>
+                    </label>} //? para después */}
                 </div>
             </div>
             <TableComponent

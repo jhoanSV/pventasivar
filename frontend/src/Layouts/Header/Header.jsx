@@ -54,7 +54,9 @@ export const Header = () => {
         }
         const s = section.replace(/\s+/g, "").toLowerCase();
         const elm = document.getElementById('mi'+(s));
-        if(elm){
+        if(s==='configuración'){
+            document.getElementById('miconfig').classList.add('m-selected');
+        }else if(elm){
             elm.classList.add('m-selected');
         }
         //document.getElementById('mi'+(s)).classList.add('m-selected')
@@ -147,11 +149,11 @@ export const Header = () => {
                             }}>
                                 NUEVO
                             </Link>
-                            <Link to={'/BalanceReport'} id='mireportedesaldos' className='genLink' onClick={(e)=>{
+                            {/* {<Link to={'/BalanceReport'} id='mireportedesaldos' className='genLink' onClick={(e)=>{
                                 hideSideBar()
                             }}>
                                 REPORTE DE SALDOS
-                            </Link>
+                            </Link>} //?Para despues */}
                         </div>
                     </div>
                     <div>
@@ -165,7 +167,7 @@ export const Header = () => {
                         </Link>                            
                     </div>
                     <div>
-                        <Link to={'/'} className='genLink' onClick={()=>{hideSideBar()}}>
+                        <Link to={'/Config'} id='miconfig' className='genLink' onClick={()=>{hideSideBar()}}>
                             CONFIGURACION
                         </Link>                            
                     </div>

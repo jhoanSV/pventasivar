@@ -18,7 +18,8 @@ import { Customerlist,
          VerifyPurchase,
          LowInv,
          Cart,
-         CashReconciliation
+         CashReconciliation,
+         Configuration
 } from "../Pages";
 
 export function RoutesComponent() {
@@ -42,6 +43,7 @@ export function RoutesComponent() {
             <Route path='/VerifyPurchase' element={ <VerifyPurchase/> }/>
             <Route path='/Cart' element={ <Cart/>}/>
             <Route path='/CashReconciliation' element={ <CashReconciliation/>}/>
+            <Route path='/Config' element={ <Configuration/>}/>
         </Routes>
     );
 }

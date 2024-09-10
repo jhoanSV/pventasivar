@@ -9,15 +9,15 @@ import { ProductMeasures } from '../../Components/Modals/ProductMeasures';
 import { MoneyFlow } from '../../Components/Modals/MoneyFlow';
 import { StartOfCash } from '../../Components/Modals/StartOfCash';
 import "./_sales.scss";
-import jsonTest from '../../tickets-text.json';
+// import ticketsJson from '../../tickets-text.json';
 import { useTheContext } from '../../TheProvider';
 import { CashFlow, Inventory } from '../../api';
 import { CSSTransition } from 'react-transition-group';
 
 export function Sales(){
     //*---------------------
-    const [saleTabs, setSaleTabs] = useState(jsonTest);
-    const [currentTab, setCurrentTab] = useState({"index": 0, "key": 1});
+    const [saleTabs, setSaleTabs] = useState(JSON.parse(localStorage.getItem('ticketsJson')));
+    const [currentTab, setCurrentTab] = useState({"index": 0, "key": Object.keys(saleTabs)[0]});
     const [tabsHistory, setTabsHistory] = useState(Object.keys(saleTabs).length);
     //*---------------------
     const [ total, setTotal] = useState(0);
@@ -63,12 +63,10 @@ export function Sales(){
             } else if (event.key === 'ArrowUp' && currentSelectedFila - 1 >= 0 && currentSelectedFila - 1 < theOrder.length) {
                 setSelectedfila(currentSelectedFila - 1)
             } else if (event.key === 'Delete') {
-                //console.log(theOrder);
                 theOrder.splice(currentSelectedFila, 1)
                 if (selectedfila === theOrder.length - 1 && selectedfila !== 0){
                     setSelectedfila(currentSelectedFila - 1)
                 }
-                //console.log(updatedOrdersList);
                 // Actualiza el estado con la nueva lista
                 const updatedOrdersList = [...theOrder];
                 setOrderslist(updatedOrdersList);
@@ -77,30 +75,24 @@ export function Sales(){
     };
 
     const onblurChangeCuantity = (row, amount) => {
-        let theOrder = Object.entries(saleTabs)[selectedTabRef.current][1]
-        if (amount > 0) {
-            theOrder[row].Cantidad = amount
-            // Crea una copia del jsonTest[tabindex] para actualizar el estado
-            const updatedOrdersList = [...theOrder];
-            // Actualiza el estado con la nueva lista
-            setOrderslist(updatedOrdersList);
+        let theOrder = [...saleTabs[currentTab.key].Order]
+        let theAmount = amount.replace(/[.,]/g, (a) => (a === "." ? "" : "."));
+        if (theAmount > 0) {
+            theOrder[row].Cantidad = Number(theAmount);
+            setOrderslist(theOrder);
         }
-        setChangeQuantity(null)
+        setChangeQuantity(null);
     };
 
-    const onblurChangePv = (row, amount, theKey) => {
-        let theOrder = Object.entries(saleTabs)[selectedTabRef.current][1]
-        //console.log(theOrder);
-        if (amount > 0) {
-            const theValue = amount
-            let withoutFormat = theValue.replace(/\./g, '')
-            theOrder[row][theKey] = withoutFormat
-            // Crea una copia del jsonTest[tabindex] para actualizar el estado
-            const updatedOrdersList = [...theOrder];
+    const onblurChangePv = (row, amount) => {
+        let theOrder = [...saleTabs[currentTab.key].Order];
+        let withoutFormat = amount.replace(/[.,]/g, (a) => (a === "." ? "" : "."));
+        if (withoutFormat > 0) {
+            theOrder[row].PVenta = Number(withoutFormat);
             // Actualiza el estado con la nueva lista
-            setOrderslist(updatedOrdersList);
+            setOrderslist(theOrder);
         }
-        setChangePventa(null)
+        setChangePventa(null);
     };
     
     const RowOrder = (item, index, columnsWidth) => {
@@ -121,7 +113,7 @@ export function Sales(){
                                 autofocus={true}
                             /> ) :
                         ( 
-                            <label>{item.Cantidad}</label>
+                            <label>{Formater(item.Cantidad)}</label>
                         )}
                     </td>
                     <td style={{width: columnsWidth[1]}}>
@@ -138,10 +130,10 @@ export function Sales(){
                             <TheInput
                                 id = {'i'+ rowIndex}
                                 numType ='real'
-                                val = {item.Medida !== '' ? item.PVentaUM : item.PVenta}
+                                val = {item.PVenta}
                                 sTyle = {{width: columnsWidth[0]}}
                                 onblur = {(e) => {
-                                    onblurChangePv(rowIndex, e, (item.Medida !== '' ? 'PVentaUM': 'PVenta'));
+                                    onblurChangePv(rowIndex, e);
                                     isEditingRef.current=false}}
                                 autofocus={true}
                             /> ) :
@@ -166,7 +158,6 @@ export function Sales(){
     
 
     const updateCantidad = (selectedRow, amount) => {
-        console.log(saleTabs[currentTab.key].Order)
         let theOrder = saleTabs[currentTab.key].Order//Object.entries(saleTabs.Orden)[selectedTabRef.current][1]
         if (theOrder[selectedRow].Cantidad + amount > 0) {
             theOrder[selectedRow].Cantidad += amount
@@ -227,18 +218,15 @@ export function Sales(){
 
     const changeTab = (Num, index) => {
         if(Num===null){
-            console.log(currentTab.key);
-            
-
             setOrderslist(saleTabs[currentTab.key].Order);
             setCurrentTab({"index": index,
-                "key": currentTab.key});
+                "key": currentTab.key
+            });
         }else{
             setOrderslist(saleTabs[Num].Order);
             setCurrentTab({"index": index,
                 "key": Num});
         }
-        console.log(index);
         if (Num !== null && saleTabs[Num].Order.length !== 0) {
             setSelectedfila(() => {
                 //send the scrollbar to the bottom
@@ -257,6 +245,11 @@ export function Sales(){
             setSelectedfila(null);
         }
         
+        if(Object.keys(saleTabs[Num].Customer).length !== 0){
+            setCustomer(saleTabs[Num].Customer.Nombre + ' ' + saleTabs[Num].Customer.Apellido)
+        }else{
+            setCustomer("Por asignar")
+        }
         //console.log(saleTabs[Num].Customer.Nombre !== null);
         //const custromerName = saleTabs[Num].Customer.Nombre === '' ? saleTabs[Num].Customer.Nombre: 'Por asignar';
         //setCustomer(custromerName)
@@ -318,23 +311,21 @@ export function Sales(){
         const productAlreadyExistsIndex = theOrder.findIndex(
             (prod) => prod.Cod === item.Cod && prod.Medida === item.Medida
         );
-        console.log(item);
         if(productAlreadyExistsIndex === -1){
-        theOrder.push(item);
-        setOrderslist(a => {
-            //send the scrollbar to the bottom
-            var orderElement = document.getElementById("FlastListID");
-            setTimeout(() => {
-                if (orderElement) {
-                    orderElement.scrollTop = orderElement.scrollHeight;
-                }
-              }, 0);
-            return [...theOrder];
-        });
+            theOrder.push(item);
+            setOrderslist(a => {
+                //send the scrollbar to the bottom
+                var orderElement = document.getElementById("FlastListID");
+                setTimeout(() => {
+                    if (orderElement) {
+                        orderElement.scrollTop = orderElement.scrollHeight;
+                    }
+                }, 0);
+                return [...theOrder];
+            });
             setShowFL(false);
             setSelectedfila(saleTabs[currentTab.key].Order.length - 1)
-        }
-        else {
+        } else {
             saleTabs[currentTab.key].Order[productAlreadyExistsIndex].Cantidad = theOrder[productAlreadyExistsIndex].Cantidad + item.Cantidad
             setSelectedfila(productAlreadyExistsIndex)
             setShowFL(false);
@@ -365,7 +356,6 @@ export function Sales(){
         const list = await Inventory({
             "IdFerreteria": usD.Cod
         })
-        console.log(list);
         if(list){
             setInvList(list);
             refList.current = list;
@@ -373,9 +363,10 @@ export function Sales(){
     }
 
     const AsingCustomerToOrder = (item) => {
-        jsonTest[currentTab.key].Customer = item[0]
-        setCustomer(jsonTest[currentTab.key].Customer.Nombre + " " + jsonTest[currentTab.key].Customer.Apellido)
-        setSaleTabs(jsonTest)
+        let st = {...saleTabs};
+        st[currentTab.key].Customer = item[0];
+        setCustomer(st[currentTab.key].Customer.Nombre + " " + st[currentTab.key].Customer.Apellido);
+        setSaleTabs(st);
     }
 
     const confirmarVenta = () => {
@@ -387,37 +378,48 @@ export function Sales(){
     }
 
     useEffect(() => {
+        let st = {...saleTabs}
+        st[currentTab.key].Order = orderslist;
+        setSaleTabs(st);
+        console.log(st);
         sumarTotal();
+        localStorage.setItem('ticketsJson', JSON.stringify(saleTabs));
         // eslint-disable-next-line
     }, [orderslist]);
     
     
     useEffect(() => {
         selectedfilaRef.current = selectedfila;
+        console.log('seleccionada fila', selectedfila);
+        
     }, [selectedfila]);
     
     useEffect(() => {
         selectedTabRef.current = currentTab.index;
         //console.log(saleTabs)
+        // eslin-disable-next-line
     }, [currentTab]);
+
+    useEffect(() => {
+        localStorage.setItem('ticketsJson', JSON.stringify(saleTabs));
+    }, [saleTabs]);
     
     useEffect(() => {
-        const now = new Date();
-        // Obtener la fecha en formato YYYY-MM-DD
-        const date = now.toISOString().split('T')[0];
-        // Obtener la hora en formato HH:MM:SS
-        const time = now.toTimeString().split(' ')[0];
         setSection('Ventas');
         fetchInventoryList();
         window.addEventListener('keydown', handleKeyDown);
         document.addEventListener('mousedown', handleClickOutside);
+        if(Object.keys(saleTabs[currentTab.key].Customer).length !== 0){
+            setCustomer(saleTabs[currentTab.key].Customer.Nombre + ' ' + saleTabs[currentTab.key].Customer.Apellido)
+        }else{
+            setCustomer("Por asignar")
+        }
         
         const StartCahs = async() => {
             const cashFlow = await CashFlow({
                 IdFerreteria: usD.Cod,
                 Fecha: new Date().toISOString().split('T')[0],
             })
-            console.log('cashFlow: ', cashFlow)
             if (cashFlow.length === 0) setShowStartCahs(true);
         }
         StartCahs()
@@ -441,6 +443,7 @@ export function Sales(){
                         onFocus={()=>{setShowFL(true);isEditingRef.current=true}}
                         onBlur={()=>{isEditingRef.current=false}}
                         autoComplete='off'
+                        autoFocus
                     />
                     <CSSTransition
                         timeout={200}
@@ -461,8 +464,6 @@ export function Sales(){
                             )}
                         </div>
                     </CSSTransition>
-                    {/*(sBText !== '' && showFL) &&
-                    */}
                 </div>
                 {/*<ModalBusca/>*/}
             </div>
@@ -474,12 +475,13 @@ export function Sales(){
                         >Asignar cliente
                     </button>
                     <button
-                        className="btnStnd btn1"
+                        style={{marginLeft: 'auto'}}
+                        className="btnStnd moneyEnt"
                         onClick={()=>{setTypeMoneyFlow(false);setShowMoneyFlow(true)}}
                         >Entradas de dinero
                     </button>
                     <button
-                        className="btnStnd btn1"
+                        className="btnStnd moneyExt"
                         onClick={()=>{setTypeMoneyFlow(true); setShowMoneyFlow(true)}}
                         >Salidas de dinero
                     </button>

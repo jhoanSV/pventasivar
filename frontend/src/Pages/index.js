@@ -18,3 +18,4 @@ export * from './VerifyPurchase';
 export * from './LowInv';
 export * from './Cart';
 export * from './CashReconciliation';
+export * from './Configuration';

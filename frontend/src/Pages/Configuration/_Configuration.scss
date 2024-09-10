@@ -1,0 +1,103 @@
+.Configuration{
+    display: flex;
+    padding: 40px 100px;
+}
+.mccontainer{
+    ul {
+        padding: 0px 26px;
+        font-weight: 700;
+        list-style: none;
+        li{
+            padding: 5px 20px;
+            cursor: pointer;
+            -webkit-user-select: none;
+            user-select: none;
+            background: linear-gradient(to left, #f2f2f2 50%, #d9d9d9 50%);
+            background-size: 200% 100%;
+            background-position: right bottom;
+            transition: none;
+            border-left: solid #bdbdbd 3px;
+            &.active{
+                background-position: left bottom;
+                border-left: solid black 3px;
+                transition: background-position 0.5s ease;
+            }
+            &:hover{
+                border-left: solid black 3px;
+            }
+        }
+    }
+}
+
+.userLogo {
+    background: #fff;
+    border-radius: 50px;
+    display: flex;
+    font-size: 100px;
+}
+
+.configBox{
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: -5px 5px 7px 0px #959595;
+    margin-bottom: 20px;
+    .a{
+        display: flex;
+    }
+}
+
+.gcConfig{
+    width: 100%;
+    height: min-content;
+    margin-left: 10px;
+    grid-template-columns: auto 1fr;
+    gap: 5px 10px;
+    div:nth-child(2n+1){
+        text-align: end;
+        font-weight: bold;
+    }
+}
+
+.cpssm{
+    padding: 25px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px 0px;
+    .userPass{
+        width: 100%;
+        input{
+            width: 100%;
+        }
+    }
+}
+
+.passLvlBarContainer{
+    display: flex;
+    width: 100%;
+}
+.passLvlBar{
+    width: 37px;
+    height: 10px;
+    margin-right: 4px;
+    background-color: white;
+    border: solid 1px black;
+}
+.passLvl1{
+    background-color: #ed4e50;
+}
+.passLvl2{
+    background-color: #F2CB05;
+}
+.passLvl3{
+    background-color: #24ff00;
+}
+span.noMatch{
+    color: red;
+}
+
+@media screen and (max-width: 1050px){
+    .Configuration{
+        flex-wrap: wrap;
+    }    
+}

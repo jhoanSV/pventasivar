@@ -124,12 +124,13 @@ export const Newproduct = () => {
     }
 
     const prepData = () => {
-        let d = { ...productData }
+        let d = {...productData}
+        let ms = d.Medidas.map(item => ({ ...item }));
         if(d.Medidas.length !== 0){
-            d.Medidas.forEach((item) => {
+            ms.forEach((item) => {
                 if (item.PVentaUM==='') {
-                    let v = NPToNumber(productData.PCosto) / NPToNumber(item.UMedida) + 
-                        NPToNumber(productData.PCosto) / 
+                    let v = NPToNumber(d.PCosto) / NPToNumber(item.UMedida) + 
+                        NPToNumber(d.PCosto) / 
                         NPToNumber(item.UMedida)*Number(pctGan.replace(/,/g, '.'))/100;
                     v = v % 1 === 0 ? v.toString() : v.toFixed(2);
                     item.PVentaUM = Number(v);
@@ -137,9 +138,11 @@ export const Newproduct = () => {
                     item.PVentaUM = NPToNumber(item.PVentaUM);
                 }
                 item.UMedida = NPToNumber(item.UMedida);
-                delete item.pctUM
+                delete item.pctUM;
             });
+            d.Medidas = ms;
         }
+        
         d.PVenta = NPToNumber(d['PVenta'])
         d.PCosto = NPToNumber(d.PCosto)
         d.Inventario = NPToNumber(d['Inventario'])
@@ -176,8 +179,6 @@ export const Newproduct = () => {
         }
         //*------------------------------------------------------------------
         let a = prepData();
-        console.log(productData);
-        console.log(a);
         a.IdFerreteria = usD.Cod;
         const fecha = new Date();
         const today = fecha.getFullYear() + '-' + (fecha.getMonth() + 1) + '-' + fecha.getDate() + ' ' + fecha.getHours() + ':' + fecha.getMinutes() + ':' + fecha.getSeconds();
@@ -294,7 +295,7 @@ export const Newproduct = () => {
     }, []);
 
     useEffect(() => {
-        console.log(productData);
+        console.log('-->', productData);
     }, [productData]);
 
     return (
@@ -426,7 +427,12 @@ export const Newproduct = () => {
                         <label className="custom-label">
                             <input type="radio" className="custom-radio" name="uniorpack"
                                 checked={productData.Clase===0}
-                                onChange={() => { changeValuesProducts("Clase", 0) }}
+                                onChange={() => { 
+                                    let pd = {...productData}
+                                    pd.Clase = 0
+                                    pd.Medidas = []
+                                    setProductData(pd);
+                                }}
                             />
                             <i></i>
                             por unidad

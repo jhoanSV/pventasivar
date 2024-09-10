@@ -21,6 +21,10 @@
   padding: 5px 10px;
 }
 
+.gridCont{
+  display: grid;
+}
+
 .btnStnd{
   cursor: pointer;
   padding: 5px 10px;
@@ -31,7 +35,29 @@
   color: white;
   background-color: #193773;
   box-shadow: 0px 3px 0px 0px rgba(16, 35, 73);
+  &:active{
+    background-color: #2454B5;
+    box-shadow: none;
+    transform: translateY(3px);
+  }
+  &:disabled{
+    background-color: #68799b;
+    cursor: default;
+    box-shadow: 0px 3px 0px 0px rgb(67 77 96);
+    transform: translateY(0px);
+  }
 }
+
+.btn3{
+  color: #193773;
+  background-color: #d9d9d9;
+  box-shadow: 0px 3px 0px 0px rgb(175, 175, 175);
+  &:active{
+    box-shadow: none;
+    transform: translateY(3px);
+  }
+}
+
 .btn1Stnd{
   cursor: pointer;
   background-color: transparent;
@@ -39,17 +65,6 @@
   border-radius: 25px;
   height: max-content;
   aspect-ratio: 1 / 1;
-}
-.btn1:active{
-  background-color: #2454B5;
-  box-shadow: none;
-  transform: translateY(3px);
-}
-.btn1:disabled{
-  background-color: #68799b;
-  cursor: default;
-  box-shadow: 0px 3px 0px 0px rgb(67 77 96);
-  transform: translateY(0px);
 }
 .btn1Stnd:hover{
   background-color: rgb(0 0 0 / 26%);

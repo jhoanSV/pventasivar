@@ -25,6 +25,26 @@ export const validateUser = async(validateValueUser) => {
     }
 }
 
+export const Changepassword = async(validateValueUser) => {
+    /*Validate the user information and if it's correct change the password in the database
+    you have to send a json of the form:
+    {
+        "CodUser": "493",
+        "Password": "Actual password",
+        "NewPassword": "New password"
+    }*/
+    try {
+        const res = await fetch(`${API}/Changepassword`,{
+            method: 'POST',
+            headers: { Accept: 'application/json','Content-Type': 'application/json'},
+            body: JSON.stringify(validateValueUser)
+        })
+        return await res.json()
+    }catch(error) {
+        console.log(error)
+    }
+}
+
 //*All related to products %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 export const NuevoProducto = async(NewproductValues) => {

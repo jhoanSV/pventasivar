@@ -29,7 +29,6 @@ export function CashReconciliation() {
     //const [ fechaSearch, setFEchaSearch ] = useState();
 
     useEffect(() => {
-        console.log('CashReconciliation')
         CaschRDetail()
         setSection('Corte de caja')
     }, [])
@@ -202,83 +201,87 @@ export function CashReconciliation() {
             <div>
                 <h3>Dinero en caja</h3>
                 <table>
-                    <tr>
-                        <td>
-                            <label style={{color: 'green', fontWeight: 'bold'}}>Inicio de caja:</label>
-                        </td>
-                        <td>
-                            <label>$ {Formater(CRData['Inicio de caja'] ? CRData['Inicio de caja'].Efectivo: 0)}</label>
-                        </td>
-                    </tr>
-                    <tr>
-                        <rd>
-                            <label style={{color: 'green', fontWeight: 'bold'}}>Venta por caja:</label>
-                        </rd>
-                        <td>
-                            <label>$ {Formater(CRData['Venta por caja'] ? CRData['Venta por caja'].Efectivo: 0)}</label>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <label style={{color: 'green', fontWeight: 'bold'}}>Ingreso por caja:</label>
-                        </td>
-                        <td>
-                            <label>$ {Formater(CRData['Ingreso por caja'] ? CRData['Ingreso por caja'].Efectivo: 0)}</label>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <label style={{color: '#C70039', fontWeight: 'bold'}}>Devolución Entrada:</label>
-                        </td>
-                        <rd>
-                            <label>$ {Formater(CRData['Devolución Entrada'] ? CRData['Devolución Entrada'].Efectivo: 0)}</label>
-                        </rd>
-                    </tr>
-                    <tr>
-                        <td>
-                            <label style={{color: '#C70039', fontWeight: 'bold'}}>Devolución mercancia:</label>
-                        </td>
-                        <td>
-                            <label>$ {Formater(CRData['Devolución mercancia'] ? CRData['Devolución mercancia'].Efectivo: 0)}</label>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <label style={{fontWeight: 'bold'}}>Efectivo en caja:</label>
-                        </td>
-                        <td>
-                            <label>$ {Formater(cash)}</label>
-                        </td>
-                    </tr>
+                    <tbody>
+                        <tr>
+                            <td>
+                                <label style={{color: 'green', fontWeight: 'bold'}}>Inicio de caja:</label>
+                            </td>
+                            <td>
+                                <label>$ {Formater(CRData['Inicio de caja'] ? CRData['Inicio de caja'].Efectivo: 0)}</label>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <label style={{color: 'green', fontWeight: 'bold'}}>Venta por caja:</label>
+                            </td>
+                            <td>
+                                <label>$ {Formater(CRData['Venta por caja'] ? CRData['Venta por caja'].Efectivo: 0)}</label>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <label style={{color: 'green', fontWeight: 'bold'}}>Ingreso por caja:</label>
+                            </td>
+                            <td>
+                                <label>$ {Formater(CRData['Ingreso por caja'] ? CRData['Ingreso por caja'].Efectivo: 0)}</label>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <label style={{color: '#C70039', fontWeight: 'bold'}}>Devolución Entrada:</label>
+                            </td>
+                            <td>
+                                <label>$ {Formater(CRData['Devolución Entrada'] ? CRData['Devolución Entrada'].Efectivo: 0)}</label>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <label style={{color: '#C70039', fontWeight: 'bold'}}>Devolución mercancia:</label>
+                            </td>
+                            <td>
+                                <label>$ {Formater(CRData['Devolución mercancia'] ? CRData['Devolución mercancia'].Efectivo: 0)}</label>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <label style={{fontWeight: 'bold'}}>Efectivo en caja:</label>
+                            </td>
+                            <td>
+                                <label>$ {Formater(cash)}</label>
+                            </td>
+                        </tr>
+                    </tbody>
                 </table>
             </div>
             <div>
                 <h3>Ventas</h3>
                 <table>
-                    <tr>
-                        <td>
-                            <label>En efectivo:</label>
-                        </td>
-                        <td>
-                            <label>$ {Formater(CRData['Venta por caja'] ? CRData['Venta por caja'].Efectivo: 0)}</label>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <label>Por transferencia:</label>
-                        </td>
-                        <td>
-                            <label>$ {Formater(CRData['Venta por caja'] ? CRData['Venta por caja'].Transferencia: 0)}</label>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <label>Devoluciones de Mercancia:</label>
-                        </td>
-                        <td>
-                            <label>$ {Formater(CRData['Ingreso por caja'] ? CRData['Ingreso por caja'].Efectivo: 0)}</label>
-                        </td>
-                    </tr>
+                    <tbody>
+                        <tr>
+                            <td>
+                                <label>En efectivo:</label>
+                            </td>
+                            <td>
+                                <label>$ {Formater(CRData['Venta por caja'] ? CRData['Venta por caja'].Efectivo: 0)}</label>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <label>Por transferencia:</label>
+                            </td>
+                            <td>
+                                <label>$ {Formater(CRData['Venta por caja'] ? CRData['Venta por caja'].Transferencia: 0)}</label>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <label>Devoluciones de Mercancia:</label>
+                            </td>
+                            <td>
+                                <label>$ {Formater(CRData['Ingreso por caja'] ? CRData['Ingreso por caja'].Efectivo: 0)}</label>
+                            </td>
+                        </tr>
+                    </tbody>
                 </table>          
             </div>
         </div>

@@ -118,4 +118,26 @@
     padding: 0px 10px;
     z-index: 3;
 }
+
+.moneyEnt{
+    color: white;
+    background-color: #1a6d24;
+    box-shadow: 0px 3px 0px 0px #15521d;
+    &:active{
+        background-color: #299c38;
+        box-shadow: none;
+        transform: translateY(3px);
+    }
+}
+
+.moneyExt{
+    color: white;
+    background-color: #900c3f;
+    box-shadow: 0px 3px 0px 0px #5c0728;
+    &:active{
+        background-color: #a10f47;
+        box-shadow: none;
+        transform: translateY(3px);
+    }
+}
 //*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

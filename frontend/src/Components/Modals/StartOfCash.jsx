@@ -4,7 +4,7 @@ import { TheInput } from '../InputComponent/TheInput';
 import { useTheContext } from '../../TheProvider';
 import { NewMoneyFlow} from '../../api';
 
-export const StartOfCash = ({show, aceptar, width='50%', height='50%'}) => {
+export const StartOfCash = ({show, aceptar}) => {
     const [ cantidad, setCantidad ] = useState(0);
     const { setSection, usD } = useTheContext();
 
@@ -36,23 +36,36 @@ export const StartOfCash = ({show, aceptar, width='50%', height='50%'}) => {
 
     return (
         <div className='theModalContainer'>
-            <div className='theModal-content' style={{width: width, height: height, position: 'relative'}}>
+            <div className='theModal-content' style={{position: 'relative'}}>
                 <button className='btn1Stnd' onClick={() => {show(false)}} style={{position: 'absolute', top: '0px', right: '0px'}}>
                     <i className='bi bi-x-lg'/>
-                </button>
-                <div>
-                    <label>Bienvenido {usD.Cod} un gusto verte de nuevo</label>
-                    <label>¿Con cuanto dinero inicias la caja hoy?</label>
+                </button>{/*Borrar este botón*/}
+                <div style={{
+                    padding: '10px',
+                    display: 'flex'
+                }}>
+                    <div style={{
+                        textAlign: 'center',
+                        marginBottom: '10px'
+                    }}>
+                        <label>Bienvenido {usD.Contacto} un gusto verte de nuevo<br/></label>
+                        <label>¿Con cuanto dinero inicias la caja hoy?</label>
+                    </div>
+                    <div>
+                        <label style={{marginRight: '10px'}}>Cantidad:</label>
+                        <TheInput
+                            numType='real'
+                            val={cantidad}
+                            onchange={(e)=>setCantidad(e)}
+                            min={0}
+                        />
+                    </div>
+                    <button className='btnStnd btn1'
+                     onClick={()=>aceptFunction()}
+                     style={{margin: '10px auto auto', fontSize: '17px'}}
+                     >
+                        &#x1F4B0; Registrar dinero en caja</button>
                 </div>
-                <label>Cantidad:</label>
-                <TheInput
-                    numType='real'
-                    val={cantidad}
-                    onchange={(e)=>setCantidad(e)}
-                    min={0}
-                >
-                </TheInput>
-                <button onClick={()=>aceptFunction()}>Aceptar</button>
             </div>
         </div>
     );
