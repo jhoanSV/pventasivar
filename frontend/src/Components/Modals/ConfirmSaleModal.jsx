@@ -246,13 +246,14 @@ export const ConfirmSaleModal = ({show, sendSale , folio , orderslist, width='50
                                     Activo: true
                                     }
                 console.log('orderlist: ', orderslist)
+                const usDdata = usD
                 // Render the component as HTML
-                const ticketHTML = ReactDOMServer.renderToString(<TicketPrint data={orderslist} usD={usD}/>);
+                const ticketHTML = ReactDOMServer.renderToString(<TicketPrint data={orderslist} usD={usDdata}/>);
                 //console.log(ticketHTML)
                 //setShowTicket(true)
                 // Send the HTML to Electron for printing
-                //window.electron.send('print-ticket', ticketHTML);
-                
+                window.electron.send('print-ticket', ticketHTML);
+                //setShowTicket(true);
                 //NewSale(orderslist)
                 //sendSale()
                 show(false)
@@ -365,6 +366,15 @@ export const ConfirmSaleModal = ({show, sendSale , folio , orderslist, width='50
                     </div>
                 </div>
             </div>
+            
+            {showTicket && 
+                <div className="theModalContainer">
+                    <div className="theModal-content">
+                        <TicketPrint data={orderslist} usD={usD}/>
+                    </div>
+
+                </div>
+            }
         </div>
     );
 }
