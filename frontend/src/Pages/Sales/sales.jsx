@@ -295,11 +295,11 @@ export function Sales(){
         item.Cod.toString().toLowerCase().includes(text) ||
         item.Descripcion.toLowerCase().includes(text);
 
-    const SearchHandle = (text) =>{
+    const SearchHandle = (text, sl) =>{
         setSBText((text))
         let c = refList.current;
         if (text !== ''){
-            setInvList(c.filter((i)=>filterByText(i, text)));
+            sl(c.filter((i)=>filterByText(i, text)));
         }else{
             fetchInventoryList();
         }
@@ -420,7 +420,18 @@ export function Sales(){
                 IdFerreteria: usD.Cod,
                 Fecha: new Date().toISOString().split('T')[0],
             })
-            if (cashFlow.length === 0) setShowStartCahs(true);
+            if (cashFlow.length === 0){
+                setShowStartCahs(true);
+                localStorage.setItem('ticketsJson', JSON.stringify(
+                    {
+                        "1": { "Customer": {},
+                                "Order": []
+                        }
+                    }
+                ));
+                setSaleTabs(JSON.parse(localStorage.getItem('ticketsJson')));
+                console.log('ResetTickets and showStarCash');
+            }
         }
         StartCahs()
         return () => {
@@ -438,7 +449,7 @@ export function Sales(){
                         type="text"
                         id='NPinput'
                         placeholder="Codigo del producto"
-                        onChange={(e)=>{SearchHandle((e.target.value).toLowerCase())}}
+                        onChange={(e)=>{SearchHandle((e.target.value).toLowerCase(), setInvList)}}
                         style={{width: '500px'}}
                         onFocus={()=>{setShowFL(true);isEditingRef.current=true}}
                         onBlur={()=>{isEditingRef.current=false}}
@@ -465,9 +476,13 @@ export function Sales(){
                         </div>
                     </CSSTransition>
                 </div>
-                {/*<ModalBusca/>*/}
+                <ModalBusca
+                    list={[...invList]}
+                    click={askToAddProduct}
+                    sh={SearchHandle}
+                />
             </div>
-            <div style={{padding: '0px 70px'}}>
+            <div style={{padding: '20px 70px'}}>
                 <div style={{display: 'flex', gap: '5px', marginTop: '10px'}}>
                     <button
                         className="btnStnd btn1"
@@ -526,12 +541,16 @@ export function Sales(){
                         setSelectedRow={setSelectedfila}
                     />
                 </div>
-                <div>
-                    <button className="btnStnd btn1" onClick={()=>confirmarVenta()}>F2-Cobrar</button>
-                    <label style={{marginLeft: '10px'}}>$ {Formater(total)}</label>
+                <div className='sDetail'>
+                    <div><label>Total &iacute;tems: {orderslist && orderslist.length}</label></div>
+                    <div><label style={{fontSize: '28px'}}>$ {Formater(total)}</label></div>
+                    <div><button className="btnStnd btn1" onClick={()=>confirmarVenta()}>F2-Cobrar</button></div>
+                    <div>
+                        <button className="btnStnd btn1" onClick={()=>setShowSalesOfTheDay(true)}>
+                            Ventas del dia y devoluciones
+                        </button>
+                    </div>
                 </div>
-                <label>{orderslist && orderslist.length} productos en el ticket actual</label>
-                <button className="btnStnd btn1" onClick={()=>setShowSalesOfTheDay(true)}>Ventas del dia y devoluciones</button>
                 { showConfirmar && <ConfirmSaleModal orderslist={saleTabs[currentTab.key]} show={setShowConfirmar} folio={currentTab.key} sendSale={()=>closeTab(currentTab.key, currentTab.index)} totalE={total}/>}
                 { confirmUser && <UserConfirm show={setConfirmUser} confirmed={()=>setChangePventa(selectedfila)}/>}
                 { searchClient && <SignClient show={setSearchClient} retornar={(i)=>AsingCustomerToOrder(i)}/>}

@@ -83,7 +83,7 @@ export const TableComponent = ({data, headers, selected, setSelected, multiSelec
 
     const Formater = (number) =>{
         //it gives a number format
-        if (number === '') return '';
+        if (number === '') return '0';
         const numberString = String(number).replace(/,/g, '.');
         const numberfromat = Number(numberString);
         return Intl.NumberFormat('de-DE').format(numberfromat);
@@ -138,6 +138,8 @@ export const TableComponent = ({data, headers, selected, setSelected, multiSelec
                                             <div className='cellContent'>{item[header['key']]}</div>
                                         :header['type'] === 'coin'?
                                             <div className='cellContent'>$ {Formater(item[header['key']])}</div>
+                                        :header['type'] === 'formater'?
+                                            <div className='cellContent'>{Formater(item[header['key']])}</div>
                                         :header['type'] === 'other' ?
                                             <Other item={item} />
                                         :

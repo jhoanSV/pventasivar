@@ -1,29 +1,30 @@
 import React, { useEffect, useState } from 'react';
 import './_ModalBusca.scss';
 import p_json from '../../products_json_test.json';
+import { BoxItem } from '../Others/BoxItem';
+import { AddPurchaseModal } from './AddPurchaseModal';
 
-export const ModalBusca = ({click=false}) => {
+export const ModalBusca = ({list, click=false, sh}) => {
     
     const [showModalBusca, setShowModalBusca] = useState(false);
     const [limit, setLimit] = useState(0);
-    const [lista, setLista] = useState();
+    const [lista, setLista] = useState([]);
 
-    const P_query = () =>{
+    /*const P_query = () =>{
         setLista(p_json)
-    }
+    }*/
 
-    const clickFunct = () =>{
-        click && click()
+    const clickFunct = (item) =>{
+        (Number(item.Inventario)!==0 && click) ? click(item) : alert('No hay invetario suficiente')
         setShowModalBusca(false)
     }
 
-    const filterByText = (item, text) =>
-        item.cod.toString().includes(text) ||
-        item.cod_de_barras.toLowerCase() === (text) ||
-        item.descripcion.toLowerCase().includes(text);        
+    /*const filterByText = (item, text) =>
+        item.Cod.toString().includes(text) ||
+        item.Descripcion.toLowerCase().includes(text);
 
     const SearchHandle = (text) =>{
-        let c = p_json;
+        let c = [...lista];
         if (text !== ''){
             c = c.filter((i)=>filterByText(i, text))
             setLista(c)
@@ -32,7 +33,7 @@ export const ModalBusca = ({click=false}) => {
             setLista(p_json)
             setLimit(10)
         }
-    }
+    }*/
 
     const observeT2 = () =>{
         if(showModalBusca){
@@ -49,7 +50,8 @@ export const ModalBusca = ({click=false}) => {
     useEffect(() => {
         setLimit(20);
         observeT2();
-        P_query();
+        setLista(list);
+        //P_query();
         // eslint-disable-next-line
     }, [showModalBusca]);
 
@@ -69,33 +71,19 @@ export const ModalBusca = ({click=false}) => {
                             <input
                                 type='text'
                                 placeholder='Buscar'
-                                onChange={(e)=>{SearchHandle((e.target.value).toLowerCase())}}
+                                onChange={(e)=>{sh((e.target.value).toLowerCase(), setLista)}}
                             />
                             <div className="productsContainer MB">
                                 {
                                     lista.slice(0,limit).map((product, index) => {
                                         return (
-                                            <div key={index} style={{position: 'relative', width: '154px', height: '200px'}}>
-                                                <div className='caja-product' onClick={()=>{clickFunct()}}>
-                                                    <div className="detailBox">
-                                                        <div className='MBimgContainer'>
-                                                            <picture>
-                                                                {/* {<source
-                                                                    type="image/avif"
-                                                                    //srcSet={imgSrc}
-                                                                />} */}
-                                                                <img
-                                                                    //src='https://random-image-pepebigotes.vercel.app/api/random-image'
-                                                                    src='https://picsum.photos/200/300'
-                                                                    alt="imgProducto"
-                                                                    decoding="async"
-                                                                />
-                                                            </picture>
-                                                        </div>
-                                                        <strong>{product.descripcion}</strong>
-                                                    </div>
-                                                </div>
-                                            </div>
+                                            <BoxItem
+                                                key={index+''+product.Cod}
+                                                Codigo={product.Cod}
+                                                Descripcion={product.Descripcion}
+                                                Agotado={product.Agotado}
+                                                simpleFunct={()=>clickFunct(product)}
+                                            />
                                         );
                                     })
                                 }

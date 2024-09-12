@@ -14,7 +14,7 @@ export function Inventory(){
     const [inventoryCost, setInventoryCost] = useState(0);
     const refList = useRef([]);
     //const [multiSelect, setMultiSelect] = useState(false);
-    const { setSection, usD } = useTheContext();
+    const { setSection, usD, setSomeData } = useTheContext();
 
     const InvHeaders = [
         {
@@ -51,19 +51,19 @@ export function Inventory(){
             header: 'Existencia',
             key: 'Inventario',
             defaultWidth: '0px',
-            type: 'text',
+            type: 'formater',
         },
         {
             header: 'Inv. minimo',
             key: 'InvMinimo',
             defaultWidth: '0px',
-            type: 'text',
+            type: 'formater',
         },
         {
             header: 'Inv. maximo',
             key: 'InvMaximo',
             defaultWidth: '0px',
-            type: 'text',
+            type: 'formater',
         }
     ]
 
@@ -90,15 +90,21 @@ export function Inventory(){
     };
 
     const DeleteFunction = () =>{
-        alert('eliminando jsjs')        
+        console.log(selected[0]);
+        if(selected[0].Inventario > 0){
+            alert('No se puede eliminar un producto con existencias');
+        }else{
+            alert('Esta característica aún no está disponible');
+        }
     }
 
-    const deselect = () =>{
-        setSelected([])
-    }
+    // const deselect = () =>{
+    //     setSelected([])
+    //? para después}
 
     const verFunction = () =>{
-        navigate('/Products', { state: selected[0] })
+        setSomeData({...selected[0]});
+        navigate('/NewProduct');
     }
 
     const fetchInvList = async() =>{
@@ -147,7 +153,7 @@ export function Inventory(){
                 />
                 <button className='btnStnd btn1'
                     style={{marginLeft: '20px'}}
-                    onClick={()=>{navigate('/LowInv')}}
+                    onClick={()=>{navigate('/LowInv'); setSection('Bajos de inventario')}}
                 >
                     Bajos en inventario
                 </button>
@@ -163,19 +169,21 @@ export function Inventory(){
                     </button> */}
                 {/* </div> */}
                 <div className=''>
-                    <button className='btn1Stnd' onClick={()=>(deselect())}
+                    {/* {<button className='btn1Stnd' onClick={()=>(deselect())}
                         disabled={selected.length === 0}>
                         <i className='bi bi-x'/>
                     </button>
                     <label style={{marginRight: '8px', padding: '3px', color: selected.length === 0 ? 'rgb(183 183 183)' : 'black'}}>
                         Seleccionados: {selected.length}
-                    </label>
+                    </label>} //?Para después */}
                     <button className='btn1Stnd' onClick={()=>(verFunction())}
-                        disabled={(selected.length === 0 || selected.length > 1)}>
+                        disabled={(selected.length === 0 || selected.length > 1)}
+                        style={{fontSize: '22px'}}>
                         <i className='bi bi-eye-fill'/>
                     </button>
                     <button className='btn1Stnd' onClick={()=>(DeleteFunction())}
-                        disabled={selected.length === 0}>
+                        disabled={selected.length === 0}
+                        style={{fontSize: '22px'}}>
                         <i className='bi bi-trash-fill'/>
                     </button>
                     {/*<input id='checkmlsct' type="checkbox" className="" onChange={()=>{setMultiSelect(a=>!a);setSelected([])}}/>
@@ -193,6 +201,7 @@ export function Inventory(){
                     headers={InvHeaders}
                     selected={selected}
                     setSelected={setSelected}
+                    doubleClickFunct={verFunction}
                     multiSelect={false}
                 />
             </div>

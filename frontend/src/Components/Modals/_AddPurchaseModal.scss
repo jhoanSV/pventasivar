@@ -47,6 +47,17 @@ input[type=number]::-webkit-outer-spin-button
     }
 }
 
+.soldOutMod{
+    position: absolute;
+    padding: 0px 111px;
+    color: #FF4A4A;
+    font-weight: 700;
+    background-color: rgba(255, 0, 0, 0.34);
+    transform: translate(-50%, -50%) rotate(-45deg);
+    top: 20%;
+    left: 20%;
+}
+
 .imgWB{
     display: flex;
     justify-content: center;
@@ -54,17 +65,17 @@ input[type=number]::-webkit-outer-spin-button
     padding: 10px;
     position: relative;
     picture{
+        position: relative;
         overflow: hidden;
         display: flex;
-        width: 90%;
+        width: 70%;
     }
     img{
         aspect-ratio: 1 / 1;
-        width: 80%;
-        margin: auto;
         border: solid;
         border-radius: 25%;
         object-fit: contain;
+        width: 100%;
     }
 }
 
@@ -100,5 +111,9 @@ input[type=number]::-webkit-outer-spin-button
                 width: 100%;
             }
         }
+    }
+    .soldOutMod{
+        top: 30%;
+        left: 30%;
     }
 }

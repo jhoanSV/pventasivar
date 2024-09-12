@@ -39,9 +39,10 @@ export const Newproduct = () => {
     const calpctC = (e) => {
         let thePcosto = Number(e.replace(/[.,]/g, (a) => (a === "," && ".")));
         let thePventa = Number(productData.PVenta.replace(/[.,]/g, (a) => (a === "." ? "" : ".")))
-        let pct = (((thePventa - thePcosto) / thePcosto) * 100).toFixed(2).toString();
-        pct = pct.replace(/\./g, ',');
-        setpctGan(pct);
+        let pct = ((thePventa - thePcosto) / thePcosto) * 100;
+        pct = pct % 1 === 0 ? pct : pct.toFixed(2);
+        //pct = pct.replace(/\./g, ',');
+        setpctGan(Formater(pct));
     }
     
     const calpventa = (e) => {
@@ -54,9 +55,10 @@ export const Newproduct = () => {
     const calpctV = (e) => {
         let thePventa = Number(e.replace(/[.,]/g, (a) => (a === "," && ".")));
         let thePcosto = Number(productData.PCosto.replace(/[.,]/g, (a) => (a === "." ? "" : ".")))
-        let pct = (((thePventa - thePcosto) / thePcosto) * 100).toFixed(2).toString();
-        pct = pct.replace(/\./g, ',');
-        setpctGan(pct);
+        let pct = (((thePventa - thePcosto) / thePcosto) * 100)
+        pct = pct % 1 === 0 ? pct : pct.toFixed(2);
+        //pct = pct.replace(/\./g, ',');
+        setpctGan(Formater(pct));
     }
 
     const changeValuesProducts = (key, value) => {
@@ -97,7 +99,6 @@ export const Newproduct = () => {
     };
 
     const Formater = (number) => {
-        if (!number) return ''
         let thenumber = typeof (number) === 'number' ? number.toString() : number
         //it gives a number format
         console.log(thenumber);
@@ -189,6 +190,7 @@ export const Newproduct = () => {
         a.Motivo = "Nuevo producto al inventario";
         // *----------------------------------------
         a.Iva = 19 //* En discusión 
+        console.log(a);
         const res = await NuevoProducto(a);
         console.log(res);
         if(res && res.message === 'Transacción completada con éxito'){
@@ -264,14 +266,14 @@ export const Newproduct = () => {
         if (someData) {
             let data = { ...someData }
             if (data.PVenta && data.PCosto) {
-                let pct = (((data.PVenta - data.PCosto) / data.PCosto) * 100).toFixed(2).toString();
-                pct = pct.replace(/\./g, ',');
-                setpctGan(pct);
+                let pct = ((data.PVenta - data.PCosto) / data.PCosto) * 100
+                pct = pct % 1 === 0 ? pct : pct.toFixed(2);
+                //pct = pct.replace(/\./g, ',');
+                setpctGan(Formater(pct));
             }
             if (data.Medidas.length !== 0){
                 data.Medidas.forEach((medida) => {
-                    let pctum = (medida.PVentaUM - data.PCosto/medida.UMedida) / (data.PCosto/medida.UMedida) * 100
-                    console.log(data.PCosto, medida.UMedida, );
+                    let pctum = (medida.PVentaUM - data.PCosto/medida.UMedida) / (data.PCosto/medida.UMedida) * 100;
                     pctum = pctum % 1 === 0 ? pctum : pctum.toFixed(2);
                     medida.pctUM = Formater(pctum);
                     medida.UMedida = Formater(medida.UMedida);
@@ -347,12 +349,15 @@ export const Newproduct = () => {
                     <div className='Colmn1'>
                         <label>% ganancia</label>
                     </div>
-                    <div className='Colmn2'>
+                    <div className='Colmn2' style={{position: 'relative'}}>
                         <TheInput
                             val={pctGan}
                             numType={'real'}
                             onchange={(e) => { setpctGan(e); calpventa(e) }}
                         />
+                        <span style={{position: 'absolute', top: '6px', left: 3+pctGan.length+'%'}}>
+                            %
+                        </span>
                     </div>
                 </div>
                 <div className='Row'>
@@ -487,7 +492,7 @@ export const Newproduct = () => {
                         </div>
                         <div className='Colmn2'>
                             {modificarProducto ?
-                                <label>{productData.Inventario}</label>
+                                <label>{Formater(productData.Inventario)}</label>
                                 :
                                 <TheInput
                                     val={productData.Inventario}

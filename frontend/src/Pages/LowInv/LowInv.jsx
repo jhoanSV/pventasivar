@@ -9,7 +9,7 @@ import { ShoppingList } from '../../api';
 
 export const LowInv = () => {
     
-    const { usD, section } = useTheContext();
+    const { usD, section, setSection } = useTheContext();
     const navigate = useNavigate()
     const [lista, setLista] = useState();
     //const [imgSrc, setImgSrc] = useState();
@@ -39,11 +39,16 @@ export const LowInv = () => {
             "Compras": section === 'Nueva Compra' ? true : section === 'Bajos de inventario' ? false : true
         })
         if(shppList){
-            setLista(shppList);
-            refList.current = shppList;
+            if(section!=='Bajos de inventario') setSection('Nueva Compra');
+            const a = shppList.filter(obj => obj.SVenta === 1);
+            const b = shppList.filter(obj => obj.SVenta !== 1);
+
+            // Concatenar los arrays para tener los de SVenta: 1 primero
+            const ab = [...a, ...b];
+            setLista(ab);
+            refList.current = ab;
+            console.log(ab);
         }
-        console.log('a: ', shppList);
-        //setLista(p_json)
     }    
 
     const observeT3 = () =>{
@@ -90,7 +95,8 @@ export const LowInv = () => {
                                     key={index+''+product.Cod}
                                     Codigo={product.Cod}
                                     Descripcion={product.Descripcion}
-                                    IdFerreteria={product.IdFerreteria}
+                                    SVenta={product.SVenta}
+                                    Agotado={product.Agotado}
                                     showModal={(show, theImg)=><AddPurchaseModal
                                         P={product}
                                         Show={show}

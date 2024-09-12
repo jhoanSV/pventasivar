@@ -1,13 +1,15 @@
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import './_BoxItem.scss';
 import imgPlaceHolder from '../../Assets/AVIF/placeHolderProduct.avif';
 import { useTheContext } from '../../TheProvider';
 
-export const BoxItem = ({Codigo, Descripcion, simpleFunct, showModal, IdFerreteria}) => {
+export const BoxItem = ({Codigo, Descripcion, simpleFunct, showModal, SVenta, Agotado}) => {
 
     const [show, setShow] = useState(false);
     
     const [img, setImg] = useState(`https://sivarwebresources.s3.amazonaws.com/AVIF/${Codigo}.avif`);
+
+    const theCaja = useRef();
 
     const {section, } = useTheContext();
 
@@ -15,7 +17,7 @@ export const BoxItem = ({Codigo, Descripcion, simpleFunct, showModal, IdFerreter
         if(simpleFunct){
             simpleFunct();
         }
-        if((showModal && (IdFerreteria === 0)) || (section==='Nueva Compra')){
+        if((showModal && (SVenta === 1)) || (section==='Nueva Compra')){
             document.body.classList.add('modalOpen');
             setShow(true);
         }
@@ -23,8 +25,16 @@ export const BoxItem = ({Codigo, Descripcion, simpleFunct, showModal, IdFerreter
 
     return (
         <>
-            <div style={{position: 'relative', width: '154px', height: '200px'}}>
+            <div ref={theCaja} style={{position: 'relative', width: '154px', height: '200px'}}>
                 <div className='caja-product' onClick={()=>{handleClickBox()}}>
+                    { Agotado ?
+                        <div className='soldOutLI' style={{
+                            fontSize: (theCaja.current ? theCaja.current.clientWidth - 30 : 0)+'%'}}>
+                            AGOTADO
+                        </div>
+                    :
+                        <></>
+                    }
                     <div className='detailBox'>
                         <div className='BimgContainer'>
                             <picture>

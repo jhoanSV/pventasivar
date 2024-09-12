@@ -42,7 +42,8 @@ export const StartOfCash = ({show, aceptar}) => {
                 </button>{/*Borrar este botón*/}
                 <div style={{
                     padding: '10px',
-                    display: 'flex'
+                    display: 'flex',
+                    flexDirection: 'column'
                 }}>
                     <div style={{
                         textAlign: 'center',

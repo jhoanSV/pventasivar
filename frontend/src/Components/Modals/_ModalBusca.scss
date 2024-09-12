@@ -2,4 +2,11 @@
     height: 86%;
     overflow-y: auto;
     margin-top: 10px;
+    box-shadow: unset;
+    border-radius: unset;
+    border-top: solid 1px;
+    border-bottom: solid 1px;
+    & > div:has(.caja-product){
+        margin: 0 2% 2% 2%;
+    }
 }
