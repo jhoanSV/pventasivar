@@ -11,6 +11,18 @@
     & > div:has(.caja-product){
         margin: 0 3% 3% 3%;
     }
+    & > div:has(.caja-product.caja-productHover):hover {
+        position: absolute;
+        transform: scale(1.025);
+        z-index: 9;
+        .caja-product{
+            max-height: unset;
+        }
+        .detailBox{
+            -webkit-line-clamp: unset;
+            line-clamp: unset;
+        }
+    }
 }
 
 .caja-product{
@@ -21,7 +33,6 @@
     min-height: 200px;
     border: solid 1px black;
     background-color: #f2f2f2;
-    cursor: pointer;
     overflow: hidden;
     .detailBox{
         overflow: hidden;
@@ -29,16 +40,6 @@
         -webkit-line-clamp: 3;
         line-clamp: 3;
         -webkit-box-orient: vertical;
-    }
-    &:hover{
-        position: absolute;
-        transform: scale(1.025);
-        z-index: 9;
-        max-height: unset;
-        .detailBox{
-            -webkit-line-clamp: unset;
-            line-clamp: unset;
-        }
     }
 }
 
@@ -60,4 +61,10 @@
     transform: translate(-50%, -50%) rotate(-45deg);
     top: 20%;
     left: 26%;
+}
+
+.LowInvSpanner{
+    position: absolute;
+    right: -18%;
+    bottom: -12%;
 }

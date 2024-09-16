@@ -26,7 +26,8 @@ export const BoxItem = ({Codigo, Descripcion, simpleFunct, showModal, SVenta, Ag
     return (
         <>
             <div ref={theCaja} style={{position: 'relative', width: '154px', height: '200px'}}>
-                <div className='caja-product' onClick={()=>{handleClickBox()}}>
+                <div className={`caja-product ${(SVenta===1 || (section==='Nueva Compra')) && 'caja-productHover'}`} onClick={()=>{handleClickBox()}}
+                    style={{cursor: (SVenta === 1 || (section==='Nueva Compra')) && 'pointer'}}>
                     { Agotado ?
                         <div className='soldOutLI' style={{
                             fontSize: (theCaja.current ? theCaja.current.clientWidth - 30 : 0)+'%'}}>
@@ -53,6 +54,24 @@ export const BoxItem = ({Codigo, Descripcion, simpleFunct, showModal, SVenta, Ag
                         <strong>{Descripcion}</strong>
                     </div>
                 </div>
+                {SVenta===1 ? 
+                    <div className='LowInvSpanner'>
+                        <picture>
+                            <source
+                                type="image/avif"
+                                srcSet={require('../../Assets/AVIF/LlaveSivar.avif')}
+                            />
+                            <img
+                                width={'45px'}
+                                alt="LogoSivar"
+                                decoding="async"
+                            />
+                        </picture>
+                    </div>
+                :
+                    <>
+                    </>
+                }
             </div>
             {show && showModal(setShow, img)}
         </>
