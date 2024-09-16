@@ -7,6 +7,7 @@ import jsonTest from '../../sales_per_day.json';
 import { SalesPerDay, CancelTheSale } from '../../api';
 import { ReturnProduct } from './ReturnProduct';
 import { UserConfirm } from './UserConfirm';
+import { TokenV } from '../../App';
 
 
 export const SalesOfTheDay = ({show, orderslist, width='90%', height='90%'}) => {
@@ -20,7 +21,7 @@ export const SalesOfTheDay = ({show, orderslist, width='90%', height='90%'}) => 
     const [ headerSales, setHeaderSales ] = useState(null);
     const [ dateSearch, setDateSearch ] = useState(new Date());
     const [ showConfirm, setShowConfirm ] = useState(false);
-    const { setSection, setSomeData, usD } = useTheContext();
+    const { setSection, setSomeData, usD, setLogged } = useTheContext();
     // for the tables of the order and the selected order
     const isEditingRef = useRef(false);
     const ordersRef = useRef([]);
@@ -83,6 +84,7 @@ export const SalesOfTheDay = ({show, orderslist, width='90%', height='90%'}) => 
     
 
     const getOrdersPerday = async() => {
+        TokenV({ IdFerreteria: usD.Cod }, usD.token, setLogged)
         const now = new Date();
         // Obtener la fecha en formato YYYY-MM-DD
         const date = now.toISOString().split('T')[0];

@@ -1,7 +1,9 @@
 import React from 'react';
 import './_TicketPrint.scss';
+import QRCode from 'react-qr-code';
 
-export const TicketPrint = ({data, usD}) => {
+
+export const TicketPrint = ({data, usD, Electronic = false}) => {
 
     const Formater = (number) =>{
         if (number === '') return '';
@@ -16,12 +18,18 @@ export const TicketPrint = ({data, usD}) => {
 
     data.Order.forEach(detail => {
         total += detail.PVenta * detail.Cantidad;
-        base += (detail.PCosto * detail.Cantidad)/(1+detail.Iva);
-        iva += ((detail.PCosto * detail.Cantidad)/(1+detail.Iva)) * detail.Iva;
+        base += (detail.PCosto * detail.Cantidad)/(1+(detail.Iva/100));
+        iva += ((detail.PCosto * detail.Cantidad)/(1+(detail.Iva/100))) * (detail.Iva/100);
     });
 
+    let CufeQR = '';
+
+    if (Electronic) {
+        CufeQR = 'https://catalogo-vpfe.dian.gov.co/document/ShowDocumentToPublic/' + data.Result.CufeCude;
+    }
+
     return (
-        <div id="ticket-content" style={{ marginLeft: -6, width: '243px'}}>
+        <div id="ticket-content" style={{ marginLeft: -7, width: '243px'}}>
             <div style={{textAlign: 'Center'}}>
                 <label style={{display: 'block'}}><strong>{usD.Ferreteria}</strong></label>
                 <label style={{display: 'block'}}><strong>{usD.Cel}</strong></label>
@@ -37,6 +45,11 @@ export const TicketPrint = ({data, usD}) => {
                 <label style={{display: 'block'}}><strong>E-Mail:</strong> {data.Customer.Correo}</label>
                 <label style={{display: 'block'}}><strong>Telefono:</strong> {data.Customer.Telefono1}</label>
             </div>
+            {Electronic &&
+                <div style={{textAlign: 'Center'}}>
+                    <label><strong>Factura electronica de venta</strong></label>
+                </div>
+            }
             <table>
                 <thead>
                     <tr>
@@ -55,7 +68,7 @@ export const TicketPrint = ({data, usD}) => {
                     ))}
                 </tbody>
             </table>
-            <div style={{display: 'flex', justifyContent: 'space-between'}}>
+            <div style={{display: 'flex', justifyContent: 'space-between', paddingRight: '15px'}}>
                 <div id='Colt1'>
                     <label style={{display: 'block', fontWeight: 'bold'}}><strong>Total:</strong></label>
                     <label style={{display: 'block', fontWeight: 'bold'}}><strong>Efectivo:</strong></label>
@@ -63,16 +76,49 @@ export const TicketPrint = ({data, usD}) => {
                     <label style={{display: 'block', fontWeight: 'bold'}}><strong>Cambio:</strong></label>
                 </div>
                 <div id='Colt2'>
-                    <label style={{display: 'block'}}>${Formater(total)}</label>
-                    <label style={{display: 'block'}}>${Formater(data.RCData.Efectivo)}</label>
-                    <label style={{display: 'block'}}>${Formater(data.RCData.Transferencia)}</label>
-                    <label style={{display: 'block'}}>${Formater(data.RCData.Efectivo)}</label>
+                    <label style={{display: 'block'}}>${Formater(total.toFixed(2))}</label>
+                    <label style={{display: 'block'}}>${Formater(data.RCData.Efectivo.toFixed(2))}</label>
+                    <label style={{display: 'block'}}>${Formater(data.RCData.Transferencia.toFixed(2))}</label>
+                    <label style={{display: 'block'}}>${Formater(data.RCData.Efectivo.toFixed(2))}</label>
                 </div>
             </div>
+            {Electronic && 
+            <div>
+                <div>
+                    <div style={{textAlign: 'Center'}}>
+                        <label style={{display: 'block'}}><strong>Impuestos</strong></label>
+                    </div>
+                    <div style={{display: 'flex', justifyContent: 'space-between', paddingRight: '15px'}}>
+                        <div>
+                            <label style={{display: 'block'}}><strong>Total bruto:</strong></label>
+                            <label style={{display: 'block'}}><strong>Iva:</strong></label>
+                        </div>
+                        <div>
+                            <label style={{display: 'block'}}>${Formater(base)}</label>
+                            <label style={{display: 'block'}}>${Formater(iva)}</label>
+                        </div>
+                    </div>
+                </div>
+                <div style={{textAlign: 'Center'}}>
+                    <label style={{display: 'block'}}><strong>CUFE</strong></label>
+                    <label style={{display: 'block', width: '90%',whiteSpace: 'normal', wordWrap: 'break-word'}}>{data.Result.CufeCude}</label>
+                    <QRCode
+                        size={256}
+                        style={{ height: "auto", maxWidth: "100%", width: "80%" }}
+                        value={CufeQR}
+                        viewBox={`0 0 230 230`}
+                    />
+                    <label style={{display: 'block'}}>Resolución con fecha de expedición</label>
+                    <label style={{display: 'block'}}>Factura generada por COLTEK</label>
+                    <label style={{display: 'block'}}>www.coltek.com.co</label>
+                </div>
+            </div>}
             <div style={{textAlign: 'Center'}}>
                 <label style={{display: 'block'}}>En alianza con</label>
                 <label style={{display: 'block'}}>www.sivar.com.co</label>
-                <label style={{display: 'block'}}><strong>Este ticket No constituye una factura electronica</strong></label>
+                {!Electronic && 
+                    <label style={{display: 'block'}}><strong>Este ticket No constituye una factura electronica</strong></label>
+                }
             </div>
         </div>
     )

@@ -4,7 +4,7 @@ import { Header } from './Layouts';
 import { Login } from './Pages';
 import { Routes } from "./Routes";
 import { useTheContext } from './TheProvider';
-import { ProductList } from './api';
+import { ProductList, VerifyToken } from './api';
 
 export const Formater = (number) =>{
   //it gives a number format
@@ -14,6 +14,12 @@ export const Formater = (number) =>{
   return Intl.NumberFormat('de-DE').format(numberfromat);
 };
 
+export const TokenV = async (dataToken, token, setL) =>{
+  const allow = await VerifyToken(dataToken, token)
+  if(allow.authorization === false) {
+    setL(false)
+  }
+}
 export const App = () => {
   
   const { logged, someData, setNItemsCart, setProductCodes, usD } = useTheContext();
