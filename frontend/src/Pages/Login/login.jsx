@@ -1,7 +1,7 @@
 import React, {useEffect, useState } from 'react';
 import "./_login.scss";
 import { useTheContext } from '../../TheProvider';
-import { SubCategories, validateUser } from '../../api';
+import { SubCategories, validateUser, LoginPos } from '../../api';
 import pckjson from '../../../package.json';
 import { TheAlert } from '../../Components/TheAlert';
 
@@ -28,8 +28,7 @@ export function Login(){
             "Asesor": "Gerson"
         })
         return;*/
-        //*-----------------
-        const userData = await validateUser({
+        const userData = await LoginPos({
             "EmailUser": inputData1,
             "Password": inputData2
         });

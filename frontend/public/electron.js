@@ -43,9 +43,36 @@ function createWindow() {
   //mainWindow.loadURL("http://localhost:" + PORT);
   //a mainWindow.loadURL("http://localhost:" + PORT);
   // Open the DevTools.
-  // mainWindow.webContents.openDevTools()
+  mainWindow.webContents.openDevTools()
 }
 
+
+//* For the print command ********************************
+// Handle printing request from renderer process
+ipcMain.on('print-ticket', (event, ticketHTML) => {
+  const printWindow = new BrowserWindow({
+    show: false,
+    webPreferences: {
+      nodeIntegration: true,
+    }
+  });
+
+  // Load the HTML content into the hidden window
+  printWindow.loadURL(`data:text/html;charset=utf-8,${encodeURIComponent(ticketHTML)}`);
+
+  // Print the content once it's fully loaded
+  printWindow.webContents.on('did-finish-load', () => {
+    printWindow.webContents.print({
+      silent: true, // Impresión en silencio, sin diálogo emergente
+      printBackground: true // Para imprimir con fondo, si lo hay
+    }, () => {
+      // Una vez impreso, cerrar la ventana invisible
+      printWindow.close();
+    });
+  });
+});
+
+//* For the update process ********************************
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
@@ -97,3 +124,4 @@ app.on("window-all-closed", function () {
 
 // In this file you can include the rest of your app's specific main process
 // code. You can also put them in separate files and require them here.
+

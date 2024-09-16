@@ -2,6 +2,8 @@ import React, {useState, useEffect} from 'react';
 import { TheInput } from '../../Components/InputComponent/TheInput';
 import { useTheContext } from '../../TheProvider';
 import { NewSale } from '../../api';
+import { TicketPrint } from '../TickerPrint';
+import ReactDOMServer from 'react-dom/server';
 import './_ConfirmSaleModal.scss';
 import { TheAlert } from '../TheAlert';
 
@@ -12,6 +14,8 @@ export const ConfirmSaleModal = ({show, sendSale , folio , orderslist, width='50
     const [ total, setTotal] = useState(0)
     const [ tipoDePago, setTipoDePago] = useState("Efectivo");
     const [ referencia, setReferencia] = useState('');
+    const [ showTicket, setShowTicket] = useState(false)
+    const [ electronic, setElectronic ] = useState(false);
     const { setSection, setSomeData, usD } = useTheContext();
 
     useEffect(() => {
@@ -87,136 +91,70 @@ export const ConfirmSaleModal = ({show, sendSale , folio , orderslist, width='50
         const date = now.toISOString().split('T')[0];
         // Obtener la hora en formato HH:MM:SS
         const time = now.toTimeString().split(' ')[0];
-        /*{
-            "Ambiente": 2,
-            "Resolucion": {
-                "NumeroResolucion": "18760000001",
-                "FechaInicio": "2019-01-19",
-                "FechaFinal": "2030-01-19",
-                "Prefijo": "SETP",
-                "NumeroInicial": "990000000",
-                "NumeroFinal": "995000000",
-                "ClaveTecnica": "fc8eac422eba16e22ffd8c6f94b3f40a6e38162c"
-            },
-            "Factura": "SETP990000001",
-            "Fecha": date,
-            "Hora": "09:00:00-05:00",
-            "Observacion": "Observacion",
-            "FormaDePago": "1",
-            "MedioDePago": "41",
-            "FechaVencimiento": "2019-06-30",
-            "CantidadArticulos": orderslist.Order.length,
-            "Cliente": {
-                "TipoPersona": 1,
-                "NombreTipoPersona": "Persona Jurídica",
-                "TipoDocumento": 31,
-                "NombreTipoDocumento": "Documento de identificación extranjero",
-                "Documento": 900108281,
-                "Dv": 3,
-                "NombreComercial": "OPTICAS GMO COLOMBIA SAS",
-                "RazonSocial": "OPTICAS GMO COLOMBIA SAS",
-                "Telefono": "123123",
-                "Correo": "example@gmail.com",
-                "Departamento": {
-                "Codigo": 11,
-                "Nombre": "Bogota"
-                },
-                "Ciudad": {
-                "Codigo": 11001,
-                "Nombre": "Bogota, DC."
-                },
-                "Direccion": "CARRERA 8 No 20-14/40",
-                "ResponsabilidadFiscal": "R-99-PN",
-                "DetallesTributario": {
-                "Codigo": "01",
-                "Nombre": "IVA"
-                }
-            },
-            "Impuestos": {
-                "IVA": {
-                "Codigo": "01",
-                "Total": total - total/1.19,
-                "porcentajes": [
-                    {
-                    "porcentaje": "19",
-                    "Base": total/1.19,
-                    "Total": total - total/1.19
-                    }
-                ]
-                }
-            },
-            "Totales": {
-                "Bruto": total/1.19,
-                "BaseImpuestos": total/1.19,
-                "Descuentos": 1000, //Preguntar que es esto
-                "Cargos": 1000, //Preguntar que es esto
-                "APagar": total,
-                "Impuestos": total - total/1.19
-            },
-            "Articulos": [
-                {
-                "CodigoInterno": "1111",
-                "Nombre": "Articulo 1",
-                "Cantidad": 1,
-                "PrecioUnitario": 10000,
-                "Total": 8403.36,
-                "Regalo": "false",
-                "DescuentoYRecargos": [
-                    {
-                    "Recargo": "false",
-                    "Observacion": "Recargo por domicilios",
-                    "Porcentaje": 10,
-                    "Base": 8403.36,
-                    "Total": 840.34
-                    },
-                    {
-                    "Recargo": "true",
-                    "Observacion": "descuento por cliente vip",
-                    "Porcentaje": 10,
-                    "Base": 8403.36,
-                    "Total": 840.34
-                    }
-                ],
-                "Impuestos": {
-                    "IVA": {
-                    "Codigo": "01",
-                    "Total": 1596.64,
-                    "porcentajes": [
-                        {
-                        "porcentaje": "19",
-                        "Base": 8403.36,
-                        "Total": 1596.64
-                        }
-                    ]
-                    }
-                }
-                }
-            ]
-            }*/
+        if (tipoDePago !== 'Efectivo' &&  referencia === '') {
+            TheAlert('Debe ingresar una referencia para este tipo de pago')
+        } else if (efectivo === 0 && transferencia === '') {
+            TheAlert('Debe ingresar el efectivo o la transferencia para este tipo de pago')
+        } else {
+            orderslist.RCData = {IdFerreteria: usD.Cod,
+                                CodResponsable: usD.Cod,
+                                Responsable: usD.Contacto,
+                                Folio: folio,
+                                Fecha: date + ' ' + time,
+                                Referencia: referencia,
+                                MedioDePago: tipoDePago,
+                                Efectivo: efectivo,
+                                Transferencia: transferencia,
+                                Motivo: "Venta por caja",
+                                Comentarios: '',
+                                Activo: true
+                                }
+            console.log('orderlist: ', orderslist)
+            NewSale(orderslist)
+            sendSale()
+            show(false)
+        }
+    }
+    
 
-            if (tipoDePago !== 'Efectivo' &&  referencia === '') {
-                TheAlert('Debe ingresar una referencia para este tipo de pago')
-            } else { if (efectivo === 0 && transferencia === '') {
-                TheAlert('Debe ingresar el efectivo o la transferencia para este tipo de pago')} else {
-                    orderslist.RCData = {IdFerreteria: usD.Cod,
-                                        CodResponsable: usD.Cod,
-                                        Responsable: usD.Contacto,
-                                        Folio: folio,
-                                        Fecha: date + ' ' + time,
-                                        Referencia: referencia,
-                                        MedioDePago: tipoDePago,
-                                        Efectivo: efectivo,
-                                        Transferencia: transferencia,
-                                        Motivo: "Venta por caja",
-                                        Comentarios: '',
-                                        Activo: true
-                                        }
-                    console.log('orderlist: ', orderslist)
-                    NewSale(orderslist)
-                    sendSale()
-                    show(false)
-                }
+    const printOrder = async() => {
+        const now = new Date();
+        // Obtener la fecha en formato YYYY-MM-DD
+        const date = now.toISOString().split('T')[0];
+        // Obtener la hora en formato HH:MM:SS
+        const time = now.toTimeString().split(' ')[0];
+        
+        if (tipoDePago !== 'Efectivo' &&  referencia === '') {
+            TheAlert('Debe ingresar una referencia para este tipo de pago')
+        } else { if (efectivo === 0 && transferencia === '') {
+            TheAlert('Debe ingresar el efectivo o la transferencia para este tipo de pago')} else {
+                orderslist.RCData = {IdFerreteria: usD.Cod,
+                                    CodResponsable: usD.Cod,
+                                    Responsable: usD.Contacto,
+                                    Folio: folio,
+                                    Fecha: date + ' ' + time,
+                                    Referencia: referencia,
+                                    MedioDePago: tipoDePago,
+                                    Efectivo: efectivo,
+                                    Transferencia: transferencia,
+                                    Motivo: "Venta por caja",
+                                    Comentarios: '',
+                                    Activo: true
+                                    }
+                orderslist.Electronic = electronic
+                console.log('orderlist: ', orderslist)
+                const usDdata = usD
+                const sendedOrden = await NewSale(orderslist)
+                //console.log('Sended orden: ', sendedOrden)
+                // Render the component as HTML
+                const ticketHTML = ReactDOMServer.renderToString(<TicketPrint data={sendedOrden} usD={usDdata} Electronic={electronic}/>);
+                //Send the HTML to Electron for printing
+                window.electron.send('print-ticket', ticketHTML);
+                //setShowTicket(true);
+                //sendSale()
+                show(false)
             }
+        }
     }
 
     return (
@@ -312,7 +250,7 @@ export const ConfirmSaleModal = ({show, sendSale , folio , orderslist, width='50
                                 <button className="btnStnd btn1" onClick={()=>chargeTheOrder()}>Solo cobrar</button>
                             </div>
                             <div>
-                                <button className="btnStnd btn1" onClick={()=>{}}>Cobrar e imprimir</button>
+                                <button className="btnStnd btn1" onClick={()=>printOrder()}>Cobrar e imprimir</button>
                             </div>
                             <div>
                                 <label>Total de articulos:</label>
@@ -324,6 +262,15 @@ export const ConfirmSaleModal = ({show, sendSale , folio , orderslist, width='50
                     </div>
                 </div>
             </div>
+            
+            {showTicket && 
+                <div className="theModalContainer">
+                    <div className="theModal-content">
+                        <TicketPrint data={orderslist} usD={usD} Electronic={electronic}/>
+                    </div>
+
+                </div>
+            }
         </div>
     );
 }

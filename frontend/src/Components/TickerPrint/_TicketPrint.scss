@@ -1,0 +1,30 @@
+.rowsPrint {
+    display: flex;
+    flex-direction: column;
+}
+
+#ticket-content {
+    margin-left: -3;
+}
+
+#Colt1 label{
+    display: block;
+    font-weight: bold;
+}
+
+#Colt2 label{
+    display: block;
+}
+
+#rowsPrint {
+    display: flex;
+    justify-content: space-between;
+}
+
+.rowsCenter {
+    text-align: center;
+    label{
+        display: block;
+    }
+
+}

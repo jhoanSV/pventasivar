@@ -41,7 +41,49 @@ export const Changepassword = async(validateValueUser) => {
         })
         return await res.json()
     }catch(error) {
-        console.log(error)
+        console.log('TheError: '+ error)
+    }
+}
+
+export const LoginPos = async(validateValueUser) => {
+    /*Validate the user information and if it's correct return the data of the user
+    you have to send a json of the form:
+    {
+        "EmailUser": "Pruebausuario1@gmail.com",
+        "Password": "123456789"
+    }
+    */
+    try {
+        const res = await fetch(`${API}/loginPos`,{
+            method: 'POST',
+            headers: { Accept: 'application/json','Content-Type': 'application/json'},
+            body: JSON.stringify(validateValueUser)
+        })
+        return await res.json()
+    }catch(error) {
+        console.log('TheError: '+ error)
+    }
+}
+
+export const VerifyToken = async(dataUser, token) => {
+    /*Validate the user information and if it's correct return the data of the user
+    you have to send a json of the form:
+    {
+        "IdFerreteria": "242"
+    }
+    */
+    try {
+        const res = await fetch(`${API}/verifytoken`,{
+            method: 'POST',
+            headers: { Accept: 'application/json',
+                                'Content-Type': 'application/json',
+                                'Authorization': `Bearer ${token}`
+                            },
+            body: JSON.stringify(dataUser)
+        })
+        return await res.json()
+    }catch(error) {
+        console.log('TheError: '+ error)
     }
 }
 
@@ -455,7 +497,9 @@ export const SalesPerDay = async(salesperday) => {
     try {
         const res = await fetch(`${API_POS}/salesperday`,{
             method: 'POST',
-            headers: { Accept: 'application/json','Content-Type': 'application/json'},
+            headers: { Accept: 'application/json',
+                'Content-Type': 'application/json'
+            },
             body: JSON.stringify(salesperday)
         })
         return await res.json()
