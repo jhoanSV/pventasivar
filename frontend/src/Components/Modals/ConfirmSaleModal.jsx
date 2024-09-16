@@ -3,6 +3,7 @@ import { TheInput } from '../../Components/InputComponent/TheInput';
 import { useTheContext } from '../../TheProvider';
 import { NewSale } from '../../api';
 import './_ConfirmSaleModal.scss';
+import { TheAlert } from '../TheAlert';
 
 export const ConfirmSaleModal = ({show, sendSale , folio , orderslist, width='50%', height='50%', totalE}) => {
     const [ efectivo, setEfectivo] = useState(5000)
@@ -194,9 +195,9 @@ export const ConfirmSaleModal = ({show, sendSale , folio , orderslist, width='50
             }*/
 
             if (tipoDePago !== 'Efectivo' &&  referencia === '') {
-                alert('Debe ingresar una referencia para este tipo de pago')
+                TheAlert('Debe ingresar una referencia para este tipo de pago')
             } else { if (efectivo === 0 && transferencia === '') {
-                alert('Debe ingresar el efectivo o la transferencia para este tipo de pago')} else {
+                TheAlert('Debe ingresar el efectivo o la transferencia para este tipo de pago')} else {
                     orderslist.RCData = {IdFerreteria: usD.Cod,
                                         CodResponsable: usD.Cod,
                                         Responsable: usD.Contacto,

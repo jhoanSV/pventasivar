@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import './_ItemCart.scss';
 import imgPlaceHolder from '../../Assets/AVIF/placeHolderProduct.avif'
 import { Formater } from '../../App';
+import { TheAlert } from '../../Components';
 
 export const ItemCart = ({id, nombre, cod, unitPrice, unitPaq, category, cantidad, onDelete, updtC}) => {
     
@@ -11,8 +12,8 @@ export const ItemCart = ({id, nombre, cod, unitPrice, unitPaq, category, cantida
     const [fontResize, setFontResize] = useState('');
     const [imgSrc, setImgSrc] = useState(`https://sivarwebresources.s3.amazonaws.com/AVIF/${cod}.avif`);
 
-    const handleDelete = () =>{
-        if(window.confirm('¿Desea eliminar este producto?')){
+    const handleDelete = async() =>{
+        if(await TheAlert('¿Desea eliminar este producto?', 1)){
             onDelete(id)
         }
     }

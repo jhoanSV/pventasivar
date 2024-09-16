@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import './_ModalBusca.scss';
-import p_json from '../../products_json_test.json';
 import { BoxItem } from '../Others/BoxItem';
-import { AddPurchaseModal } from './AddPurchaseModal';
+import { TheAlert } from '../TheAlert';
 
 export const ModalBusca = ({list, click=false, sh}) => {
     
@@ -10,30 +9,10 @@ export const ModalBusca = ({list, click=false, sh}) => {
     const [limit, setLimit] = useState(0);
     const [lista, setLista] = useState([]);
 
-    /*const P_query = () =>{
-        setLista(p_json)
-    }*/
-
-    const clickFunct = (item) =>{
-        (Number(item.Inventario)!==0 && click) ? click(item) : alert('No hay invetario suficiente')
-        setShowModalBusca(false)
+    const clickFunct = async(item) =>{
+        (Number(item.Inventario)!==0 && click) ? click(item) : await TheAlert('No hay invetario suficiente');
+        setShowModalBusca(false);
     }
-
-    /*const filterByText = (item, text) =>
-        item.Cod.toString().includes(text) ||
-        item.Descripcion.toLowerCase().includes(text);
-
-    const SearchHandle = (text) =>{
-        let c = [...lista];
-        if (text !== ''){
-            c = c.filter((i)=>filterByText(i, text))
-            setLista(c)
-            setLimit(10)
-        }else{
-            setLista(p_json)
-            setLimit(10)
-        }
-    }*/
 
     const observeT2 = () =>{
         if(showModalBusca){
@@ -51,7 +30,6 @@ export const ModalBusca = ({list, click=false, sh}) => {
         setLimit(20);
         observeT2();
         setLista(list);
-        //P_query();
         // eslint-disable-next-line
     }, [showModalBusca]);
 

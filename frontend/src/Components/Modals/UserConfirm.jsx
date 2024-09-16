@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import './_GeneralModal.scss'
 import { validateUser } from '../../api';
+import { TheAlert } from '../TheAlert';
 
 export const UserConfirm = ({show, confirmed}) => {
 
@@ -14,14 +15,14 @@ export const UserConfirm = ({show, confirmed}) => {
             "Password": password
         });
         if(!userData){
-            alert('Problema de conexión, intente de nuevo más tarde');
+            TheAlert('Problema de conexión, intente de nuevo más tarde');
             return;
         }
         if(userData.Cod){
             confirmed(true)
             show(false)
         }else{
-            alert('Usuario o contraseña incorrectos');
+            TheAlert('Usuario o contraseña incorrectos');
         }
         //*-----------------------------------------------------
     }

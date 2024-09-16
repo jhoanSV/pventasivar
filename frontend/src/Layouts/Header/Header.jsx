@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom';
 import { useTheContext } from '../../TheProvider';
 import './_Header.scss';
 import React, { useEffect, useRef } from 'react';
+import { TheAlert } from '../../Components';
 
 export const Header = () => {
 
@@ -30,22 +31,33 @@ export const Header = () => {
     const Interval = setInterval(updateTime, 1000);
 
     const showSideBar = (e) =>{
-        e.target.classList.add('mlh-selected')
-        document.querySelector('.side-bar').classList.add('show')
-        document.getElementById('lgId2').classList.add('show')
+        e.target.classList.add('mlh-selected');
+        document.querySelector('.side-bar-container').classList.add('show');
+        document.getElementById('lgId2').classList.add('show');
+        document.body.classList.add('modalOpen');
     }
 
     const hideSideBar = () =>{
-        document.querySelector('.mainLogoHead').classList.remove('mlh-selected')
-        document.querySelector('.side-bar').classList.remove('show')
-        document.getElementById('lgId2').classList.remove('show')
+        document.querySelector('.mainLogoHead').classList.remove('mlh-selected');
+        document.querySelector('.side-bar-container').classList.remove('show');
+        document.getElementById('lgId2').classList.remove('show');
+        document.body.classList.remove('modalOpen');
     }
 
     const handleClickOutside = (event) => {
-        if (divSideBarRef.current && !divSideBarRef.current.contains(event.target)) {
+        if (divSideBarRef.current &&
+            !divSideBarRef.current.contains(event.target) &&
+            document.querySelector('.side-bar-container').classList.contains('show')) {
           hideSideBar();
         }
     };
+
+    const handleCloseSesion = async() => {
+        if(await TheAlert('¿Desea cerrar sesión?', 1)){
+            document.getElementById('sbarcID').removeEventListener('mousedown', handleClickOutside);
+            setLogged(false);
+        }
+    }
 
     useEffect(() => {
         const prevS = document.querySelector('.m-selected');
@@ -63,11 +75,7 @@ export const Header = () => {
     }, [ section ]);
 
     useEffect(() => {
-        document.addEventListener('mousedown', handleClickOutside);
-        
-        return () => {
-            document.removeEventListener('mousedown', handleClickOutside);
-        };
+        document.getElementById('sbarcID').addEventListener('mousedown', handleClickOutside);
         // eslint-disable-next-line
     }, []);
 
@@ -80,99 +88,101 @@ export const Header = () => {
                 alt='MainLogo'
                 onClick={(e)=>{showSideBar(e)}}
             />
-            <div className='side-bar'>
-                <div onClick={()=>{hideSideBar()}} className='equis'>
-                    <i className="bi bi-x-lg"></i>
-                </div>
-                <img
-                    id='lgId2'
-                    className='Ins-mlh'
-                    src={require('../../Assets/PNG/icono2.png')}
-                    alt='MainLogo'
-                    onClick={()=>{hideSideBar()}}
-                />
-                <div className='side-menu' ref={divSideBarRef}>
-                    <div>
-                        <Link to={'/'} id='miventas' className='genLink' onClick={(e)=>{
-                            hideSideBar()
-                        }}>
-                            VENTAS
-                        </Link>
+            <div className='side-bar-container' id='sbarcID'>
+                <div className='side-bar' ref={divSideBarRef}>
+                    <div onClick={()=>{hideSideBar()}} className='equis'>
+                        <i className="bi bi-x-lg"></i>
                     </div>
-                    <div>
-                        <Link className='genLink' onClick={(e)=>{
-                            e.currentTarget.classList.toggle('m-open')}}>
-                            PRODUCTOS
-                            <i className="bi bi-caret-right-fill"></i>
-                        </Link>
-                        <div className='subm-container'>
-                            <Link to={'/ProductsList'} id='milistadodeproductos' className='genLink' onClick={()=>{
+                    <img
+                        id='lgId2'
+                        className='Ins-mlh'
+                        src={require('../../Assets/PNG/icono2.png')}
+                        alt='MainLogo'
+                        onClick={()=>{hideSideBar()}}
+                    />
+                    <div className='side-menu'>
+                        <div>
+                            <Link to={'/'} id='miventas' className='genLink' onClick={(e)=>{
                                 hideSideBar()
                             }}>
-                                LISTADO
-                            </Link>
-                            <Link to={'/NewProduct'} id='minuevoproducto' className='genLink' onClick={()=>{
-                                setSomeData(null)
-                                hideSideBar()
-                            }}>
-                                NUEVO
-                            </Link>
-                            <Link to={'/Inventory'} id='miinventario' className='genLink' onClick={()=>{
-                                hideSideBar()
-                            }}>
-                                INVENTARIO
-                            </Link>
-                            <Link to={'/LowInv'} id='mibajosdeinventario' className='genLink' onClick={()=>{
-                                hideSideBar();
-                                setSection('Bajos de inventario');
-                            }}>
-                                BAJO INVENTARIO
+                                VENTAS
                             </Link>
                         </div>
-                    </div>
-                    <div>
-                        <Link className='genLink' onClick={(e)=>{
-                            e.currentTarget.classList.toggle('m-open')
-                        }}>
-                            CLIENTES
-                            <i className="bi bi-caret-right-fill"></i>
-                        </Link>
-                        <div className='subm-container'>
-                            <Link to={'/Customerlist'} id='milistadeclientes' className='genLink' onClick={(e)=>{
-                                hideSideBar();
-                            }}>
-                                LISTADO
+                        <div>
+                            <Link className='genLink' onClick={(e)=>{
+                                e.currentTarget.classList.toggle('m-open')}}>
+                                PRODUCTOS
+                                <i className="bi bi-caret-right-fill"></i>
                             </Link>
-                            <Link to={'/NewCustomer'} id='minuevocliente' className='genLink' onClick={(e)=>{
-                                setSomeData(null)
-                                hideSideBar()
-                            }}>
-                                NUEVO
-                            </Link>
-                            {/* {<Link to={'/BalanceReport'} id='mireportedesaldos' className='genLink' onClick={(e)=>{
-                                hideSideBar()
-                            }}>
-                                REPORTE DE SALDOS
-                            </Link>} //?Para despues */}
+                            <div className='subm-container'>
+                                <Link to={'/ProductsList'} id='milistadodeproductos' className='genLink' onClick={()=>{
+                                    hideSideBar()
+                                }}>
+                                    LISTADO
+                                </Link>
+                                <Link to={'/NewProduct'} id='minuevoproducto' className='genLink' onClick={()=>{
+                                    setSomeData(null)
+                                    hideSideBar()
+                                }}>
+                                    NUEVO
+                                </Link>
+                                <Link to={'/Inventory'} id='miinventario' className='genLink' onClick={()=>{
+                                    hideSideBar()
+                                }}>
+                                    INVENTARIO
+                                </Link>
+                                <Link to={'/LowInv'} id='mibajosdeinventario' className='genLink' onClick={()=>{
+                                    hideSideBar();
+                                    setSection('Bajos de inventario');
+                                }}>
+                                    BAJO INVENTARIO
+                                </Link>
+                            </div>
                         </div>
-                    </div>
-                    <div>
-                        <Link to={'/PurchaseList'} id='micompras' className='genLink' onClick={()=>{hideSideBar()}}>
-                            COMPRAS
-                        </Link>
-                    </div>
-                    <div>
-                        <Link to={'/CashReconciliation'} className='genLink' onClick={()=>{hideSideBar()}}>
-                            ADMINISTRACION
-                        </Link>                            
-                    </div>
-                    <div>
-                        <Link to={'/Config'} id='miconfig' className='genLink' onClick={()=>{hideSideBar()}}>
-                            CONFIGURACION
-                        </Link>                            
-                    </div>
-                    <div onClick={()=>{setLogged(false)}} className='clsBtn'>
-                        CERRAR SESION
+                        <div>
+                            <Link className='genLink' onClick={(e)=>{
+                                e.currentTarget.classList.toggle('m-open')
+                            }}>
+                                CLIENTES
+                                <i className="bi bi-caret-right-fill"></i>
+                            </Link>
+                            <div className='subm-container'>
+                                <Link to={'/Customerlist'} id='milistadeclientes' className='genLink' onClick={(e)=>{
+                                    hideSideBar();
+                                }}>
+                                    LISTADO
+                                </Link>
+                                <Link to={'/NewCustomer'} id='minuevocliente' className='genLink' onClick={(e)=>{
+                                    setSomeData(null)
+                                    hideSideBar()
+                                }}>
+                                    NUEVO
+                                </Link>
+                                {/* {<Link to={'/BalanceReport'} id='mireportedesaldos' className='genLink' onClick={(e)=>{
+                                    hideSideBar()
+                                }}>
+                                    REPORTE DE SALDOS
+                                </Link>} //?Para despues */}
+                            </div>
+                        </div>
+                        <div>
+                            <Link to={'/PurchaseList'} id='micompras' className='genLink' onClick={()=>{hideSideBar()}}>
+                                COMPRAS
+                            </Link>
+                        </div>
+                        <div>
+                            <Link to={'/CashReconciliation'} className='genLink' onClick={()=>{hideSideBar()}}>
+                                ADMINISTRACION
+                            </Link>                            
+                        </div>
+                        <div>
+                            <Link to={'/Config'} id='miconfig' className='genLink' onClick={()=>{hideSideBar()}}>
+                                CONFIGURACION
+                            </Link>                            
+                        </div>
+                        <div onClick={()=>{handleCloseSesion()}} className='clsBtn'>
+                            CERRAR SESION
+                        </div>
                     </div>
                 </div>
 

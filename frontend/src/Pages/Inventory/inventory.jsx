@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import "./_inventory.scss";
 import { useNavigate } from 'react-router-dom';
 import { useTheContext } from '../../TheProvider';
-import { TableComponent } from '../../Components';
+import { TableComponent, TheAlert } from '../../Components';
 import { Inventory as ListInv } from '../../api';
 import { Formater } from '../../App';
 
@@ -92,9 +92,9 @@ export function Inventory(){
     const DeleteFunction = () =>{
         console.log(selected[0]);
         if(selected[0].Inventario > 0){
-            alert('No se puede eliminar un producto con existencias');
+            TheAlert('No se puede eliminar un producto con existencias');
         }else{
-            alert('Esta característica aún no está disponible');
+            TheAlert('Esta característica aún no está disponible');
         }
     }
 

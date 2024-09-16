@@ -2,6 +2,7 @@ import React, {useState} from 'react';
 import { TheInput } from '../../Components/InputComponent/TheInput';
 import { ModifyPurchaseProduct } from '../../api';
 import { useTheContext } from '../../TheProvider';
+import { TheAlert } from '../TheAlert';
 
 export const ChangePurchasePro = ({data, show, width}) => {
     console.log(data);
@@ -58,10 +59,10 @@ export const ChangePurchasePro = ({data, show, width}) => {
         if(res && res.message === 'Transacción completada con éxito'){
             show(false);
             data.Verificado = 1
-            alert('Producto modificado con éxito');
+            await TheAlert('Producto modificado con éxito');
             document.getElementById('id'+data.Cod).checked = true;
         } else {
-            alert('Ocurrió un error inesperado al modificar el producto');
+            await TheAlert('Ocurrió un error inesperado al modificar el producto');
         }
     }
 

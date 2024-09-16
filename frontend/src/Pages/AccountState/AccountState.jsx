@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import './_AccountState.scss';
 import { useTheContext } from '../../TheProvider';
-import { TableComponent } from '../../Components';
+import { TableComponent, TheAlert } from '../../Components';
 import fctsTest from './fctsTest.json';
 
 export const AccountState = () => {
@@ -10,7 +10,7 @@ export const AccountState = () => {
     const [selected, setSelected] = useState([]);
 
     const verFunction = () =>{
-        alert('viendo jsjs')
+        TheAlert('viendo jsjs')
     }
     
     const ctHeaders = [

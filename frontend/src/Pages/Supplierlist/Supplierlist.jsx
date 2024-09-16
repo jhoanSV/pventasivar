@@ -4,7 +4,7 @@ import { useTheContext } from '../../TheProvider';
 import { useNavigate } from 'react-router-dom';
 //test
 import jsonTest from '../../jsonTest.json';
-import { TableComponent } from '../../Components';
+import { TableComponent, TheAlert } from '../../Components';
 
 export const Supplierlist = () => {
 
@@ -12,15 +12,15 @@ export const Supplierlist = () => {
     const navigate = useNavigate();
 
     const verFunction = () =>{
-        alert('viendo jsjs')
+        TheAlert('viendo jsjs')
     }
 
     const ModifyFunction = () =>{
-        alert('modificando jsjs')
+        TheAlert('modificando jsjs')
     }
 
     const DeleteFunction = () =>{
-        alert('eliminando jsjs')
+        TheAlert('eliminando jsjs')
     }
 
     const stHeaders = [

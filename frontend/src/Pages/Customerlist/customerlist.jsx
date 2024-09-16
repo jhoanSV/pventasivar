@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import "./_customerlist.scss";
 import { useNavigate } from 'react-router-dom';
 import { useTheContext } from '../../TheProvider';
-import { TableComponent } from '../../Components';
+import { TableComponent, TheAlert } from '../../Components';
 import { GeneralModal } from '../../Components/Modals/GeneralModal';
 import { Clientlist } from '../../api';
 import * as XLSX from 'xlsx';
@@ -36,7 +36,7 @@ export function Customerlist(){
     }
 
     const DeleteFunction = () =>{
-        alert('Elimineishon')
+        TheAlert('Esta característica aún no está disponible')
     }
 
     const deselect = () =>{

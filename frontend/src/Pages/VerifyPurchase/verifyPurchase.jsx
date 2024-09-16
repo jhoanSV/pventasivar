@@ -2,7 +2,7 @@ import React, { useEffect, useState, useRef } from 'react';
 import "./_verifyPurchase.scss";
 import { useNavigate } from 'react-router-dom';
 import { useTheContext } from '../../TheProvider';
-import { Flatlist } from '../../Components';
+import { Flatlist, TheAlert } from '../../Components';
 import { ChangePurchasePro } from '../../Components/Modals/ChangePurchasePro';
 //es un json de prueba
 import { AddPurchase, PurchaseDetail, UpdateVefiedPurchase } from '../../api';
@@ -109,7 +109,7 @@ export function VerifyPurchase(){
                 console.log(res);
             }else{
                 e.target.checked = false;
-                alert('El precio de venta de "' + order[isSelected].Descripcion + '" no puede estar vacío ');
+                TheAlert('El precio de venta de "' + order[isSelected].Descripcion + '" no puede estar vacío ');
             }
         }
         return (
@@ -217,13 +217,13 @@ export function VerifyPurchase(){
             });
             console.log(res);
             if(res && res.message === 'Transacción completada con éxito'){
-                alert('Producto recepcionado con éxito');
+                TheAlert('Producto recepcionado con éxito');
                 navigate(-1);
             } else {
-                alert('Ocurrió un error inesperado al recepcionar pedido');
+                TheAlert('Ocurrió un error inesperado al recepcionar pedido');
             }
         } else {
-            alert('Todos los productos deben estar verificados');
+            TheAlert('Todos los productos deben estar verificados');
         }
     }
     

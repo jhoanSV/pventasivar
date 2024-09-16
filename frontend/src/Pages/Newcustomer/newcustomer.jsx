@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import "./_newcustomer.scss";
-import { TheInput } from '../../Components';
+import { TheAlert, TheInput } from '../../Components';
 import { useTheContext } from '../../TheProvider';
 import { useNavigate } from 'react-router-dom';
 import { Newclient, UpdateClient } from '../../api';
@@ -50,7 +50,7 @@ export function Newcustomer(){
             msjV = msjV + 'El correo no es válido\n'
         }
         if(msjV){
-            alert(msjV)
+            TheAlert(msjV);
             return;
         }
         //*-----------------
@@ -75,9 +75,9 @@ export function Newcustomer(){
         console.log(res);
         if(res.insertId || res.message === 'Transacción completada con éxito'){
             navigate('/Customerlist')
-            alert(msj1);
+            TheAlert(msj1);
         }else{
-            alert('Ocurrió un error inesperado al '+msj2);
+            TheAlert('Ocurrió un error inesperado al '+msj2);
         }
     }
     

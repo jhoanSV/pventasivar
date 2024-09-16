@@ -1,7 +1,7 @@
 import React, {useState, useEffect, useRef} from 'react';
 import { TheInput } from '../InputComponent/TheInput';
 import { useTheContext } from '../../TheProvider';
-import { TableComponent, Flatlist } from '../../Components';
+import { TableComponent, Flatlist, TheAlert } from '../../Components';
 import './_SalesOfTheDay.scss';
 import jsonTest from '../../sales_per_day.json';
 import { SalesPerDay, CancelTheSale } from '../../api';
@@ -294,7 +294,7 @@ export const SalesOfTheDay = ({show, orderslist, width='90%', height='90%'}) => 
         const fila = orders[selectedfila].Orden[selectedfilaOrder]
         console.log(fila);
         if (fila.CantidadSa - fila.CantidadEn === 0) {
-            alert('No se puede devolver un producto que ya ha sido vendido completamente.')
+            TheAlert('No se puede devolver un producto que ya ha sido vendido completamente.')
         } else {
             setShowReturnModal(true)
         }

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import './_MoneyFlow.scss';
 import { TheInput } from '../InputComponent/TheInput';
 import { useTheContext } from '../../TheProvider';
-import { Flatlist, ModalBusca } from '../../Components';
+import { Flatlist, ModalBusca, TheAlert } from '../../Components';
 import { CashFlow, NewMoneyFlow, RemoveFlow } from '../../api';
 
 export const MoneyFlow = ({show, typeOfFlow , aceptar }) => {
@@ -75,7 +75,7 @@ export const MoneyFlow = ({show, typeOfFlow , aceptar }) => {
     }
 
     const cancelarEnSa = async(item) => {
-        const isConfirmed = window.confirm("¿Estás seguro de que deseas realizar esta acción?");
+        const isConfirmed = await TheAlert("¿Estás seguro de que deseas realizar esta acción?", 1);
     
         if (isConfirmed) {
             const now = new Date();
@@ -97,7 +97,7 @@ export const MoneyFlow = ({show, typeOfFlow , aceptar }) => {
             }
             await RemoveFlow({IdFerreteria: usD.Cod, Consecutivo: item.Consecutivo})
             await NewMoneyFlow(dataToSend)
-            alert('Se eliminó correctamente la ' + title)
+            TheAlert('Se eliminó correctamente la ' + title)
             const newFlowIndex = moneyFlow.findIndex(row => row.Consecutivo === item.Consecutivo)
             if (newFlowIndex !== -1) {
                 const updatedMoneyFlow = moneyFlow.map((row, index) => 
@@ -113,7 +113,7 @@ export const MoneyFlow = ({show, typeOfFlow , aceptar }) => {
     
     const addMoneyFlow = async() => {
         if (cantidad === 0 ){
-            alert('Debe ingresar una cantidad');
+            TheAlert('Debe ingresar una cantidad');
         } else {
             const now = new Date();
             // Obtener la fecha en formato YYYY-MM-DD
@@ -158,7 +158,7 @@ export const MoneyFlow = ({show, typeOfFlow , aceptar }) => {
         };
         const removeFlow = () => {
             if (item.Activo === 0) {
-                alert('la ' + title + 'ya se encuentra eliminada')
+                TheAlert('la ' + title + 'ya se encuentra eliminada')
             } else {
                 cancelarEnSa(item)
             }

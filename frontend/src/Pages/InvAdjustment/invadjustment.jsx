@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import "./_InvAdjustment.scss";
 import { useNavigate } from 'react-router-dom';
 import { useTheContext } from '../../TheProvider';
-import { TheInput } from '../../Components';
+import { TheAlert, TheInput } from '../../Components';
 import { postUpdateInventory } from '../../api';
 
 export function InvAdjustment(){
@@ -58,10 +58,10 @@ export function InvAdjustment(){
         });
         //console.log(res);
         if(res && res.message === 'Transacción completada con éxito'){
-            alert('Cantidad modificada correctamente')
+            TheAlert('Cantidad modificada correctamente')
             navigate(-1, {repalce: true})
         } else {
-            alert('Ocurrió un error inesperado, intente de nuevo más tarde');
+            TheAlert('Ocurrió un error inesperado, intente de nuevo más tarde');
         }
     }
 

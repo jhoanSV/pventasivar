@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import './_Configuration.scss';
 import { Changepassword } from '../../api';
 import { useTheContext } from '../../TheProvider';
+import { TheAlert } from '../../Components';
 
 export const ChangePassModal = ({show}) => {
 
@@ -29,12 +30,12 @@ export const ChangePassModal = ({show}) => {
         if (dataChangePassword.hasOwnProperty('authorization') && dataChangePassword.authorization === 'Authorized'){
             //password changed
             console.log('authorized', dataChangePassword);
-            alert('Contraseña modificada correctamente');
+            TheAlert('Contraseña modificada correctamente');
             show(false);
         } else if (dataChangePassword.hasOwnProperty('error') && dataChangePassword.error === 'Unauthorized'){
             //password not changed
             console.log('unauthorized', dataChangePassword);
-            alert('Hubo un error al cambiar la contraseña');
+            TheAlert('Hubo un error al cambiar la contraseña');
         }
     }
 

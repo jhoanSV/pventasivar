@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import './_ProductMeasures.scss';
 import { TheInput } from '../InputComponent/TheInput';
+import { TheAlert } from '../TheAlert';
 
 export const ProductMeasures = ({show, product, aceptar, width='50%', height='50%'}) => {
     const [ selectedOption, setSelectedOption] = useState('');
@@ -42,7 +43,7 @@ export const ProductMeasures = ({show, product, aceptar, width='50%', height='50
 
     const aceptFunction = () => {
         if (selectedOption === '' || cantidad === 0 || cantidad === ''){
-            alert('No tiene cantidad'); 
+            TheAlert('No tiene cantidad');
         } else {
             const verdaderaCantidad = Number(cantidad)
             const valor = product.Medidas.filter(med=> med.Medida === selectedOption)

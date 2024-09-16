@@ -3,6 +3,8 @@ import "./_login.scss";
 import { useTheContext } from '../../TheProvider';
 import { SubCategories, validateUser } from '../../api';
 import pckjson from '../../../package.json';
+import { TheAlert } from '../../Components/TheAlert';
+
 export function Login(){
     const [showPassword, setShowPassword] = useState(false);
     const togglePasswordVisibility = () => {
@@ -33,7 +35,7 @@ export function Login(){
         });
         console.log(userData);
         if(!userData){
-            alert('Problema de conexión, intente de nuevo más tarde');
+            TheAlert('Problema de conexión, intente de nuevo más tarde');
             return;
         }
         if(userData.Cod){
@@ -51,7 +53,7 @@ export function Login(){
             setLogged(true);
             setUsD(userData);
         }else{
-            alert('Usuario o contraseña incorrectos');
+            TheAlert('Usuario o contraseña incorrectos');
         }
     }
 

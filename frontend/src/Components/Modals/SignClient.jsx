@@ -1,5 +1,5 @@
 import React, {useEffect, useState, useRef} from 'react';
-import { TableComponent } from '../../Components';
+import { TableComponent, TheAlert } from '../../Components';
 import { useTheContext } from '../../TheProvider';
 import { useNavigate } from 'react-router-dom';
 import { Clientlist } from '../../api';
@@ -133,7 +133,7 @@ export const SignClient = ({show, retornar, width='50%', height='80%'}) => {
 
         const validate = () =>{
             const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            alert(regex.test(document.getElementById('emailId').value))
+            TheAlert(regex.test(document.getElementById('emailId').value))
         }
         
         const Formater = (number) =>{

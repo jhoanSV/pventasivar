@@ -4,14 +4,24 @@ import { useNavigate } from 'react-router-dom';
 import { useTheContext } from '../../TheProvider';
 import { TableComponent } from '../../Components';
 import { ProductList } from '../../api';
+//import { LevenDistance } from '../../App';
 //import { ModalBusca } from '../../Components/Modals/ModalBusca';
+
+const debounce = (func, delay) => {
+    let timeout;
+    return (...args) => {
+        clearTimeout(timeout);
+        timeout = setTimeout(() => func.apply(null, args), delay);
+    };
+};
 
 export const ProductsList = () => {
 
     const navigate = useNavigate()
     const [selected, setSelected] = useState([]);
     const [contentList, setContentList] = useState([]);
-    const refList = useRef([])
+    const refList = useRef([]);
+    const debounceSearch = useRef(null);
     //const [multiSelect, setMultiSelect] = useState(false);//* De momento se omite esto
     const { setSection, setSomeData, usD, setProductCodes} = useTheContext();
 
@@ -23,7 +33,8 @@ export const ProductsList = () => {
 
     const filterByText = (item, text) =>
         item.Cod.toString().toLowerCase().includes(text) ||
-        item.Descripcion.toLowerCase().includes(text);
+        item.Descripcion.toLowerCase().includes(text)/* ||
+        (text.length > 3 && LevenDistance(item.Descripcion.toLowerCase(), text) < 3);*/
 
     const SearchHandle = (text) =>{
         let c = refList.current;
@@ -110,6 +121,14 @@ export const ProductsList = () => {
         }
     }
 
+    if (!debounceSearch.current) {
+        debounceSearch.current = debounce(SearchHandle, 500);
+    }
+
+    const handleInputChange = (text) => {
+        debounceSearch.current(text); // Llamamos al debounce
+    };
+
     useEffect(() => {
         setSomeData(null)
         setSection('Listado de productos')
@@ -121,9 +140,9 @@ export const ProductsList = () => {
         <section className="Productslist">
             <div className='plfdiv'>{/*product list first div*/}
                 <div>
-                    <label>Buscar:</label>
+                    <label /*onClick={()=>{LevenDistance2('gato', 'gatitos')}}*/>Buscar:</label>
                     <input type="text" placeholder='Buscar'
-                        onChange={(e)=>{SearchHandle((e.target.value).toLowerCase())}}
+                        onChange={(e)=>{handleInputChange((e.target.value).toLowerCase())}}
                      />
                     <button className='btnStnd btn1'
                         style={{marginLeft: '20px'}}

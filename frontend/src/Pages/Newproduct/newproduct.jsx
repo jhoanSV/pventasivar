@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import "./_newproduct.scss";
 import { useNavigate } from 'react-router-dom';
 import { useTheContext } from '../../TheProvider';
-import { TheInput, UserConfirm } from '../../Components';
+import { TheAlert, TheInput, UserConfirm } from '../../Components';
 import imgPlaceHolder from '../../Assets/AVIF/placeHolderProduct.avif'
 import { GranelModal } from '../../Components/Modals/GranelModal';
 import { NuevoProducto, UpdateProduct } from '../../api';
@@ -170,12 +170,14 @@ export const Newproduct = () => {
         if (emptValue) {
             let text1 = emptValue;
             if(text1 === 'IdSubCategoria') text1 = 'Sub-Categoría';
-            alert('El campo '+ text1 + ' no puede estar vacío');
+            if(text1 === 'Clase') text1 = 'tipo de venta';
+            if(text1 === 'Inventario') text1 = 'Inv Actual';
+            TheAlert('El campo '+ text1 + ' no puede estar vacío');
             return;
         }
         const codeFind = productCodes.map(code => code.toLowerCase()).includes(productData.Cod.toLowerCase());
         if(codeFind){
-            alert('El código de producto ya existe')
+            TheAlert('El código de producto ya existe')
             return;
         }
         //*------------------------------------------------------------------
@@ -195,9 +197,9 @@ export const Newproduct = () => {
         console.log(res);
         if(res && res.message === 'Transacción completada con éxito'){
             navigate('/ProductsList');
-            alert('Producto creado con éxito');
+            TheAlert('Producto creado con éxito');
         } else {
-            alert('Ocurrió un error inesperado al crear el producto');
+            TheAlert('Ocurrió un error inesperado al crear el producto');
         }
     }
 
@@ -216,12 +218,12 @@ export const Newproduct = () => {
         if (emptValue) {
             let text1 = emptValue;
             if(text1 === 'IdSubCategoria') text1 = 'Sub-Categoría';
-            alert('El campo '+ text1 + ' no puede estar vacío');
+            TheAlert('El campo '+ text1 + ' no puede estar vacío');
             return;
         }
         const codeFind = productCodes.map(code => code.toLowerCase()).includes(productData.Cod.toLowerCase());
         if((productData.Cod !== someData.Cod) && codeFind){
-            alert('El código de producto ya existe')
+            TheAlert('El código de producto ya existe')
             return;
         }
         //*---------------------------------------
@@ -235,9 +237,9 @@ export const Newproduct = () => {
         console.log(res);
         if(res && res.message === 'Transacción completada con éxito'){
             navigate('/ProductsList')
-            alert('Producto modificado con éxito')
+            TheAlert('Producto modificado con éxito')
         } else {
-            alert('Ocurrió un error inesperado al modificar el producto');
+            TheAlert('Ocurrió un error inesperado al modificar el producto');
         }
     }
 

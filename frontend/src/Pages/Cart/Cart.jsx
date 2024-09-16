@@ -6,6 +6,7 @@ import { Formater } from '../../App';
 import { ItemCart } from './ItemCart';
 import { EnviarVenta } from '../../api';
 import html2canvas from 'html2canvas';
+import { TheAlert } from '../../Components';
 
 export const Cart = () => {
 
@@ -87,7 +88,7 @@ export const Cart = () => {
             setNItemsCart(0)
             localStorage.setItem('cart',JSON.stringify([]))
         }else{
-            alert('Ocurrió un error, intente de nuevo más tarde')
+            TheAlert('Ocurrió un error, intente de nuevo más tarde')
         }
     }
 

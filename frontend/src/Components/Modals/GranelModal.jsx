@@ -11,27 +11,6 @@ export const GranelModal = ({show, productData, pctGan, updtState}) => {
         return Intl.NumberFormat('de-DE').format(numberformat.toFixed(2));
     }
 
-    //console.log(Number(pctGan.replace(/[.,]/g, (a) => (a === "." ? "" : "."))))
-    //console.log(productData.PCosto.replace(/[.,]/g, (a) => (a === "." ? "" : "."))/productData.UMedida.replace(/\./g, ''));
-    //const [cUnit, setcUnit] = useState((typeof(productData.PCosto) !== 'number') ? (productData.PCosto.replace(/[.,]/g, (a) => (a === "." ? "" : "."))/productData.UMedida.replace(/\./g, '')) : Formater(productData.PCosto/productData.UMedida));
-    const [cUnit, setcUnit] = useState(0);
-    const [frstRender, setFrstRender] = useState(true);
-    
-    console.log(productData.Medidas);
-    //const [medidas, setMedidas] = useState(productData.Medidas.length === 0 ? [{}] : productData.Medidas);
-    const [pVentaUnit, setPVentaUnit] = useState(productData.PVentaUM);
-    /*const [pctUnit, setPctUnit] = useState(productData.PVentaUM ? 
-        Formater((((pVentaUnit.replace(/\./g, '')-cUnit)/cUnit)*100).toFixed(2))
-        :
-        ''
-    )*/
-    //const [tabRow, setTabRow] = useState(medidas);
-
-    /*const handleMedUnit = (e) =>{
-        updtState('UMedida', e);
-        (typeof(productData.PCosto) !== 'number') ? setcUnit(productData.PCosto.replace(/[.,]/g, (a) => (a === "." ? "" : "."))/e) : setcUnit(productData.PCosto/e)
-    }*/
-
     const handleMeasureChange = (e) =>{
         updtState('Clase', Number(e.target.value));
         let a = {...productData};
@@ -71,170 +50,6 @@ export const GranelModal = ({show, productData, pctGan, updtState}) => {
         }
     }
 
-    /*const calpct = (e) =>{
-        let thePventa = Number(e.replace(/[.,]/g, (a) => (a === "," && ".")))
-        let thePcosto = cUnit
-        let pct = (((thePventa-thePcosto)/thePcosto)*100).toFixed(2).toString();
-        pct = pct.replace(/\./g, ',');
-        setPctUnit(Formater(pct))
-    }*/
-
-    const calcPVU = (e, index, pcostoUnit) =>{
-        let thepct = Number(e.replace(/[.,]/g, (a) => (a === "," && ".")));
-        let newPventa = (pcostoUnit + (pcostoUnit*thepct/100)).toFixed(2).toString();
-        console.log(newPventa);
-        let a = {...productData}
-        a.Medidas[index+1].PVentaUM = (newPventa);
-        updtState('Medidas', a.Medidas);//Modifica la unidad en la medida
-        //updtState('PVentaUM', Formater(newPventa));
-        //setPVentaUnit(Formater(newPventa));
-    }
-
-    // useEffect(() => {
-    //     if(Number(productData.Clase) === 1){
-    //         setTabRow([
-    //             {
-    //                 Medida: 'Paquete',
-    //                 UMedida: '1',
-    //                 PVentaUM: '',
-    //             },
-    //             {
-    //                 Medida: 'Unidades',
-    //                 UMedida: '',
-    //                 PVentaUM: '',
-    //             }
-    //         ]);
-    //     }
-    //     if(Number(productData.Clase) === 3){
-    //         setTabRow([
-    //             {
-    //                 Medida: 'Bulto',
-    //                 UMedida: '1',
-    //                 PVentaUM: ''
-    //             },
-    //             {
-    //                 Medida: 'Medio Bulto',
-    //                 UMedida: '',
-    //                 PVentaUM: ''
-    //             },
-    //             {
-    //                 Medida: 'Arrobas',
-    //                 UMedida: '',
-    //                 PVentaUM: ''
-    //             },
-    //             {
-    //                 Medida: 'Kilos',
-    //                 UMedida: '',
-    //                 PVentaUM: ''
-    //             }
-    //         ]);
-    //     }
-    //     if(Number(productData.Clase) === 4){
-    //         setTabRow([
-    //             {
-    //                 Medida: 'Metros',
-    //                 UMedida: '1',
-    //                 PVentaUM: ''
-    //             },
-    //             {
-    //                 Medida: 'Carretilla',
-    //                 UMedida: '4',
-    //                 PVentaUM: ''
-    //             },
-    //             {
-    //                 Medida: 'Lona',
-    //                 UMedida: '12',
-    //                 PVentaUM: ''
-    //             },
-    //             {
-    //                 Medida: 'Pala',
-    //                 UMedida: '72',
-    //                 PVentaUM: ''
-    //             }
-    //             ])
-    //     }
-    //     // eslint-disable-next-line
-    // }, [productData]);
-
-    // useEffect(() => {
-    //     console.log('clase: ' + (Number(productData.Clase)));
-    //     if(Number(productData.Clase) === 0){
-    //         setMedidas((a) =>{
-    //             a = [{}];
-    //             //updtState('Medidas', a);
-    //             return(a);
-    //         })
-    //     }else if(Number(productData.Clase) === 1){
-    //         setMedidas((a) =>{
-    //             a = [
-    //                 {
-    //                     Medida: 'Paquete',
-    //                     UMedida: '1',
-    //                     PVentaUM: '',
-    //                 },
-    //                 {
-    //                     Medida: 'Unidades',
-    //                     UMedida: '',
-    //                     PVentaUM: '',
-    //                 }
-    //             ];
-    //             //updtState('Medidas', a);
-    //             return(a);
-    //         })
-    //     }else if(Number(productData.Clase) === 2){
-    //         setMedidas((a) =>{
-    //             a = [
-    //                 {
-    //                     Medida: 'Completo',
-    //                     UMedida: '1',
-    //                     PVentaUM: '',
-    //                 },
-    //                 {
-    //                     Medida: 'Metros',
-    //                     UMedida: '',
-    //                     PVentaUM: '',
-    //                 }
-    //             ];
-    //             //updtState('Medidas', a);
-    //             return(a);
-    //         })
-    //     }else if(Number(productData.Clase) === 3){
-    //         setMedidas((a) =>{
-    //             a = [
-    //                 {
-    //                     Medida: 'Bulto',
-    //                     UMedida: '1',
-    //                     PVentaUM: ''
-    //                 },
-    //                 {
-    //                     Medida: 'Medio Bulto',
-    //                     UMedida: '',
-    //                     PVentaUM: ''
-    //                 },
-    //                 {
-    //                     Medida: 'Arrobas',
-    //                     UMedida: '',
-    //                     PVentaUM: ''
-    //                 },
-    //                 {
-    //                     Medida: 'Kilos',
-    //                     UMedida: '',
-    //                     PVentaUM: ''
-    //                 }
-    //             ];
-    //             //updtState('Medidas', a);
-    //             return(a);
-    //         })                        
-    //     }
-
-    //     // eslint-disable-next-line
-    // }, [productData]);
-
-    useEffect(() => {
-        
-        // eslint-disable-next-line
-    }, []);
-
     return(
         <div className='theModalContainer'>
             <div className='theModal-content' style={{width: 'max-content', position: 'relative'}}>
@@ -242,8 +57,8 @@ export const GranelModal = ({show, productData, pctGan, updtState}) => {
                     <button className='btn1Stnd' onClick={() => {show(false)}} style={{position: 'absolute', top: '0px', right: '0px'}}>
                         <i className='bi bi-x-lg'/>
                     </button>
-                    <h1>{productData.Descripcion}</h1>
-                    <h1>{productData.Cod}</h1>
+                    <div style={{fontSize: '30px', fontWeight: 'bold'}}>{productData.Descripcion}</div>
+                    <div style={{marginBottom: '14px'}}>{productData.Cod}</div>
                     <div className='Row' style={{marginBottom: '10px'}}>
                         <span style={{width: '134px', textAlign: 'end', marginRight: '10px'}}>
                             Unidad de medida:
@@ -265,16 +80,6 @@ export const GranelModal = ({show, productData, pctGan, updtState}) => {
                             </label>
                         }
                     </div>
-                    {/*<div className="Row">
-                        <span style={{width: '131px', marginRight: '10px'}}>
-                            Medida Unitaria
-                        </span>
-                        <TheInput
-                            val={productData.UMedida}
-                            numType='nat'
-                            onchange={(e)=>{handleMedUnit(e)}}
-                        />
-                    </div>*/}
                     <div className="Row">
                         
                         <table className='theTable gmt' style={{margin: '10px 0px'}}>
@@ -296,20 +101,11 @@ export const GranelModal = ({show, productData, pctGan, updtState}) => {
                                     <td>{(typeof(productData.PVenta) !== 'number') ? Formater(productData.PVenta.replace(/\./g, '')) : productData.PVenta}</td>
                                     <td>{Formater(pctGan)}</td>
                                 </tr>}
-                                {/*medidas.slice(1).map((Med, index) =>*/}
                                 {productData.Medidas.slice(1).map((Med, index) =>{
 
                                     
                                     let pcosto = productData.PCosto.replace(/[.,]/g, (a) => (a === "." ? "" : "."));
                                     let pcostoUnit = pcosto/(Med.UMedida.replace(/[.,]/g, (a) => (a === "," && ".")));
-                                    //Med.PVentaUM = Med.PVentaUM.toString();
-                                    
-                                    /*const calpventa = (e) => {
-                                        let Epct = e.replace(/[.,]/g, (a) => (a === "," && "."))
-                                        let thePcosto = Number(productData.PCosto.replace(/[.,]/g, (a) => (a === "." ? "" : ".")))
-                                        let newPventa = (thePcosto + (thePcosto * Epct / 100)).toFixed(2).toString();
-                                        changeValuesProducts('PVenta', Formater(newPventa));
-                                    }*/
 
                                     return (
                                     <tr key={index}>
@@ -318,7 +114,6 @@ export const GranelModal = ({show, productData, pctGan, updtState}) => {
                                             <TheInput
                                                 numType='real'
                                                 val={Med.UMedida}
-                                                //onchange={(e)=>updtState(`Medidas[${index}].PVentaUM`, e)}
                                                 onchange={(e)=>{
                                                     Med.UMedida = e;
                                                     let um = e.replace(/[.,]/g, (a) => (a === "," && "."));
@@ -369,7 +164,6 @@ export const GranelModal = ({show, productData, pctGan, updtState}) => {
                                                     let pct = e.replace(/[.,]/g, (a) => (a === "." ? "" : "."));
                                                     let meds = {...productData}.Medidas;
                                                     let a = meds[index+1];
-                                                    //a.pctUM = e;
                                                     if(a.UMedida!==''){
                                                         let newPventa = (pcostoUnit + (pcostoUnit * pct / 100));
                                                         newPventa = newPventa % 1 === 0 ? newPventa.toString() : newPventa.toFixed(2);
@@ -382,26 +176,6 @@ export const GranelModal = ({show, productData, pctGan, updtState}) => {
                                     </tr>
                                     )}
                                 )}
-                                {/*<tr>
-                                    <td>{productData.Medida ? productData.Medida : updtState('Medida', 'Metros')}</td>
-                                    <td>{Formater(cUnit)}</td>
-                                    <td>
-                                        <TheInput
-                                            numType='real'
-                                            val={pVentaUnit}
-                                            pholder={Formater(Number(cUnit) + (Number(cUnit)*Number(pctGan.replace(/,/g, '.'))/100))}
-                                            onchange={(e)=>{updtState('PVentaUM', e);calpct(e)}}
-                                        />
-                                    </td>
-                                    <td>
-                                        <TheInput
-                                            numType='real'
-                                            val={pctUnit}
-                                            pholder={Formater(pctGan)}
-                                            onchange={(e)=>calcPVU(e)}
-                                        />
-                                    </td>
-                                </tr>*/}
                             </tbody>}
                         </table>
                     </div>

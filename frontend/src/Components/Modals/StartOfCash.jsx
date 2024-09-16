@@ -3,6 +3,7 @@ import './_StartOfCash.scss';
 import { TheInput } from '../InputComponent/TheInput';
 import { useTheContext } from '../../TheProvider';
 import { NewMoneyFlow} from '../../api';
+import { TheAlert } from '../TheAlert';
 
 export const StartOfCash = ({show, aceptar}) => {
     const [ cantidad, setCantidad ] = useState(0);
@@ -10,7 +11,7 @@ export const StartOfCash = ({show, aceptar}) => {
 
     const aceptFunction = async() => {
         if (cantidad === 0 ){
-            alert('Debe ingresar una cantidad');
+            TheAlert('Debe ingresar una cantidad');
         } else {
             const now = new Date();
             // Obtener la fecha en formato YYYY-MM-DD

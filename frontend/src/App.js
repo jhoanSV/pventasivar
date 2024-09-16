@@ -6,6 +6,39 @@ import { Routes } from "./Routes";
 import { useTheContext } from './TheProvider';
 import { ProductList } from './api';
 
+export const LevenDistance = (str1, str2) => {
+
+    let lenStr1 = str1.length + 1;
+    let lenStr2 = str2.length + 1;
+
+    if(lenStr1===0) return lenStr1;
+    if(lenStr2===0) return lenStr2;
+
+    let matrix = Array(lenStr1).fill(null).map(() => Array(lenStr2).fill(0));
+    
+    for (let i = 0; i < lenStr1; i++) {
+        matrix[i][0] = i;
+    }
+    for (let j = 0; j < lenStr2; j++) {
+        matrix[0][j] = j;
+    }
+
+    for (let i = 1; i < lenStr1; i++) {
+        for (let j = 1; j < lenStr2; j++) {
+            let cost = str1[i - 1] === str2[j - 1] ? 0 : 1
+            matrix[i][j] = Math.min(
+                matrix[i - 1][j] + 1,
+                matrix[i][j - 1] + 1,
+                matrix[i - 1][j - 1] + cost
+            )
+        }
+    }
+
+    if(matrix[lenStr1 - 1][lenStr2 - 1] < 5) console.log('----->',str1, str2);
+    console.log(matrix[lenStr1 - 1][lenStr2 - 1]);
+    return (matrix[lenStr1 - 1][lenStr2 - 1]);
+}
+
 export const Formater = (number) => {
     //it gives a number format
     if (number === '') return '';
@@ -76,8 +109,8 @@ export const App = () => {
         /*window.electron.onUpdateAvailable(handleUpdateAvailable);
         window.electron.onUpdateNotAvailable(handleUpdateNotAvailable);
         window.electron.onUpdateDownloaded(handleUpdateDownloaded);
-        window.electron.onUpdateError(()=>{
-            alert('Cant check versions');
+        window.electron.onUpdateError(async()=>{
+            await TheAlert('Cant check versions');
         });
     
         // Cleanup the event listeners on component unmount

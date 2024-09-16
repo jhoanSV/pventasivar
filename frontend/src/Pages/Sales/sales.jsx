@@ -1,5 +1,5 @@
 import React, {useEffect, useState, useRef} from 'react';
-import { Flatlist, ModalBusca } from '../../Components';
+import { Flatlist, ModalBusca, TheAlert } from '../../Components';
 import { TheInput } from '../../Components/InputComponent/TheInput';
 import { ConfirmSaleModal } from '../../Components/Modals/ConfirmSaleModal';
 import { UserConfirm } from '../../Components/Modals/UserConfirm';
@@ -265,7 +265,9 @@ export function Sales(){
         }
     };
 
-    const closeTab = (tabNumber, index) => {
+    const closeTab = async(tabNumber, index) => {
+        let asktoclose = await TheAlert('¿Desea eliminar el tiket con ' + saleTabs[tabNumber].Order.length + ' productos?', 1);
+        if(!asktoclose) return;
         if (Object.keys(saleTabs).length > 1 && (tabNumber in saleTabs)) {
             const newTabButtons = {...saleTabs};
             delete newTabButtons[tabNumber];
@@ -371,14 +373,15 @@ export function Sales(){
 
     const confirmarVenta = () => {
         if (orderslist.length > 0) {
-            setShowConfirmar(true)
+            setShowConfirmar(true);
         } else {
-            alert('Debe seleccionar al menos un producto')
+            TheAlert('Debe seleccionar al menos un producto');
         }
     }
 
     useEffect(() => {
         let st = {...saleTabs}
+        console.log(currentTab, saleTabs);
         st[currentTab.key].Order = orderslist;
         setSaleTabs(st);
         console.log(st);
@@ -412,14 +415,14 @@ export function Sales(){
         if(Object.keys(saleTabs[currentTab.key].Customer).length !== 0){
             setCustomer(saleTabs[currentTab.key].Customer.Nombre + ' ' + saleTabs[currentTab.key].Customer.Apellido)
         }else{
-            setCustomer("Por asignar")
+            setCustomer("Por asignar");
         }
         
         const StartCahs = async() => {
             const cashFlow = await CashFlow({
                 IdFerreteria: usD.Cod,
                 Fecha: new Date().toISOString().split('T')[0],
-            })
+            });
             if (cashFlow.length === 0){
                 setShowStartCahs(true);
                 localStorage.setItem('ticketsJson', JSON.stringify(
@@ -429,7 +432,14 @@ export function Sales(){
                         }
                     }
                 ));
-                setSaleTabs(JSON.parse(localStorage.getItem('ticketsJson')));
+                setSaleTabs({
+                    "1": { "Customer": {},
+                            "Order": []
+                    }
+                });
+                setOrderslist([]);
+                setCurrentTab({"index": 0, "key": 1});
+                setCustomer("Por asignar");
                 console.log('ResetTickets and showStarCash');
             }
         }
@@ -467,7 +477,7 @@ export function Sales(){
                             {invList.slice(0,20).map((item, index) =>
                                 <div key={index}
                                     className='flItem'
-                                    onClick={()=>{Number(item.Inventario)!==0 ? askToAddProduct(item) : alert('No hay invetario suficiente')}}
+                                    onClick={()=>{Number(item.Inventario)!==0 ? askToAddProduct(item) : TheAlert('No hay invetario suficiente')}}
                                     style={{color: Number(item.Inventario)===0 && 'red'}}
                                 >
                                     {item.Descripcion}
