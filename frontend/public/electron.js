@@ -30,7 +30,7 @@ function createWindow() {
     width: 1280,
     height: 750,
     minWidth: 783,
-    minHeight: 460,//750 x 422 mins
+    minHeight: 590,//750 x 422 mins
     webPreferences: {
       preload: path.join(__dirname, "preload.js"),
       contextIsolation: true,
@@ -43,7 +43,7 @@ function createWindow() {
   //mainWindow.loadURL("http://localhost:" + PORT);
   //a mainWindow.loadURL("http://localhost:" + PORT);
   // Open the DevTools.
-  mainWindow.webContents.openDevTools()
+  // mainWindow.webContents.openDevTools()
 }
 
 
@@ -90,6 +90,7 @@ app.whenReady().then(() => {
     log.info("Verifying updates...");
   } else {
     log.info("Application in development mode. Skipping update verification.");
+    mainWindow.webContents.send('update-not-available');
   }
 });
 

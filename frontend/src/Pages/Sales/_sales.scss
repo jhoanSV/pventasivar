@@ -58,7 +58,9 @@
 //*tabs style %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 .tabs {
     margin: 10px auto;
-    //flex-grow: 1;
+    flex-grow: 1;
+    height: 53%;
+    width: 100%;
 }
 
 #NPinput{
@@ -153,4 +155,20 @@
     display: flex;
     flex-direction: column;
     gap: 10px;
+}
+
+.total-label{
+    width: 250px;
+    font-size: 28px;
+    padding: 10px 10px;
+    margin: 0px 10px 0px 0px;
+    background-color: #d9d9d9;
+}
+
+#sales-main-view{
+    padding: 20px 70px;
+    overflow-y: hidden;
+    height: calc(100vh - 110px);
+    display: flex;
+    flex-direction: column;
 }

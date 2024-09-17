@@ -492,7 +492,7 @@ export function Sales(){
                     sh={SearchHandle}
                 />
             </div>
-            <div style={{padding: '20px 70px'}}>
+            <div id='sales-main-view'>
                 <div style={{display: 'flex', gap: '5px', marginTop: '10px'}}>
                     <button
                         className="btnStnd btn1"
@@ -546,15 +546,22 @@ export function Sales(){
                         data={orderslist}
                         headers={ctHeaders}
                         row={RowOrder}
-                        Height={'60vh'}
+                        Height={'93%'}
                         selectedRow={selectedfila}
                         setSelectedRow={setSelectedfila}
                     />
                 </div>
                 <div className='sDetail'>
                     <div><label>Total &iacute;tems: {orderslist && orderslist.length}</label></div>
-                    <div><label style={{fontSize: '28px'}}>$ {Formater(total)}</label></div>
-                    <div><button className="btnStnd btn1" onClick={()=>confirmarVenta()}>F2-Cobrar</button></div>
+                    <div style={{display: 'flex'}}>
+                        <div className='total-label'>
+                            $ {Formater(total)}
+                        </div>
+                        <button className="btnStnd btn1" onClick={()=>confirmarVenta()}
+                            style={{fontSize: '16px', padding: '16px 14px'}}>
+                            F2-Cobrar
+                        </button>
+                    </div>
                     <div>
                         <button className="btnStnd btn1" onClick={()=>setShowSalesOfTheDay(true)}>
                             Ventas del dia y devoluciones

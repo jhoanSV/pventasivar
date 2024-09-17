@@ -34,14 +34,14 @@ export const Header = () => {
         e.target.classList.add('mlh-selected');
         document.querySelector('.side-bar-container').classList.add('show');
         document.getElementById('lgId2').classList.add('show');
-        document.body.classList.add('modalOpen');
+        document.body.classList.add('side-bar-showed');
     }
 
     const hideSideBar = () =>{
         document.querySelector('.mainLogoHead').classList.remove('mlh-selected');
         document.querySelector('.side-bar-container').classList.remove('show');
         document.getElementById('lgId2').classList.remove('show');
-        document.body.classList.remove('modalOpen');
+        document.body.classList.remove('side-bar-showed');
     }
 
     const handleClickOutside = (event) => {

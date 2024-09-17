@@ -5,6 +5,7 @@ import { Login } from './Pages';
 import { Routes } from "./Routes";
 import { useTheContext } from './TheProvider';
 import { ProductList, VerifyToken } from './api';
+import { TheAlert } from './Components';
 
 export const LevenDistance = (str1, str2) => {
 
@@ -110,22 +111,22 @@ export const App = () => {
         };
         //! Care with this, window.electron doesnt works on devMode, only in production
         //? To solve this comment all windoe.electron lines and uncomment the line handleUpdateNotAvailable();
-        handleUpdateNotAvailable();
+        handleUpdateNotAvailable(); //todo uncomment this line to development mode
 
-        /*window.electron.onUpdateAvailable(handleUpdateAvailable);
-        window.electron.onUpdateNotAvailable(handleUpdateNotAvailable);
-        window.electron.onUpdateDownloaded(handleUpdateDownloaded);
-        window.electron.onUpdateError(async()=>{
-            await TheAlert('Cant check versions');
-        });
+        // window.electron.onUpdateAvailable(handleUpdateAvailable); //todo Coment this to production mode
+        // window.electron.onUpdateNotAvailable(handleUpdateNotAvailable);
+        // window.electron.onUpdateDownloaded(handleUpdateDownloaded);
+        // window.electron.onUpdateError(async()=>{
+        //     await TheAlert('Cant check versions');
+        // });
     
-        // Cleanup the event listeners on component unmount
-        return () => {
-            window.electron.onUpdateAvailable(() => {});
-            window.electron.onUpdateNotAvailable(() => {});
-            window.electron.onUpdateError(()=>{});
-            window.electron.onUpdateDownloaded(()=>{});
-        };*/
+        // // Cleanup the event listeners on component unmount
+        // return () => {
+        //     window.electron.onUpdateAvailable(() => {});
+        //     window.electron.onUpdateNotAvailable(() => {});
+        //     window.electron.onUpdateError(()=>{});
+        //     window.electron.onUpdateDownloaded(()=>{});
+        // };
     }, []);
 
     return (
