@@ -189,6 +189,13 @@ export const Header = () => {
             </div>
             <label>{section}</label>
             <div className='htud'>
+                <div className='wapphtud' style={{marginRight: '12px', lineHeight: '1'}}>
+                    <div className="text">
+                        ¿Necesitas ayuda?
+                    </div>
+                    <i className='bi bi-whatsapp' onClick={()=>{window.electron.openExternalLink('https://api.whatsapp.com/send/?phone=573134237538&text&type=phone_number&app_absent=0')}}
+                    />
+                </div>
                 <div className='fdhtud' style={{marginRight: '12px'}}>
                     <Link to="/Cart" type="button" className='btnCart'>
                         <i className="bi bi-cart4"></i>

@@ -103,6 +103,33 @@
 
 .htud{
     display: flex;
+    .wapphtud{
+        position: relative;
+        .text{
+            position: absolute;
+            //transition: all 0.8s cubic-bezier(0, 0, 0.23, 1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-image: linear-gradient(90deg, #193773, #193773 50%, white 0);
+            background-size: 200% 100%;
+            background-position: 0;
+            font-size: 20px;
+            color: white;
+            text-align: left;
+            font-weight: 800;
+            letter-spacing: 2.59px;
+            transform: translate(-110%, 0px);
+            animation: shiftBackground 24s infinite;
+            /*&:hover{
+                background-position: 100%;
+                color: white;
+            }*/
+        }
+        .bi-whatsapp:hover{
+            cursor: pointer;
+            color: #25D366;
+        }
+    }
     .btnCart{
         position: relative;
         display: flex;
@@ -179,5 +206,21 @@
     }
     100% {
       transform: rotate(0deg);
+    }
+}
+
+@keyframes shiftBackground {
+    0% {
+        background-position: 0;
+    }
+    
+    4% {
+        background-position: 100%;
+    }
+    20% {
+        background-position: 100%;
+    }
+    24% {
+        background-position: 0%;
     }
 }

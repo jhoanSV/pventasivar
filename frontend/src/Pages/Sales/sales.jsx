@@ -18,7 +18,10 @@ export function Sales(){
     //*---------------------
     const [saleTabs, setSaleTabs] = useState(JSON.parse(localStorage.getItem('ticketsJson')));
     const [currentTab, setCurrentTab] = useState({"index": 0, "key": Object.keys(saleTabs)[0]});
-    const [tabsHistory, setTabsHistory] = useState(Object.keys(saleTabs).length);
+    const [tabsHistory, setTabsHistory] = useState(() => {
+        const keys = Object.keys(saleTabs);
+        return Number(keys[keys.length-1]);
+    });
     //*---------------------
     const [ total, setTotal] = useState(0);
     const [ orderslist, setOrderslist] = useState(saleTabs[Object.keys(saleTabs)[0]]["Order"])
@@ -39,37 +42,76 @@ export function Sales(){
     //const [limit, setLimit] = useState(0);
     const [ sBText, setSBText] = useState('');
     const [ invList, setInvList] = useState([]);
-    const nodeRef = useRef(null), divSRef = useRef();
-    const refList = useRef([]);
+    const [ selectedFLI, setSelectedFLI] = useState(0);
+    const nodeRef = useRef(null), divSRef = useRef(), tabsRef = useRef();
+    const refList = useRef([]), invListRef = useRef([]);
     const selectedfilaRef = useRef(selectedfila);
     const selectedTabRef = useRef(currentTab);
+    const selectedFLIRef = useRef(0)
     const isEditingRef = useRef(false);
+    const asktoaddRef = useRef(null);
     const { setSection, usD } = useTheContext();
-
-    const handleKeyDown = (event) => {
-        //const currentSelectedTab = selectedTabRef.current;
-        if(isEditingRef.current===true)return;
-        let theOrder = saleTabs[currentTab.key].Order//Object.entries(saleTabs)[selectedTabRef.current][1]
-        //console.log(selectedfilaRef.current);
-        //console.log(theOrder.length);
-        if (theOrder.length !== 0 && selectedfilaRef.current !== null) {
-            const currentSelectedFila = selectedfilaRef.current;
-            if (event.key === '+') {
-                updateCantidad(currentSelectedFila, 1)
-            } else if (event.key === '-') {
-                updateCantidad(currentSelectedFila,-1)
-            } else if (event.key === 'ArrowDown' && currentSelectedFila + 1 >= 0 && currentSelectedFila + 1 < theOrder.length) {
-                setSelectedfila(currentSelectedFila + 1)
-            } else if (event.key === 'ArrowUp' && currentSelectedFila - 1 >= 0 && currentSelectedFila - 1 < theOrder.length) {
-                setSelectedfila(currentSelectedFila - 1)
-            } else if (event.key === 'Delete') {
-                theOrder.splice(currentSelectedFila, 1)
-                if (selectedfila === theOrder.length - 1 && selectedfila !== 0){
-                    setSelectedfila(currentSelectedFila - 1)
+    
+    const handleKeyDown = (e) => {
+        if(document.getElementById('NPinput') === document.activeElement){
+            const theInvList = invListRef.current
+            if (e.key === 'ArrowDown') {
+                if(selectedFLIRef.current === theInvList.slice(0, 20).length-1){
+                    selectedFLIRef.current = 0
+                }else{
+                    selectedFLIRef.current = selectedFLIRef.current + 1
                 }
-                // Actualiza el estado con la nueva lista
-                const updatedOrdersList = [...theOrder];
-                setOrderslist(updatedOrdersList);
+            } else if (e.key === 'ArrowUp') {
+                if(selectedFLIRef.current === 0){
+                    selectedFLIRef.current = theInvList.slice(0, 20).length-1;
+                }else{
+                    selectedFLIRef.current = selectedFLIRef.current-1;
+                }
+            } else if (e.key === 'Enter') {
+                const selectedItem = theInvList[selectedFLIRef.current];
+                if(!selectedItem){
+                    document.getElementById('NPinput').focus();
+                    document.getElementById('NPinput').select();
+                    return;
+                } 
+                if (Number(selectedItem.Inventario) !== 0) {
+                    asktoaddRef.current(selectedItem);
+                    setSBText('');
+                    document.getElementById('NPinput').focus();
+                    document.getElementById('NPinput').select();
+                } else {
+                    TheAlert('No hay inventario suficiente');
+                    document.getElementById('NPinput').focus();
+                    document.getElementById('NPinput').select();
+                }
+                /*document.getElementById('tabsId').removeEventListener('keydown', handleKeyDown2);
+                document.getElementById('NPinput').removeEventListener('keydown', handleKeyDown);
+                document.getElementById('tabsId').addEventListener('keydown', handleKeyDown2);
+                document.getElementById('NPinput').addEventListener('keydown', handleKeyDown);*/
+            }
+            setSelectedFLI(selectedFLIRef.current);
+        }else if(document.getElementById('tabsId') === document.activeElement){
+            if(isEditingRef.current===true)return;
+            let theOrder = saleTabs[currentTab.key].Order
+            if (theOrder.length !== 0 && selectedfilaRef.current !== null) {
+                const currentSelectedFila = selectedfilaRef.current;
+                if (e.key === '+') {
+                    updateCantidad(currentSelectedFila, 1)
+                } else if (e.key === '-') {
+                    updateCantidad(currentSelectedFila,-1)
+                } else if (e.key === 'ArrowDown' && currentSelectedFila + 1 >= 0 && currentSelectedFila + 1 < theOrder.length) {
+                    setSelectedfila(currentSelectedFila + 1)
+                } else if (e.key === 'ArrowUp' && currentSelectedFila - 1 >= 0 && currentSelectedFila - 1 < theOrder.length) {
+                    setSelectedfila(currentSelectedFila - 1)
+                } else if (e.key === 'Delete') {
+                    theOrder.splice(currentSelectedFila, 1)
+                    if (selectedfila === theOrder.length - 1 && selectedfila !== 0){
+                        setSelectedfila(currentSelectedFila - 1)
+                    }
+                    // Actualiza el estado con la nueva lista
+                    const updatedOrdersList = [...theOrder];
+                    setOrderslist(updatedOrdersList);
+                }
             }
         }
     };
@@ -217,6 +259,8 @@ export function Sales(){
     };
 
     const changeTab = (Num, index) => {
+        document.getElementById('NPinput').focus();
+        document.getElementById('NPinput').select();
         if(Num===null){
             setOrderslist(saleTabs[currentTab.key].Order);
             setCurrentTab({"index": index,
@@ -234,7 +278,6 @@ export function Sales(){
                     var orderElement = document.getElementById("FlastListID");
                     if (orderElement) {
                         orderElement.scrollTop = orderElement.scrollHeight;
-                        console.log(orderElement);
                     }
                 }, 0);
                 return saleTabs[Num].Order.length - 1
@@ -308,8 +351,9 @@ export function Sales(){
     }
 
     const addProduct = (item) =>{
+        console.log(item, saleTabs[currentTab.key], currentTab.key);
         let theOrder = saleTabs[currentTab.key].Order
-            // Verificar si el producto ya existe en theOrder
+        // Verificar si el producto ya existe en theOrder
         const productAlreadyExistsIndex = theOrder.findIndex(
             (prod) => prod.Cod === item.Cod && prod.Medida === item.Medida
         );
@@ -325,13 +369,16 @@ export function Sales(){
                 }, 0);
                 return [...theOrder];
             });
-            setShowFL(false);
             setSelectedfila(saleTabs[currentTab.key].Order.length - 1)
         } else {
-            saleTabs[currentTab.key].Order[productAlreadyExistsIndex].Cantidad = theOrder[productAlreadyExistsIndex].Cantidad + item.Cantidad
+            //saleTabs[currentTab.key].Order[productAlreadyExistsIndex].Cantidad = theOrder[productAlreadyExistsIndex].Cantidad + item.Cantidad
+            theOrder[productAlreadyExistsIndex].Cantidad += item.Cantidad
+            setOrderslist([...theOrder])
             setSelectedfila(productAlreadyExistsIndex)
-            setShowFL(false);
         }
+        setSBText('');
+        document.getElementById('NPinput').focus();
+        document.getElementById('NPinput').select();
     }
 
     const askToAddProduct = (item) => {
@@ -350,7 +397,7 @@ export function Sales(){
 
     const handleClickOutside = (event) => {
         if (divSRef.current && !divSRef.current.contains(event.target)) {
-          setShowFL(false);
+            setShowFL(false);
         }
     };
 
@@ -381,10 +428,8 @@ export function Sales(){
 
     useEffect(() => {
         let st = {...saleTabs}
-        console.log(currentTab, saleTabs);
         st[currentTab.key].Order = orderslist;
         setSaleTabs(st);
-        console.log(st);
         sumarTotal();
         localStorage.setItem('ticketsJson', JSON.stringify(saleTabs));
         // eslint-disable-next-line
@@ -393,24 +438,40 @@ export function Sales(){
     
     useEffect(() => {
         selectedfilaRef.current = selectedfila;
-        console.log('seleccionada fila', selectedfila);
-        
     }, [selectedfila]);
     
     useEffect(() => {
         selectedTabRef.current = currentTab.index;
-        //console.log(saleTabs)
         // eslin-disable-next-line
     }, [currentTab]);
 
     useEffect(() => {
         localStorage.setItem('ticketsJson', JSON.stringify(saleTabs));
     }, [saleTabs]);
+
+    useEffect(() => {
+        if(sBText === '' || !showFL){
+            selectedFLIRef.current = 0;
+            setSelectedFLI(0);
+        }
+        // eslint-disable-next-line
+    }, [sBText, showFL]);
+
+    useEffect(() => {
+        invListRef.current = invList
+        // eslint-disable-next-line
+    }, [invList]);
+
+    useEffect(() => {
+        asktoaddRef.current = askToAddProduct
+        // eslint-disable-next-line
+    }, [currentTab]);
     
     useEffect(() => {
+        document.addEventListener('keydown', handleKeyDown);
+
         setSection('Ventas');
         fetchInventoryList();
-        window.addEventListener('keydown', handleKeyDown);
         document.addEventListener('mousedown', handleClickOutside);
         if(Object.keys(saleTabs[currentTab.key].Customer).length !== 0){
             setCustomer(saleTabs[currentTab.key].Customer.Nombre + ' ' + saleTabs[currentTab.key].Customer.Apellido)
@@ -445,7 +506,7 @@ export function Sales(){
         }
         StartCahs()
         return () => {
-            window.removeEventListener('keydown', handleKeyDown);
+            document.removeEventListener('keydown', handleKeyDown);
             document.removeEventListener('mousedown', handleClickOutside);
         };
         // eslint-disable-next-line
@@ -459,10 +520,10 @@ export function Sales(){
                         type="text"
                         id='NPinput'
                         placeholder="Codigo del producto"
-                        onChange={(e)=>{SearchHandle((e.target.value).toLowerCase(), setInvList)}}
+                        onChange={(e)=>{SearchHandle((e.target.value).toLowerCase(), setInvList);selectedFLIRef.current = 0}}
                         style={{width: '500px'}}
-                        onFocus={()=>{setShowFL(true);isEditingRef.current=true}}
-                        onBlur={()=>{isEditingRef.current=false}}
+                        onFocus={(e)=>{setShowFL(true);isEditingRef.current=true;e.target.select();}}
+                        onBlur={()=>{isEditingRef.current=false;}}
                         autoComplete='off'
                         autoFocus
                     />
@@ -473,16 +534,26 @@ export function Sales(){
                         classNames="FLA"
                         unmountOnExit
                         >
-                        <div className="FloatingList" ref={nodeRef}>
+                        <div id='flId' className="FloatingList" ref={nodeRef}>
                             {invList.slice(0,20).map((item, index) =>
                                 <div key={index}
-                                    className='flItem'
-                                    onClick={()=>{Number(item.Inventario)!==0 ? askToAddProduct(item) : TheAlert('No hay invetario suficiente')}}
+                                    className={`flItem ${index === selectedFLI ? 'selected' : ''}`}
+                                    onClick={()=>{Number(item.Inventario)!==0 ? askToAddProduct(item) : TheAlert('No hay invetario suficiente'); document.getElementById('NPinput').focus();}}
                                     style={{color: Number(item.Inventario)===0 && 'red'}}
                                 >
                                     {item.Descripcion}
+                                    <div className='codFlitem'>
+                                        {item.Cod}
+                                    </div>
                                 </div>
                             )}
+                            {invList.length === 0 ?
+                                <div className='flItem'>
+                                    No se encuentran coincidencias                                                                                                            
+                                </div>
+                                :
+                                <></>
+                            }
                         </div>
                     </CSSTransition>
                 </div>
@@ -514,13 +585,12 @@ export function Sales(){
                 <div>
                     <label>Cliente: {customer}</label>
                 </div>
-                <div className="tabs">
+                <div id='tabsId' className="tabs" tabIndex={0} ref={tabsRef}>
                     <div className='tabButtons'>
                         {Object.keys(saleTabs).map((tabNumber, index) => (
                             <div className='tabButtonModel' key={tabNumber} onClick={()=>{
                                 changeTab(parseInt(tabNumber), index);
                                 document.getElementById(`radio${tabNumber}`).checked = true;
-                                console.log('a');
                             }}>
                                 <input
                                     type="radio"

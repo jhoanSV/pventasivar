@@ -205,26 +205,28 @@ export const MoneyFlow = ({show, typeOfFlow , aceptar }) => {
                 <div style={{padding: '0px 10px 10px'}}>
                     <div style={{display: 'flex', justifyContent: 'space-around', marginBottom: '10px'}}>
                         <table className='semiTable'>{/*semiTable*/}
-                            <tr>
-                                <td>Cantidad:</td>
-                                <td>
-                                    <TheInput
-                                        numType='real'
-                                        val={cantidad}
-                                        onchange={(e)=>setCantidad(e)}
-                                    />
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>Comentarios:</td>
-                                <td>
-                                    <textarea
-                                        type='text'
-                                        value={comentario}
-                                        style={{backgroundColor: '#d9d9d9', resize: 'none', width: '130%'}}
-                                        onChange={e => handleInputChange(e)}/>
-                                </td>
-                            </tr>
+                            <tbody>
+                                <tr>
+                                    <td>Cantidad:</td>
+                                    <td>
+                                        <TheInput
+                                            numType='real'
+                                            val={cantidad}
+                                            onchange={(e)=>setCantidad(e)}
+                                        />
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>Comentarios:</td>
+                                    <td>
+                                        <textarea
+                                            type='text'
+                                            value={comentario}
+                                            style={{backgroundColor: '#d9d9d9', resize: 'none', width: '130%'}}
+                                            onChange={e => handleInputChange(e)}/>
+                                    </td>
+                                </tr>
+                            </tbody>
                         </table>
                         <div className='ActionButtons'>
                             <button className="btnStnd btn1" onClick={()=>addMoneyFlow()}>Guardar</button>

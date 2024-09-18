@@ -110,7 +110,6 @@ export const ProductsList = () => {
             "IdFerreteria" : usD.Cod
         })
         if(listado){
-            console.log(listado);
             let codes = []
             setContentList(listado);
             refList.current = listado;

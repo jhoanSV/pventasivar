@@ -105,7 +105,7 @@ export const GranelModal = ({show, productData, pctGan, updtState}) => {
 
                                     
                                     let pcosto = productData.PCosto.replace(/[.,]/g, (a) => (a === "." ? "" : "."));
-                                    let pcostoUnit = pcosto/(Med.UMedida.replace(/[.,]/g, (a) => (a === "," && ".")));
+                                    let pcostoUnit = Med.UMedida ? pcosto/(Med.UMedida.replace(/[.,]/g, (a) => (a === "," && "."))) : 0;
 
                                     return (
                                     <tr key={index}>
@@ -119,7 +119,8 @@ export const GranelModal = ({show, productData, pctGan, updtState}) => {
                                                     let um = e.replace(/[.,]/g, (a) => (a === "," && "."));
                                                     let meds = {...productData}.Medidas;
                                                     let a = meds[index+1];
-                                                    if(a.PVentaUM!==''){
+                                                    if(a.PVentaUM){
+                                                        console.log(a.PVentaUM);
                                                         let pct = (((a.PVentaUM.replace(/[.,]/g, (a) => (a === "." ? "" : ".")) - (pcosto/um)) / (pcosto/um)) * 100);
                                                         console.log(Med.PVentaUM, pcosto/um, pct);
                                                         pct = pct % 1 === 0 ? pct.toString() : pct.toFixed(2);

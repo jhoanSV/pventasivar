@@ -70,7 +70,6 @@ export const App = () => {
 
     useEffect(() => {
         if (localStorage.getItem('cart')) setNItemsCart(JSON.parse(localStorage.getItem('cart')).length);
-        console.log('someData', someData);
         // eslint-disable-next-line
     }, [someData]);
 
@@ -118,6 +117,7 @@ export const App = () => {
         // window.electron.onUpdateDownloaded(handleUpdateDownloaded);
         // window.electron.onUpdateError(async()=>{
         //     await TheAlert('Cant check versions');
+        //     handleUpdateNotAvailable();
         // });
     
         // // Cleanup the event listeners on component unmount

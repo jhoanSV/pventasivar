@@ -99,10 +99,9 @@ export const Newproduct = () => {
     };
 
     const Formater = (number) => {
+        if(!number)return
         let thenumber = typeof (number) === 'number' ? number.toString() : number
         //it gives a number format
-        console.log(thenumber);
-        console.log(thenumber.replace(/,/g, '.'));
         const numberfromat = Number(thenumber.replace(/,/g, '.'));
         return Intl.NumberFormat('de-DE').format(numberfromat);
     }
@@ -129,7 +128,7 @@ export const Newproduct = () => {
         let ms = d.Medidas.map(item => ({ ...item }));
         if(d.Medidas.length !== 0){
             ms.forEach((item) => {
-                if (item.PVentaUM==='') {
+                if (item.PVentaUM==='' && item.UMedida) {
                     let v = NPToNumber(d.PCosto) / NPToNumber(item.UMedida) + 
                         NPToNumber(d.PCosto) / 
                         NPToNumber(item.UMedida)*Number(pctGan.replace(/,/g, '.'))/100;
@@ -272,15 +271,15 @@ export const Newproduct = () => {
                 pct = pct % 1 === 0 ? pct : pct.toFixed(2);
                 //pct = pct.replace(/\./g, ',');
                 setpctGan(Formater(pct));
-            }
-            if (data.Medidas.length !== 0){
-                data.Medidas.forEach((medida) => {
-                    let pctum = (medida.PVentaUM - data.PCosto/medida.UMedida) / (data.PCosto/medida.UMedida) * 100;
-                    pctum = pctum % 1 === 0 ? pctum : pctum.toFixed(2);
-                    medida.pctUM = Formater(pctum);
-                    medida.UMedida = Formater(medida.UMedida);
-                    medida.PVentaUM = Formater(medida.PVentaUM);
-                })
+                if (data.Medidas.length !== 0){
+                    data.Medidas.forEach((medida) => {
+                        let pctum = medida.UMedida ? (medida.PVentaUM - data.PCosto/medida.UMedida) / (data.PCosto/medida.UMedida) * 100 : Number(pct);
+                        pctum = pctum % 1 === 0 ? pctum : pctum.toFixed(2);
+                        medida.pctUM = Formater(pctum);
+                        medida.UMedida = Formater(medida.UMedida);
+                        medida.PVentaUM = Formater(medida.PVentaUM);
+                    })
+                }
             }
             data.PVenta = Formater(data.PVenta);
             data.PCosto = Formater(data.PCosto);

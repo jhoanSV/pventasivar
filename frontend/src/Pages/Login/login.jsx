@@ -32,7 +32,6 @@ export function Login(){
             "EmailUser": inputData1,
             "Password": inputData2
         });
-        console.log(userData);
         if(!userData){
             TheAlert('Problema de conexión, intente de nuevo más tarde');
             return;
@@ -90,7 +89,8 @@ export function Login(){
                     <i className="bi bi-arrow-right"></i>
                 </button>
                 <span className="aviso">
-                    <label>
+                    <label onClick={()=>{window.electron.openExternalLink('https://api.whatsapp.com/send/?phone=573134237538&text&type=phone_number&app_absent=0')}}>
+                        <i className='bi bi-whatsapp' id='wappIconLogin'></i>
                         reportar un problema
                     </label>
                 </span>

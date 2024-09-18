@@ -42,7 +42,6 @@ export const ConfirmSaleModal = ({show, sendSale , folio , orderslist, width='50
 
     useEffect(() => {
         if (tipoDePago === 'Efectivo') {
-            console.log('Entro en efectivo')
             setEfectivo(total)
             setTransferencia(0)
             setCambio(efectivo - total)

@@ -53,6 +53,22 @@
         font-size: 22px;
     }
 }
+
+label:has(#wappIconLogin){
+    cursor: pointer;
+    &:hover{
+        #wappIconLogin{
+            display: unset;
+        }
+    }
+    #wappIconLogin{
+        display: none;
+        position: absolute;
+        transform: translate(-120%, 0px);
+        color: #25D366;
+    }
+}
+
 #linput1{
     width: 65%;
     height: 35px;

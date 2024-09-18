@@ -1,6 +1,6 @@
 // Modules to control application life and create native browser window
-const { app, BrowserWindow, ipcMain } = require("electron");
-const {autoUpdater, AppUpdater} = require("electron-updater");
+const { app, BrowserWindow, ipcMain, shell } = require("electron");
+const { autoUpdater, AppUpdater } = require("electron-updater");
 const path = require("path");
 const log = require("electron-log");
 /*const express = require("express");
@@ -25,7 +25,7 @@ let mainWindow
 
 function createWindow() {
   // Create the browser window.
-  
+
   mainWindow = new BrowserWindow({
     width: 1280,
     height: 750,
@@ -46,6 +46,9 @@ function createWindow() {
   // mainWindow.webContents.openDevTools()
 }
 
+ipcMain.on('open-external-link', (event, url) => {
+  shell.openExternal(url); // Abre el navegador con el enlace proporcionado
+});
 
 //* For the print command ********************************
 // Handle printing request from renderer process
@@ -56,7 +59,6 @@ ipcMain.on('print-ticket', (event, ticketHTML) => {
       nodeIntegration: true,
     }
   });
-
   // Load the HTML content into the hidden window
   printWindow.loadURL(`data:text/html;charset=utf-8,${encodeURIComponent(ticketHTML)}`);
 
@@ -94,24 +96,24 @@ app.whenReady().then(() => {
   }
 });
 
-autoUpdater.on("update-available", (info)=>{
+autoUpdater.on("update-available", (info) => {
   log.info('update available');
   let pth = autoUpdater.downloadUpdate();
   log.info(pth);
   mainWindow.webContents.send('update-available');
 });
 
-autoUpdater.on("update-not-available", (info)=>{
+autoUpdater.on("update-not-available", (info) => {
   log.info('no updates');
   mainWindow.webContents.send('update-not-available');
 });
 
-autoUpdater.on("error", (info)=>{
+autoUpdater.on("error", (info) => {
   log.info(info);
   mainWindow.webContents.send('error');
 })
 
-autoUpdater.on("update-downloaded", (info)=>{
+autoUpdater.on("update-downloaded", (info) => {
   mainWindow.webContents.send('downloaded');
   autoUpdater.quitAndInstall(true, true);
 })
