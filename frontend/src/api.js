@@ -1,7 +1,7 @@
 // const API_POS = process.env.REACT_APP_SIVARPOS;
 // const API = process.env.REACT_APP_API;
-const API_POS = 'http://192.168.1.110:3000/pos';
-const API = 'http://192.168.1.110:3000/tasks';
+const API_POS = 'http://192.168.101.88:3000/pos';
+const API = 'http://192.168.101.88:3000/tasks';
 
 export const validateUser = async(validateValueUser) => {
     /*Validate the user information and if it's correct return the data of the user

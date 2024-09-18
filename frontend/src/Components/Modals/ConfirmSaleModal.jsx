@@ -220,7 +220,7 @@ export const ConfirmSaleModal = ({show, sendSale , folio , orderslist, width='50
 
     return (
         <div className='theModalContainer'>
-            <div className='theModal-content' style={{width: width, height: height, position: 'relative'}}>
+            <div className='theModal-content' style={{width: '45%', height: '60%', position: 'relative'}}>
                 <button className='btn1Stnd' onClick={() => {show(false)}} style={{position: 'absolute', top: '0px', right: '0px'}}>
                     <i className='bi bi-x-lg'/>
                 </button>
@@ -231,13 +231,17 @@ export const ConfirmSaleModal = ({show, sendSale , folio , orderslist, width='50
                     </div>
                     <div className='content'>
                         <div className='change'>
-                            <div>
+                        <div className='column'>
+                                    <h1 className='total'>$ {Formater(total)}</h1>
+                                </div>
+                            <div className='op'> 
                                 <label>
                                     <input type ='radio'
                                            value ='Efectivo'
                                            name = 'ModoDePago'
                                            defaultChecked = {true}
                                            onChange = {()=>setTipoDePago('Efectivo')}/>
+                                    <img src={require('../../Assets/PNG/efectivo.png')  } />
                                     Efectivo
                                 </label>
                                 <label>
@@ -245,6 +249,7 @@ export const ConfirmSaleModal = ({show, sendSale , folio , orderslist, width='50
                                            value='Transferencia'
                                            name = 'ModoDePago'
                                            onChange = {()=>setTipoDePago('Transferencia')}/>
+                                           <img src={require('../../Assets/PNG/transferencia.png')} />
                                     Transferencia
                                 </label>
                                 <label>
@@ -252,16 +257,11 @@ export const ConfirmSaleModal = ({show, sendSale , folio , orderslist, width='50
                                            value='Mixto'
                                            name = 'ModoDePago'
                                            onChange = {()=>setTipoDePago('Mixto')}/>
+                                           <img src={require('../../Assets/PNG/mixto.png')} />
                                     Mixto
                                 </label>
                             </div>
                             <div className='Rows'>
-                                <div className='column1'>
-                                    <label>Total:</label>
-                                </div>
-                                <div className='column2'>
-                                    <label>$ {Formater(total)}</label>
-                                </div>
                                 {tipoDePago === 'Efectivo' || tipoDePago === 'Mixto' ? (
                                     <>
                                         <div className='column1'>
@@ -307,17 +307,14 @@ export const ConfirmSaleModal = ({show, sendSale , folio , orderslist, width='50
                             </div>
                         </div>
                         <div className='menuOptions'>
-                            <div>
+                            <div className='btn'>
                                 <button className="btnStnd btn1" onClick={()=>chargeTheOrder()}>Solo cobrar</button>
                             </div>
-                            <div>
+                            <div className='btn2'>
                                 <button className="btnStnd btn1" onClick={()=>{}}>Cobrar e imprimir</button>
                             </div>
-                            <div>
-                                <label>Total de articulos:</label>
-                            </div>
-                            <div>
-                                <label>{orderslist.Order.length}</label>
+                            <div className='art'>
+                                <label>Total de articulos: {orderslist.Order.length}</label>
                             </div>
                         </div>
                     </div>
