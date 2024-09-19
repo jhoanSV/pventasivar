@@ -92,7 +92,9 @@ export function Sales(){
             setSelectedFLI(selectedFLIRef.current);
         }else if(document.getElementById('tabsId') === document.activeElement){
             if(isEditingRef.current===true)return;
-            let theOrder = saleTabs[currentTab.key].Order
+            let st = JSON.parse(localStorage.getItem('ticketsJson'));
+            let theOrder = st[selectedTabRef.current.key].Order;
+            
             if (theOrder.length !== 0 && selectedfilaRef.current !== null) {
                 const currentSelectedFila = selectedfilaRef.current;
                 if (e.key === '+') {
@@ -104,8 +106,8 @@ export function Sales(){
                 } else if (e.key === 'ArrowUp' && currentSelectedFila - 1 >= 0 && currentSelectedFila - 1 < theOrder.length) {
                     setSelectedfila(currentSelectedFila - 1)
                 } else if (e.key === 'Delete') {
-                    theOrder.splice(currentSelectedFila, 1)
-                    if (selectedfila === theOrder.length - 1 && selectedfila !== 0){
+                    theOrder.splice(currentSelectedFila, 1);
+                    if (currentSelectedFila === theOrder.length && currentSelectedFila !== 0){
                         setSelectedfila(currentSelectedFila - 1)
                     }
                     // Actualiza el estado con la nueva lista
@@ -200,9 +202,10 @@ export function Sales(){
     
 
     const updateCantidad = (selectedRow, amount) => {
-        let theOrder = saleTabs[currentTab.key].Order//Object.entries(saleTabs.Orden)[selectedTabRef.current][1]
+        let st = JSON.parse(localStorage.getItem('ticketsJson'));
+        let theOrder = st[selectedTabRef.current.key].Order;
         if (theOrder[selectedRow].Cantidad + amount > 0) {
-            theOrder[selectedRow].Cantidad += amount
+            theOrder[selectedRow].Cantidad += amount;
             // Crea una copia del jsonTest[tabindex] para actualizar el estado
             const updatedOrdersList = [...theOrder];
             // Actualiza el estado con la nueva lista
@@ -293,7 +296,6 @@ export function Sales(){
         }else{
             setCustomer("Por asignar")
         }
-        //console.log(saleTabs[Num].Customer.Nombre !== null);
         //const custromerName = saleTabs[Num].Customer.Nombre === '' ? saleTabs[Num].Customer.Nombre: 'Por asignar';
         //setCustomer(custromerName)
     };
@@ -315,7 +317,6 @@ export function Sales(){
             const newTabButtons = {...saleTabs};
             delete newTabButtons[tabNumber];
             setSaleTabs(newTabButtons);
-            console.log('tabNumber: '+tabNumber+' index: '+index+' CurrentTab: '+currentTab);
             if(index < currentTab.index) {
                 setCurrentTab({"index": currentTab.index-1,
                                 "key": tabNumber});
@@ -351,7 +352,6 @@ export function Sales(){
     }
 
     const addProduct = (item) =>{
-        console.log(item, saleTabs[currentTab.key], currentTab.key);
         let theOrder = saleTabs[currentTab.key].Order
         // Verificar si el producto ya existe en theOrder
         const productAlreadyExistsIndex = theOrder.findIndex(
@@ -382,7 +382,6 @@ export function Sales(){
     }
 
     const askToAddProduct = (item) => {
-        //console.log(item)
         if (item.Clase === 0){
             let theProduct = {...item}
             theProduct.Medida = ''
@@ -441,7 +440,7 @@ export function Sales(){
     }, [selectedfila]);
     
     useEffect(() => {
-        selectedTabRef.current = currentTab.index;
+        selectedTabRef.current = currentTab;
         // eslin-disable-next-line
     }, [currentTab]);
 
@@ -500,6 +499,7 @@ export function Sales(){
                 });
                 setOrderslist([]);
                 setCurrentTab({"index": 0, "key": 1});
+                setTabsHistory(1);
                 setCustomer("Por asignar");
                 console.log('ResetTickets and showStarCash');
             }
