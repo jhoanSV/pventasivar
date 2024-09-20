@@ -8,7 +8,7 @@ import { postUpdateInventory } from '../../api';
 export function InvAdjustment(){
 
     const navigate = useNavigate()
-    const { setSection, someData, invAdAuth, setInvAdAuth, usD } = useTheContext();
+    const { setSection, someData, setSomeData, invAdAuth, setInvAdAuth, usD } = useTheContext();
     const [currentC, setCurrentC] = useState('0');
     const [cantAdj, setCantAdj] = useState('');
     const [newCant, setNewCant] = useState('');
@@ -58,6 +58,8 @@ export function InvAdjustment(){
         });
         //console.log(res);
         if(res && res.message === 'Transacción completada con éxito'){
+            console.log('---------------', d);
+            setSomeData(d)
             TheAlert('Cantidad modificada correctamente')
             navigate(-1, {repalce: true})
         } else {
@@ -90,7 +92,7 @@ export function InvAdjustment(){
                     <label>Cantidad actual:</label>
                 </div>
                 <div className='Colmn2'>
-                    <label>{currentC}</label>
+                    <label>{currentC==='' ? 0 : currentC}</label>
                 </div>
             </div>
             <div className='Row'>

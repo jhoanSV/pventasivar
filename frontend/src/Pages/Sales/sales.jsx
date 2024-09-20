@@ -630,7 +630,7 @@ export function Sales(){
                     </CSSTransition>
                 </div>
                 <ModalBusca
-                    list={[...invList]}
+                    list={refList.current}
                     click={askToAddProduct}
                     sh={SearchHandle}
                 />

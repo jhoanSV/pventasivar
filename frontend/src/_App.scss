@@ -89,6 +89,9 @@ input[type="text"], input[type="number"], input[type="password"] {
   border: none;
   border-radius: 5px;
   padding: 6px;
+  &:disabled{
+    background-color: white;
+  }
 }
 
 .noInputArrows::-webkit-outer-spin-button,

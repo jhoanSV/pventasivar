@@ -5,7 +5,7 @@ import { useTheContext } from '../../TheProvider';
 import { TheAlert, TheInput, UserConfirm } from '../../Components';
 import imgPlaceHolder from '../../Assets/AVIF/placeHolderProduct.avif'
 import { GranelModal } from '../../Components/Modals/GranelModal';
-import { NuevoProducto, UpdateProduct } from '../../api';
+import { NuevoProducto, postUpdateInventory, UpdateProduct } from '../../api';
 
 export const Newproduct = () => {
     
@@ -99,7 +99,7 @@ export const Newproduct = () => {
     };
 
     const Formater = (number) => {
-        if(!number)return
+        if(!number)return '';
         let thenumber = typeof (number) === 'number' ? number.toString() : number
         //it gives a number format
         const numberfromat = Number(thenumber.replace(/,/g, '.'));
@@ -141,7 +141,9 @@ export const Newproduct = () => {
                 delete item.pctUM;
             });
             d.Medidas = ms;
-        }
+        }/*else if(d.Medidas.length===0&&d.Clase!==0){
+
+        }*/
         
         d.PVenta = NPToNumber(d['PVenta'])
         d.PCosto = NPToNumber(d.PCosto)
@@ -169,14 +171,18 @@ export const Newproduct = () => {
         if (emptValue) {
             let text1 = emptValue;
             if(text1 === 'IdSubCategoria') text1 = 'Sub-Categoría';
-            if(text1 === 'Clase') text1 = 'tipo de venta';
+            if(text1 === 'Clase') text1 = 'Modo de venta';
             if(text1 === 'Inventario') text1 = 'Inv Actual';
             TheAlert('El campo '+ text1 + ' no puede estar vacío');
             return;
         }
+        if(productData.Clase!==0&&productData.Medidas.length===0){
+            TheAlert('Revisar medidas de venta para granel');
+            return;
+        }
         const codeFind = productCodes.map(code => code.toLowerCase()).includes(productData.Cod.toLowerCase());
         if(codeFind){
-            TheAlert('El código de producto ya existe')
+            TheAlert('El código de producto ya existe');
             return;
         }
         //*------------------------------------------------------------------
@@ -212,6 +218,11 @@ export const Newproduct = () => {
                 key !== 'Medida'
             ) && productData[key] === '') {
                 emptValue = key; // Si algún campo está vacío, la validación falla
+                productData.Medidas.forEach(med => {
+                    if(med.UMedida===''){
+                        emptValue = med.Medida + ' de granel'
+                    }
+                });
             }
         }
         if (emptValue) {
@@ -220,9 +231,13 @@ export const Newproduct = () => {
             TheAlert('El campo '+ text1 + ' no puede estar vacío');
             return;
         }
+        if(productData.Clase!==0&&productData.Medidas.length===0){
+            TheAlert('Revisar medidas de venta para granel');
+            return;
+        }
         const codeFind = productCodes.map(code => code.toLowerCase()).includes(productData.Cod.toLowerCase());
         if((productData.Cod !== someData.Cod) && codeFind){
-            TheAlert('El código de producto ya existe')
+            TheAlert('El código de producto ya existe');
             return;
         }
         //*---------------------------------------
@@ -232,11 +247,29 @@ export const Newproduct = () => {
         a.ConsecutivoProd = someData.Consecutivo
         console.log(productData);
         console.log(a);
-        const res = await UpdateProduct(a)
-        console.log(res);
-        if(res && res.message === 'Transacción completada con éxito'){
-            navigate('/ProductsList')
-            TheAlert('Producto modificado con éxito')
+        if(modificarProducto && ((someData.PCosto!==0&&!someData.PVenta!==0)||someData.Inventario!==0)){
+            console.log('Es para modificar un producto ya creado pero que no tiene inventario por lo que no está creado en mi inventario sjj');
+            const fecha = new Date();
+            const today = fecha.getFullYear() + '-' + (fecha.getMonth() + 1) + '-' + fecha.getDate() + ' ' + fecha.getHours() + ':' + fecha.getMinutes() + ':' + fecha.getSeconds();
+            const res = await postUpdateInventory({
+                "IdFerreteria": someData.IdFerreteria,
+                "CodResponsable": usD.Cod,
+                "Responsable": usD.Ferreteria,
+                "ConsecutivoProd": someData.Consecutivo,
+                "Cantidad": someData.Inventario,
+                "Fecha": today,
+                "Motivo": 'Agregar producto a inventario'
+            });
+            if(!(res && res.message === 'Transacción completada con éxito')){
+                await TheAlert('Ocurrió un error inesperado al agregar producto al inventario');
+                return;
+            }
+        }
+        const res2 = await UpdateProduct(a);
+        console.log(res2);
+        if(res2 && res2.message === 'Transacción completada con éxito'){
+            navigate('/ProductsList');
+            TheAlert('Producto modificado con éxito');
         } else {
             TheAlert('Ocurrió un error inesperado al modificar el producto');
         }
@@ -266,6 +299,7 @@ export const Newproduct = () => {
     useEffect(() => {
         if (someData) {
             let data = { ...someData }
+            console.log({...data});
             if (data.PVenta && data.PCosto) {
                 let pct = ((data.PVenta - data.PCosto) / data.PCosto) * 100
                 pct = pct % 1 === 0 ? pct : pct.toFixed(2);
@@ -286,6 +320,7 @@ export const Newproduct = () => {
             data.Inventario = Formater(data.Inventario);
             data.InvMinimo = Formater(data.InvMinimo);
             data.InvMaximo = Formater(data.InvMaximo);
+            console.log(data);
             setSelectedCategory(data.Categoria.toLowerCase());
             setProductData(data);
             setSection('Modificar producto');
@@ -315,7 +350,9 @@ export const Newproduct = () => {
                                 type="text"
                                 className=""
                                 onChange={(e) => changeValuesProducts("Cod", e.target.value)}
-                                value={productData.Cod} />
+                                value={productData.Cod}
+                                disabled={productData.IdFerreteria===0}
+                                />
                             <div className={(handleCodVali()) ? 'warningCloud' : 'd-none'}>
                                 Este c&oacute;digo ya existe
                             </div>
@@ -331,7 +368,9 @@ export const Newproduct = () => {
                             type="text"
                             className=''
                             onChange={(e) => changeValuesProducts("Descripcion", e.target.value)}
-                            value={productData.Descripcion} />
+                            value={productData.Descripcion}
+                            disabled={productData.IdFerreteria===0}
+                            />
                     </div>
                 </div>
                 <div className='Row'>
@@ -391,7 +430,7 @@ export const Newproduct = () => {
                                 <i className={`icon-${item}`}></i>
                             </label>
                         ))*/}
-                        <select value={selectedCategory} onChange={(e)=>{handleSelectedCategory('Categoria', e)}} style={{width: '41%'}}>
+                        <select value={selectedCategory} onChange={(e)=>{handleSelectedCategory('Categoria', e)}} style={{width: '41%'}} disabled={productData.IdFerreteria===0}>
                             <option value="">Categoria...</option>
                             {categories.map(c => (
                                 <option key={c.IdCategoria} value={c.IdCategoria}>
@@ -406,7 +445,7 @@ export const Newproduct = () => {
                         <label>Sub-Categor&iacute;a</label>
                     </div>
                     <div className='Colmn2'>
-                        <select value={productData.IdSubCategoria} onChange={(e)=>{handleSelectedCategory('subCat', e)}} style={{width: '41%'}}>
+                        <select value={productData.IdSubCategoria} onChange={(e)=>{handleSelectedCategory('subCat', e)}} style={{width: '41%'}} disabled={productData.IdFerreteria===0}>
                             <option value="">Seleccione...</option>
                             {subCatList.map(sc => (
                                 <option key={sc.IdSubCategoria} value={sc.IdSubCategoria}>{sc.SubCategoria}</option>
@@ -426,7 +465,7 @@ export const Newproduct = () => {
                 } */}
                 <div className={'Row salesMethod ' + ((productData.Cod && productData.Descripcion && productData.PCosto && productData.PVenta) && 'show')}>
                     <div className='Colmn1'>
-                        <label>Se vende:</label>
+                        <label>Modo de venta:</label>
                     </div>
                     <div className='Row'>
                         { productData.IdFerreteria !== 0 &&
@@ -492,8 +531,8 @@ export const Newproduct = () => {
                             <label>Inv actual</label>
                         </div>
                         <div className='Colmn2'>
-                            {modificarProducto ?
-                                <label>{Formater(productData.Inventario)}</label>
+                            {modificarProducto && ((someData.PCosto!==0&&!someData.PVenta!==0)||someData.Inventario!==0) ?
+                                <label>{Formater(productData.Inventario)==='' ? 0 : Formater(productData.Inventario)}</label>
                                 :
                                 <TheInput
                                     val={productData.Inventario}

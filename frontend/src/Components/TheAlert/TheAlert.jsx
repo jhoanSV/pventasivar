@@ -4,6 +4,8 @@ import React from 'react';
 
 export const TheAlert = (message, mode = 0) => {
 
+    //* if mode is 1 there will be 2 buttons, and the cancel button can return false
+
     return new Promise((resolve) => {
         document.body.classList.add('modalOpen');
         

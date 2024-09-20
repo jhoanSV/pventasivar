@@ -13,7 +13,8 @@ export const TheInput = ({
     pholder='',
     Min=null,
     Max=null,
-    select=false}) => {
+    select=false,
+    disabled=false}) => {
 
     const [value, setValue] = useState(val);
     
@@ -93,6 +94,7 @@ export const TheInput = ({
             onFocus={(e)=>{handleFocus(e)}}
             onBlur={(e)=>{handleBlur(e)}}
             autoFocus={autofocus}
+            disabled={disabled}
         />
 
     );

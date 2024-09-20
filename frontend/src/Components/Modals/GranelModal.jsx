@@ -65,7 +65,7 @@ export const GranelModal = ({show, productData, pctGan, updtState}) => {
                         </span>
                         {productData.Clase !== 4 ?
                             <>
-                                <select value={productData.Clase} name='medida'
+                                <select value={(productData.Clase!==0&&productData.Medidas.length!==0) ? productData.Clase : ''} name='medida'
                                     onChange={(e)=>{handleMeasureChange(e)}}
                                 >
                                     <option value=''>seleccione...</option>
