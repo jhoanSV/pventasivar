@@ -67,6 +67,7 @@ export const App = () => {
             }
         }
     ));
+    if(!localStorage.getItem('PAdded')) localStorage.setItem('PAdded', JSON.stringify({}))
 
     useEffect(() => {
         if (localStorage.getItem('cart')) setNItemsCart(JSON.parse(localStorage.getItem('cart')).length);

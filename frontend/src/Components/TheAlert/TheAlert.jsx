@@ -12,13 +12,20 @@ export const TheAlert = (message, mode = 0) => {
         theRoot.appendChild(div);
     
         const root = ReactDOM.createRoot(div);
-    
+
+        const preventEnterKey = (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+            }
+        };
+
         const closeAlert = () => {
             document.getElementById('talertcId').classList.add('bye');
             setTimeout(() => {
                 document.body.classList.remove('modalOpen');
                 root.unmount();
                 theRoot.removeChild(div);
+                window.removeEventListener('keydown', preventEnterKey);
             }, 200);
         }
     
@@ -31,6 +38,8 @@ export const TheAlert = (message, mode = 0) => {
             closeAlert();
             resolve(true);
         };
+
+        window.addEventListener('keydown', preventEnterKey, { once: true });
     
         root.render(
             <AlertContent

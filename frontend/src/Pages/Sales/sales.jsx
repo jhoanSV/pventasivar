@@ -43,16 +43,16 @@ export function Sales(){
     const [ sBText, setSBText] = useState('');
     const [ invList, setInvList] = useState([]);
     const [ selectedFLI, setSelectedFLI] = useState(0);
-    const nodeRef = useRef(null), divSRef = useRef(), tabsRef = useRef();
+    const nodeRef = useRef(null), divSRef = useRef();
     const refList = useRef([]), invListRef = useRef([]);
     const selectedfilaRef = useRef(selectedfila);
     const selectedTabRef = useRef(currentTab);
-    const selectedFLIRef = useRef(0)
+    const selectedFLIRef = useRef(selectedFLI);
     const isEditingRef = useRef(false);
     const asktoaddRef = useRef(null);
     const { setSection, usD } = useTheContext();
     
-    const handleKeyDown = (e) => {
+    const handleKeyDown = async(e) => {
         if(document.getElementById('NPinput') === document.activeElement){
             const theInvList = invListRef.current
             if (e.key === 'ArrowDown') {
@@ -74,16 +74,7 @@ export function Sales(){
                     document.getElementById('NPinput').select();
                     return;
                 } 
-                if (Number(selectedItem.Inventario) !== 0) {
-                    asktoaddRef.current(selectedItem);
-                    setSBText('');
-                    document.getElementById('NPinput').focus();
-                    document.getElementById('NPinput').select();
-                } else {
-                    TheAlert('No hay inventario suficiente');
-                    document.getElementById('NPinput').focus();
-                    document.getElementById('NPinput').select();
-                }
+                asktoaddRef.current(selectedItem);
                 /*document.getElementById('tabsId').removeEventListener('keydown', handleKeyDown2);
                 document.getElementById('NPinput').removeEventListener('keydown', handleKeyDown);
                 document.getElementById('tabsId').addEventListener('keydown', handleKeyDown2);
@@ -106,6 +97,14 @@ export function Sales(){
                 } else if (e.key === 'ArrowUp' && currentSelectedFila - 1 >= 0 && currentSelectedFila - 1 < theOrder.length) {
                     setSelectedfila(currentSelectedFila - 1)
                 } else if (e.key === 'Delete') {
+                    const PAdded = JSON.parse(localStorage.getItem('PAdded'));
+                    let item = theOrder[currentSelectedFila]
+                    console.log(Number(PAdded[item.Cod].Cantidades),' - ',Number(item.Cantidad/item.UMedida),' = ',Number(PAdded[item.Cod].Cantidades)-Number(item.Cantidad/item.UMedida));
+                    let dif = Math.abs(Number(PAdded[item.Cod].Cantidades)-Number(item.Cantidad/item.UMedida)) < 1e-10 ? 0 : Number(PAdded[item.Cod].Cantidades)-Number(item.Cantidad/item.UMedida)
+                    if(dif === 0){
+                        delete PAdded[item.Cod];
+                    }else PAdded[item.Cod].Cantidades = dif;
+                    localStorage.setItem('PAdded', JSON.stringify(PAdded));
                     theOrder.splice(currentSelectedFila, 1);
                     if (currentSelectedFila === theOrder.length && currentSelectedFila !== 0){
                         setSelectedfila(currentSelectedFila - 1)
@@ -118,10 +117,23 @@ export function Sales(){
         }
     };
 
-    const onblurChangeCuantity = (row, amount) => {
+    const onblurChangeCuantity = async(row, amount) => {
         let theOrder = [...saleTabs[currentTab.key].Order]
         let theAmount = amount.replace(/[.,]/g, (a) => (a === "." ? "" : "."));
         if (theAmount > 0) {
+            const PAdded = JSON.parse(localStorage.getItem('PAdded'));
+            let item = theOrder[row];
+            console.log(Number(PAdded[item.Cod].Cantidades), Number(theAmount/item.UMedida), item.Inventario);
+            if((Number(PAdded[item.Cod].Cantidades)+Number(theAmount/item.UMedida))>(item.Inventario)){
+                await TheAlert('No hay suficiente inventario');
+                PAdded[item.Cod].Cantidades = item.Cantidad;
+                theOrder[row].Cantidad = Number(item.Cantidad);
+                setOrderslist(theOrder);
+                setChangeQuantity(null);
+                return;
+            }
+            PAdded[item.Cod].Cantidades = Number(theAmount/item.UMedida);
+            localStorage.setItem('PAdded', JSON.stringify(PAdded));
             theOrder[row].Cantidad = Number(theAmount);
             setOrderslist(theOrder);
         }
@@ -155,6 +167,7 @@ export function Sales(){
                                 sTyle = {{width: columnsWidth[0]}}
                                 onblur = {(e) => {onblurChangeCuantity(rowIndex, e);isEditingRef.current=false}}
                                 autofocus={true}
+                                select={true}
                             /> ) :
                         ( 
                             <label>{Formater(item.Cantidad)}</label>
@@ -180,6 +193,7 @@ export function Sales(){
                                     onblurChangePv(rowIndex, e);
                                     isEditingRef.current=false}}
                                 autofocus={true}
+                                select={true}
                             /> ) :
                         ( 
                             <label>$ {Formater(item.PVenta)}</label>
@@ -201,17 +215,27 @@ export function Sales(){
     };
     
 
-    const updateCantidad = (selectedRow, amount) => {
+    const updateCantidad = async(selectedRow, amount) => {
         let st = JSON.parse(localStorage.getItem('ticketsJson'));
         let theOrder = st[selectedTabRef.current.key].Order;
         if (theOrder[selectedRow].Cantidad + amount > 0) {
+            const PAdded = JSON.parse(localStorage.getItem('PAdded'));
+            let item = theOrder[selectedRow];
+            let umin = item.Medida ? item.Medidas[item.Medidas.length-1].UMedida : 1;
+            console.log(Number(PAdded[item.Cod].Cantidades),Number(amount/item.UMedida),(item.Inventario*umin) );
+            if(Number(PAdded[item.Cod].Cantidades)+Number(amount/item.UMedida)>(item.Inventario)){
+                await TheAlert('No hay suficiente inventario.');
+                return;
+            }
+            PAdded[item.Cod].Cantidades = Number(PAdded[item.Cod].Cantidades)+Number(amount/item.UMedida);
+            localStorage.setItem('PAdded', JSON.stringify(PAdded));
             theOrder[selectedRow].Cantidad += amount;
             // Crea una copia del jsonTest[tabindex] para actualizar el estado
             const updatedOrdersList = [...theOrder];
             // Actualiza el estado con la nueva lista
             setOrderslist(updatedOrdersList);
         }
-      };
+    };
 
     const ctHeaders = [
         {
@@ -313,9 +337,12 @@ export function Sales(){
     const closeTab = async(tabNumber, index) => {
         let asktoclose = await TheAlert('¿Desea eliminar el tiket con ' + saleTabs[tabNumber].Order.length + ' productos?', 1);
         if(!asktoclose) return;
+        let ifDel = false;
+        const newTabButtons = {...saleTabs};
+        const otD = newTabButtons[tabNumber].Order
         if (Object.keys(saleTabs).length > 1 && (tabNumber in saleTabs)) {
-            const newTabButtons = {...saleTabs};
             delete newTabButtons[tabNumber];
+            ifDel = true;
             setSaleTabs(newTabButtons);
             if(index < currentTab.index) {
                 setCurrentTab({"index": currentTab.index-1,
@@ -329,11 +356,20 @@ export function Sales(){
             }
         } else {
             createButton()
-            const newTabButtons = {...saleTabs};
             delete newTabButtons[tabNumber];
+            ifDel = true
             setSaleTabs(newTabButtons)
             setCurrentTab({"index": 0,
                              "key": Object.keys(newTabButtons)[0]})
+        }
+        if(ifDel && otD.length > 0){
+            const PAdded = JSON.parse(localStorage.getItem('PAdded'));
+            otD.forEach(item => {
+                if(Number(PAdded[item.Cod].Cantidades)-Number(item.Cantidad/item.UMedida) === 0){
+                    delete PAdded[item.cod];
+                }else PAdded[item.Cod].Cantidades = Number(PAdded[item.Cod].Cantidades)-Number(item.Cantidad/item.UMedida);
+            });
+            localStorage.setItem('PAdded', JSON.stringify(PAdded));
         }
     };
 
@@ -344,6 +380,7 @@ export function Sales(){
     const SearchHandle = (text, sl) =>{
         setSBText((text))
         let c = refList.current;
+        console.log(c);
         if (text !== ''){
             sl(c.filter((i)=>filterByText(i, text)));
         }else{
@@ -351,13 +388,42 @@ export function Sales(){
         }
     }
 
-    const addProduct = (item) =>{
+    const addProduct = async(item) =>{
+        const PAdded = JSON.parse(localStorage.getItem('PAdded'));
+        //let paddedItem;
+        let umin = item.Medida ? item.Medidas[item.Medidas.length-1].UMedida : 1;
+        if(!PAdded[item.Cod])PAdded[item.Cod] = {};
+        if(!PAdded[item.Cod]['Cantidades'])PAdded[item.Cod].Cantidades = 0;
+        /*if(!item.Medida){
+            if(!PAdded[item.Cod]['a'])PAdded[item.Cod]['a'] = { Cantidades: 0 }
+            paddedItem = PAdded[item.Cod]['a'];
+        }else{
+            if(!PAdded[item.Cod][item.Medida])PAdded[item.Cod][item.Medida] = { Cantidades: 0 }
+            paddedItem = PAdded[item.Cod][item.Medida];
+        }*/
+        /*console.log(Number(paddedItem.Cantidades),Number(item.Cantidad),item.Inventario, item.UMedida, umin);
+        console.log((Number(paddedItem.Cantidades*umin)+Number(item.Cantidad)),(item.Inventario*umin));*/
+        /*if(Number(paddedItem.Cantidades*umin)+Number(item.Cantidad*umin)>(item.Inventario*umin)){
+            await TheAlert('No hay suficiente inventario. Inventario actual: '+(item.Inventario*item.UMedida));
+            setSBText('')
+            document.getElementById('NPinput').focus();
+            return;
+        }*/
+        console.log(Number(item.Cantidad), (item.UMedida), (item.Inventario),(umin));
+        console.log(Number(PAdded[item.Cod].Cantidades), Number(item.Cantidad/item.UMedida), (item.Inventario));
+        if(Number(PAdded[item.Cod].Cantidades)+Number(item.Cantidad/item.UMedida)>(item.Inventario)){
+            await TheAlert('No hay suficiente inventario.');
+            setSBText('')
+            document.getElementById('NPinput').focus();
+            return;
+        }
         let theOrder = saleTabs[currentTab.key].Order
         // Verificar si el producto ya existe en theOrder
         const productAlreadyExistsIndex = theOrder.findIndex(
             (prod) => prod.Cod === item.Cod && prod.Medida === item.Medida
         );
         if(productAlreadyExistsIndex === -1){
+            //*Product doesnt exist
             theOrder.push(item);
             setOrderslist(a => {
                 //send the scrollbar to the bottom
@@ -369,13 +435,18 @@ export function Sales(){
                 }, 0);
                 return [...theOrder];
             });
-            setSelectedfila(saleTabs[currentTab.key].Order.length - 1)
+            setSelectedfila(saleTabs[currentTab.key].Order.length - 1);
         } else {
             //saleTabs[currentTab.key].Order[productAlreadyExistsIndex].Cantidad = theOrder[productAlreadyExistsIndex].Cantidad + item.Cantidad
-            theOrder[productAlreadyExistsIndex].Cantidad += item.Cantidad
-            setOrderslist([...theOrder])
-            setSelectedfila(productAlreadyExistsIndex)
+            theOrder[productAlreadyExistsIndex].Cantidad += item.Cantidad;
+            setOrderslist([...theOrder]);
+            setSelectedfila(productAlreadyExistsIndex);
         }
+        PAdded[item.Cod].Cantidades = Number(PAdded[item.Cod].Cantidades)+Number(item.Cantidad/item.UMedida)
+        //paddedItem.Cantidades = Number(paddedItem.Cantidades)+item.Cantidad;
+        console.log(PAdded);
+        localStorage.setItem('PAdded', JSON.stringify(PAdded));
+        console.log(item);
         setSBText('');
         document.getElementById('NPinput').focus();
         document.getElementById('NPinput').select();
@@ -383,11 +454,11 @@ export function Sales(){
 
     const askToAddProduct = (item) => {
         if (item.Clase === 0){
-            let theProduct = {...item}
-            theProduct.Medida = ''
+            let theProduct = {...item};
+            theProduct.Medida = '';
             theProduct.Cantidad = 1;
             theProduct.UMedida = 1;
-            addProduct(theProduct)
+            addProduct(theProduct);
         } else if (item.Clase !== 0){
             setSelectProduct(item)
             setShowProductMeasures(true)
@@ -467,11 +538,8 @@ export function Sales(){
     }, [currentTab]);
     
     useEffect(() => {
-        document.addEventListener('keydown', handleKeyDown);
-
         setSection('Ventas');
         fetchInventoryList();
-        document.addEventListener('mousedown', handleClickOutside);
         if(Object.keys(saleTabs[currentTab.key].Customer).length !== 0){
             setCustomer(saleTabs[currentTab.key].Customer.Nombre + ' ' + saleTabs[currentTab.key].Customer.Apellido)
         }else{
@@ -492,6 +560,7 @@ export function Sales(){
                         }
                     }
                 ));
+                localStorage.setItem('PAdded', JSON.stringify({}));
                 setSaleTabs({
                     "1": { "Customer": {},
                             "Order": []
@@ -505,6 +574,8 @@ export function Sales(){
             }
         }
         StartCahs()
+        document.addEventListener('keydown', handleKeyDown);
+        document.addEventListener('mousedown', handleClickOutside);
         return () => {
             document.removeEventListener('keydown', handleKeyDown);
             document.removeEventListener('mousedown', handleClickOutside);
@@ -538,8 +609,9 @@ export function Sales(){
                             {invList.slice(0,20).map((item, index) =>
                                 <div key={index}
                                     className={`flItem ${index === selectedFLI ? 'selected' : ''}`}
-                                    onClick={()=>{Number(item.Inventario)!==0 ? askToAddProduct(item) : TheAlert('No hay invetario suficiente'); document.getElementById('NPinput').focus();}}
-                                    style={{color: Number(item.Inventario)===0 && 'red'}}
+                                    onClick={()=>{
+                                        askToAddProduct(item)}}
+                                    style={{color: Number(item.Inventario)<=0 && 'red'}}
                                 >
                                     {item.Descripcion}
                                     <div className='codFlitem'>
@@ -585,7 +657,7 @@ export function Sales(){
                 <div>
                     <label>Cliente: {customer}</label>
                 </div>
-                <div id='tabsId' className="tabs" tabIndex={0} ref={tabsRef}>
+                <div id='tabsId' className="tabs" tabIndex={0}>
                     <div className='tabButtons'>
                         {Object.keys(saleTabs).map((tabNumber, index) => (
                             <div className='tabButtonModel' key={tabNumber} onClick={()=>{

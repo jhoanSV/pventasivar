@@ -12,7 +12,8 @@ export const TheInput = ({
     sTyle={},
     pholder='',
     Min=null,
-    Max=null}) => {
+    Max=null,
+    select=false}) => {
 
     const [value, setValue] = useState(val);
     
@@ -69,6 +70,9 @@ export const TheInput = ({
             let withoutFormat = theValue.replace(/\./g, '')
             setValue(withoutFormat)
             if(onfocus)onfocus(withoutFormat)
+        }
+        if(select){
+            e.target.select();
         }
     };
 

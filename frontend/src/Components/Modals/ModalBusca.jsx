@@ -10,7 +10,7 @@ export const ModalBusca = ({list, click=false, sh}) => {
     const [lista, setLista] = useState([]);
 
     const clickFunct = async(item) =>{
-        (Number(item.Inventario)!==0 && click) ? click(item) : await TheAlert('No hay invetario suficiente');
+        (Number(item.Inventario)!==0 && click) ? click(item) : await TheAlert('No hay inventario suficiente');
         setShowModalBusca(false);
     }
 
