@@ -1,9 +1,11 @@
 import React, {useEffect, useState, useRef} from 'react';
-import { TableComponent, TheAlert } from '../../Components';
+import { TableComponent, TheAlert, TheInput } from '../../Components';
 import { useTheContext } from '../../TheProvider';
 import { useNavigate } from 'react-router-dom';
 import { Clientlist } from '../../api';
 import jsonTest from '../../jsonTest.json';
+import './_SignClient.scss';
+import { Newclient, UpdateClient } from '../../api';
 
 export const SignClient = ({show, retornar, width='50%', height='80%'}) => {
     const [ selected, setSelected] = useState([]);
@@ -116,75 +118,143 @@ export const SignClient = ({show, retornar, width='50%', height='80%'}) => {
         )
     };
 
-    const CreateCustomerForm = ({cType, conCredito, setConCredito, value, setValue, verCod, setVerCod, creLim, setCreLim}) => {
-        const { setSection, someData } = useTheContext();
-        
-        const navigate = useNavigate()
+    const CreateCustomerForm = ({cType, value, setValue, creLim, setCreLim}) => {
+        const { setSection, someData, usD } = useTheContext();
+        const [enableB1, setEnableB1] = useState(false);
+        const [conCredito, setConCredito] = useState(false);
+        const [showAlertCustomers, setShowAlertCustomers] = useState(false)
+        const [verCod, setVerCod] = useState('');//* verificationCode
+        const [customerData, setCustomerData] = useState({
+            "IdFerreteria": usD.Cod,
+            "Tipo": 0, 
+            "NitCC": "",
+            "Nombre": "",
+            "Apellido": "",
+            "Telefono1": "",
+            "Telefono2": "",
+            "Correo": "",
+            "Direccion": "",
+            "Barrio": "",
+            "FormaDePago": 0,
+            "LimiteDeCredito": 0, //In this stage this have to be always 0
+            "Nota": "",
+            "Fecha": "2024-07-20 13:00:00" //Format is AAAA-MM-DD hh:mm:ss
+        });    
 
-        const handleChange = (e) => {
-            const newValue = e.target.value.replace(/[^0-9]/g, '');
-            setValue(newValue);
-        };
-
-        const handleFormat = (e) => {
+        const handleFormat = (id, e) => {
             const t = e.target.value.replace(/[^0-9]/g, '');
-            e.target.value = t
+            if (id === 'NitCC') {
+                const filterCustomers = contentList.filter((data) => data.NitCC === t)
+                if (filterCustomers.length > 0 && id === 'NitCC') {
+                    setShowAlertCustomers(true)
+                } else {
+                    setShowAlertCustomers(false)
+                }
+            }
+            changeValuesCustomer(id, t);
         }
 
-        const validate = () =>{
+        const validate = async() =>{
+            let a = {...customerData}
+            let res, msj1, msj2, msjV = ''
+            //* Primero se valida
             const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            TheAlert(regex.test(document.getElementById('emailId').value))
+            if(a.NitCC.length < 9){
+                msjV = msjV + 'El Nit/Cédula debe tener al menos 9 caracteres\n'
+            }
+            if(a.Nombre === ''){
+                msjV = msjV + 'El nombre no puede estar vacío\n'
+            }
+            if(!regex.test(a.Correo)){
+                msjV = msjV + 'El correo no es válido\n'
+            }
+            if(msjV){
+                TheAlert(msjV);
+                return;
+            }
+            //*-----------------
+            if(customerData.Tipo===1){
+                a.NitCC = customerData.NitCC + '-' + verCod
+            }
+            const fecha = new Date()
+            const today = fecha.getFullYear() + '-' + (fecha.getMonth()+1) + '-' + fecha.getDate() + ' ' + fecha.getHours() + ':' + fecha.getMinutes() + ':' + fecha.getSeconds()
+            if(someData){
+                //* Modificar
+                msj1 = 'Modificado con éxito'
+                msj2 = 'modificar el cliente'
+                a.Consecutivo = someData.Consecutivo
+                res = await UpdateClient(a)
+            }else {
+                //* Nuevo
+                msj1 = 'Creado con éxito'
+                msj2 = 'crear el cliente'
+                a.Fecha = today
+                if (showAlertCustomers) {
+                    TheAlert('El Nit/Cédula ya existe');
+                    return;
+                } else {
+                    res = await Newclient(a)
+                }
+            }
+            console.log(res);
+            if(res.insertId || res.message === 'Transacción completada con éxito'){
+                //console.log(a)
+                retornar([a])
+                //navigate('/Customerlist')
+                //TheAlert(msj1);
+                show(false)
+            }else{
+                TheAlert('Ocurrió un error inesperado al '+ msj2);
+            }
         }
         
-        const Formater = (number) =>{
-            return Intl.NumberFormat().format(number);
+        // const Formater = (number) =>{
+        //     return Intl.NumberFormat().format(number);
+        // }
+
+        const changeValuesCustomer = (key, value)=>{
+            //This function allows us to change the one specific value in the product data
+            setEnableB1(true)
+            setCustomerData(prevValue => ({
+                ...prevValue, // Copia los valores anteriores
+                [key]: value // Reemplaza el valor de la clave específica
+            }));
         }
 
         useEffect(() => {
-            setSection('Nuevo cliente')
-
             if(someData){
-                let data = someData
-                if(data['ctype']==='cc'){
-                    document.getElementById('CustomerType').value = 1
-                    setValue(data['id_nit'])
-                    setCType('1')
-                }else{
-                    document.getElementById('CustomerType').value = 2
-                    const parts = data['id_nit'].split('-');
-                    setValue(parts[0])
-                    setVerCod(parts[1])
-                    setCType('2')
+                let data = {...someData};
+                let parts = data.NitCC.split('-');
+                if(parts[1]){
+                    data.NitCC = parts[0];
+                    setVerCod(parts[1]);
                 }
-                document.getElementById('cnombre').value = data['nombre']
-                document.getElementById('capellido').value = data['apellido']            
-                document.getElementById('celId1').value = (data['telefono1'])
-                document.getElementById('celId2').value = (data['telefono2']) ? (data['telefono2']) : ''
-                document.getElementById('emailId').value = (data['email']) ? (data['email']) : ''
-                document.getElementById('adId').value = (data['direccion']) ? (data['direccion']) : ''
-                document.getElementById('barrioId').value = (data['barrio']) ? (data['barrio']) : ''
-                if(data['credito']===true){
+                if(data['LimiteDeCredito']>0){
                     document.getElementById('checkCredito').checked = true;
                     setConCredito(true)
-                    setCreLim(Formater(data['limCredito']))
                 }
-                document.getElementById('nctaId').value = data['notas'] ? data['notas'] : ''
+                data.IdFerreteria = usD.Cod
+                //data.FormaDePago = 0
+                setCustomerData(data)
             }
             // eslint-disable-next-line
         }, []);
 
         return (
-
-            <section className='newCustomer'>
+            <div id='newCustomer'>
                 <div>
+                    <div id='Name-Bar'>
+                        <h1>Nuevo Cliente</h1>
+                    </div>
                     <div className='Row'>
                         <div className='Colmn1'>
                             <label>Tipo cliente</label>
                         </div>
                         <div className='Colmn2'>
-                            <select id='CustomerType' onChange={(e)=>{setCType(e.target.value)}}>
-                                <option value='1'>C&eacute;dula</option>
-                                <option value='2'>Nit</option>
+                            <select id='CustomerType' value={customerData.Tipo}
+                            onChange={(e)=>{changeValuesCustomer('Tipo', Number(e.target.value))}}>
+                                <option value='0'>C&eacute;dula</option>
+                                <option value='1'>Nit</option>
                             </select>
                         </div>
                     </div>
@@ -194,34 +264,43 @@ export const SignClient = ({show, retornar, width='50%', height='80%'}) => {
                         </div>
                         <div className='Colmn2'>
                             <input id='numId' type="text"
-                            onChange={(e)=>handleChange(e)}
-                            value={value}
+                            onChange={(e)=>handleFormat('NitCC', e)}
+                            value={customerData.NitCC}
                             style={{width: '41%', marginRight: '5px'}}
                             />
-                            {cType==='2' && 
-                                <input id='nitId' type="text" defaultValue={verCod}/>
+                            {customerData.Tipo=== 1 && 
+                                <input id='nitId' type="text" value={verCod} onChange={(e)=>setVerCod(e.target.value)}/>
+                            }
+                        </div>
+                        {showAlertCustomers && <div style={{color: 'red'}}><label>El cliente ya existe</label></div>}
+                    </div>
+                    <div className='Row'>
+                        <div className='Colmn1'>
+                            <label>{customerData.Tipo=== 1 ? 'Razón social' : 'Nombres'}</label>
+                        </div>
+                        <div className='Colmn2'>
+                            <input id='cnombre' type="text" value={customerData.Nombre} onChange={(e)=>changeValuesCustomer('Nombre', e.target.value)}/>
+                            {customerData.Tipo!== 1 && 
+                                <>
+                                <label style={{marginLeft: '10px'}}>Apellidos</label>
+                                <input id='capellido' type="text"
+                                    value={customerData.Apellido}
+                                    onChange={(e)=>changeValuesCustomer('Apellido', e.target.value)}
+                                    style={{marginLeft: '20px', width: '39%'}}
+                                />
+                                </>
                             }
                         </div>
                     </div>
                     <div className='Row'>
                         <div className='Colmn1'>
-                            <label>{cType==='2' ? 'Razón social' : 'Nombres'}</label>
-                        </div>
-                        <div className='Colmn2'>
-                            <input id='cnombre' type="text" className=""/>
-                            <label style={{marginLeft: '10px'}}>Apellidos</label>
-                            <input id='capellido' type="text" className="" style={{marginLeft: '20px'}}/>
-                        </div>
-                    </div>
-                    <div className='Row'>
-                        <div className='Colmn1'>
-                            <label>Telefono 1/whastsapp</label>                        
+                            <label>Telefono 1 / whastsapp</label>
                         </div>
                         <div className='Colmn2'>
                             <input id='celId1'
                                 type="text"
-                                className="noInputArrows"
-                                onChange={(e)=>handleFormat(e)}
+                                value={customerData.Telefono1}
+                                onChange={(e)=>handleFormat("Telefono1", e)}
                             />
                         </div>
                     </div>
@@ -232,8 +311,8 @@ export const SignClient = ({show, retornar, width='50%', height='80%'}) => {
                         <div className='Colmn2'>
                             <input id='celId2'
                                 type="text"
-                                className="noInputArrows"
-                                onChange={(e)=>handleFormat(e)}
+                                value={customerData.Telefono2}
+                                onChange={(e)=>handleFormat("Telefono2", e)}
                             />
                         </div>
                     </div>
@@ -242,7 +321,10 @@ export const SignClient = ({show, retornar, width='50%', height='80%'}) => {
                             <label>E-mail</label>
                         </div>
                         <div className='Colmn2'>
-                            <input id='emailId' type="text" className=""/>
+                            <input id='emailId' type="text"
+                                value={customerData.Correo}
+                                onChange={(e)=>changeValuesCustomer('Correo', e.target.value)}
+                            />
                         </div>
                     </div>
                     <div className='Row'>
@@ -250,12 +332,19 @@ export const SignClient = ({show, retornar, width='50%', height='80%'}) => {
                             <label>Direccion</label>
                         </div>
                         <div className='Colmn2'>
-                            <input id='adId' type="text" className=""/>
+                            <input id='adId' type="text"
+                                value={customerData.Direccion}
+                                onChange={(e)=>changeValuesCustomer('Direccion', e.target.value)}
+                            />
                             <label style={{marginLeft: '10px'}}>Barrio</label>
-                            <input id='barrioId' type="text" className="" style={{marginLeft: '20px'}}/>
+                            <input id='barrioId' type="text"
+                                style={{marginLeft: '20px'}}
+                                value={customerData.Barrio}
+                                onChange={(e)=>changeValuesCustomer('Barrio', e.target.value)}
+                            />
                         </div>
                     </div>
-                    <div className='Row'>
+                    <div className='Row' style={{display: 'none'}}>{/*Display none while E1*/}
                         <div className='Colmn1'>
                             <label>Credito</label>
                         </div>
@@ -264,9 +353,11 @@ export const SignClient = ({show, retornar, width='50%', height='80%'}) => {
                             {conCredito &&
                                 <>
                                     <label style={{paddingRight: '10px'}}>Limite de credito</label>
-                                    <input id='limCredito' type="text" className="" value={creLim}
-                                    onBlur={(e)=>{setCreLim(Formater(e.target.value))}}
-                                    onChange={(e)=>setCreLim(e.target.value)}/>
+                                    <TheInput
+                                        val={customerData.LimiteDeCredito}
+                                        numType={'real'}
+                                        onchange={(e)=>{changeValuesCustomer('LimiteDeCredito', e)}}
+                                    />
                                 </>
                             }
                         </div>
@@ -279,22 +370,29 @@ export const SignClient = ({show, retornar, width='50%', height='80%'}) => {
                             <textarea
                                 id='nctaId'
                                 type="textbox"
-                                className="ncTextArea"
+                                className="taStnd ncTextArea"
                                 placeholder="Notas/Detalles del cliente"
+                                value={customerData.Nota}
+                                onChange={(e)=>changeValuesCustomer('Nota', e.target.value)}
                             />
                         </div>
                     </div>
                     <div style={{marginLeft: '15.5%', display: 'flex', justifyContent: 'space-between'}}>
                         <div>
+                            {console.log(enableB1)}
                             <button className='btnStnd btn1'
-                            style={{marginRight: '10px'}} onClick={()=>{validate()}}>{someData ? 'Modificar' : 'Guardar'}</button>
-                            {someData && <button className='btnStnd btn1'>Estado de cuenta</button>}
+                            style={{marginRight: '10px'}}
+                            onClick={()=>{validate()}}
+                            disabled={!enableB1}>
+                                {someData ? 'Modificar' : 'Guardar'}
+                            </button>
+                            {/* {someData && <button className='btnStnd btn1'>Estado de cuenta</button>} */}{/*WIP*/}
                         </div>
-                        <button className='btnStnd btn1' onClick={()=>navigate(-1)}>Cancelar</button>
+                        <button className='btnStnd btn1' onClick={()=>setShowCustomerList(false)}>Cancelar</button>
                     </div>
                 </div>
-            </section>
-        )
+            </div>
+        );
     };
 
     return (
@@ -304,7 +402,18 @@ export const SignClient = ({show, retornar, width='50%', height='80%'}) => {
                     <i className='bi bi-x-lg'/>
                 </button>
                 <div className='theModal-body'>
-                    {showCustomerList ? customerList() : CreateCustomerForm(cType={cType}, conCredito={conCredito}, setConCredito={setConCredito}, value={value}, setValue={setValue}, verCod={verCod}, setVerCod={setVerCod}, creLim={creLim}, setCreLim={setCreLim})}
+                    {showCustomerList ? customerList() :
+                        <CreateCustomerForm
+                            cType={cType} 
+                            conCredito={conCredito}
+                            setConCredito={setConCredito}
+                            value={value}
+                            setValue={setValue}
+                            verCod={verCod}
+                            setVerCod={setVerCod}
+                            creLim={creLim}
+                            setCreLim={setCreLim}
+                        />}
                 </div>
             </div>
         </div>

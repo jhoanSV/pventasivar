@@ -6,6 +6,7 @@ import { TicketPrint } from '../TickerPrint';
 import ReactDOMServer from 'react-dom/server';
 import './_ConfirmSaleModal.scss';
 import { TheAlert } from '../TheAlert';
+import '../../Fonts_CSS/PayIcon.css'
 
 export const ConfirmSaleModal = ({show, sendSale , folio , orderslist, width='50%', height='50%', totalE}) => {
     const [ efectivo, setEfectivo] = useState(5000)
@@ -169,33 +170,36 @@ export const ConfirmSaleModal = ({show, sendSale , folio , orderslist, width='50
                     </div>
                     <div className='content'>
                         <div className='change'>
-                        <div className='column'>
-                                    <h1 className='total'>$ {Formater(total)}</h1>
-                                </div>
+                            <div>
+                                <h1 className='total'>$ {Formater(total)}</h1>
+                            </div>
                             <div className='op'> 
                                 <label>
                                     <input type ='radio'
-                                           value ='Efectivo'
-                                           name = 'ModoDePago'
-                                           defaultChecked = {true}
-                                           onChange = {()=>setTipoDePago('Efectivo')}/>
-                                    <img src={require('../../Assets/PNG/efectivo.png')  } />
+                                        value ='Efectivo'
+                                        name = 'ModoDePago'
+                                        defaultChecked = {true}
+                                        onChange = {()=>setTipoDePago('Efectivo')}/>
+                                    <i class="bi bi-cash-coin"></i>
+                                    {/*<img src={require('../../Assets/PNG/efectivo.png')  } />*/}
                                     Efectivo
                                 </label>
                                 <label>
                                     <input type='radio'
-                                           value='Transferencia'
-                                           name = 'ModoDePago'
-                                           onChange = {()=>setTipoDePago('Transferencia')}/>
-                                           <img src={require('../../Assets/PNG/transferencia.png')} />
+                                        value='Transferencia'
+                                        name = 'ModoDePago'
+                                        onChange = {()=>setTipoDePago('Transferencia')}/>
+                                        <i class="Picon-transferencia"></i>
+                                        {/*<img src={require('../../Assets/PNG/transferencia.png')} />*/}
                                     Transferencia
                                 </label>
                                 <label>
                                     <input type='radio'
-                                           value='Mixto'
-                                           name = 'ModoDePago'
-                                           onChange = {()=>setTipoDePago('Mixto')}/>
-                                           <img src={require('../../Assets/PNG/mixto.png')} />
+                                        value='Mixto'
+                                        name = 'ModoDePago'
+                                        onChange = {()=>setTipoDePago('Mixto')}/>
+                                        <i class="Picon-mixto"></i>
+                                        {/*<img src={require('../../Assets/PNG/mixto.png')} />*/}
                                     Mixto
                                 </label>
                             </div>
@@ -244,15 +248,16 @@ export const ConfirmSaleModal = ({show, sendSale , folio , orderslist, width='50
                                 </div>
                             </div>
                         </div>
-                        <div className='menuOptions'>
+                        <div id='ButtonsOptions'>
                             <div className='btn'>
                                 <button className="btnStnd btn1" onClick={()=>chargeTheOrder()}>Solo cobrar</button>
                             </div>
-                            <div>
+                            <div  className='btn'>
                                 <button className="btnStnd btn1" onClick={()=>printOrder()}>Cobrar e imprimir</button>
                             </div>
                             <div className='art'>
-                                <label>Total de articulos: {orderslist.Order.length}</label>
+                                <label>Total de articulos:</label>
+                                <label>{orderslist.Order.length}</label>
                             </div>
                         </div>
                     </div>
@@ -264,7 +269,6 @@ export const ConfirmSaleModal = ({show, sendSale , folio , orderslist, width='50
                     <div className="theModal-content">
                         <TicketPrint data={orderslist} usD={usD} Electronic={electronic}/>
                     </div>
-
                 </div>
             }
         </div>

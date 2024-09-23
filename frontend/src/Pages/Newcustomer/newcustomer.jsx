@@ -3,7 +3,7 @@ import "./_newcustomer.scss";
 import { TheAlert, TheInput } from '../../Components';
 import { useTheContext } from '../../TheProvider';
 import { useNavigate } from 'react-router-dom';
-import { Newclient, UpdateClient } from '../../api';
+import { Newclient, UpdateClient, Clientlist } from '../../api';
 
 export function Newcustomer(){
     
@@ -11,6 +11,8 @@ export function Newcustomer(){
     const [enableB1, setEnableB1] = useState(false);
     const [conCredito, setConCredito] = useState(false);
     const [verCod, setVerCod] = useState('');//* verificationCode
+    const [ contentList, setContentList] = useState([]);
+    const [showAlertCustomers, setShowAlertCustomers] = useState(false)
     const [customerData, setCustomerData] = useState({
         "IdFerreteria": usD.Cod,
         "Tipo": 0, 
@@ -30,8 +32,28 @@ export function Newcustomer(){
     
     const navigate = useNavigate()
 
+    useEffect(() => {
+        const fetchData = async () => {
+            const listado = await Clientlist({
+                "IdFerreteria": usD.Cod
+            });
+            if (listado) {
+                setContentList(listado);
+            }
+        };
+        fetchData();
+    }, []);
+
     const handleFormat = (id, e) => {
         const t = e.target.value.replace(/[^0-9]/g, '');
+        if (id === 'NitCC' && someData === null) {
+            const filterCustomers = contentList.filter((data) => data.NitCC === t)
+            if (filterCustomers.length > 0 && id === 'NitCC') {
+                setShowAlertCustomers(true)
+            } else {
+                setShowAlertCustomers(false)
+            }
+        }
         changeValuesCustomer(id, t);
     }
 
@@ -70,7 +92,12 @@ export function Newcustomer(){
             msj1 = 'Creado con éxito'
             msj2 = 'crear el cliente'
             a.Fecha = today
-            res = await Newclient(a)
+            if (showAlertCustomers) {
+                TheAlert('El Nit/Cédula ya existe');
+                return;
+            } else {
+                res = await Newclient(a)
+            }
         }
         console.log(res);
         if(res.insertId || res.message === 'Transacción completada con éxito'){
@@ -144,6 +171,7 @@ export function Newcustomer(){
                             <input id='nitId' type="text" value={verCod} onChange={(e)=>setVerCod(e.target.value)}/>
                         }
                     </div>
+                    {showAlertCustomers && <div style={{color: 'red'}}><label>El cliente ya existe</label></div>}
                 </div>
                 <div className='Row'>
                     <div className='Colmn1'>
