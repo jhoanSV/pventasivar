@@ -10,26 +10,30 @@ $cGriferia: #0097e0;
 $cElectricos: #02a55a;
 $cTornilleria: #83706b;
 //colores de categorias
-.cEba{
+.cEba, .cebanisteria{
     color: $cEbanisteria;
 }
 
-.cEst{
+.cEst, .cestudiantil{
     color: $cEstudiantil;
 }
 
-.cGas{
+.cGas, .cgas{
     color: $cGas;
 }
 
-.cGri{
+.cGri, .cgriferia{
     color: $cGriferia;
 }
 
-.cElec{
+.cElec, .celectricos{
     color: $cElectricos;
 }
 
-.cTor{
+.cTor, .ctornilleria{
     color: $cTornilleria;
+}
+
+.cDefecto, .defecto{
+    color: black;
 }

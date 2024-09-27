@@ -335,8 +335,6 @@ export function Sales(){
     };
 
     const closeTab = async(tabNumber, index) => {
-        let asktoclose = await TheAlert('¿Desea eliminar el tiket con ' + saleTabs[tabNumber].Order.length + ' productos?', 1);
-        if(!asktoclose) return;
         let ifDel = false;
         const newTabButtons = {...saleTabs};
         const otD = newTabButtons[tabNumber].Order
@@ -354,6 +352,7 @@ export function Sales(){
                     changeTab(Object.keys(saleTabs)[index-1], (index-1))
                 }
             }
+            console.log('entro en :Object.keys(saleTabs).length > 1 && (tabNumber in saleTabs)')
         } else {
             createButton()
             delete newTabButtons[tabNumber];
@@ -361,6 +360,7 @@ export function Sales(){
             setSaleTabs(newTabButtons)
             setCurrentTab({"index": 0,
                              "key": Object.keys(newTabButtons)[0]})
+            console.log('entro en lo demas')
         }
         if(ifDel && otD.length > 0){
             const PAdded = JSON.parse(localStorage.getItem('PAdded'));
@@ -676,8 +676,10 @@ export function Sales(){
                                 <label className='tab-rb-label' style={{userSelect: 'none'}}>
                                     {tabNumber}
                                 </label>
-                                <button className="tab-btn-close" style={{userSelect: 'none'}} onClick={(e) => {
+                                <button className="tab-btn-close" style={{userSelect: 'none'}} onClick={async(e) => {
                                     e.stopPropagation();
+                                    let asktoclose = await TheAlert('¿Desea eliminar el tiket con ' + saleTabs[tabNumber].Order.length + ' productos?', 1);
+                                    if(!asktoclose) return;
                                     closeTab(parseInt(tabNumber), (index));
                                 }}>x</button>
                             </div>

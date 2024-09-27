@@ -3,7 +3,7 @@ import './_BoxItem.scss';
 import imgPlaceHolder from '../../Assets/AVIF/placeHolderProduct.avif';
 import { useTheContext } from '../../TheProvider';
 
-export const BoxItem = ({Codigo, Descripcion, simpleFunct, showModal, SVenta, Agotado}) => {
+export const BoxItem = ({Codigo, Descripcion, simpleFunct, showModal, SVenta, Agotado, categoria}) => {
 
     const [show, setShow] = useState(false);
     
@@ -37,7 +37,7 @@ export const BoxItem = ({Codigo, Descripcion, simpleFunct, showModal, SVenta, Ag
                         <></>
                     }
                     <div className='detailBox'>
-                        <div className='BimgContainer'>
+                        <div className={`BimgContainer c${categoria.toLowerCase()}`}>
                             <picture>
                                 <source
                                     type="image/avif"

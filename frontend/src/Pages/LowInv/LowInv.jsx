@@ -97,6 +97,7 @@ export const LowInv = () => {
                                     Descripcion={product.Descripcion}
                                     SVenta={product.SVenta}
                                     Agotado={product.Agotado}
+                                    categoria={product.Categoria}
                                     showModal={(show, theImg)=><AddPurchaseModal
                                         P={product}
                                         Show={show}

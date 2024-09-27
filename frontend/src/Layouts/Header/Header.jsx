@@ -1,13 +1,16 @@
 import { Link } from 'react-router-dom';
 import { useTheContext } from '../../TheProvider';
 import './_Header.scss';
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { TheAlert } from '../../Components';
+import imgPlaceHolder from '../../Assets/AVIF/placeHolderProduct.avif';
+import LogoPredeterminado from '../../Assets/AVIF/LogoPredeterminado.avif';
 
 export const Header = () => {
 
     const { setLogged, section, setSection, usD, setSomeData, nItemsCart } = useTheContext()
     const divSideBarRef = useRef(null);
+    const [img, setImg] = useState(`https://sivarwebresources.s3.amazonaws.com/AVIFLOGOS/${usD.Cod}.avif`);
     //const [currentPage, setCurrentPage] = useState();
     
     function updateTime() {
@@ -84,10 +87,12 @@ export const Header = () => {
             <img
                 id='lgId'
                 className='mainLogoHead'
-                src={require('../../Assets/PNG/icono2.png')}
+                src={img}
+                onError={()=>{setImg(LogoPredeterminado)}}
                 alt='MainLogo'
                 onClick={(e)=>{showSideBar(e)}}
-            />
+                />
+                {/*require('../../Assets/PNG/icono2.png')}*/}
             <div className='side-bar-container' id='sbarcID'>
                 <div className='side-bar' ref={divSideBarRef}>
                     <div onClick={()=>{hideSideBar()}} className='equis'>
@@ -96,7 +101,8 @@ export const Header = () => {
                     <img
                         id='lgId2'
                         className='Ins-mlh'
-                        src={require('../../Assets/PNG/icono2.png')}
+                        src={img}
+                        onError={()=>{setImg(LogoPredeterminado)}}
                         alt='MainLogo'
                         onClick={()=>{hideSideBar()}}
                     />

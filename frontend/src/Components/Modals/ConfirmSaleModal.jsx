@@ -85,7 +85,7 @@ export const ConfirmSaleModal = ({show, sendSale , folio , orderslist, width='50
         setTotal(suma)
     };
 
-    const chargeTheOrder = () => {
+    const chargeTheOrder = async(print) => {
         const now = new Date();
         // Obtener la fecha en formato YYYY-MM-DD
         const date = now.toISOString().split('T')[0];
@@ -96,6 +96,25 @@ export const ConfirmSaleModal = ({show, sendSale , folio , orderslist, width='50
         } else if (efectivo === 0 && transferencia === '') {
             TheAlert('Debe ingresar el efectivo o la transferencia para este tipo de pago')
         } else {
+            if (orderslist.Customer.length === 0){
+                orderslist.Customer = {
+                    Consecutivo: 0,
+                    IdFerreteria: usD.Cod,
+                    Tipo: 0,
+                    NitCC: 222222222222,
+                    Nombre: 'Consumidor final',
+                    Apellido: '',
+                    Telefono1: 0,
+                    Telefono2: 0,
+                    Correo: 'contabilidad.ferresierra@gmail.com',
+                    Direccion: '',
+                    Barrio: '',
+                    FormaDePago: 0,
+                    LimiteDeCredito: 0,
+                    Nota: '',
+                    Fecha: date + ' ' + time
+                }
+            }
             orderslist.RCData = {IdFerreteria: usD.Cod,
                                 CodResponsable: usD.Cod,
                                 Responsable: usD.Contacto,
@@ -110,7 +129,17 @@ export const ConfirmSaleModal = ({show, sendSale , folio , orderslist, width='50
                                 Activo: true
                                 }
             console.log('orderlist: ', orderslist)
-            NewSale(orderslist)
+            orderslist.Electronic = electronic
+            const sendedOrden = await NewSale(orderslist)
+            if (print) {
+                const usDdata = usD
+                //console.log('Sended orden: ', sendedOrden)
+                // Render the component as HTML
+                const ticketHTML = ReactDOMServer.renderToString(<TicketPrint data={sendedOrden} usD={usDdata} Electronic={electronic}/>);
+                //Send the HTML to Electron for printing
+                window.electron.send('print-ticket', ticketHTML);
+                //setShowTicket(true);
+            }
             sendSale()
             show(false)
         }
@@ -250,10 +279,10 @@ export const ConfirmSaleModal = ({show, sendSale , folio , orderslist, width='50
                         </div>
                         <div id='ButtonsOptions'>
                             <div className='btn'>
-                                <button className="btnStnd btn1" onClick={()=>chargeTheOrder()}>Solo cobrar</button>
+                                <button className="btnStnd btn1" onClick={()=>chargeTheOrder(false)}>Solo cobrar</button>
                             </div>
                             <div  className='btn'>
-                                <button className="btnStnd btn1" onClick={()=>printOrder()}>Cobrar e imprimir</button>
+                                <button className="btnStnd btn1" onClick={()=>chargeTheOrder(true)}>Cobrar e imprimir</button>
                             </div>
                             <div className='art'>
                                 <label>Total de articulos:</label>

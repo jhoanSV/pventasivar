@@ -1,3 +1,5 @@
+@import "../../Scss/_colors.scss";
+
 .productsContainer{
     display: flex;
     flex-wrap: wrap;
@@ -32,8 +34,12 @@
     max-height: 205px;
     min-height: 200px;
     border: solid 1px black;
-    background-color: #f2f2f2;
+    background-color: $blancoPrincipal;//#f2f2f2;
+    border-color: gray;
+    border-width: 0.0625rem;
     overflow: hidden;
+    box-shadow: 0.1875rem 0.1875rem 0.1875rem gray;
+    transition: 200ms;
     .detailBox{
         overflow: hidden;
         display: -webkit-box;
@@ -44,11 +50,14 @@
 }
 
 
-.BimgContainer{
+.BimgContainer {
+    border-radius: 30px;
+    border: solid 1px currentColor;
     img{        
         width: 100%;
         aspect-ratio: 1 / 1;
         object-fit: contain;
+        border-radius: 30px;
     }
 }
 

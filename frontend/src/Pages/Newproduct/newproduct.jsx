@@ -1,20 +1,25 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import "./_newproduct.scss";
 import { useNavigate } from 'react-router-dom';
 import { useTheContext } from '../../TheProvider';
-import { TheAlert, TheInput, UserConfirm } from '../../Components';
+import { TheAlert, TheInput, UserConfirm, ModalBusca } from '../../Components';
 import imgPlaceHolder from '../../Assets/AVIF/placeHolderProduct.avif'
 import { GranelModal } from '../../Components/Modals/GranelModal';
-import { NuevoProducto, postUpdateInventory, UpdateProduct } from '../../api';
+import { NuevoProducto, postUpdateInventory, UpdateProduct, ProductList } from '../../api';
+import { CSSTransition } from 'react-transition-group';
 
 export const Newproduct = () => {
     
     const navigate = useNavigate()
     const { setSection, someData, setInvAdAuth, usD, productCodes, subC, categories } = useTheContext();
-    const [imgSrc, setImgSrc] = useState(someData && `https://sivarwebresources.s3.amazonaws.com/AVIF/${someData.Cod}.avif`)
-    const [selectedCategory, setSelectedCategory] = useState(''); // set the selected category
-    const [buttons, setButtons] = useState("Crear producto");
-    const [productData, setProductData] = useState({
+
+    const [ imgSrc, setImgSrc] = useState(someData && `https://sivarwebresources.s3.amazonaws.com/AVIF/${someData.Cod}.avif`)
+    const [ selectedCategory, setSelectedCategory] = useState(''); // set the selected category
+    const [ buttons, setButtons] = useState("Crear producto");
+    const [ pList,setPList] = useState([]);
+    const [ sBText, setSBText] = useState('');
+    const [ showFL, setShowFL] = useState(false);
+    const [ productData, setProductData] = useState({
         'Cod': '',
         'Descripcion': '',
         'InvMaximo': '',
@@ -28,14 +33,54 @@ export const Newproduct = () => {
         'Detalle': '',
         'Clase': '',
     });
-    const [modificarProducto, setModificarProducto] = useState(false);
-    const [pctGan, setpctGan] = useState('');
-    const [show1, setShow1] = useState(false);
-    const [show2, setShow2] = useState(false);
+    const [ modificarProducto, setModificarProducto] = useState(false);
+    const [ pctGan, setpctGan] = useState('');
+    const [ show1, setShow1] = useState(false);
+    const [ show2, setShow2] = useState(false);
     // eslint-disable-next-line
-    const [productsDataShow, setproductsDataShow] = useState({});
-    const [subCatList, setSubCatList] = useState(/*productData.Categoria ?  : */subC);
+    const [ productsDataShow, setproductsDataShow] = useState({});
+    const [ subCatList, setSubCatList] = useState(/*productData.Categoria ?  : */subC);
+    const [ selectedFLI, setSelectedFLI] = useState(0);
+    // useRef
+    const selectedFLIRef = useRef(selectedFLI);
+    const isEditingRef = useRef(false);
+    const refList = useRef([]);
+    const nodeRef = useRef(null)
+    const invListRef = useRef([]);
+    const asktoaddRef = useRef(null);
+    const theSomeData = useRef(someData);
 
+    const handleKeyDown = async(e) => {
+        if(document.getElementById('NPinputNP') === document.activeElement){
+            const theInvList = invListRef.current
+            if (e.key === 'ArrowDown') {
+                if(selectedFLIRef.current === theInvList.slice(0, 20).length-1){
+                    selectedFLIRef.current = 0
+                }else{
+                    selectedFLIRef.current = selectedFLIRef.current + 1
+                }
+            } else if (e.key === 'ArrowUp') {
+                if(selectedFLIRef.current === 0){
+                    selectedFLIRef.current = theInvList.slice(0, 20).length-1;
+                }else{
+                    selectedFLIRef.current = selectedFLIRef.current-1;
+                }
+            } else if (e.key === 'Enter') {
+                const selectedItem = theInvList[selectedFLIRef.current];
+                if(!selectedItem){
+                    document.getElementById('NPinputNP').focus();
+                    document.getElementById('NPinputNP').select();
+                    return;
+                } 
+                asktoaddRef.current(selectedItem);
+                /*document.getElementById('tabsId').removeEventListener('keydown', handleKeyDown2);
+                document.getElementById('NPinput').removeEventListener('keydown', handleKeyDown);
+                document.getElementById('tabsId').addEventListener('keydown', handleKeyDown2);
+                document.getElementById('NPinput').addEventListener('keydown', handleKeyDown);*/
+            }
+            setSelectedFLI(selectedFLIRef.current);
+        }
+    };
     const calpctC = (e) => {
         let thePcosto = Number(e.replace(/[.,]/g, (a) => (a === "," && ".")));
         let thePventa = Number(productData.PVenta.replace(/[.,]/g, (a) => (a === "." ? "" : ".")))
@@ -281,8 +326,8 @@ export const Newproduct = () => {
 
     const handleCodVali = () =>{
         const codeFind = productCodes.map(code => code.toLowerCase()).includes(productData.Cod.toLowerCase());
-        if(modificarProducto && someData){
-            if((productData.Cod !== someData.Cod) && codeFind){
+        if(modificarProducto && theSomeData){
+            if((productData.Cod !== theSomeData.current.Cod) && codeFind){
                 return true
             }else{
                 return false
@@ -298,7 +343,8 @@ export const Newproduct = () => {
 
     useEffect(() => {
         if (someData) {
-            let data = { ...someData }
+            toModifyProduct(someData)
+            /*let data = { ...someData }
             console.log({...data});
             if (data.PVenta && data.PCosto) {
                 let pct = ((data.PVenta - data.PCosto) / data.PCosto) * 100
@@ -325,16 +371,112 @@ export const Newproduct = () => {
             setProductData(data);
             setSection('Modificar producto');
             setButtons("Modificar producto");
-            setModificarProducto(true);
+            setModificarProducto(true);*/
         } else {
             setSection('Nuevo Producto');
         }
+        const products = async() => {
+            const pro = await ProductList()
+            setPList(pro);
+            refList.current = pro
+        }
+        products();
+        document.addEventListener('keydown', handleKeyDown);
+        //document.addEventListener('mousedown', handleClickOutside);
+        return () => {
+            document.removeEventListener('keydown', handleKeyDown);
+            //document.removeEventListener('mousedown', handleClickOutside);
+        };
         // eslint-disable-next-line
     }, []);
+
+    const toModifyProduct = (dataProduct) => {
+        theSomeData.current = dataProduct
+        setImgSrc(theSomeData && `https://sivarwebresources.s3.amazonaws.com/AVIF/${theSomeData.Cod}.avif`)
+        let data = { ...dataProduct}
+        console.log({...data});
+        if (data.PVenta && data.PCosto) {
+            let pct = ((data.PVenta - data.PCosto) / data.PCosto) * 100
+            pct = pct % 1 === 0 ? pct : pct.toFixed(2);
+            //pct = pct.replace(/\./g, ',');
+            setpctGan(Formater(pct));
+            if (data.Medidas.length !== 0){
+                data.Medidas.forEach((medida) => {
+                    let pctum = medida.UMedida ? (medida.PVentaUM - data.PCosto/medida.UMedida) / (data.PCosto/medida.UMedida) * 100 : Number(pct);
+                    pctum = pctum % 1 === 0 ? pctum : pctum.toFixed(2);
+                    medida.pctUM = Formater(pctum);
+                    medida.UMedida = Formater(medida.UMedida);
+                    medida.PVentaUM = Formater(medida.PVentaUM);
+                })
+            }
+        } else if (data.PVenta === null || data.PVenta === '') {
+            data.PVenta = 0;
+        } else if (data.PCosto === null || data.PCosto === '') {
+            data.PCosto = 0;
+        }
+        data.PVenta = Formater(data.PVenta);
+        data.PCosto = Formater(data.PCosto);
+        data.Inventario = Formater(data.Inventario);
+        data.InvMinimo = Formater(data.InvMinimo);
+        data.InvMaximo = Formater(data.InvMaximo);
+        console.log(data);
+        setSelectedCategory(data.Categoria.toLowerCase());
+        setProductData(data);
+        setSection('Modificar producto');
+        setButtons("Modificar producto");
+        setModificarProducto(true);
+    };
 
     useEffect(() => {
         console.log('-->', productData);
     }, [productData]);
+
+    //For the search of products that already exist.
+    const filterByText = (item, text) =>
+        item.Cod.toString().toLowerCase().includes(text) ||
+        item.Descripcion.toLowerCase().includes(text);
+
+    const SearchHandle = (text, sl) =>{
+        setSBText((text))
+        let c = refList.current;
+        if (text !== ''){
+            setPList(c.filter((i)=>filterByText(i, text)));
+            console.log(pList)
+        }else{
+            fetchProductList();
+        }
+    }
+
+    
+    const askToAddProduct = async(item) => {
+        let modifyProduct = await TheAlert('El producto ya existe, ¿desea modificar el producto?', 1)
+        if (modifyProduct){
+            toModifyProduct(item)
+            setShowFL(false)
+        } else if (!modifyProduct) {
+            let data = {
+                PVenta: Formater(0),
+                PCosto: Formater(0),
+                Inventario: Formater(0),
+                InvMinimo: Formater(0),
+                InvMaximo: Formater(0)
+            }
+        }
+    }
+
+    const fetchProductList = async() =>{
+        const list = await ProductList({
+            "IdFerreteria": usD.Cod
+        })
+        if(list){
+            setPList(list);
+            refList.current = list;
+        }
+    }
+
+    const onFocusSearch = async() =>{
+
+    }
 
     return (
         <section className='Newproduct'>
@@ -367,10 +509,59 @@ export const Newproduct = () => {
                         <input
                             type="text"
                             className=''
-                            onChange={(e) => changeValuesProducts("Descripcion", e.target.value)}
+                            id='NPinputNP'
+                            onChange={(e) => {
+                                changeValuesProducts("Descripcion", e.target.value);
+                                if (!modificarProducto){
+                                    SearchHandle((e.target.value).toLowerCase(), setPList);
+                                    selectedFLIRef.current = 0
+                                }
+                            }}
                             value={productData.Descripcion}
                             disabled={productData.IdFerreteria===0}
-                            />
+                            onFocus={(e)=>{if (!modificarProducto){
+                                setShowFL(true);
+                                isEditingRef.current=true;
+                                e.target.select();
+                            } else {
+                                setShowFL(false);
+                                isEditingRef.current=false;
+                                e.target.blur();
+                            }}}
+                            onBlur={()=>{isEditingRef.current=false;}}
+                            autoComplete='off'
+                            autoFocus
+                        />
+                        <CSSTransition
+                            timeout={200}
+                            in={sBText !== '' && showFL}
+                            nodeRef={nodeRef}
+                            classNames="FLA"
+                            unmountOnExit
+                            >
+                            <div id='flId' className="FloatingList" ref={nodeRef}>
+                                {pList.slice(0,20).map((item, index) =>
+                                    <div key={index}
+                                        className={`flItem ${index === selectedFLI ? 'selected' : ''}`}
+                                        onClick={()=>{
+                                            askToAddProduct(item)}}
+                                        style={{color: Number(item.Inventario)<=0 && 'red'}}
+                                    >
+                                        {item.Descripcion}
+                                        <div className='codFlitem'>
+                                            {item.Cod}
+                                        </div>
+                                    </div>
+                                )}
+                                {pList.length === 0 ?
+                                    <div className='flItem'>
+                                        No se encuentran coincidencias                                                                                                            
+                                    </div>
+                                    :
+                                    <></>
+                                }
+                            </div>
+                        </CSSTransition>
                     </div>
                 </div>
                 <div className='Row'>
@@ -531,7 +722,7 @@ export const Newproduct = () => {
                             <label>Inv actual</label>
                         </div>
                         <div className='Colmn2'>
-                            {modificarProducto && ((someData.PCosto!==0&&!someData.PVenta!==0)||someData.Inventario!==0) ?
+                            {modificarProducto && ((theSomeData.current.PCosto!==0&&!theSomeData.current.PVenta!==0)||theSomeData.Inventario!==0) ?
                                 <label>{Formater(productData.Inventario)==='' ? 0 : Formater(productData.Inventario)}</label>
                                 :
                                 <TheInput
