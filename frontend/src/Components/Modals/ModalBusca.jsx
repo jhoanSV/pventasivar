@@ -60,6 +60,7 @@ export const ModalBusca = ({list, click=false, sh}) => {
                                                 Codigo={product.Cod}
                                                 Descripcion={product.Descripcion}
                                                 Agotado={product.Agotado}
+                                                categoria={product.Categoria}
                                                 simpleFunct={()=>clickFunct(product)}
                                             />
                                         );

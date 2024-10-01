@@ -81,6 +81,7 @@ export const Newproduct = () => {
             setSelectedFLI(selectedFLIRef.current);
         }
     };
+    
     const calpctC = (e) => {
         let thePcosto = Number(e.replace(/[.,]/g, (a) => (a === "," && ".")));
         let thePventa = Number(productData.PVenta.replace(/[.,]/g, (a) => (a === "." ? "" : ".")))
