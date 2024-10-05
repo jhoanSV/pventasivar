@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useTheContext } from '../../TheProvider';
 import './_CashReconciliation.scss'
 import { Flatlist} from '../../Components';
@@ -26,6 +26,7 @@ export function CashReconciliation() {
             }
         ]
     });
+    const SalesData = useRef({})
     //const [ fechaSearch, setFEchaSearch ] = useState();
 
     useEffect(() => {
@@ -58,8 +59,24 @@ export function CashReconciliation() {
         console.log('cashFlow: ', cashFlow)
         const filtroEntradas = cashFlow.filter( item => item.TipoDeFlujo === 0 && item.Motivo !== 'Inicio de caja')
         const filtroSalidas = cashFlow.filter( item => item.TipoDeFlujo === 1 && item.Motivo !== 'Inicio de caja')
+        console.log('filtroEntradas', filtroEntradas)
         setEntradas(filtroEntradas)
         setSalidas(filtroSalidas)
+        let entradasEnEfectivo = 0
+        let salidasEnEfectivo = 0
+        for (const row of filtroEntradas) {
+            if (row.Activo = 1) {
+                entradasEnEfectivo += row.Efectivo
+            }
+        }
+        for (const row of filtroSalidas) {
+            if (row.Activo = 1) {
+                salidasEnEfectivo += row.Efectivo
+            }
+        }
+        SalesData.current['entradasEnEfectivo'] = entradasEnEfectivo
+        SalesData.current['salidasEnEfectivo'] = salidasEnEfectivo
+        console.log('filtroSalidas', filtroSalidas)
         setCash(
             (CR['Inicio de caja'] ? CR['Inicio de caja'].Efectivo : 0) +
             (CR['Venta por caja'] ? CR['Venta por caja'].Efectivo : 0) +
@@ -197,7 +214,7 @@ export function CashReconciliation() {
                 <h2>Ventas: $ {Formater((CRData['Venta por caja'] ? CRData['Venta por caja'].Efectivo + CRData['Venta por caja'].Transferencia : 0) - (CRData['Devolución mercancia'] ? CRData['Devolución mercancia'].Efectivo : 0))}</h2>
             </div>
             <div>
-                <h2>Ganancia: $</h2>
+                <h2>Ganancia: $ {Formater((CRData['Venta por caja'] ? CRData['Venta por caja'].Efectivo + CRData['Venta por caja'].Transferencia : 0) - (CRData['']))}</h2>
             </div>
         </div>
         <div className='TwoColumns' style={{gap: '20%'}}>
@@ -215,7 +232,7 @@ export function CashReconciliation() {
                         </tr>
                         <tr>
                             <td>
-                                <label style={{color: 'green', fontWeight: 'bold'}}>Venta por caja:</label>
+                                <label style={{color: 'green', fontWeight: 'bold'}}>Ventas en efectivo:</label>
                             </td>
                             <td>
                                 <label>$ {Formater(CRData['Venta por caja'] ? CRData['Venta por caja'].Efectivo: 0)}</label>
@@ -223,7 +240,15 @@ export function CashReconciliation() {
                         </tr>
                         <tr>
                             <td>
-                                <label style={{color: 'green', fontWeight: 'bold'}}>Ingreso por caja:</label>
+                                <label style={{color: 'green', fontWeight: 'bold'}}>Entradas en efectivo:</label>
+                            </td>
+                            <td>
+                                <label>$ {Formater(SalesData.current.entradasEnEfectivo ? SalesData.current.entradasEnEfectivo: 0)}</label>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <label style={{color: '#C70039', fontWeight: 'bold'}}>Salidas en efectivo:</label>
                             </td>
                             <td>
                                 <label>$ {Formater(CRData['Ingreso por caja'] ? CRData['Ingreso por caja'].Efectivo: 0)}</label>

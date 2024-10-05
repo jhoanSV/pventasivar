@@ -89,7 +89,7 @@ export function Login(){
                     <i className="bi bi-arrow-right"></i>
                 </button>
                 <span className="aviso">
-                    <label onClick={()=>{window.electron.openExternalLink('https://api.whatsapp.com/send/?phone=573134237538&text&type=phone_number&app_absent=0')}}>
+                    <label style={{color: 'blue', textDecoration: 'underline'}}onClick={()=>{window.electron.openExternalLink('https://api.whatsapp.com/send/?phone=573134237538&text&type=phone_number&app_absent=0')}}>
                         <i className='bi bi-whatsapp' id='wappIconLogin'></i>
                         reportar un problema
                     </label>

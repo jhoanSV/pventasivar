@@ -9,14 +9,22 @@ import { ProductMeasures } from '../../Components/Modals/ProductMeasures';
 import { MoneyFlow } from '../../Components/Modals/MoneyFlow';
 import { StartOfCash } from '../../Components/Modals/StartOfCash';
 import "./_sales.scss";
-// import ticketsJson from '../../tickets-text.json';
+import ticketsJson from '../../tickets-text.json';
 import { useTheContext } from '../../TheProvider';
 import { CashFlow, Inventory } from '../../api';
 import { CSSTransition } from 'react-transition-group';
 
 export function Sales(){
     //*---------------------
-    const [saleTabs, setSaleTabs] = useState(JSON.parse(localStorage.getItem('ticketsJson')));
+    const [saleTabs, setSaleTabs] = useState(()=>{
+        localStorage.setItem('ticketsJson', JSON.stringify({
+            "1": { "Customer": {},
+                   "Order": []
+            }
+        }));
+        const savedTabs = JSON.parse(localStorage.getItem('ticketsJson'));
+        return savedTabs ? savedTabs : ticketsJson; // Usar ticketsJson como valor por defecto
+    });
     const [currentTab, setCurrentTab] = useState({"index": 0, "key": Object.keys(saleTabs)[0]});
     const [tabsHistory, setTabsHistory] = useState(() => {
         const keys = Object.keys(saleTabs);
@@ -354,14 +362,25 @@ export function Sales(){
             }
             console.log('entro en :Object.keys(saleTabs).length > 1 && (tabNumber in saleTabs)')
         } else {
-            createButton()
+            //createButton()
             delete newTabButtons[tabNumber];
             ifDel = true
+            //To create a new tab
+            const newTabKey = tabsHistory + 1;
+            newTabButtons[newTabKey] = {"Customer": {},
+                                         "Order": []};
             setSaleTabs(newTabButtons)
-            setCurrentTab({"index": 0,
-                             "key": Object.keys(newTabButtons)[0]})
+            //end to create a new tab
+            setTabsHistory(newTabKey);
+            console.log(newTabButtons)
+            setOrderslist(newTabButtons[newTabKey].Order);
+            setCurrentTab({"index": 0,"key": newTabKey});
+            setCustomer("Por asignar")
+            console.log('newTabButtons', newTabButtons)
+            //setCurrentTab({"index": 0,"key": Object.keys(newTabButtons)[0]})
             console.log('entro en lo demas')
         }
+
         if(ifDel && otD.length > 0){
             const PAdded = JSON.parse(localStorage.getItem('PAdded'));
             otD.forEach(item => {

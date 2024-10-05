@@ -388,7 +388,7 @@ export const SignClient = ({show, retornar, width='50%', height='80%'}) => {
                             </button>
                             {/* {someData && <button className='btnStnd btn1'>Estado de cuenta</button>} */}{/*WIP*/}
                         </div>
-                        <button className='btnStnd btn1' onClick={()=>setShowCustomerList(false)}>Cancelar</button>
+                        <button className='btnStnd btn1' onClick={()=>setShowCustomerList(true)}>Cancelar</button>
                     </div>
                 </div>
             </div>

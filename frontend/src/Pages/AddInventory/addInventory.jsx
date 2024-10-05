@@ -291,8 +291,8 @@ export function AddInventory(){
                     sh={SearchHandle}
                 />
             </div>
-            <h1>{productData.Descripcion === ''? 'Nombre del producto': productData.Descripcion}</h1>
-            <h2>{productData.Cod === ''? 'Codigo': productData.Cod}</h2>
+            <h1>Producto: {productData.Descripcion === ''? 'Nombre del producto': productData.Descripcion}</h1>
+            <h2>Codigo: {productData.Cod === ''? 'Codigo': productData.Cod}</h2>
 
             <div className='Row'>
                 <div className='Colmn1'>
@@ -317,7 +317,7 @@ export function AddInventory(){
                 <div className='Colmn2'>
                 <TheInput
                     val={cantidadYProveedor.Cantidad}
-                    numType='nat'
+                    numType={'real'}
                     onchange={(e) => {theCantidad(e)}}
                 />
                 </div>

@@ -24,9 +24,11 @@ export function InvAdjustment(){
 
     const adjustCant = (op, e) =>{//*operation depending on op
         let currCant = Number(currentC.replace(/\./g, ''))
+        const formattedNum = Number(e.replace(",", "."));
         if(op==='ca'){
             setCantAdj(e)
-            setNewCant(Formater(((currCant+Number(e))).toString()))
+            console.log(e)
+            setNewCant(Formater(((currCant+formattedNum)).toString()))
         }else if(op==='nc'){
             setCantAdj(Formater((-(currCant-Number(e))).toString()))
             setNewCant(Formater(Number(e)))
@@ -102,7 +104,7 @@ export function InvAdjustment(){
                 <div className='Colmn2'>
                     <TheInput
                         val={cantAdj}
-                        numType={'ent'}
+                        numType={'real'}
                         onchange={(e)=>{adjustCant('ca', e)}}
                     />
                 </div>
@@ -114,7 +116,7 @@ export function InvAdjustment(){
                 <div className='Colmn2'>
                     <TheInput
                         val={newCant}
-                        numType={'ent'}
+                        numType={'real'}
                         onchange={(e)=>{adjustCant('nc', e)}}
                     /> 
                 </div>

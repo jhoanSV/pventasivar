@@ -5,13 +5,13 @@ import { useTheContext } from '../../TheProvider';
 import { TheAlert, TheInput, UserConfirm, ModalBusca } from '../../Components';
 import imgPlaceHolder from '../../Assets/AVIF/placeHolderProduct.avif'
 import { GranelModal } from '../../Components/Modals/GranelModal';
-import { NuevoProducto, postUpdateInventory, UpdateProduct, ProductList } from '../../api';
+import { NuevoProducto, postUpdateInventory, UpdateProduct, ProductList, AddProduct } from '../../api';
 import { CSSTransition } from 'react-transition-group';
 
 export const Newproduct = () => {
     
     const navigate = useNavigate()
-    const { setSection, someData, setInvAdAuth, usD, productCodes, subC, categories } = useTheContext();
+    const { setSection, someData, setSomeData, setInvAdAuth, usD, productCodes, subC, categories } = useTheContext();
 
     const [ imgSrc, setImgSrc] = useState(someData && `https://sivarwebresources.s3.amazonaws.com/AVIF/${someData.Cod}.avif`)
     const [ selectedCategory, setSelectedCategory] = useState(''); // set the selected category
@@ -37,6 +37,7 @@ export const Newproduct = () => {
     const [ pctGan, setpctGan] = useState('');
     const [ show1, setShow1] = useState(false);
     const [ show2, setShow2] = useState(false);
+    const [ fromSivarToNew, setFromSivarToNew] = useState(false);
     // eslint-disable-next-line
     const [ productsDataShow, setproductsDataShow] = useState({});
     const [ subCatList, setSubCatList] = useState(/*productData.Categoria ?  : */subC);
@@ -113,6 +114,7 @@ export const Newproduct = () => {
             ...prevValue, // Copia los valores anteriores
             [key]: value // Reemplaza el valor de la clave específica
         }));
+        //theSomeData.current[key] = value;
     }
 
     const handleSelectedCategory = (value2Ch, e) => {
@@ -281,43 +283,101 @@ export const Newproduct = () => {
             TheAlert('Revisar medidas de venta para granel');
             return;
         }
-        const codeFind = productCodes.map(code => code.toLowerCase()).includes(productData.Cod.toLowerCase());
-        if((productData.Cod !== someData.Cod) && codeFind){
-            TheAlert('El código de producto ya existe');
-            return;
-        }
-        //*---------------------------------------
-        let a = prepData();
-        a.IdFerreteria = usD.Cod;
-        a.Iva = 19 //* En discusión 
-        a.ConsecutivoProd = someData.Consecutivo
-        console.log(productData);
-        console.log(a);
-        if(modificarProducto && ((someData.PCosto!==0&&!someData.PVenta!==0)||someData.Inventario!==0)){
-            console.log('Es para modificar un producto ya creado pero que no tiene inventario por lo que no está creado en mi inventario sjj');
-            const fecha = new Date();
-            const today = fecha.getFullYear() + '-' + (fecha.getMonth() + 1) + '-' + fecha.getDate() + ' ' + fecha.getHours() + ':' + fecha.getMinutes() + ':' + fecha.getSeconds();
+        
+        const fecha = new Date();
+        const today = fecha.getFullYear() + '-' + (fecha.getMonth() + 1) + '-' + fecha.getDate() + ' ' + fecha.getHours() + ':' + fecha.getMinutes() + ':' + fecha.getSeconds();
+        if (!fromSivarToNew) {
+            const codeFind = productCodes.map(code => code.toLowerCase()).includes(productData.Cod.toLowerCase());
+            if((productData.Cod !== someData.Cod) && codeFind){
+                TheAlert('El código de producto ya existe');
+                return;
+            }
+            //*---------------------------------------
+            let a = prepData();
+            a.IdFerreteria = usD.Cod;
+            a.Iva = 19 //* En discusión 
+            a.ConsecutivoProd = someData.Consecutivo
+            console.log(productData);
+            console.log(a);
+            
+            
+            if(modificarProducto && ((someData.PCosto!==0&&!someData.PVenta!==0)||someData.Inventario!==0)){
+                console.log('Es para modificar un producto ya creado pero que no tiene inventario por lo que no está creado en mi inventario sjj');
+                const res = await postUpdateInventory({
+                    "IdFerreteria": someData.IdFerreteria,
+                    "CodResponsable": usD.Cod,
+                    "Responsable": usD.Ferreteria,
+                    "ConsecutivoProd": someData.Consecutivo,
+                    "Cantidad": someData.Inventario,
+                    "Fecha": today,
+                    "Motivo": 'Agregar producto a inventario'
+                });
+                if(!(res && res.message === 'Transacción completada con éxito')){
+                    await TheAlert('Ocurrió un error inesperado al agregar producto al inventario');
+                    return;
+                }
+            }
+            
+            const res2 = await UpdateProduct(a);
+            console.log(res2);
+            if(res2 && res2.message === 'Transacción completada con éxito'){
+                navigate('/ProductsList');
+                TheAlert('Producto modificado con éxito');
+            } else {
+                TheAlert('Ocurrió un error inesperado al modificar el producto');
+            }
+        } else {
+            /*const addInv = {
+                IdFerreteria: usD.Cod,
+                ConsecutivoProd: theSomeData.current.Consecutivo,
+                Cantidad: 0,
+                Cod: theSomeData.current.Cod,
+                Descripcion: theSomeData.current.Descripcion,
+                PCosto: 0,
+                PCostoLP: theSomeData.current.PCosto,
+                Fecha: today,
+                Iva: 19,
+                CodResponsable: usD.Cod,
+                Responsable: usD.Contacto,
+                Motivo: 'Agregar producto a inventario',
+                ConsecutivoCompra: 0,
+                Medida: 'Unidad',
+                UMedida: 1
+            }
+            console.log('addInv', addInv)
+            console.log('theSomeData', theSomeData)*/
+            //*This part of the code only add the producuct to the inventory
             const res = await postUpdateInventory({
-                "IdFerreteria": someData.IdFerreteria,
+                "IdFerreteria": usD.Cod,
                 "CodResponsable": usD.Cod,
-                "Responsable": usD.Ferreteria,
-                "ConsecutivoProd": someData.Consecutivo,
-                "Cantidad": someData.Inventario,
+                "Responsable": usD.Contacto,
+                "ConsecutivoProd": theSomeData.current.Consecutivo,
+                "Cantidad": productData.Inventario,
                 "Fecha": today,
                 "Motivo": 'Agregar producto a inventario'
             });
             if(!(res && res.message === 'Transacción completada con éxito')){
                 await TheAlert('Ocurrió un error inesperado al agregar producto al inventario');
                 return;
+            } else {
+                //Once we have the product added to the inventory we can update the product
+                console.log('res', res)
+                //This part of the code update the product
+                const preparedData = prepData()
+                preparedData.ConsecutivoProd = theSomeData.current.Consecutivo
+                preparedData.Iva = 19;
+                preparedData.IdFerreteria = usD.Cod;
+                console.log('preparedData', preparedData)
+                const res2 = await UpdateProduct(preparedData);
+                console.log(res2);
+                if(res2 && res2.message === 'Transacción completada con éxito'){
+                    navigate('/ProductsList');
+                    TheAlert('Producto modificado con éxito');
+                    setFromSivarToNew(false);
+                } else {
+                    TheAlert('Ocurrió un error inesperado al modificar el producto');
+                }
             }
-        }
-        const res2 = await UpdateProduct(a);
-        console.log(res2);
-        if(res2 && res2.message === 'Transacción completada con éxito'){
-            navigate('/ProductsList');
-            TheAlert('Producto modificado con éxito');
-        } else {
-            TheAlert('Ocurrió un error inesperado al modificar el producto');
         }
     }
 
@@ -452,6 +512,7 @@ export const Newproduct = () => {
     const askToAddProduct = async(item) => {
         let modifyProduct = await TheAlert('El producto ya existe, ¿desea modificar el producto?', 1)
         if (modifyProduct){
+            setFromSivarToNew(true)
             toModifyProduct(item)
             setShowFL(false)
         } else if (!modifyProduct) {
@@ -473,10 +534,6 @@ export const Newproduct = () => {
             setPList(list);
             refList.current = list;
         }
-    }
-
-    const onFocusSearch = async() =>{
-
     }
 
     return (
@@ -723,7 +780,7 @@ export const Newproduct = () => {
                             <label>Inv actual</label>
                         </div>
                         <div className='Colmn2'>
-                            {modificarProducto && ((theSomeData.current.PCosto!==0&&!theSomeData.current.PVenta!==0)||theSomeData.Inventario!==0) ?
+                            {modificarProducto && ((theSomeData.current.PCosto!==0&&!theSomeData.current.PVenta!==0)||theSomeData.Inventario!==0) && !fromSivarToNew ?
                                 <label>{Formater(productData.Inventario)==='' ? 0 : Formater(productData.Inventario)}</label>
                                 :
                                 <TheInput
@@ -777,7 +834,7 @@ export const Newproduct = () => {
                 <button
                     className='btnStnd btn1'
                     onClick={() => { modificarProducto ? handleBtn2() : handleBtn1() }}>{buttons}</button>
-                {modificarProducto &&
+                {modificarProducto && !fromSivarToNew &&
                     <>
                         <button
                             style={{ margin: '0px 10px' }}

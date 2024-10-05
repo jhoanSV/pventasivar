@@ -38,7 +38,7 @@ export const StartOfCash = ({show, aceptar}) => {
     return (
         <div className='theModalContainer'>
             <div className='theModal-content' style={{position: 'relative'}}>
-                <button className='btn1Stnd' onClick={() => {show(false)}} style={{position: 'absolute', top: '0px', right: '0px'}}>
+                {/*<button className='btn1Stnd' onClick={() => {show(false)}} style={{position: 'absolute', top: '0px', right: '0px'}}>
                     <i className='bi bi-x-lg'/>
                 </button>{/*Borrar este botón*/}
                 <div style={{

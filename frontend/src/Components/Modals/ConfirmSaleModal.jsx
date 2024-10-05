@@ -96,7 +96,7 @@ export const ConfirmSaleModal = ({show, sendSale , folio , orderslist, width='50
         } else if (efectivo === 0 && transferencia === '') {
             TheAlert('Debe ingresar el efectivo o la transferencia para este tipo de pago')
         } else {
-            if (orderslist.Customer.length === 0){
+            if (Object.keys(orderslist.Customer).length === 0){
                 orderslist.Customer = {
                     Consecutivo: 0,
                     IdFerreteria: usD.Cod,
@@ -106,7 +106,7 @@ export const ConfirmSaleModal = ({show, sendSale , folio , orderslist, width='50
                     Apellido: '',
                     Telefono1: 0,
                     Telefono2: 0,
-                    Correo: 'contabilidad.ferresierra@gmail.com',
+                    Correo: usD.Correo,
                     Direccion: '',
                     Barrio: '',
                     FormaDePago: 0,
@@ -128,8 +128,8 @@ export const ConfirmSaleModal = ({show, sendSale , folio , orderslist, width='50
                                 Comentarios: '',
                                 Activo: true
                                 }
-            console.log('orderlist: ', orderslist)
             orderslist.Electronic = electronic
+            console.log('orderlist: ', orderslist)
             const sendedOrden = await NewSale(orderslist)
             if (print) {
                 const usDdata = usD
@@ -265,6 +265,8 @@ export const ConfirmSaleModal = ({show, sendSale , folio , orderslist, width='50
                                         <div className='column2'>
                                             <input
                                                 type='text'
+                                                value={referencia}
+                                                onChange={(e)=>setReferencia(e.target.value)}
                                             />
                                         </div>
                                     </>
