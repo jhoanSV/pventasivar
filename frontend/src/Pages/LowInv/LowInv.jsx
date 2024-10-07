@@ -12,7 +12,7 @@ export const LowInv = () => {
     const { usD, section, setSection } = useTheContext();
     const navigate = useNavigate()
     const [lista, setLista] = useState();
-    //const [imgSrc, setImgSrc] = useState();
+    //The quantity ob boxes that its showed
     const [limit, setLimit] = useState(20);
     //const [show, setShow] = useState(false);
     const refList = useRef([]);
@@ -98,6 +98,13 @@ export const LowInv = () => {
                                     SVenta={product.SVenta}
                                     Agotado={product.Agotado}
                                     categoria={product.Categoria}
+                                    // Si section es "Bajos de inventario", agrega las props Inv e InvMin
+                                    {...(section === 'Bajos de inventario' && {
+                                        Inv: product.Inventario,
+                                        InvMin: product.InvMinimo,
+                                        showInv: true,
+                                        Height:'215px'
+                                    })}
                                     showModal={(show, theImg)=><AddPurchaseModal
                                         P={product}
                                         Show={show}

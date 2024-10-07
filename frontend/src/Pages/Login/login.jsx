@@ -4,6 +4,7 @@ import { useTheContext } from '../../TheProvider';
 import { SubCategories, validateUser, LoginPos } from '../../api';
 import pckjson from '../../../package.json';
 import { TheAlert } from '../../Components/TheAlert';
+import { useNavigate } from 'react-router-dom';
 
 export function Login(){
     const [showPassword, setShowPassword] = useState(false);
@@ -13,7 +14,7 @@ export function Login(){
     const { setLogged, setUsD, setSubC, setCategories } = useTheContext()
     const [inputData1, setInputData1] = useState();
     const [inputData2, setInputData2] = useState();
-
+    const navigate = useNavigate();
     const LoginHandle = async() => {
         //*Veo ñero ojo con esto
         /*setLogged(true);
@@ -50,6 +51,7 @@ export function Login(){
             setCategories(uniqueData)
             setLogged(true);
             setUsD(userData);
+            navigate('/')
         }else{
             TheAlert('Usuario o contraseña incorrectos');
         }

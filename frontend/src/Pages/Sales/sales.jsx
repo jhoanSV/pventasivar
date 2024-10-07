@@ -17,15 +17,36 @@ import { CSSTransition } from 'react-transition-group';
 export function Sales(){
     //*---------------------
     const [saleTabs, setSaleTabs] = useState(()=>{
-        localStorage.setItem('ticketsJson', JSON.stringify({
-            "1": { "Customer": {},
-                   "Order": []
-            }
-        }));
         const savedTabs = JSON.parse(localStorage.getItem('ticketsJson'));
-        return savedTabs ? savedTabs : ticketsJson; // Usar ticketsJson como valor por defecto
+        if (savedTabs) {
+            return savedTabs; // Si hay datos en localStorage, los usamos
+        } else {
+            // Si no hay datos en localStorage, establecer un valor por defecto
+            const defaultTabs = {
+                "1": { 
+                    "Customer": {},
+                    "Order": []
+                }
+            };
+            localStorage.setItem('ticketsJson', JSON.stringify(defaultTabs)); // Guardar el valor por defecto en localStorage
+            return defaultTabs;
+        }
     });
-    const [currentTab, setCurrentTab] = useState({"index": 0, "key": Object.keys(saleTabs)[0]});
+    const [currentTab, setCurrentTab] = useState(()=>{
+        const actualTab = JSON.parse(localStorage.getItem('CurrentTab'));
+        if (actualTab) {
+            return actualTab
+        } else {
+            const defaultTab = {
+                "index": 0,
+                "key": Object.keys(saleTabs)[0]
+            }
+            localStorage.setItem('CurrentTab', JSON.stringify(defaultTab)); // Guardar el valor por defecto en localStorage
+            return defaultTab
+        };
+    });
+
+
     const [tabsHistory, setTabsHistory] = useState(() => {
         const keys = Object.keys(saleTabs);
         return Number(keys[keys.length-1]);
@@ -530,6 +551,8 @@ export function Sales(){
     }, [selectedfila]);
     
     useEffect(() => {
+        //asktoaddRef.current = askToAddProduct
+        localStorage.setItem('CurrentTab', JSON.stringify(currentTab));
         selectedTabRef.current = currentTab;
         // eslin-disable-next-line
     }, [currentTab]);
@@ -537,7 +560,7 @@ export function Sales(){
     useEffect(() => {
         localStorage.setItem('ticketsJson', JSON.stringify(saleTabs));
     }, [saleTabs]);
-
+    
     useEffect(() => {
         if(sBText === '' || !showFL){
             selectedFLIRef.current = 0;
@@ -545,20 +568,17 @@ export function Sales(){
         }
         // eslint-disable-next-line
     }, [sBText, showFL]);
-
+    
     useEffect(() => {
         invListRef.current = invList
         // eslint-disable-next-line
     }, [invList]);
 
-    useEffect(() => {
-        asktoaddRef.current = askToAddProduct
-        // eslint-disable-next-line
-    }, [currentTab]);
     
     useEffect(() => {
         setSection('Ventas');
         fetchInventoryList();
+
         if(Object.keys(saleTabs[currentTab.key].Customer).length !== 0){
             setCustomer(saleTabs[currentTab.key].Customer.Nombre + ' ' + saleTabs[currentTab.key].Customer.Apellido)
         }else{

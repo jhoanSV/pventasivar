@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { useTheContext } from '../../TheProvider';
 import { TheAlert, TheInput } from '../../Components';
 import { postUpdateInventory } from '../../api';
+import { Formater } from '../../App';
 
 export function InvAdjustment(){
 
@@ -13,21 +14,14 @@ export function InvAdjustment(){
     const [cantAdj, setCantAdj] = useState('');
     const [newCant, setNewCant] = useState('');
     const [taValue, setTaValue] = useState('');
-    
-    const Formater = (number) =>{
-        if (!number) return ''
-        let thenumber = typeof(number)==='number' ? number.toString() : number
-        //it gives a number format
-        const numberfromat = Number(thenumber.replace(/,/g, '.'));
-        return Intl.NumberFormat('de-DE').format(numberfromat);
-    }
 
     const adjustCant = (op, e) =>{//*operation depending on op
-        let currCant = Number(currentC.replace(/\./g, ''))
-        const formattedNum = Number(e.replace(",", "."));
+        let currCant = parseFloat(currentC.toString())
+        const formattedNum = e === ''? 0: parseFloat(e.replace(",", "."));
         if(op==='ca'){
             setCantAdj(e)
-            console.log(e)
+            console.log('currCant', currCant)
+            console.log('formattedNum', formattedNum)
             setNewCant(Formater(((currCant+formattedNum)).toString()))
         }else if(op==='nc'){
             setCantAdj(Formater((-(currCant-Number(e))).toString()))
@@ -73,20 +67,19 @@ export function InvAdjustment(){
         setSection('Ajustes de inventario')
         if(invAdAuth){
             //* Make de query to get the current inventory quantity
-            setCurrentC(Formater(someData.Inventario))
+            setCurrentC(someData.Inventario)
         }else{
             navigate('/', {replace: true});
             console.log('idontunderstand this');
-            
         }
         return () => {
             setInvAdAuth(false);
         }
         // eslint-disable-next-line
     }, []);
-
+    
     return (
-        invAdAuth && 
+        invAdAuth &&
         <section className='InvAdjustment'>
             <h1 style={{marginTop: '0px'}}>{someData.Descripcion}</h1>
             <div className='Row'>
@@ -94,7 +87,7 @@ export function InvAdjustment(){
                     <label>Cantidad actual:</label>
                 </div>
                 <div className='Colmn2'>
-                    <label>{currentC==='' ? 0 : currentC}</label>
+                    <label>{currentC==='' ? 0 : Formater(currentC)}</label>
                 </div>
             </div>
             <div className='Row'>
@@ -149,7 +142,7 @@ export function InvAdjustment(){
                 onClick={() => { modifyCant() }}
                 disabled={
                     (cantAdj==='') ||
-                    (Number(newCant.replace(/\./g, '')) === Number(currentC.replace(/\./g, ''))) ||
+                    (Number(newCant.replace(/\./g, '')) === Number(currentC.toString().replace(/\./g, ''))) ||
                     (Number(newCant.replace(/\./g, '')) < 0 ) ||
                     (taValue.length < 5)
                 }

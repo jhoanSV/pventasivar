@@ -2,10 +2,11 @@ import React, {useEffect, useState, useRef} from 'react';
 import { TableComponent, TheAlert, TheInput } from '../../Components';
 import { useTheContext } from '../../TheProvider';
 import { useNavigate } from 'react-router-dom';
-import { Clientlist } from '../../api';
+//import { Clientlist } from '../../api';
 import jsonTest from '../../jsonTest.json';
 import './_SignClient.scss';
-import { Newclient, UpdateClient } from '../../api';
+import { Clientlist, Newclient, UpdateClient } from '../../api';
+import { DotProduct } from '../../App';
 
 export const SignClient = ({show, retornar, width='50%', height='80%'}) => {
     const [ selected, setSelected] = useState([]);
@@ -119,6 +120,7 @@ export const SignClient = ({show, retornar, width='50%', height='80%'}) => {
     };
 
     const CreateCustomerForm = ({cType, value, setValue, creLim, setCreLim}) => {
+        const WeightDian = [71,67,59,53,47,43,41,37,29,23,19,17,13,7,3]
         const { setSection, someData, usD } = useTheContext();
         const [enableB1, setEnableB1] = useState(false);
         const [conCredito, setConCredito] = useState(false);
@@ -208,9 +210,17 @@ export const SignClient = ({show, retornar, width='50%', height='80%'}) => {
             }
         }
         
-        // const Formater = (number) =>{
-        //     return Intl.NumberFormat().format(number);
-        // }
+        const VerifyCodNit = () =>{
+            let CodVe = customerData.NitCC
+            const digitList = Array.from(CodVe).filter(char => /\d/.test(char)).map(Number);
+            // Completar digitList con ceros al principio para que tenga 15 entradas
+            const filledDigitList = new Array(15 - digitList.length).fill(0).concat(digitList);
+            const dot = DotProduct(filledDigitList, WeightDian)
+            const result = 11-( dot % 11)
+            console.log(result)
+            setVerCod(result)
+            return result
+        }
 
         const changeValuesCustomer = (key, value)=>{
             //This function allows us to change the one specific value in the product data
@@ -264,9 +274,10 @@ export const SignClient = ({show, retornar, width='50%', height='80%'}) => {
                         </div>
                         <div className='Colmn2'>
                             <input id='numId' type="text"
-                            onChange={(e)=>handleFormat('NitCC', e)}
-                            value={customerData.NitCC}
-                            style={{width: '41%', marginRight: '5px'}}
+                                onChange={(e)=>handleFormat('NitCC', e)}
+                                value={customerData.NitCC}
+                                style={{width: '41%', marginRight: '5px'}}
+                                onBlur={(e) => VerifyCodNit(e.target.value)}
                             />
                             {customerData.Tipo=== 1 && 
                                 <input id='nitId' type="text" value={verCod} onChange={(e)=>setVerCod(e.target.value)}/>

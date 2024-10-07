@@ -48,6 +48,18 @@ export const Formater = (number) => {
     return Intl.NumberFormat('de-DE').format(numberfromat);
 };
 
+export const DotProduct=(vector1, vector2) =>{
+    // Verificamos que los dos vectores tengan la misma longitud
+    if (vector1.length !== vector2.length) {
+        throw new Error("Los vectores deben tener la misma longitud.");
+    }
+
+    // Usamos map para multiplicar los elementos y reduce para sumar los productos
+    return vector1
+        .map((valor, index) => valor * vector2[index]) // Multiplica cada elemento correspondiente
+        .reduce((acumulador, valor) => acumulador + valor, 0); // Suma los resultados
+}
+
 export const TokenV = async (dataToken, token, setL) =>{
   const allow = await VerifyToken(dataToken, token)
   if(allow.authorization === false) {

@@ -43,7 +43,7 @@ function createWindow() {
   //mainWindow.loadURL("http://localhost:" + PORT);
   //a mainWindow.loadURL("http://localhost:" + PORT);
   // Open the DevTools.
-  // mainWindow.webContents.openDevTools()
+  mainWindow.webContents.openDevTools()
 }
 
 ipcMain.on('open-external-link', (event, url) => {

@@ -3,7 +3,7 @@ import './_BoxItem.scss';
 import imgPlaceHolder from '../../Assets/AVIF/placeHolderProduct.avif';
 import { useTheContext } from '../../TheProvider';
 
-export const BoxItem = ({Codigo, Descripcion, simpleFunct, showModal, SVenta, Agotado, categoria}) => {
+export const BoxItem = ({Codigo, Descripcion, simpleFunct, showModal, SVenta, Agotado, categoria, Inv, InvMin, showInv, Height='200px' }) => {
 
     const [show, setShow] = useState(false);
     
@@ -27,11 +27,25 @@ export const BoxItem = ({Codigo, Descripcion, simpleFunct, showModal, SVenta, Ag
         <>
             <div ref={theCaja} style={{position: 'relative', width: '154px', height: '200px'}}>
                 <div className={`caja-product ${(SVenta===1 || (section==='Nueva Compra')) && 'caja-productHover'}`} onClick={()=>{handleClickBox()}}
-                    style={{cursor: (SVenta === 1 || (section==='Nueva Compra')) && 'pointer'}}>
+                    style={{cursor: (SVenta === 1 || (section==='Nueva Compra')) && 'pointer', minHeight: Height }}>
                     { Agotado ?
                         <div className='soldOutLI' style={{
                             fontSize: (theCaja.current ? theCaja.current.clientWidth - 30 : 0)+'%'}}>
                             AGOTADO
+                        </div>
+                    :
+                        <></>
+                    }
+                    {showInv ?
+                        <div>
+                            <div className='stock'>
+                                <label>Inv:</label>
+                                <strong>{Inv}</strong>
+                            </div>
+                            <div className='stock'>
+                                <label>Inv min:</label>
+                                <strong>{InvMin}</strong>
+                            </div>
                         </div>
                     :
                         <></>

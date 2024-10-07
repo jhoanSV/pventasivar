@@ -4,9 +4,10 @@ import { TheAlert, TheInput } from '../../Components';
 import { useTheContext } from '../../TheProvider';
 import { useNavigate } from 'react-router-dom';
 import { Newclient, UpdateClient, Clientlist } from '../../api';
+import { DotProduct } from '../../App';
 
 export function Newcustomer(){
-    
+    const WeightDian = [71,67,59,53,47,43,41,37,29,23,19,17,13,7,3]
     const { setSection, someData, usD } = useTheContext();
     const [enableB1, setEnableB1] = useState(false);
     const [conCredito, setConCredito] = useState(false);
@@ -46,8 +47,14 @@ export function Newcustomer(){
 
     const handleFormat = (id, e) => {
         const t = e.target.value.replace(/[^0-9]/g, '');
+        let toCheck = ''
         if (id === 'NitCC' && someData === null) {
-            const filterCustomers = contentList.filter((data) => data.NitCC === t)
+            if (customerData.Tipo === 1) {
+                toCheck = t + '-' + VerifyCodNit(t)
+            } else {
+                toCheck = t
+            }
+            const filterCustomers = contentList.filter((data) => data.NitCC === toCheck)
             if (filterCustomers.length > 0 && id === 'NitCC') {
                 setShowAlertCustomers(true)
             } else {
@@ -121,6 +128,18 @@ export function Newcustomer(){
         }));
     }
 
+    const VerifyCodNit = (value) =>{
+        let CodVe = value
+        const digitList = Array.from(CodVe).filter(char => /\d/.test(char)).map(Number);
+        // Completar digitList con ceros al principio para que tenga 15 entradas
+        const filledDigitList = new Array(15 - digitList.length).fill(0).concat(digitList);
+        const dot = DotProduct(filledDigitList, WeightDian)
+        const result = 11-( dot % 11)
+        //console.log(result)
+        //setVerCod(result)
+        return result
+    }
+
     useEffect(() => {
         setSection('Nuevo cliente');
 
@@ -162,13 +181,20 @@ export function Newcustomer(){
                         <label>Nit/C.C</label>
                     </div>
                     <div className='Colmn2'>
-                        <input id='numId' type="text"
-                         onChange={(e)=>handleFormat('NitCC', e)}
-                         value={customerData.NitCC}
-                         style={{width: '41%', marginRight: '5px'}}
+                        <input 
+                            id='numId'
+                            type="text"
+                            onChange={(e)=>handleFormat('NitCC', e)}
+                            value={customerData.NitCC}
+                            style={{width: '41%', marginRight: '5px'}}
+                            onBlur={() => setVerCod(VerifyCodNit(customerData.NitCC))}
                          />
                         {customerData.Tipo=== 1 && 
-                            <input id='nitId' type="text" value={verCod} onChange={(e)=>setVerCod(e.target.value)}/>
+                            <input
+                                id='nitId'
+                                type="text"
+                                value={verCod}
+                                onChange={(e)=>setVerCod(e.target.value)}/>
                         }
                     </div>
                     {showAlertCustomers && <div style={{color: 'red'}}><label>El cliente ya existe</label></div>}

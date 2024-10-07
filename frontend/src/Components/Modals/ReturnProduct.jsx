@@ -84,23 +84,25 @@ export const ReturnProduct = ({show, row, updateOrders, index, width='50%', heig
                 <button className='btn1Stnd' onClick={() => {show(false)}} style={{position: 'absolute', top: '0px', right: '0px'}}>
                     <i className='bi bi-x-lg'/>
                 </button>
-                <div className='Rows'>
-                    <label>Cod:</label>
-                    <label>{row.Orden[index].Cod}</label>
-                    <label>Descripción:</label>
-                    <label>{row.Orden[index].Descripcion}</label>
-                    <label>Valor unitario:</label>
-                    <label>$ {Formater(row.Orden[index].VrUnitario)}</label>
-                    <label>Cantidad a devolver:</label>
-                    <TheInput
-                        type='real'
-                        val={cantidad}
-                        onchange={(e)=>handleCantidad(e)}
-                        Min = {0}
-                        Max = {row.Orden[index].Cantidad}
-                    />
-                <label>Valor a devolver:</label>
-                <label>$ {Formater(value)}</label>
+                <div className='theModal-body'>
+                    <div className='Rows'>
+                        <label className='Subtittle'>Cod:</label>
+                        <label>{row.Orden[index].Cod}</label>
+                        <label>Descripción:</label>
+                        <label>{row.Orden[index].Descripcion}</label>
+                        <label>Valor unitario:</label>
+                        <label>$ {Formater(row.Orden[index].VrUnitario)}</label>
+                        <label>Cantidad a devolver:</label>
+                        <TheInput
+                            type='real'
+                            val={cantidad}
+                            onchange={(e)=>handleCantidad(e)}
+                            Min = {0}
+                            Max = {row.Orden[index].Cantidad}
+                        />
+                    <label>Valor a devolver:</label>
+                    <label>$ {Formater(value)}</label>
+                    </div>
                 </div>
                 <button className='btnStnd btn1' onClick={() => setShowConfirm(true)}>Aceptar</button>
                 <button className='btnStnd btn1'>Cancelar</button>

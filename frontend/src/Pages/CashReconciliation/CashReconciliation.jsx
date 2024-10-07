@@ -214,7 +214,7 @@ export function CashReconciliation() {
                 <h2>Ventas: $ {Formater((CRData['Venta por caja'] ? CRData['Venta por caja'].Efectivo + CRData['Venta por caja'].Transferencia : 0) - (CRData['Devolución mercancia'] ? CRData['Devolución mercancia'].Efectivo : 0))}</h2>
             </div>
             <div>
-                <h2>Ganancia: $ {Formater((CRData['Venta por caja'] ? CRData['Venta por caja'].Efectivo + CRData['Venta por caja'].Transferencia : 0) - (CRData['']))}</h2>
+                <h2>Ganancia: $ {Formater((CRData['Venta por caja'] ? CRData['Venta por caja'].Efectivo + CRData['Venta por caja'].Transferencia : 0))}</h2>
             </div>
         </div>
         <div className='TwoColumns' style={{gap: '20%'}}>
