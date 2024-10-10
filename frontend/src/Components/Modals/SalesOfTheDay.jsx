@@ -320,6 +320,14 @@ export const SalesOfTheDay = ({show, orderslist, width='90%', height='90%'}) => 
         CancelTheSale(fila)
     }
 
+    const formatDate = (date) => {
+        const d = new Date(date);
+        const month = `${d.getMonth() + 1}`.padStart(2, '0');
+        const day = `${d.getDate()}`.padStart(2, '0');
+        const year = d.getFullYear();
+        return [year, month, day].join('-');
+    };
+
     return (
         <div className='theModalContainer'>
             <div className='theModal-content' style={{width: width, height: height, position: 'relative'}}>
@@ -347,20 +355,30 @@ export const SalesOfTheDay = ({show, orderslist, width='90%', height='90%'}) => 
                                     headers={ctHeaders}
                                     selectedRow={selectedfila}
                                     setSelectedRow={setSelectedfila}
-                                    Height='200'
+                                    Height='600px'
+                                />
+                            </div>
+                            <div>
+                                <label><strong>Fecha seleccionada: </strong></label>
+                                <input
+                                    type="date"
+                                    value={formatDate(dateSearch)}
+                                    onChange={(e)=>{setDateSearch(new Date(e.target.value))}}
                                 />
                             </div>
                         </div>
                         <div>
                             <div className='data_of_sale'>
                                 <div className='Col'>
-                                    <label>Venta:</label>
-                                    <label>Cliente:</label>
-                                    <label>Hora:</label>
+                                    <label><strong>Tipo de venta:</strong></label>
+                                    <label><strong>Venta:</strong></label>
+                                    <label><strong>Cliente:</strong></label>
+                                    <label><strong>Hora:</strong></label>
                                 </div>
                                 <div className='Col'>
                                     {headerSales !== null ? (
                                         <>
+                                            <label>{headerSales.FacturaElectronica === ''? 'Remisión': 'Factura electronica'}</label>
                                             <label>{headerSales.Consecutivo}</label>
                                             <label>{headerSales.Nombre + ' ' + headerSales.Apellido}</label>
                                             <label>{headerSales.Fecha.split('T')[1].split('.')[0]}</label>
@@ -377,7 +395,8 @@ export const SalesOfTheDay = ({show, orderslist, width='90%', height='90%'}) => 
                                     headers={HeadersOrderSelected}
                                     selectedRow={selectedfilaOrder}
                                     setSelectedRow={setSelectedfilaOrder}
-                                    Height='140'
+                                    Height='500px'
+                                    maxHeight={'30%'}
                                 />
                             </div>
                             <button className="btnStnd btn1" onClick={()=>returnProductM()}>Devolver articulo</button>

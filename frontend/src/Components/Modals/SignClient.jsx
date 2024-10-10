@@ -145,8 +145,14 @@ export const SignClient = ({show, retornar, width='50%', height='80%'}) => {
 
         const handleFormat = (id, e) => {
             const t = e.target.value.replace(/[^0-9]/g, '');
-            if (id === 'NitCC') {
-                const filterCustomers = contentList.filter((data) => data.NitCC === t)
+            let toCheck = ''
+            if (id === 'NitCC' && someData === null) {
+                if (customerData.Tipo === 1) {
+                    toCheck = t + '-' + VerifyCodNit(t)
+                } else {
+                    toCheck = t
+                }
+                const filterCustomers = contentList.filter((data) => data.NitCC === toCheck)
                 if (filterCustomers.length > 0 && id === 'NitCC') {
                     setShowAlertCustomers(true)
                 } else {
@@ -161,8 +167,11 @@ export const SignClient = ({show, retornar, width='50%', height='80%'}) => {
             let res, msj1, msj2, msjV = ''
             //* Primero se valida
             const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            if(a.NitCC.length < 9){
-                msjV = msjV + 'El Nit/Cédula debe tener al menos 9 caracteres\n'
+            if(a.NitCC.length < 9 && a.Tipo === 1){
+                msjV = msjV + 'El Nit debe tener al menos 9 caracteres\n'
+            }
+            if(a.NitCC.length < 6 && a.Tipo === 0){
+                msjV = msjV + 'El Cédula debe tener al menos 5 caracteres\n'
             }
             if(a.Nombre === ''){
                 msjV = msjV + 'El nombre no puede estar vacío\n'
@@ -222,6 +231,24 @@ export const SignClient = ({show, retornar, width='50%', height='80%'}) => {
             return result
         }
 
+        const ClientExists = () =>{
+            const data = {...customerData}
+            let toCheck = ''
+            if (customerData.NitCC !== '') {
+                if (customerData.Tipo === 1) {
+                    toCheck = customerData.NitCC + '-' + VerifyCodNit(customerData.NitCC)
+                } else {
+                    toCheck = customerData.NitCC
+                }
+                const filterCustomers = contentList.filter((data) => data.NitCC === toCheck)
+                if (filterCustomers.length > 0) {
+                    setShowAlertCustomers(true)
+                } else {
+                    setShowAlertCustomers(false)
+                }
+            }
+        }
+
         const changeValuesCustomer = (key, value)=>{
             //This function allows us to change the one specific value in the product data
             setEnableB1(true)
@@ -261,8 +288,10 @@ export const SignClient = ({show, retornar, width='50%', height='80%'}) => {
                             <label>Tipo cliente</label>
                         </div>
                         <div className='Colmn2'>
-                            <select id='CustomerType' value={customerData.Tipo}
-                            onChange={(e)=>{changeValuesCustomer('Tipo', Number(e.target.value))}}>
+                            <select id='CustomerType'
+                                value={customerData.Tipo}
+                                onChange={(e)=>{changeValuesCustomer('Tipo', Number(e.target.value))}}
+                                onBlur={()=>ClientExists()}>
                                 <option value='0'>C&eacute;dula</option>
                                 <option value='1'>Nit</option>
                             </select>
@@ -273,11 +302,13 @@ export const SignClient = ({show, retornar, width='50%', height='80%'}) => {
                             <label>Nit/C.C</label>
                         </div>
                         <div className='Colmn2'>
-                            <input id='numId' type="text"
+                            <input
+                                id='numId'
+                                type="text"
                                 onChange={(e)=>handleFormat('NitCC', e)}
                                 value={customerData.NitCC}
                                 style={{width: '41%', marginRight: '5px'}}
-                                onBlur={(e) => VerifyCodNit(e.target.value)}
+                                onBlur={()=>{setVerCod(VerifyCodNit(customerData.NitCC)) ;ClientExists()}}
                             />
                             {customerData.Tipo=== 1 && 
                                 <input id='nitId' type="text" value={verCod} onChange={(e)=>setVerCod(e.target.value)}/>

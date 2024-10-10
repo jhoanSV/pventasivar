@@ -27,16 +27,14 @@ export const ConfirmSaleModal = ({show, sendSale , folio , orderslist, width='50
                 setCambio(0)
             }
         } else if (tipoDePago === 'Transferencia') {
-            if (transferencia >= total) {
-                setCambio(transferencia - total)
-            } else {
                 setCambio(0)
-            }
         } else if (tipoDePago === 'Mixto') {
-            if (efectivo + transferencia >= total) {
-                setCambio(efectivo + transferencia - total)
-            } else {
+            if (total - efectivo >= 0) {
+                setTransferencia(total - efectivo)
                 setCambio(0)
+            } else {
+                setTransferencia(0)
+                setCambio(efectivo - total)
             }
         }
     }, [efectivo, transferencia])
@@ -49,11 +47,11 @@ export const ConfirmSaleModal = ({show, sendSale , folio , orderslist, width='50
         } else if (tipoDePago === 'Transferencia') {
             setEfectivo(0)
             setTransferencia(total)
-            setCambio(transferencia - total)
+            setCambio(0)
         } else if (tipoDePago === 'Mixto') {
             setEfectivo(total)
             setTransferencia(0)
-            setCambio(efectivo + transferencia - total)
+            setCambio(efectivo - total)
         }
     }, [tipoDePago])
 
@@ -96,7 +94,7 @@ export const ConfirmSaleModal = ({show, sendSale , folio , orderslist, width='50
         } else if (efectivo === 0 && transferencia === '') {
             TheAlert('Debe ingresar el efectivo o la transferencia para este tipo de pago')
         } else {
-            console.log(usD)
+            console.log(orderslist)
             if (Object.keys(orderslist.Customer).length === 0){
                 orderslist.Customer = {
                     Consecutivo: 0,
@@ -156,7 +154,7 @@ export const ConfirmSaleModal = ({show, sendSale , folio , orderslist, width='50
                 <div className='theModal-body'>
                     <div className='header_confirm_sale'>
                         <h2>Cliente:</h2>
-                        <h2>{orderslist.Customer.Nombre + ' ' + orderslist.Customer.Apellido}</h2>
+                        <h2>{orderslist.Customer.Nombre ? orderslist.Customer.Nombre + ' ' + orderslist.Customer.Apellido: 'Consumidor final'}</h2>
                     </div>
                     <div className='content'>
                         <div className='change'>
@@ -214,11 +212,12 @@ export const ConfirmSaleModal = ({show, sendSale , folio , orderslist, width='50
                                             <label>Transferencia:</label>
                                         </div>
                                         <div className='column2'>
-                                            <TheInput
+                                            <label>{Formater(parseFloat(transferencia))}</label>
+                                            {/*<TheInput
                                                 numType='real'
                                                 val={transferencia}
                                                 onchange={(e)=>setTransferencia(e)}
-                                            />
+                                            />*/}
                                         </div>
                                         <div className='column1'>
                                             <label>Referencia:</label>
@@ -246,7 +245,7 @@ export const ConfirmSaleModal = ({show, sendSale , folio , orderslist, width='50
                                     value ='Remision'
                                     name = 'TipoDeVenta'
                                     defaultChecked = {true}
-                                    onChange = {(e)=>setElectronic(e.target.value)}/>
+                                    onChange = {(e)=>setElectronic(e.target.checked)}/>
                                 Remisión
                             </label>
                             <label>
@@ -254,7 +253,7 @@ export const ConfirmSaleModal = ({show, sendSale , folio , orderslist, width='50
                                     value ='FElectronica'
                                     name = 'TipoDeVenta'
                                     defaultChecked = {false}
-                                    onChange = {(e)=>setElectronic(e.target.value)}/>
+                                    onChange = {(e)=>setElectronic(e.target.checked)}/>
                                 Factura
                             </label>
                             <div className='btn'>

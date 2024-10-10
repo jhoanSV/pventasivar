@@ -405,34 +405,6 @@ export const Newproduct = () => {
     useEffect(() => {
         if (someData) {
             toModifyProduct(someData)
-            /*let data = { ...someData }
-            console.log({...data});
-            if (data.PVenta && data.PCosto) {
-                let pct = ((data.PVenta - data.PCosto) / data.PCosto) * 100
-                pct = pct % 1 === 0 ? pct : pct.toFixed(2);
-                //pct = pct.replace(/\./g, ',');
-                setpctGan(Formater(pct));
-                if (data.Medidas.length !== 0){
-                    data.Medidas.forEach((medida) => {
-                        let pctum = medida.UMedida ? (medida.PVentaUM - data.PCosto/medida.UMedida) / (data.PCosto/medida.UMedida) * 100 : Number(pct);
-                        pctum = pctum % 1 === 0 ? pctum : pctum.toFixed(2);
-                        medida.pctUM = Formater(pctum);
-                        medida.UMedida = Formater(medida.UMedida);
-                        medida.PVentaUM = Formater(medida.PVentaUM);
-                    })
-                }
-            }
-            data.PVenta = Formater(data.PVenta);
-            data.PCosto = Formater(data.PCosto);
-            data.Inventario = Formater(data.Inventario);
-            data.InvMinimo = Formater(data.InvMinimo);
-            data.InvMaximo = Formater(data.InvMaximo);
-            console.log(data);
-            setSelectedCategory(data.Categoria.toLowerCase());
-            setProductData(data);
-            setSection('Modificar producto');
-            setButtons("Modificar producto");
-            setModificarProducto(true);*/
         } else {
             setSection('Nuevo Producto');
         }
@@ -512,7 +484,10 @@ export const Newproduct = () => {
     const askToAddProduct = async(item) => {
         let modifyProduct = await TheAlert('El producto ya existe, ¿desea modificar el producto?', 1)
         if (modifyProduct){
-            setFromSivarToNew(true)
+            console.log('item', item)
+            if (item.Inventario === 0 && item.InvMinimo === 0 &&  item.InvMaximo === 0 ){
+                setFromSivarToNew(true)
+            }
             toModifyProduct(item)
             setShowFL(false)
         } else if (!modifyProduct) {
@@ -535,6 +510,12 @@ export const Newproduct = () => {
             refList.current = list;
         }
     }
+
+    useEffect(() => {
+        if (pList.length === 0) {
+          setShowFL(false);
+        }
+      }, [pList, setShowFL]);
 
     return (
         <section className='Newproduct'>
@@ -586,7 +567,7 @@ export const Newproduct = () => {
                                 isEditingRef.current=false;
                                 e.target.blur();
                             }}}
-                            onBlur={()=>{isEditingRef.current=false;}}
+                            onBlur={()=>{isEditingRef.current=false;setShowFL(false)}}
                             autoComplete='off'
                             autoFocus
                         />
@@ -613,7 +594,7 @@ export const Newproduct = () => {
                                 )}
                                 {pList.length === 0 ?
                                     <div className='flItem'>
-                                        No se encuentran coincidencias                                                                                                            
+                                        No se encuentran coincidencias
                                     </div>
                                     :
                                     <></>

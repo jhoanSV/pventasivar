@@ -15,11 +15,14 @@ export const TicketPrint = ({data, usD, Electronic = false}) => {
     let total = 0;
     let base = 0;
     let iva = 0;
-
+    console.log('data', data)
     data.Order.forEach(detail => {
         total += detail.PVenta * detail.Cantidad;
-        base += (detail.PCosto * detail.Cantidad)/(1+(detail.Iva/100));
-        iva += ((detail.PCosto * detail.Cantidad)/(1+(detail.Iva/100))) * (detail.Iva/100);
+        base += (detail.PVenta * detail.Cantidad)/(1+(detail.Iva/100));
+        iva += base * (detail.Iva/100)//((detail.Pventa * detail.Cantidad)/(1+(detail.Iva/100))) * (detail.Iva/100);
+        console.log('detail.Iva', detail.Iva)
+        console.log('base: ', base);
+        console.log('iva: ', iva);
     });
 
     let CufeQR = '';
@@ -77,9 +80,9 @@ export const TicketPrint = ({data, usD, Electronic = false}) => {
                 </div>
                 <div id='Colt2'>
                     <label style={{display: 'block'}}>${Formater(total.toFixed(2))}</label>
-                    <label style={{display: 'block'}}>${Formater(data.RCData.Efectivo.toFixed(2))}</label>
-                    <label style={{display: 'block'}}>${Formater(data.RCData.Transferencia.toFixed(2))}</label>
-                    <label style={{display: 'block'}}>${Formater(data.RCData.Efectivo.toFixed(2))}</label>
+                    <label style={{display: 'block'}}>${Formater(parseFloat(data.RCData.Efectivo).toFixed(2))}</label>
+                    <label style={{display: 'block'}}>${Formater(parseFloat(data.RCData.Transferencia).toFixed(2))}</label>
+                    <label style={{display: 'block'}}>${Formater(parseFloat(data.RCData.Efectivo).toFixed(2)-total.toFixed(2))}</label>
                 </div>
             </div>
             {Electronic && 
@@ -94,8 +97,8 @@ export const TicketPrint = ({data, usD, Electronic = false}) => {
                             <label style={{display: 'block'}}><strong>Iva:</strong></label>
                         </div>
                         <div>
-                            <label style={{display: 'block'}}>${Formater(base)}</label>
-                            <label style={{display: 'block'}}>${Formater(iva)}</label>
+                            <label style={{display: 'block'}}>${Formater(base.toFixed(2))}</label>
+                            <label style={{display: 'block'}}>${Formater((total - base).toFixed(2))}</label>
                         </div>
                     </div>
                 </div>

@@ -68,8 +68,8 @@ export function Inventory(){
     ]
 
     const filterByText = (item, text) =>
-        item.Cod.toString().includes(text) ||
-        item.Descripcion.toLowerCase().includes(text);
+        item.Cod.toString().toLowerCase().includes(text) ||
+        item.Descripcion.toString().toLowerCase().includes(text);
 
     const SearchHandle = (text) =>{
         let c = refList.current;

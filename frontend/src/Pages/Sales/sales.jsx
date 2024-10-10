@@ -16,8 +16,10 @@ import { CSSTransition } from 'react-transition-group';
 
 export function Sales(){
     //*---------------------
+    //datas of the current tab
     const [saleTabs, setSaleTabs] = useState(()=>{
         const savedTabs = JSON.parse(localStorage.getItem('ticketsJson'));
+        console.log(savedTabs)
         if (savedTabs) {
             return savedTabs; // Si hay datos en localStorage, los usamos
         } else {
@@ -32,6 +34,7 @@ export function Sales(){
             return defaultTabs;
         }
     });
+    // For the current tab
     const [currentTab, setCurrentTab] = useState(()=>{
         const actualTab = JSON.parse(localStorage.getItem('CurrentTab'));
         if (actualTab) {
@@ -54,7 +57,7 @@ export function Sales(){
     //*---------------------
     const [ total, setTotal] = useState(0);
     const [ orderslist, setOrderslist] = useState(saleTabs[Object.keys(saleTabs)[0]]["Order"])
-    const [ customer, setCustomer] = useState("Por asignar");
+    const [ customer, setCustomer] = useState("Consumidor final");
     const [ showConfirmar, setShowConfirmar] = useState(false);
     const [ selectedfila, setSelectedfila] = useState(0);
     const [ changeQuantity, setChangeQuantity] = useState(null);
@@ -67,6 +70,7 @@ export function Sales(){
     const [ showMoneyFlow, setShowMoneyFlow ] = useState(false);
     const [ typeMoneyFlow, setTypeMoneyFlow ] = useState(false);
     const [ selectProduct, setSelectProduct] = useState(null);
+    const [ inputValue, setInputValue] = useState('');
     const [ showFL, setShowFL] = useState(false);
     //const [limit, setLimit] = useState(0);
     const [ sBText, setSBText] = useState('');
@@ -347,7 +351,7 @@ export function Sales(){
         if(Object.keys(saleTabs[Num].Customer).length !== 0){
             setCustomer(saleTabs[Num].Customer.Nombre + ' ' + saleTabs[Num].Customer.Apellido)
         }else{
-            setCustomer("Por asignar")
+            setCustomer("Consumidor final")
         }
         //const custromerName = saleTabs[Num].Customer.Nombre === '' ? saleTabs[Num].Customer.Nombre: 'Por asignar';
         //setCustomer(custromerName)
@@ -396,7 +400,7 @@ export function Sales(){
             console.log(newTabButtons)
             setOrderslist(newTabButtons[newTabKey].Order);
             setCurrentTab({"index": 0,"key": newTabKey});
-            setCustomer("Por asignar")
+            setCustomer("Consumidor final")
             console.log('newTabButtons', newTabButtons)
             //setCurrentTab({"index": 0,"key": Object.keys(newTabButtons)[0]})
             console.log('entro en lo demas')
@@ -499,6 +503,7 @@ export function Sales(){
             theProduct.Cantidad = 1;
             theProduct.UMedida = 1;
             addProduct(theProduct);
+            setInputValue('')
         } else if (item.Clase !== 0){
             setSelectProduct(item)
             setShowProductMeasures(true)
@@ -582,7 +587,7 @@ export function Sales(){
         if(Object.keys(saleTabs[currentTab.key].Customer).length !== 0){
             setCustomer(saleTabs[currentTab.key].Customer.Nombre + ' ' + saleTabs[currentTab.key].Customer.Apellido)
         }else{
-            setCustomer("Por asignar");
+            setCustomer("Consumidor final");
         }
         
         const StartCahs = async() => {
@@ -608,11 +613,13 @@ export function Sales(){
                 setOrderslist([]);
                 setCurrentTab({"index": 0, "key": 1});
                 setTabsHistory(1);
-                setCustomer("Por asignar");
+                setCustomer("Consumidor final");
                 console.log('ResetTickets and showStarCash');
             }
         }
+        
         StartCahs()
+        console.log('entra en el useEffect del inicio')
         document.addEventListener('keydown', handleKeyDown);
         document.addEventListener('mousedown', handleClickOutside);
         return () => {
@@ -629,8 +636,9 @@ export function Sales(){
                     <input
                         type="text"
                         id='NPinput'
+                        value={inputValue}
                         placeholder="Codigo del producto"
-                        onChange={(e)=>{SearchHandle((e.target.value).toLowerCase(), setInvList);selectedFLIRef.current = 0}}
+                        onChange={(e)=>{setInputValue(e.target.value);SearchHandle((e.target.value).toLowerCase(), setInvList);selectedFLIRef.current = 0}}
                         style={{width: '500px'}}
                         onFocus={(e)=>{setShowFL(true);isEditingRef.current=true;e.target.select();}}
                         onBlur={()=>{isEditingRef.current=false;}}

@@ -4,6 +4,8 @@ import { TheInput } from '../../Components/InputComponent/TheInput';
 import { UserConfirm } from './UserConfirm';
 import { useTheContext } from '../../TheProvider';
 import { validateUser, NewMoneyFlow, NewOutput } from '../../api';
+import { TheAlert } from '../TheAlert';
+import { Formater } from '../../App';
 
 export const ReturnProduct = ({show, row, updateOrders, index, width='50%', height='40%'}) => {
     const [ cantidad, setCantidad ] = useState(0);
@@ -13,45 +15,51 @@ export const ReturnProduct = ({show, row, updateOrders, index, width='50%', heig
     const { setSection, setSomeData, usD } = useTheContext();
 
     const returnP = async() => {
-        const now = new Date();
-        // Obtener la fecha en formato YYYY-MM-DD
-        const date = now.toISOString().split('T')[0];
-        // Obtener la hora en formato HH:MM:SS
-        const time = now.toTimeString().split(' ')[0];
-        const dataToSendMoneyFlow ={
-            ConsecutivoCV: row.Consecutivo,
-            IdFerreteria: usD.Cod,
-            Fecha: date + ' ' + time,
-            Referencia: 0,
-            Efectivo: value,
-            Transferencia: 0,
-            Motivo: 'Devolución mercancia',
-            Comentarios: comentarios,
-            TipoDeFlujo: 1,
-            Activo: true
+        
+        try {
+            const now = new Date();
+            // Obtener la fecha en formato YYYY-MM-DD
+            const date = now.toISOString().split('T')[0];
+            // Obtener la hora en formato HH:MM:SS
+            const time = now.toTimeString().split(' ')[0];
+            const dataToSendMoneyFlow ={
+                ConsecutivoCV: row.Consecutivo,
+                IdFerreteria: usD.Cod,
+                Fecha: date + ' ' + time,
+                Referencia: 0,
+                Efectivo: value,
+                Transferencia: 0,
+                Motivo: 'Devolución mercancia',
+                Comentarios: comentarios,
+                TipoDeFlujo: 1,
+                Activo: true
+            }
+            const dataToSendProduct ={
+                CodInterno: 0,
+                IdFerreteria: usD.Cod,
+                ConsecutivoProd: row.Orden[index].ConsecutivoProd,
+                Cantidad: cantidad,
+                Cod: row.Orden[index].Cod,
+                Descripcion: row.Orden[index].Descripcion,
+                PCosto: row.Orden[index].VrCosto,
+                PCostoLP: 0,
+                Fecha: date + ' ' + time,
+                Iva: row.Orden[index].Iva,
+                CodResponsable: usD.Cod,
+                Responsable: usD.Contacto,
+                Motivo: 'Devolución mercancia',
+                ConsecutivoCompra: row.Consecutivo,
+                Medida: row.Orden[index].Medida,
+                UMedida: row.Orden[index].UMedida,
+            }
+            NewMoneyFlow(dataToSendMoneyFlow)
+            NewOutput(dataToSendProduct)
+            updateOrders()
+            show(false)
+            TheAlert('Se devlcio el articulo correctamente')
+        } catch (error) {
+            console.error('Error al realizar la devolución:', error);
         }
-        const dataToSendProduct ={
-            CodInterno: 0,
-            IdFerreteria: usD.Cod,
-            ConsecutivoProd: row.Orden[index].ConsecutivoProd,
-            Cantidad: cantidad,
-            Cod: row.Orden[index].Cod,
-            Descripcion: row.Orden[index].Descripcion,
-            PCosto: row.Orden[index].VrCosto,
-            PCostoLP: 0,
-            Fecha: date + ' ' + time,
-            Iva: row.Orden[index].Iva,
-            CodResponsable: usD.Cod,
-            Responsable: usD.Contacto,
-            Motivo: 'Devolución mercancia',
-            ConsecutivoCompra: row.Consecutivo,
-            Medida: row.Orden[index].Medida,
-            UMedida: row.Orden[index].UMedida,
-        }
-        NewMoneyFlow(dataToSendMoneyFlow)
-        NewOutput(dataToSendProduct)
-        updateOrders()
-        show(false)
     }
 
     const handleCantidad = (Number) => {
@@ -68,14 +76,6 @@ export const ReturnProduct = ({show, row, updateOrders, index, width='50%', heig
         }
         setValue(valueNumber * row.Orden[index].VrUnitario);
         console.log('valueNumber: ' + valueNumber);
-    };
-
-    const Formater = (number) =>{
-        //it gives a number format
-        if (number === '') return '';
-        const numberString = String(number).replace(/,/g, '.');
-        const numberfromat = Number(numberString);
-        return Intl.NumberFormat('de-DE').format(numberfromat);
     };
 
     return (
