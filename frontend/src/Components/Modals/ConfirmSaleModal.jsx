@@ -6,7 +6,9 @@ import { TicketPrint } from '../TickerPrint';
 import ReactDOMServer from 'react-dom/server';
 import './_ConfirmSaleModal.scss';
 import { TheAlert } from '../TheAlert';
-import '../../Fonts_CSS/PayIcon.css'
+import '../../Fonts_CSS/PayIcon.css';
+import { Formater} from '../../App';
+import { ResolucionColtek, valTokenColtek, paymentMethodsColtek} from '../../api';
 
 export const ConfirmSaleModal = ({show, sendSale , folio , orderslist, width='50%', height='50%', totalE}) => {
     const [ efectivo, setEfectivo] = useState(5000)
@@ -16,8 +18,8 @@ export const ConfirmSaleModal = ({show, sendSale , folio , orderslist, width='50
     const [ tipoDePago, setTipoDePago] = useState("Efectivo");
     const [ referencia, setReferencia] = useState('');
     const [ showTicket, setShowTicket] = useState(false)
-    const [ electronic, setElectronic ] = useState(true);
-    const { setSection, setSomeData, usD } = useTheContext();
+    const [ electronic, setElectronic ] = useState(false);
+    const { setSection, setSomeData, usD, setUsD } = useTheContext();
 
     useEffect(() => {
         if (tipoDePago === 'Efectivo') {
@@ -66,14 +68,6 @@ export const ConfirmSaleModal = ({show, sendSale , folio , orderslist, width='50
         console.log(usD)
     }, [])
 
-    const Formater = (number) =>{
-        //it gives a number format
-        if (number === '') return '';
-        const numberString = String(number).replace(/,/g, '.');
-        const numberfromat = Number(numberString);
-        return Intl.NumberFormat('de-DE').format(numberfromat);
-    };
-
     const sumarTotal = () => {
         let suma = 0;
         //console.log('orderslist.Order: ' + JSON.stringify(orderslist.Order))
@@ -94,7 +88,6 @@ export const ConfirmSaleModal = ({show, sendSale , folio , orderslist, width='50
         } else if (efectivo === 0 && transferencia === '') {
             TheAlert('Debe ingresar el efectivo o la transferencia para este tipo de pago')
         } else {
-            console.log(orderslist)
             if (Object.keys(orderslist.Customer).length === 0){
                 orderslist.Customer = {
                     Consecutivo: 0,
@@ -106,7 +99,7 @@ export const ConfirmSaleModal = ({show, sendSale , folio , orderslist, width='50
                     Telefono1: 0,
                     Telefono2: 0,
                     Correo: usD.Email,
-                    Direccion: '',
+                    Direccion: usD.Direccion,
                     Barrio: '',
                     FormaDePago: 0,
                     LimiteDeCredito: 0,
@@ -128,10 +121,45 @@ export const ConfirmSaleModal = ({show, sendSale , folio , orderslist, width='50
                                 Activo: true
                                 }
             orderslist.Electronic = electronic
-            console.log('orderlist: ', orderslist)
-            const sendedOrden = await NewSale(orderslist)
-            console.log('sendedOrden: ', sendedOrden)
-            if (print) {
+            //
+            const tokencheck = await valTokenColtek(usD.resColtek.token, usD.token)
+            console.log('tokencheck: ', tokencheck)
+            if (tokencheck.status){
+                //If status is true then only put the token on the orderlist
+                orderslist.tokenColtek = usD.resColtek.token
+            } else if (!tokencheck.status){
+                //If status is false then restart the token to the new one
+                const newUsD = {...usD, resColtek: tokencheck.resColtek}
+                orderslist.tokenColtek = tokencheck.resColtek.token
+                setUsD(newUsD)
+            }
+            let MedioDePagoColtek = 10
+            if (tipoDePago === 'transferencia'){
+                MedioDePagoColtek = 31
+            }
+            orderslist.MedioDePagoColtek = MedioDePagoColtek
+
+            if (orderslist.Customer.Tipo === 0) {
+                //esto es para cedulas
+                orderslist.Customer.TipoPersona = 2
+                orderslist.Customer.NombreTipoPersona = 'Persona Natural'
+                orderslist.Customer.TipoDocumento = 13
+                orderslist.Customer.NombreTipoDocumento = 'Cédula de ciudadanía '
+            } else if (orderslist.Customer.Tipo === 1) {
+                //esto es para NIT
+                orderslist.Customer.TipoPersona = 1
+                orderslist.Customer.NombreTipoPersona = 'Persona Jurídica'
+                orderslist.Customer.TipoDocumento = 31
+                orderslist.Customer.NombreTipoDocumento = 'NIT'
+            }
+            //const resolucion = await ResolucionColtek(orderslist.tokenColtek)
+            //console.log('resolucion: ', resolucion)
+            //console.log('orderlist: ', orderslist)
+            //const sendedOrden = await NewSale(orderslist)
+            //console.log('sendedOrden: ', sendedOrden)
+            const metodosDePago = await paymentMethodsColtek('http://sivar.colsad.com',orderslist.tokenColtek)
+            console.log('metodosDePago: ', metodosDePago)
+            /*if (print) {
                 const usDdata = usD
                 //console.log('Sended orden: ', sendedOrden)
                 // Render the component as HTML
@@ -139,9 +167,9 @@ export const ConfirmSaleModal = ({show, sendSale , folio , orderslist, width='50
                 //Send the HTML to Electron for printing
                 window.electron.send('print-ticket', ticketHTML);
                 //setShowTicket(true);
-            }
-            sendSale()
-            show(false)
+            }*/
+            //sendSale()
+            //show(false)
         }
     }
 
@@ -245,7 +273,7 @@ export const ConfirmSaleModal = ({show, sendSale , folio , orderslist, width='50
                                     value ='Remision'
                                     name = 'TipoDeVenta'
                                     defaultChecked = {true}
-                                    onChange = {(e)=>setElectronic(e.target.checked)}/>
+                                    onChange = {(e)=>{setElectronic(false); console.log(electronic)}}/>
                                 Remisión
                             </label>
                             <label>
@@ -253,7 +281,7 @@ export const ConfirmSaleModal = ({show, sendSale , folio , orderslist, width='50
                                     value ='FElectronica'
                                     name = 'TipoDeVenta'
                                     defaultChecked = {false}
-                                    onChange = {(e)=>setElectronic(e.target.checked)}/>
+                                    onChange = {(e)=>{setElectronic(true); console.log(electronic)}}/>
                                 Factura
                             </label>
                             <div className='btn'>

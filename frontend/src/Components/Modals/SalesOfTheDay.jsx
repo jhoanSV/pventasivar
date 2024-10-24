@@ -8,6 +8,9 @@ import { SalesPerDay, CancelTheSale } from '../../api';
 import { ReturnProduct } from './ReturnProduct';
 import { UserConfirm } from './UserConfirm';
 import { TokenV } from '../../App';
+import { Formater } from '../../App';
+import ReactDOMServer from 'react-dom/server';
+import { TicketPrint } from '../TickerPrint';
 
 
 export const SalesOfTheDay = ({show, orderslist, width='90%', height='90%'}) => {
@@ -21,6 +24,7 @@ export const SalesOfTheDay = ({show, orderslist, width='90%', height='90%'}) => 
     const [ headerSales, setHeaderSales ] = useState(null);
     const [ dateSearch, setDateSearch ] = useState(new Date());
     const [ showConfirm, setShowConfirm ] = useState(false);
+    const [ allowedButtons, setAllowedButtons ] = useState(false);
     const { setSection, setSomeData, usD, setLogged } = useTheContext();
     // for the tables of the order and the selected order
     const isEditingRef = useRef(false);
@@ -94,7 +98,11 @@ export const SalesOfTheDay = ({show, orderslist, width='90%', height='90%'}) => 
             'IdFerreteria' : usD.Cod,
             'Fecha': dateSearch.toISOString().split('T')[0]
         });
+        const sortedSelectedOrder  = response.sort((a,b)=> (b.Consecutivo-a.Consecutivo))
+        console.log('sortedSelectedOrder', sortedSelectedOrder)
         setOrders(response);
+        setSelectedOrder(null);
+        setHeaderSales(null)
         allOrdersRef.current = response;
         ordersRef.current = response;
     }
@@ -116,6 +124,14 @@ export const SalesOfTheDay = ({show, orderslist, width='90%', height='90%'}) => 
     }, [])
 
     useEffect(() => {
+        getOrdersPerday()
+        window.addEventListener('keydown', handleKeyDown);
+        return () => {
+            window.removeEventListener('keydown', handleKeyDown);
+        };
+    }, [dateSearch]);
+
+    useEffect(() => {
         sumarTotal()
     }, [selectedOrder])
 
@@ -135,14 +151,6 @@ export const SalesOfTheDay = ({show, orderslist, width='90%', height='90%'}) => 
         setHeaderSales(item);
         setSelectedOrder(item.Orden)
     }
-
-    const Formater = (number) =>{
-        //it gives a number format
-        if (number === '') return '';
-        const numberString = String(number).replace(/,/g, '.');
-        const numberfromat = Number(numberString);
-        return Intl.NumberFormat('de-DE').format(numberfromat);
-    };
 
     const sumarTotal = () => {
         let suma = 0;
@@ -233,7 +241,6 @@ export const SalesOfTheDay = ({show, orderslist, width='90%', height='90%'}) => 
         item.Orden.forEach(valor => {
             suma += valor.VrUnitario * (valor.CantidadSa - valor.CantidadEn);
         });
-        console.log(item)
         const styles = {
             textDecoration: suma === 0 ? 'line-through' : 'none',
             color: suma === 0 ? '#999999' : '#000000',
@@ -261,9 +268,10 @@ export const SalesOfTheDay = ({show, orderslist, width='90%', height='90%'}) => 
 
     const RowOfSelectedOrder = (item, index, columnsWidth) => {
         //const [changeVrVenta, setChangeVrVenta] = useState(false)
+        const remainingAmount = item.CantidadSa - item.CantidadEn;
         const rowIndex = index;
         const styles = {
-            textDecoration: item.CantidadSa - item.CantidadEn === 0 ? 'line-through' : 'none',
+            textDecoration: remainingAmount === 0 ? 'line-through' : 'none',
             color: item.CantidadSa - item.CantidadEn === 0 ? '#999999' : '#000000',
             whiteSpace: 'normal',
             wordWrap: 'break-word'
@@ -271,7 +279,7 @@ export const SalesOfTheDay = ({show, orderslist, width='90%', height='90%'}) => 
         return (
                 <>
                     <td style={{...styles, width: columnsWidth[0]}} onClick={()=>isEditingRef.current = true}>
-                        <label>{(item.CantidadSa - item.CantidadEn) !== 0 ? item.CantidadSa - item.CantidadEn: item.CantidadSa}</label>
+                        <label>{(remainingAmount) !== 0 ? remainingAmount: item.CantidadSa}</label>
                     </td>
                     <td style={{...styles, width: columnsWidth[1]}} onClick={()=>isEditingRef.current = true}>
                         <label>{item.Cod}</label>
@@ -294,7 +302,7 @@ export const SalesOfTheDay = ({show, orderslist, width='90%', height='90%'}) => 
 
     const returnProductM = () => {
         const fila = orders[selectedfila].Orden[selectedfilaOrder]
-        console.log(fila);
+        //console.log(fila);
         if (fila.CantidadSa - fila.CantidadEn === 0) {
             TheAlert('No se puede devolver un producto que ya ha sido vendido completamente.')
         } else {
@@ -302,22 +310,28 @@ export const SalesOfTheDay = ({show, orderslist, width='90%', height='90%'}) => 
         }
     }
 
-    const returnTheOrder = () => {
-        const now = new Date();
-        // Obtener la fecha en formato YYYY-MM-DD
-        const date = now.toISOString().split('T')[0];
-        // Obtener la hora en formato HH:MM:SS
-        const time = now.toTimeString().split(' ')[0];
-        const fila = {...orders[selectedfila]}
-        let suma = 0
-        fila.Orden.forEach(valor => {
-            suma += valor.VrUnitario * (valor.CantidadSa - valor.CantidadEn);
-        });
-        fila.FechaActual = date + ' ' + time
-        fila.Total = suma
-        fila.IdFerreteria = usD.Cod
-        fila.Responsable = usD.Contacto
-        CancelTheSale(fila)
+    const returnTheOrder = async() => {
+        const confirmCacelTheSale = await TheAlert('¿Esta seguro que desea cancelar la venta?, esta acción es irreversible', 1)
+        if (confirmCacelTheSale) {
+            const now = new Date();
+            // Obtener la fecha en formato YYYY-MM-DD
+            const date = now.toISOString().split('T')[0];
+            // Obtener la hora en formato HH:MM:SS
+            const time = now.toTimeString().split(' ')[0];
+            const fila = {...orders[selectedfila]}
+            let suma = 0
+            fila.Orden.forEach(valor => {
+                suma += valor.VrUnitario * (valor.CantidadSa - valor.CantidadEn);
+            });
+            fila.FechaActual = date + ' ' + time
+            fila.Total = suma
+            fila.IdFerreteria = usD.Cod
+            fila.Responsable = usD.Contacto
+            await CancelTheSale(fila)
+            const today = formatDate(new Date());
+            TheAlert('Se cancelo la venta con exito')
+            getOrdersPerday()
+        }
     }
 
     const formatDate = (date) => {
@@ -328,6 +342,157 @@ export const SalesOfTheDay = ({show, orderslist, width='90%', height='90%'}) => 
         return [year, month, day].join('-');
     };
 
+    const askToPrint =() => {
+        if (orders[selectedfila].FacturaElectronica === '') {
+            let toElectronic = TheAlert('¿Deseas convertir la remision en factura electronica?',1)
+            if (toElectronic) {
+                console.log('se pasa a factura electronica');
+            }
+        } else {
+            rePrint()
+        }
+    };
+
+    const rePrint = () => {
+        const print = true;
+        for (const orden of selectedOrder){
+            orden.Cantidad = Number(orden.CantidadSa) - Number(orden.CantidadEn)
+            orden.PVenta = orden.VrUnitario
+        }
+        const originalDate = orders[selectedfila].Fecha;
+        const day = originalDate.split('T')[0];
+        const hour = originalDate.split('T')[1].split('.')[0];
+        let medioDePago = ''
+        if (orders[selectedfila].Efectico !== 0 && orders[selectedfila].Transferencia === 0) {
+            medioDePago = 'Efectivo'
+        } else if (orders[selectedfila].Efectico === 0 && orders[selectedfila].Transferencia !== 0) {
+            medioDePago = 'Transferencia'
+        } else if (orders[selectedfila].Efectico !== 0 && orders[selectedfila].Transferencia !== 0) {
+            medioDePago = 'Mixto'
+        }
+        const electronic = headerSales.FacturaElectronica === ''? false: true;
+        const sendedOrden = {
+            Customer: {
+                Apellido: orders[selectedfila].Apellido,
+                Barrio: orders[selectedfila].Barrio,
+                Consecutivo: orders[selectedfila].Consecutivo,
+                Correo: orders[selectedfila].Correo !== '' ? orders[selectedfila].Correo :usD.Email,
+                Direccion: orders[selectedfila].Direccion,
+                Fecha: day + ' ' + hour,
+                FormaDePago: 0,
+                IdFerreteria: usD.Cod,
+                LimiteDeCredito: 0,
+                NitCC: orders[selectedfila].NitCC,
+                Nombre: orders[selectedfila].Nombre,
+                Nota: "",
+                Telefono1: orders[selectedfila].Telefono1,
+                Telefono2: orders[selectedfila].Telefono2,
+                Tipo: orders[selectedfila].Tipo
+            },
+            Electronic: electronic,
+            Order: selectedOrder,
+            RCData: {
+                Activo: true,
+                CodResponsable: usD.Cod,
+                Comentarios: "",
+                Efectivo: orders[selectedfila].Efectivo,
+                Fecha: day + ' ' + hour,
+                Folio: orders[selectedfila].Folio,
+                IdFerreteria: usD.Cod,
+                MedioDePago: medioDePago,
+                Motivo: "Venta por caja",
+                Referencia: "",
+                Responsable: usD.Contacto,
+                Transferencia: orders[selectedfila].Transferencia
+            },
+            Result: {
+                Codigo: orders[selectedfila].FacturaElectronica,
+                CufeCude: orders[selectedfila].Cufe,
+                Errores: "",
+                IsValid: "true",
+                StatusCode: "00",
+                StatusDescription: "Procesado Correctamente.",
+                Url_Pdf: "http://empresa.example.com/Facturacion/empresa/Facturas/18760000001/SETP990000001/SETP990000001.pdf"
+            }
+        }
+        /*Customer: {
+            Apellido: "",
+            Barrio: "",
+            Consecutivo: 0,
+            Correo: "gersonlvargas.na@gmail.com",
+            Direccion: "",
+            Fecha: "2024-10-10 14:43:22",
+            FormaDePago: 0,
+            IdFerreteria: 242,
+            LimiteDeCredito: 0,
+            NitCC: 222222222222,
+            Nombre: "Consumidor final",
+            Nota: "",
+            Telefono1: 0,
+            Telefono2: 0,
+            Tipo: 0
+        }
+        Electronic: true,
+        Order: [{
+            Cantidad: 2,
+            Categoria: "EBANISTERIA",
+            Clase: 1,
+            Cod: "GLV1",
+            Consecutivo: 20,
+            Descripcion: "ENtertaiment",
+            Detalle: "bones",
+            IdCategoria: 1,
+            IdFerreteria: 242,
+            IdSubCategoria: 1,
+            InvMaximo: 10,
+            InvMinimo: 2,
+            Inventario: 4.571429,
+            Iva: 19,
+            Medida: "Paquete",
+            Medidas: [
+                PCosto: 14000,
+                PVenta: 7000,
+                ]
+            SubCategoria: "AMARRES PLASTICOS",
+            UMedida: 1,
+            Ubicacion: "ayaya"
+        }],
+        RCData: { 
+            Activo: true,
+            CodResponsable: 242,
+            Comentarios: "",
+            Efectivo: 14000,
+            Fecha: "2024-10-10 14:43:22",
+            Folio: 6,
+            IdFerreteria: 242,
+            MedioDePago: "Efectivo",
+            Motivo: "Venta por caja",
+            Referencia: "",
+            Responsable: "Gerson Loaiza",
+            Transferencia: 0
+        },
+        Result: {
+            Codigo: "SETP990000001",
+            CufeCude: "665bf3f7f7a148f6d3e9c4816f7683562d204f53a7c578008fd5467daec87593a64ad83580874d9ba105f0fc0f2de63e",
+            Errores: ""
+            IsValid: "true"
+            StatusCode: "00"
+            StatusDescription: "Procesado Correctamente."
+            Url_Pdf: "http://empresa.example.com/Facturacion/empresa/Facturas/18760000001/SETP990000001/SETP990000001.pdf"
+        }
+        */
+        
+        if (print) {
+            const usDdata = usD
+            //console.log('Sended orden: ', sendedOrden)
+            // Render the component as HTML
+            const ticketHTML = ReactDOMServer.renderToString(<TicketPrint data={sendedOrden} usD={usDdata} Electronic={electronic}/>);
+            //Send the HTML to Electron for printing
+            window.electron.send('print-ticket', ticketHTML);
+            //setShowTicket(true);
+        }
+    }
+
     return (
         <div className='theModalContainer'>
             <div className='theModal-content' style={{width: width, height: height, position: 'relative'}}>
@@ -335,17 +500,19 @@ export const SalesOfTheDay = ({show, orderslist, width='90%', height='90%'}) => 
                     <i className='bi bi-x-lg'/>
                 </button>
                 <div className='theModal-body'>
-                    <div className='header_confirm_sale'>
-                        <h2>Buscar ventas del dia</h2>
+                    <div className='header_Sales_Of_the_Day'>
+                        <h2>Ventas del dia</h2>
                     </div>
                     <div className='twoColumnsContainer'>
                         <div>
                             <div>
+                                <label><strong>Buscar: </strong></label>
                                 <input
                                     type='text'
                                     placeholder='Buscar ventas del dia'
                                     value={searchText}
-                                    onChange={(text)=>searchOrder(text.target.value)}>
+                                    onChange={(text)=>searchOrder(text.target.value)}
+                                    style={{width: '80%'}}>
                                 </input>
                             </div>
                             <div className='Table'>               
@@ -363,29 +530,69 @@ export const SalesOfTheDay = ({show, orderslist, width='90%', height='90%'}) => 
                                 <input
                                     type="date"
                                     value={formatDate(dateSearch)}
-                                    onChange={(e)=>{setDateSearch(new Date(e.target.value))}}
+                                    onChange={(e)=>{
+                                        const selectedDate = e.target.value;
+                                        const dateParts = selectedDate.split('-');
+                                        const correctedDate = new Date(dateParts[0], dateParts[1] - 1, dateParts[2]);
+                                        setDateSearch(correctedDate)
+                                    }}
+                                    max={(() => {
+                                        // Obtener la fecha actual en la zona horaria local
+                                        const today = new Date();
+                                        const year = today.getFullYear();
+                                        const month = String(today.getMonth() + 1).padStart(2, '0'); // Los meses son indexados desde 0
+                                        const day = String(today.getDate()).padStart(2, '0');
+                            
+                                        // Formatear la fecha como 'YYYY-MM-DD' en la zona horaria local
+                                        return `${year}-${month}-${day}`;
+                                    })()}
                                 />
                             </div>
                         </div>
                         <div>
-                            <div className='data_of_sale'>
-                                <div className='Col'>
-                                    <label><strong>Tipo de venta:</strong></label>
-                                    <label><strong>Venta:</strong></label>
-                                    <label><strong>Cliente:</strong></label>
-                                    <label><strong>Hora:</strong></label>
+                            <div className='twoColumnsContainer'>
+                                <div className='data_of_sale'>
+                                    <div className='Col'>
+                                        <label><strong>Tipo de venta:</strong></label>
+                                        <label><strong>Venta:</strong></label>
+                                        <label><strong>Cliente:</strong></label>
+                                        <label><strong>Hora:</strong></label>
+                                    </div>
+                                    <div className='Col'>
+                                        {headerSales !== null ? (
+                                            <>
+                                                <label>{headerSales.FacturaElectronica === ''? 'Remisión': 'Factura electronica'}</label>
+                                                <label>{headerSales.Consecutivo}</label>
+                                                <label>{headerSales.Nombre + ' ' + headerSales.Apellido}</label>
+                                                <label>{headerSales.Fecha.split('T')[1].split('.')[0]}</label>
+                                            </>
+                                        ) : (
+                                            <label>Seleccione una venta</label> // Mostrar un mensaje por defecto o dejar el espacio vacío
+                                        )}
+                                    </div>
                                 </div>
-                                <div className='Col'>
-                                    {headerSales !== null ? (
-                                        <>
-                                            <label>{headerSales.FacturaElectronica === ''? 'Remisión': 'Factura electronica'}</label>
-                                            <label>{headerSales.Consecutivo}</label>
-                                            <label>{headerSales.Nombre + ' ' + headerSales.Apellido}</label>
-                                            <label>{headerSales.Fecha.split('T')[1].split('.')[0]}</label>
-                                        </>
-                                    ) : (
-                                        <label>Seleccione una venta</label> // Mostrar un mensaje por defecto o dejar el espacio vacío
-                                    )}
+                                <div className='data_of_sale'>
+                                    <div className='Col'>
+                                        <label><strong>Forma de pago:</strong></label>
+                                    </div>
+                                    <div className='Col'>
+                                        {headerSales !== null ? (
+                                            <>
+                                                <label>{(()=>{
+                                                    let medioDePago = ''
+                                                    if (orders[selectedfila].Efectico !== 0 && orders[selectedfila].Transferencia === 0) {
+                                                        medioDePago = 'Efectivo'
+                                                    } else if (orders[selectedfila].Efectico === 0 && orders[selectedfila].Transferencia !== 0) {
+                                                        medioDePago = 'Transferencia'
+                                                    } else if (orders[selectedfila].Efectico !== 0 && orders[selectedfila].Transferencia !== 0) {
+                                                        medioDePago = 'Mixto'
+                                                    } return medioDePago
+                                                    })()}</label>
+                                            </>
+                                        ) : (
+                                            <label>Seleccione una venta</label> // Mostrar un mensaje por defecto o dejar el espacio vacío
+                                        )}
+                                    </div>
                                 </div>
                             </div>
                             <div className='Table'>
@@ -399,13 +606,25 @@ export const SalesOfTheDay = ({show, orderslist, width='90%', height='90%'}) => 
                                     maxHeight={'30%'}
                                 />
                             </div>
-                            <button className="btnStnd btn1" onClick={()=>returnProductM()}>Devolver articulo</button>
+                            <button
+                                className="btnStnd btn1"
+                                onClick={()=>returnProductM()}
+                                disabled={selectedOrder !== null? false: true}
+                                >Devolver articulo</button>
                             <label>Total:</label>
                             <label>${Formater(total)}</label>
                             
                         </div>
-                        <button className="btnStnd btn1" onClick={()=>returnTheOrder()}>Cancelar venta</button>
-                        <button className="btnStnd btn1" onClick={()=>{}}>Imprimir copia</button>
+                        <button
+                            className="btnStnd btn1"
+                            onClick={()=>returnTheOrder()}
+                            disabled={selectedOrder === null || total === 0? true: false} 
+                            >Cancelar venta</button>
+                        <button
+                            className="btnStnd btn1"
+                            onClick={()=>{askToPrint()}}
+                            disabled={selectedOrder !== null? false: true}
+                            >Imprimir copia</button>
                     </div>
                 </div>
 

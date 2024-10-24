@@ -467,14 +467,17 @@ export const Newproduct = () => {
     //For the search of products that already exist.
     const filterByText = (item, text) =>
         item.Cod.toString().toLowerCase().includes(text) ||
-        item.Descripcion.toLowerCase().includes(text);
+        item.Descripcion.toString().toLowerCase().includes(text);
 
     const SearchHandle = (text, sl) =>{
         setSBText((text))
         let c = refList.current;
         if (text !== ''){
-            setPList(c.filter((i)=>filterByText(i, text)));
-            console.log(pList)
+            const filteredList = c.filter((i)=>filterByText(i, text))
+            setPList(filteredList);
+            if (modificarProducto === false && filteredList.length > 0){
+            setShowFL(true)
+            }
         }else{
             fetchProductList();
         }

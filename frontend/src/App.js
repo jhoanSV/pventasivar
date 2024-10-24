@@ -4,7 +4,7 @@ import { Header } from './Layouts';
 import { Login } from './Pages';
 import { Routes } from "./Routes";
 import { useTheContext } from './TheProvider';
-import { ProductList, VerifyToken } from './api';
+import { ProductList, VerifyToken, valTokenColtek, logInColtek } from './api';
 import { TheAlert } from './Components';
 
 export const LevenDistance = (str1, str2) => {
@@ -47,6 +47,18 @@ export const Formater = (number) => {
     const numberfromat = Number(numberString);
     return Intl.NumberFormat('de-DE').format(numberfromat);
 };
+
+export const verifyTokenColtek = async(token) => {
+    const isCheck = await valTokenColtek(token)
+    if (!isCheck) {
+        const userData = {
+                            email: "sivar@colsad.com",
+                            password: "Sivar2024*"
+                        }
+        const loginData = await logInColtek(userData)
+        console.log(loginData)
+    }
+}
 
 export const DotProduct=(vector1, vector2) =>{
     // Verificamos que los dos vectores tengan la misma longitud

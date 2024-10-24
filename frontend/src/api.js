@@ -779,3 +779,88 @@ export const BestProducts = async(bestproducts) => {
         console.log('TheError: '+ error)
     }
 }
+
+export const ResolucionColtek = async(token) => {
+    try {
+        const res = await fetch(`http://sivar.colsad.com/api/v1/consulta/resoluciones`,{
+            method: 'GET',
+            headers: { Accept: 'application/json',
+                               'Content-Type': 'application/json',
+                               'Authorization': `Bearer ${token}`}
+        })
+        return await res.json()
+    }catch(error) {
+        console.log('TheError: '+ error)
+    }
+}
+
+export const valTokenColtek = async(tokenColtek, token) => {
+    try {
+        const toLoginColteck = await DataLoginColteck(token)
+        const res = await fetch(`${toLoginColteck[0].Api}/api/v1/validation-token`,{
+            method: 'POST',
+            headers: { Accept: 'application/json','Content-Type': 'application/json'},
+            body: JSON.stringify({'token':tokenColtek})
+        })
+        const status = await res.json()
+        let responseLoginColtek = {}
+        if (!status.status) {
+            const user = { email: toLoginColteck[0].Usuario,
+                           password: toLoginColteck[0].Clave}
+            responseLoginColtek = await logInColtek(toLoginColteck[0].Api,user)
+        }
+        const respuesta = {status: status.status,
+                            resColtek: responseLoginColtek}
+        return respuesta
+    }catch(error) {
+        console.log('TheError: '+ error)
+    }
+}
+
+export const logInColtek = async(Api,usuario) => {
+    /*
+    {
+        "email": "user@user.com",
+        "password": 12345678
+    }
+    */
+    try {
+        const res = await fetch(`${Api}/api/v1/login`,{
+            method: 'POST',
+            headers: { Accept: 'application/json','Content-Type': 'application/json'},
+            body: JSON.stringify(usuario)        
+        })
+        const status = await res.json()
+        return status
+    }catch(error) {
+        console.log('TheError: '+ error)
+    }
+}
+
+export const DataLoginColteck = async(token) => {
+    try {
+        const toLoginColteck = await fetch(`${API}/datalogincoltek`,{
+            method: 'GET',
+            headers: { Accept: 'application/json',
+                                'Content-Type': 'application/json',
+                                'Authorization': `Bearer ${token}`}
+        })
+        return await toLoginColteck.json()
+    }catch(error) {
+        console.log('TheError: '+ error)
+    }
+}
+
+export const paymentMethodsColtek = async(Api, token) => {
+    try {
+        const paymentMethods = await fetch(`${Api}/api/v1/basic-data/fiscal-responsibility`,{
+            method: 'GET',
+            headers: { Accept: 'application/json',
+                                'Content-Type': 'application/json',
+                                'Authorization': `Bearer ${token}`}
+        })
+        return await paymentMethods.json()
+    }catch(error) {
+        console.log('TheError: '+ error)
+    }
+}

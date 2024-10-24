@@ -13,6 +13,7 @@ import ticketsJson from '../../tickets-text.json';
 import { useTheContext } from '../../TheProvider';
 import { CashFlow, Inventory } from '../../api';
 import { CSSTransition } from 'react-transition-group';
+import { Formater } from '../../App';
 
 export function Sales(){
     //*---------------------
@@ -31,20 +32,24 @@ export function Sales(){
                 }
             };
             localStorage.setItem('ticketsJson', JSON.stringify(defaultTabs)); // Guardar el valor por defecto en localStorage
+            console.log('savedTabs', defaultTabs)
             return defaultTabs;
         }
     });
     // For the current tab
     const [currentTab, setCurrentTab] = useState(()=>{
         const actualTab = JSON.parse(localStorage.getItem('CurrentTab'));
-        if (actualTab) {
+        const savedTabs = JSON.parse(localStorage.getItem('ticketsJson'));
+
+        if (actualTab && savedTabs && savedTabs[actualTab.key]) {
             return actualTab
         } else {
             const defaultTab = {
                 "index": 0,
-                "key": Object.keys(saleTabs)[0]
+                "key": Object.keys(saleTabs || { "1": {} })[0]
             }
             localStorage.setItem('CurrentTab', JSON.stringify(defaultTab)); // Guardar el valor por defecto en localStorage
+            console.log('defaultTabs', defaultTab)
             return defaultTab
         };
     });
@@ -56,7 +61,7 @@ export function Sales(){
     });
     //*---------------------
     const [ total, setTotal] = useState(0);
-    const [ orderslist, setOrderslist] = useState(saleTabs[Object.keys(saleTabs)[0]]["Order"])
+    const [ orderslist, setOrderslist] = useState(saleTabs[currentTab.key]["Order"]);//saleTabs[Object.keys(saleTabs)[0]]["Order"])
     const [ customer, setCustomer] = useState("Consumidor final");
     const [ showConfirmar, setShowConfirmar] = useState(false);
     const [ selectedfila, setSelectedfila] = useState(0);
@@ -239,13 +244,13 @@ export function Sales(){
         );
     };
     
-    const Formater = (number) =>{
+    /*const Formater = (number) =>{
         //it gives a number format
         if (number === '') return '';
         const numberString = String(number).replace(/,/g, '.');
         const numberfromat = Number(numberString);
         return Intl.NumberFormat('de-DE').format(numberfromat);
-    };
+    };*/
     
 
     const updateCantidad = async(selectedRow, amount) => {
@@ -438,21 +443,7 @@ export function Sales(){
         let umin = item.Medida ? item.Medidas[item.Medidas.length-1].UMedida : 1;
         if(!PAdded[item.Cod])PAdded[item.Cod] = {};
         if(!PAdded[item.Cod]['Cantidades'])PAdded[item.Cod].Cantidades = 0;
-        /*if(!item.Medida){
-            if(!PAdded[item.Cod]['a'])PAdded[item.Cod]['a'] = { Cantidades: 0 }
-            paddedItem = PAdded[item.Cod]['a'];
-        }else{
-            if(!PAdded[item.Cod][item.Medida])PAdded[item.Cod][item.Medida] = { Cantidades: 0 }
-            paddedItem = PAdded[item.Cod][item.Medida];
-        }*/
-        /*console.log(Number(paddedItem.Cantidades),Number(item.Cantidad),item.Inventario, item.UMedida, umin);
-        console.log((Number(paddedItem.Cantidades*umin)+Number(item.Cantidad)),(item.Inventario*umin));*/
-        /*if(Number(paddedItem.Cantidades*umin)+Number(item.Cantidad*umin)>(item.Inventario*umin)){
-            await TheAlert('No hay suficiente inventario. Inventario actual: '+(item.Inventario*item.UMedida));
-            setSBText('')
-            document.getElementById('NPinput').focus();
-            return;
-        }*/
+        
         console.log(Number(item.Cantidad), (item.UMedida), (item.Inventario),(umin));
         console.log(Number(PAdded[item.Cod].Cantidades), Number(item.Cantidad/item.UMedida), (item.Inventario));
         if(Number(PAdded[item.Cod].Cantidades)+Number(item.Cantidad/item.UMedida)>(item.Inventario)){
@@ -584,32 +575,34 @@ export function Sales(){
         setSection('Ventas');
         fetchInventoryList();
 
-        if(Object.keys(saleTabs[currentTab.key].Customer).length !== 0){
+        if(saleTabs[currentTab.key] && Object.keys(saleTabs[currentTab.key].Customer).length !== 0){
             setCustomer(saleTabs[currentTab.key].Customer.Nombre + ' ' + saleTabs[currentTab.key].Customer.Apellido)
         }else{
             setCustomer("Consumidor final");
         }
         
         const StartCahs = async() => {
+            // Obtener la fecha actual en la zona horaria local
+            const today = new Date();
+            const year = today.getFullYear();
+            const month = String(today.getMonth() + 1).padStart(2, '0'); // Los meses son indexados desde 0
+            const day = String(today.getDate()).padStart(2, '0');
+
+            // Formatear la fecha como 'YYYY-MM-DD' en la zona horaria local
+            const formattedToday = `${year}-${month}-${day}`;
             const cashFlow = await CashFlow({
                 IdFerreteria: usD.Cod,
-                Fecha: new Date().toISOString().split('T')[0],
+                Fecha: formattedToday,
             });
             if (cashFlow.length === 0){
+
+                const defaultTabs = {
+                    "1": { "Customer": {}, "Order": [] }
+                };
                 setShowStartCahs(true);
-                localStorage.setItem('ticketsJson', JSON.stringify(
-                    {
-                        "1": { "Customer": {},
-                                "Order": []
-                        }
-                    }
-                ));
+                localStorage.setItem('ticketsJson', JSON.stringify(defaultTabs));
                 localStorage.setItem('PAdded', JSON.stringify({}));
-                setSaleTabs({
-                    "1": { "Customer": {},
-                            "Order": []
-                    }
-                });
+                setSaleTabs(defaultTabs);
                 setOrderslist([]);
                 setCurrentTab({"index": 0, "key": 1});
                 setTabsHistory(1);
@@ -617,11 +610,11 @@ export function Sales(){
                 console.log('ResetTickets and showStarCash');
             }
         }
-        
         StartCahs()
-        console.log('entra en el useEffect del inicio')
+        console.log('usD', usD)
         document.addEventListener('keydown', handleKeyDown);
         document.addEventListener('mousedown', handleClickOutside);
+
         return () => {
             document.removeEventListener('keydown', handleKeyDown);
             document.removeEventListener('mousedown', handleClickOutside);

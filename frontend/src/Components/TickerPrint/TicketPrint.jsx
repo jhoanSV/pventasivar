@@ -20,9 +20,6 @@ export const TicketPrint = ({data, usD, Electronic = false}) => {
         total += detail.PVenta * detail.Cantidad;
         base += (detail.PVenta * detail.Cantidad)/(1+(detail.Iva/100));
         iva += base * (detail.Iva/100)//((detail.Pventa * detail.Cantidad)/(1+(detail.Iva/100))) * (detail.Iva/100);
-        console.log('detail.Iva', detail.Iva)
-        console.log('base: ', base);
-        console.log('iva: ', iva);
     });
 
     let CufeQR = '';
@@ -101,6 +98,9 @@ export const TicketPrint = ({data, usD, Electronic = false}) => {
                             <label style={{display: 'block'}}>${Formater((total - base).toFixed(2))}</label>
                         </div>
                     </div>
+                </div>
+                <div>
+                    <label><strong>Factura: </strong> {data.Result.Codigo}</label>
                 </div>
                 <div style={{textAlign: 'Center'}}>
                     <label style={{display: 'block'}}><strong>CUFE</strong></label>
