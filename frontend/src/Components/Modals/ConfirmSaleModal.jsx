@@ -123,7 +123,6 @@ export const ConfirmSaleModal = ({show, sendSale , folio , orderslist, width='50
             orderslist.Electronic = electronic
             //
             const tokencheck = await valTokenColtek(usD.resColtek.token, usD.token)
-            console.log('tokencheck: ', tokencheck)
             if (tokencheck.status){
                 //If status is true then only put the token on the orderlist
                 orderslist.tokenColtek = usD.resColtek.token

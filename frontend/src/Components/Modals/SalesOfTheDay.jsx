@@ -4,7 +4,7 @@ import { useTheContext } from '../../TheProvider';
 import { TableComponent, Flatlist, TheAlert } from '../../Components';
 import './_SalesOfTheDay.scss';
 import jsonTest from '../../sales_per_day.json';
-import { SalesPerDay, CancelTheSale } from '../../api';
+import { SalesPerDay, CancelTheSale, valTokenColtek } from '../../api';
 import { ReturnProduct } from './ReturnProduct';
 import { UserConfirm } from './UserConfirm';
 import { TokenV } from '../../App';
@@ -25,7 +25,7 @@ export const SalesOfTheDay = ({show, orderslist, width='90%', height='90%'}) => 
     const [ dateSearch, setDateSearch ] = useState(new Date());
     const [ showConfirm, setShowConfirm ] = useState(false);
     const [ allowedButtons, setAllowedButtons ] = useState(false);
-    const { setSection, setSomeData, usD, setLogged } = useTheContext();
+    const { setSection, setSomeData, usD, setUsD, setLogged } = useTheContext();
     // for the tables of the order and the selected order
     const isEditingRef = useRef(false);
     const ordersRef = useRef([]);
@@ -320,6 +320,32 @@ export const SalesOfTheDay = ({show, orderslist, width='90%', height='90%'}) => 
             const time = now.toTimeString().split(' ')[0];
             const fila = {...orders[selectedfila]}
             let suma = 0
+            const Customer= {
+                TipoPersona: fila.Tipo === 0 ? 2 : 1,
+                NombreTipoPersona: fila.Tipo === 0 ? 'Persona Natural' : 'Persona Jurídica',
+                TipoDocumento: fila.Tipo === 0 ? 13 : 31,
+                NombreTipoDocumento: fila.Tipo === 0 ? 'Cédula de ciudadanía ': 'NIT',
+                Documento: usD.Nit,
+                Dv: usD.Dv,
+                NombreComercial: usD.Ferreteria,
+                RazonSocial: usD.Ferreteria,
+                Telefono: usD.Telefono,
+                Correo: usD.Email,
+                Departamento: {
+                    Codigo: 11,
+                    Nombre: "Bogota"
+                },
+                Ciudad: {
+                    Codigo: 11001,
+                    Nombre: "Bogota, DC."
+                },
+                Direccion: usD.Dirección,
+                ResponsabilidadFiscal: "R-99-PN",
+                DetallesTributario: {
+                    Codigo: "01",
+                    Nombre: "IVA"
+                }
+            }
             fila.Orden.forEach(valor => {
                 suma += valor.VrUnitario * (valor.CantidadSa - valor.CantidadEn);
             });
@@ -327,10 +353,24 @@ export const SalesOfTheDay = ({show, orderslist, width='90%', height='90%'}) => 
             fila.Total = suma
             fila.IdFerreteria = usD.Cod
             fila.Responsable = usD.Contacto
+            fila.Customer = Customer
+            if (fila.Cufe != '') {
+                const tokencheck = await valTokenColtek(usD.resColtek.token, usD.token)
+                if (tokencheck.status){
+                    //If status is true then only put the token on the orderlist
+                    fila.tokenColtek = usD.resColtek.token
+                } else if (!tokencheck.status){
+                    //If status is false then restart the token to the new one
+                    const newUsD = {...usD, resColtek: tokencheck.resColtek}
+                    fila.tokenColtek = tokencheck.resColtek.token
+                    setUsD(newUsD)
+                }
+            }
+            console.log("fila: ", fila)
             await CancelTheSale(fila)
-            const today = formatDate(new Date());
-            TheAlert('Se cancelo la venta con exito')
-            getOrdersPerday()
+            //const today = formatDate(new Date());
+            //TheAlert('Se cancelo la venta con exito')
+            //getOrdersPerday()
         }
     }
 
