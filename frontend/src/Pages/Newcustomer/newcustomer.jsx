@@ -3,18 +3,21 @@ import "./_newcustomer.scss";
 import { TheAlert, TheInput } from '../../Components';
 import { useTheContext } from '../../TheProvider';
 import { useNavigate } from 'react-router-dom';
-import { Newclient, UpdateClient, Clientlist } from '../../api';
+import { Newclient, UpdateClient, Clientlist, clientOccupation } from '../../api';
 import { DotProduct } from '../../App';
+import { Dropdown, DropdownButton } from 'react-bootstrap';
 
 export function Newcustomer(){
     const WeightDian = [71,67,59,53,47,43,41,37,29,23,19,17,13,7,3]
     const { setSection, someData, usD } = useTheContext();
-    const [enableB1, setEnableB1] = useState(false);
-    const [conCredito, setConCredito] = useState(false);
-    const [verCod, setVerCod] = useState('');//* verificationCode
+    const [ ocupation, setOccupation ] = useState([]);
+    const [ optionsOccupation, setOptionsOccupations ] = useState([]);
+    const [ enableB1, setEnableB1] = useState(false);
+    const [ conCredito, setConCredito] = useState(false);
+    const [ verCod, setVerCod] = useState('');//* verificationCode
     const [ contentList, setContentList] = useState([]);
-    const [showAlertCustomers, setShowAlertCustomers] = useState(false)
-    const [customerData, setCustomerData] = useState({
+    const [ showAlertCustomers, setShowAlertCustomers] = useState(false)
+    const [ customerData, setCustomerData] = useState({
         "IdFerreteria": usD.Cod,
         "Tipo": 0, 
         "NitCC": "",
@@ -38,6 +41,7 @@ export function Newcustomer(){
             const listado = await Clientlist({
                 "IdFerreteria": usD.Cod
             });
+            const customerType = await clientOccupation()
             if (listado) {
                 setContentList(listado);
             }
@@ -159,6 +163,10 @@ export function Newcustomer(){
                 setShowAlertCustomers(false)
             }
         }
+    }
+
+    const handleSelectOccupation = (eventKey) =>{
+
     }
 
     useEffect(() => {
@@ -308,6 +316,24 @@ export function Newcustomer(){
                                 />
                             </>
                         }
+                    </div>
+                </div>
+                <div className='Row'>
+                    <div className='Colmn1'>
+                        <label>Ocupación</label>
+                    </div>
+                    <div className='Colmn2'>
+                    <DropdownButton
+                        id="dropdown-basic-button"
+                        title={ocupation || 'Selecciona una opción'}
+                        onSelect={handleSelectOccupation}
+                        >
+                        {optionsOccupation.map((option) => (
+                            <Dropdown.Item key={option.IdOcupacion} eventKey={option.Ocupacion}>
+                            {option.Ocupacion}
+                            </Dropdown.Item>
+                        ))}
+                        </DropdownButton>
                     </div>
                 </div>
                 <div className='Row'>

@@ -310,7 +310,7 @@ export const SalesOfTheDay = ({show, orderslist, width='90%', height='90%'}) => 
         }
     }
 
-    const returnTheOrder = async() => {
+    const returnTheOrder = async(TipoReclamo) => {
         const confirmCacelTheSale = await TheAlert('¿Esta seguro que desea cancelar la venta?, esta acción es irreversible', 1)
         if (confirmCacelTheSale) {
             const now = new Date();
@@ -320,6 +320,13 @@ export const SalesOfTheDay = ({show, orderslist, width='90%', height='90%'}) => 
             const time = now.toTimeString().split(' ')[0];
             const fila = {...orders[selectedfila]}
             let suma = 0
+            if (TipoReclamo === 1){
+                fila.TipoReclamo = 1
+                fila.Descripcion_Reclamo = "Anulacion de Factura"
+            } else if (TipoReclamo === 2){
+                fila.Tipo_Reclamo = 1
+                fila.Descripcion_Reclamo = "Anulacion de Factura"
+            }
             const Customer= {
                 TipoPersona: fila.Tipo === 0 ? 2 : 1,
                 NombreTipoPersona: fila.Tipo === 0 ? 'Persona Natural' : 'Persona Jurídica',
@@ -354,7 +361,7 @@ export const SalesOfTheDay = ({show, orderslist, width='90%', height='90%'}) => 
             fila.IdFerreteria = usD.Cod
             fila.Responsable = usD.Contacto
             fila.Customer = Customer
-            if (fila.Cufe != '') {
+            if (fila.Cufe !== '') {
                 const tokencheck = await valTokenColtek(usD.resColtek.token, usD.token)
                 if (tokencheck.status){
                     //If status is true then only put the token on the orderlist

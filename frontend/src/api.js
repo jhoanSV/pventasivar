@@ -864,3 +864,16 @@ export const paymentMethodsColtek = async(Api, token) => {
         console.log('TheError: '+ error)
     }
 }
+
+export const clientOccupation = async() => {
+    try {
+        const paymentMethods = await fetch(`${API_POS}/clientocupation`,{
+            method: 'GET',
+            headers: { Accept: 'application/json',
+                                'Content-Type': 'application/json'}
+        })
+        return await paymentMethods.json()
+    }catch(error) {
+        console.log('TheError: '+ error)
+    }
+}
