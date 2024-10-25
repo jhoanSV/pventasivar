@@ -3,15 +3,17 @@ import "./_newcustomer.scss";
 import { TheAlert, TheInput } from '../../Components';
 import { useTheContext } from '../../TheProvider';
 import { useNavigate } from 'react-router-dom';
-import { Newclient, UpdateClient, Clientlist, clientOccupation } from '../../api';
+import { Newclient, UpdateClient, Clientlist, clientOccupation, ResFiscal } from '../../api';
 import { DotProduct } from '../../App';
 import { Dropdown, DropdownButton } from 'react-bootstrap';
 
 export function Newcustomer(){
     const WeightDian = [71,67,59,53,47,43,41,37,29,23,19,17,13,7,3]
     const { setSection, someData, usD } = useTheContext();
-    const [ ocupation, setOccupation ] = useState([]);
+    const [ occupation, setOccupation ] = useState('');
     const [ optionsOccupation, setOptionsOccupations ] = useState([]);
+    const [ resFiscal, setResFiscal ] = useState('');
+    const [ optionsResFiscal, setOptionsResFiscal ] = useState([]);
     const [ enableB1, setEnableB1] = useState(false);
     const [ conCredito, setConCredito] = useState(false);
     const [ verCod, setVerCod] = useState('');//* verificationCode
@@ -31,7 +33,10 @@ export function Newcustomer(){
         "FormaDePago": 0,
         "LimiteDeCredito": 0, //In this stage this have to be always 0
         "Nota": "",
-        "Fecha": "2024-07-20 13:00:00" //Format is AAAA-MM-DD hh:mm:ss
+        "Fecha": "2024-07-20 13:00:00", //Format is AAAA-MM-DD hh:mm:ss
+        "Dv": 0,
+        "Ocupacion": '',
+        "ResFiscal": ''
     });    
     
     const navigate = useNavigate()
@@ -42,6 +47,9 @@ export function Newcustomer(){
                 "IdFerreteria": usD.Cod
             });
             const customerType = await clientOccupation()
+            const fiscalRes = await ResFiscal(usD.tokenColtek, usD.token)
+            setOptionsResFiscal(fiscalRes.FiscalResponsibility)
+            setOptionsOccupations(customerType)
             if (listado) {
                 setContentList(listado);
             }
@@ -53,6 +61,7 @@ export function Newcustomer(){
         const t = e.target.value.replace(/[^0-9]/g, '');
         let toCheck = ''
         if (id === 'NitCC' && someData === null) {
+            changeValuesCustomer('Dv', VerifyCodNit(t));
             if (customerData.Tipo === 1) {
                 toCheck = t + '-' + VerifyCodNit(t)
             } else {
@@ -70,6 +79,7 @@ export function Newcustomer(){
 
     const validate = async() =>{
         let a = {...customerData}
+        console.log("customerData", a)
         let res, msj1, msj2, msjV = ''
         //* Primero se valida
         const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -85,6 +95,17 @@ export function Newcustomer(){
         if(!regex.test(a.Correo)){
             msjV = msjV + 'El correo no es válido\n'
         }
+        if(a.Ocupacion === ''){
+            msjV = msjV + 'El campo ocupacion no debe estar vacio\n'
+        }
+        if(a.Tipo === 1 && a.ResFiscal === ''){
+            msjV = msjV + 'La responsabilidad fiscal no debe estar vacia\n'
+        }
+        
+        if (a.Tipo === 0) {
+            a.ResFiscal = 'R-99-PN'
+        }
+
         if(msjV){
             TheAlert(msjV);
             return;
@@ -110,6 +131,7 @@ export function Newcustomer(){
                 TheAlert('El Nit/Cédula ya existe');
                 return;
             } else {
+                console.log("userData: ", a)
                 res = await Newclient(a)
             }
         }
@@ -118,7 +140,7 @@ export function Newcustomer(){
             navigate('/Customerlist')
             TheAlert(msj1);
         }else{
-            TheAlert('Ocurrió un error inesperado al '+msj2);
+            TheAlert('Ocurrió un error inesperado al '+ msj2);
         }
     }
     
@@ -166,7 +188,13 @@ export function Newcustomer(){
     }
 
     const handleSelectOccupation = (eventKey) =>{
+        changeValuesCustomer("Ocupacion", eventKey)
+        setOccupation(eventKey);
+    }
 
+    const handleSelectResFiscal = (eventKey) =>{
+        changeValuesCustomer("Ocupacion", eventKey)
+        setResFiscal(eventKey);
     }
 
     useEffect(() => {
@@ -200,7 +228,16 @@ export function Newcustomer(){
                     <div className='Colmn2'>
                         <select id='CustomerType'
                             value={customerData.Tipo}
-                            onChange={(e)=>{changeValuesCustomer('Tipo', Number(e.target.value))}}
+                            onChange={(e)=>{{
+                                changeValuesCustomer('Tipo', Number(e.target.value));
+                                if (e.target.value === '0') {
+                                    changeValuesCustomer('ResFiscal', "R-99-PN")
+                                    //console.log("entro a cedula")
+                                } else if (e.target.value === '1'){
+                                    changeValuesCustomer('ResFiscal', "0-13")
+                                    //console.log("entro a Nit")
+                                }
+                            }}}
                             onBlur={()=>{ClientExists()}}>
                             <option value='0'>C&eacute;dula</option>
                             <option value='1'>Nit</option>
@@ -323,19 +360,44 @@ export function Newcustomer(){
                         <label>Ocupación</label>
                     </div>
                     <div className='Colmn2'>
-                    <DropdownButton
-                        id="dropdown-basic-button"
-                        title={ocupation || 'Selecciona una opción'}
-                        onSelect={handleSelectOccupation}
-                        >
-                        {optionsOccupation.map((option) => (
-                            <Dropdown.Item key={option.IdOcupacion} eventKey={option.Ocupacion}>
-                            {option.Ocupacion}
-                            </Dropdown.Item>
-                        ))}
-                        </DropdownButton>
+                        <select id='CustomerType'
+                            value={customerData.Ocupacion !== 0 ? customerData.Ocupacion: ''}
+                            onChange={(e)=>{
+                                const selectedOption = optionsOccupation.find(option => option.IdOcupacion === parseInt(e.target.value, 10));
+                                changeValuesCustomer('Ocupacion', e.target.value);
+                                //console.log("e.target.value", e.target.value)
+                                //console.log("selectedOption", selectedOption.IdOcupacion)
+                            }}
+                            onBlur={()=>{}}>
+                            <option value="" disabled>Seleccione una opción</option>
+                            {optionsOccupation.map((option) => (
+                                <option key={option.IdOcupacion} value={option.IdOcupacion}>{option.Ocupacion}</option>
+                            ))}
+                        </select>
                     </div>
                 </div>
+                {customerData.Tipo === 1 &&
+                    <div className='Row'>
+                        <div className='Colmn1'>
+                            <label>Responsabilidad fiscal</label>
+                        </div>
+                        <div className='Colmn2'>
+                            <select id='CustomerType'
+                                value={resFiscal !== '' ? resFiscal: 'Seleccione una opción'}
+                                onChange={(e)=>{
+                                    const selectedOption = optionsResFiscal.find(option => option.code === e.target.value);
+                                    changeValuesCustomer('ResFiscal', selectedOption.code); 
+                                    setResFiscal(e.target.code);
+                                }}
+                                onBlur={()=>{}}>
+                                <option value="" disabled>Seleccione una opción</option>
+                                {optionsResFiscal.map((option) => (
+                                    <option key={option.code} value={option.code}>{option.name}</option>
+                                ))}
+                            </select>
+                        </div>
+                    </div>
+                }
                 <div className='Row'>
                     <div className='Colmn1'>
                         <label>Notas</label>

@@ -153,12 +153,12 @@ export const ConfirmSaleModal = ({show, sendSale , folio , orderslist, width='50
             }
             //const resolucion = await ResolucionColtek(orderslist.tokenColtek)
             //console.log('resolucion: ', resolucion)
-            //console.log('orderlist: ', orderslist)
-            //const sendedOrden = await NewSale(orderslist)
+            console.log('orderlist: ', orderslist)
+            const sendedOrden = await NewSale(orderslist)
             //console.log('sendedOrden: ', sendedOrden)
-            const metodosDePago = await paymentMethodsColtek('http://sivar.colsad.com',orderslist.tokenColtek)
-            console.log('metodosDePago: ', metodosDePago)
-            /*if (print) {
+            //const metodosDePago = await paymentMethodsColtek('http://sivar.colsad.com',orderslist.tokenColtek)
+            //console.log('metodosDePago: ', metodosDePago)
+            if (print) {
                 const usDdata = usD
                 //console.log('Sended orden: ', sendedOrden)
                 // Render the component as HTML
@@ -166,9 +166,9 @@ export const ConfirmSaleModal = ({show, sendSale , folio , orderslist, width='50
                 //Send the HTML to Electron for printing
                 window.electron.send('print-ticket', ticketHTML);
                 //setShowTicket(true);
-            }*/
-            //sendSale()
-            //show(false)
+            }
+            sendSale()
+            show(false)
         }
     }
 

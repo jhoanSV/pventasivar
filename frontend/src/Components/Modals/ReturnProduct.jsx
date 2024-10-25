@@ -14,14 +14,14 @@ export const ReturnProduct = ({show, row, updateOrders, index, width='50%', heig
     const [ comentarios, setComentarios ] = useState('');
     const { setSection, setSomeData, usD } = useTheContext();
 
-    const returnP = async() => {
+    const returnP = async(Tipo_Reclamo) => {
         let Cliente = {
             "TipoPersona": 1,
             "NombreTipoPersona": "Persona Jurídica",
             "TipoDocumento": 31,
             "NombreTipoDocumento": "Documento de identificación extranjero",
             "Documento": 222222222222,
-            "Dv": 3,
+            "Dv": usD.Dv,
             "NombreComercial": 'Consumidor final',
             "RazonSocial": 'Consumidor final',
             "Telefono": usD.Telefono,
@@ -41,104 +41,7 @@ export const ReturnProduct = ({show, row, updateOrders, index, width='50%', heig
             "Nombre": "IVA"
             }
         }
-        if (row.IdCliente === 0) {
-            Cliente = {
-                "TipoPersona": 1,
-                "NombreTipoPersona": "Persona Jurídica",
-                "TipoDocumento": 31,
-                "NombreTipoDocumento": "Documento de identificación extranjero",
-                "Documento": row.NitCC,
-                "Dv": 3,
-                "NombreComercial": row.Nombre + ' ' + row.Apellido,
-                "RazonSocial": row.Nombre + ' ' + row.Apellido,
-                "Telefono": row.Telefono1,
-                "Correo": row.Email,
-                "Departamento": {
-                "Codigo": 11,
-                "Nombre": "Bogota"
-                },
-                "Ciudad": {
-                "Codigo": 11001,
-                "Nombre": "Bogota, DC."
-                },
-                "Direccion": row.Direccion,
-                "ResponsabilidadFiscal": "R-99-PN",
-                "DetallesTributario": {
-                "Codigo": "01",
-                "Nombre": "IVA"
-                }
-            }
-        }
-        /*
-        
-        {
-        "Ambiente": 2,
-        "Referencia": {
-            "NumeroResolucion": "18760000001",
-            "Factura": row.FacturaElectronica,
-            "Cufe": row.Cufe,
-            "Fecha": "2022-11-20",
-            "Hora": "09:00:00-05:00",
-            "Prefijo": "NC",
-            "Tipo_Reclamo": 1,
-            "Descripcion_Reclamo": "Anulacion de Factura"
-        },
-        "Factura": row.FacturaElectronica,
-        "Fecha": "2022-11-20",
-        "Hora": "09:00:00-05:00",
-        "Observacion": "Observacion",
-        "FormaDePago": "1",
-        "MedioDePago": "41",
-        "FechaVencimiento": "2019-06-30",
-        "CantidadArticulos": 1,
-        "Cliente": {
-            "TipoPersona": 1,
-            "NombreTipoPersona": "Persona Jurídica",
-            "TipoDocumento": 31,
-            "NombreTipoDocumento": "Documento de identificación extranjero",
-            "Documento": 900108281,
-            "Dv": 3,
-            "NombreComercial": "OPTICAS GMO COLOMBIA SAS",
-            "RazonSocial": "OPTICAS GMO COLOMBIA SAS",
-            "Telefono": "123123",
-            "Correo": "yordirico93@gmail.com",
-            "Departamento": {
-            "Codigo": 11,
-            "Nombre": "Bogota"
-            },
-            "Ciudad": {
-            "Codigo": 11001,
-            "Nombre": "Bogota, DC."
-            },
-            "Direccion": "CARRERA 8 No 20-14/40",
-            "ResponsabilidadFiscal": "R-99-PN",
-            "DetallesTributario": {
-            "Codigo": "01",
-            "Nombre": "IVA"
-            }
-        },
-        "Impuestos": {
-            "IVA": {
-            "Codigo": "01",
-            "Total": 1596.64,
-            "porcentajes": [
-                {
-                "porcentaje": "19",
-                "Base": 8403.36,
-                "Total": 1596.64
-                }
-            ]
-            }
-        },
-        "Totales": {
-            "Bruto": 8403.36,
-            "BaseImpuestos": 8403.36,
-            "Descuentos": 840.34,
-            "Cargos": 840.34,
-            "APagar": 10000,
-            "Impuestos": 1596.64
-        
-        */
+
         try {
             const now = new Date();
             // Obtener la fecha en formato YYYY-MM-DD
@@ -157,7 +60,20 @@ export const ReturnProduct = ({show, row, updateOrders, index, width='50%', heig
                 TipoDeFlujo: 1,
                 Activo: true
             }
-            const dataToSendProduct ={
+            const dataToSendOutput = {
+                CantidadEn: 0,
+                CantidadSa: cantidad,
+                Cod: row.Orden[index].Cod,
+                ConsecutivoProd: row.Orden[index].ConsecutivoProd,
+                ConsecutivoVenta: row.Orden[index].ConsecutivoVenta,
+                Descripcion: row.Orden[index].Descripcion,
+                Iva: row.Orden[index].Iva,
+                Medida: row.Orden[index].Medida,
+                UMedida: row.Orden[index].UMedida,
+                VrCosto: row.Orden[index].VrCosto,
+                VrUnitario: row.Orden[index].VrUnitario
+            }
+            /*const dataToSendProduct ={
                 CodInterno: 0,
                 IdFerreteria: usD.Cod,
                 ConsecutivoProd: row.Orden[index].ConsecutivoProd,
@@ -174,9 +90,9 @@ export const ReturnProduct = ({show, row, updateOrders, index, width='50%', heig
                 ConsecutivoCompra: row.Consecutivo,
                 Medida: row.Orden[index].Medida,
                 UMedida: row.Orden[index].UMedida,
-            }
+            }*/
             NewMoneyFlow(dataToSendMoneyFlow)
-            NewOutput(dataToSendProduct)
+            //NewOutput(dataToSendProduct)
             updateOrders()
             show(false)
             TheAlert('Se devlcio el articulo correctamente')

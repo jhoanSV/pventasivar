@@ -311,7 +311,7 @@ export const SalesOfTheDay = ({show, orderslist, width='90%', height='90%'}) => 
     }
 
     const returnTheOrder = async(TipoReclamo) => {
-        const confirmCacelTheSale = await TheAlert('¿Esta seguro que desea cancelar la venta?, esta acción es irreversible', 1)
+        const confirmCacelTheSale = await TheAlert('¿Esta seguro que desea' + ( TipoReclamo === 1 ? 'devolver el producto':'cancelar la venta') + '?, esta acción es irreversible', 1)
         if (confirmCacelTheSale) {
             const now = new Date();
             // Obtener la fecha en formato YYYY-MM-DD
@@ -320,12 +320,13 @@ export const SalesOfTheDay = ({show, orderslist, width='90%', height='90%'}) => 
             const time = now.toTimeString().split(' ')[0];
             const fila = {...orders[selectedfila]}
             let suma = 0
+            console.log("TipoReclamo: ", TipoReclamo)
             if (TipoReclamo === 1){
                 fila.TipoReclamo = 1
-                fila.Descripcion_Reclamo = "Anulacion de Factura"
+                fila.Descripcion_Reclamo = "Devolución parcial de los bienes y/o no aceptación parcial del servicio"
             } else if (TipoReclamo === 2){
-                fila.Tipo_Reclamo = 1
-                fila.Descripcion_Reclamo = "Anulacion de Factura"
+                fila.Tipo_Reclamo = 2
+                fila.Descripcion_Reclamo = "Anulacion de Factura electrónica"
             }
             const Customer= {
                 TipoPersona: fila.Tipo === 0 ? 2 : 1,
@@ -664,7 +665,7 @@ export const SalesOfTheDay = ({show, orderslist, width='90%', height='90%'}) => 
                         </div>
                         <button
                             className="btnStnd btn1"
-                            onClick={()=>returnTheOrder()}
+                            onClick={()=>returnTheOrder(2)}
                             disabled={selectedOrder === null || total === 0? true: false} 
                             >Cancelar venta</button>
                         <button

@@ -853,6 +853,7 @@ export const DataLoginColteck = async(token) => {
 
 export const paymentMethodsColtek = async(Api, token) => {
     try {
+        
         const paymentMethods = await fetch(`${Api}/api/v1/basic-data/fiscal-responsibility`,{
             method: 'GET',
             headers: { Accept: 'application/json',
@@ -873,6 +874,21 @@ export const clientOccupation = async() => {
                                 'Content-Type': 'application/json'}
         })
         return await paymentMethods.json()
+    }catch(error) {
+        console.log('TheError: '+ error)
+    }
+}
+
+export const ResFiscal = async(tokenColtek,token) => {
+    try {
+        const toLoginColteck = await DataLoginColteck(token)
+        const FiscalRes = await fetch(`${toLoginColteck[0].Api}/api/v1/basic-data/fiscal-responsibility`,{
+            method: 'GET',
+            headers: { Accept: 'application/json',
+                                'Content-Type': 'application/json',
+                                'Authorization': `Bearer ${tokenColtek}`}
+        })
+        return await FiscalRes.json()
     }catch(error) {
         console.log('TheError: '+ error)
     }
