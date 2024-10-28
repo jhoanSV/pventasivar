@@ -193,22 +193,22 @@ export const AddPurchaseModal = ({P, Show, img}) => {
                                 +
                             </button>
                         </div>
-                        <div className="unitPrice genFont">
+                        <h4>{/*<div className="unitPrice genFont">*/}
                             <span className='mainBlue fw-bold'>
                                 <strong>Valor:&nbsp;</strong>
                             </span>
                             <span className="fw-bold">
                                 $ {Formater(P.PCosto)}
                             </span>
-                        </div>
-                        <h1>
+                        </h4>
+                        <h2>
                             <div className="totalPrice mainBlue">
                                 <div className='subTit fw-bold'>Total:</div>
                                 <span className='text-black Tit'>
                                     $ {Formater(totalPrice)}
                                 </span>
                             </div>
-                        </h1>
+                        </h2>
                         <button className="btnAddCart btnStnd btn1" disabled={(P.Agotado || (cant===0))} onClick={() => {btnCart()}}>
                             Agregar al carrito
                         </button>

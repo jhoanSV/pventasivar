@@ -38,6 +38,7 @@ export const Newproduct = () => {
     const [ show1, setShow1] = useState(false);
     const [ show2, setShow2] = useState(false);
     const [ fromSivarToNew, setFromSivarToNew] = useState(false);
+    const [ colorPventa, setColorPVenta ] = useState('black')
     // eslint-disable-next-line
     const [ productsDataShow, setproductsDataShow] = useState({});
     const [ subCatList, setSubCatList] = useState(/*productData.Categoria ?  : */subC);
@@ -50,6 +51,8 @@ export const Newproduct = () => {
     const invListRef = useRef([]);
     const asktoaddRef = useRef(null);
     const theSomeData = useRef(someData);
+
+    
 
     const handleKeyDown = async(e) => {
         if(document.getElementById('NPinputNP') === document.activeElement){
@@ -123,6 +126,7 @@ export const Newproduct = () => {
         if(value2Ch === 'Categoria'){
             if(e.target.value!==''){
                 setSelectedCategory(e.target.value);
+                console.log("category: ", e.target.value);
                 //changeValuesProducts('Categoria', categories.find(c => c.IdCategoria === Number(e.target.value)).Categoria);
                 setSubCatList(subC.filter(c => c.IdCategoria === Number(e.target.value)));
                 console.log(subC.filter(c => c.IdCategoria === Number(e.target.value)));
@@ -427,7 +431,7 @@ export const Newproduct = () => {
         theSomeData.current = dataProduct
         setImgSrc(theSomeData && `https://sivarwebresources.s3.amazonaws.com/AVIF/${theSomeData.Cod}.avif`)
         let data = { ...dataProduct}
-        console.log({...data});
+        console.log("Datos a modificar: ", data);
         if (data.PVenta && data.PCosto) {
             let pct = ((data.PVenta - data.PCosto) / data.PCosto) * 100
             pct = pct % 1 === 0 ? pct : pct.toFixed(2);
@@ -455,6 +459,7 @@ export const Newproduct = () => {
         console.log(data);
         setSelectedCategory(data.Categoria.toLowerCase());
         setProductData(data);
+        setSelectedCategory(data.IdCategoria);
         setSection('Modificar producto');
         setButtons("Modificar producto");
         setModificarProducto(true);
@@ -626,9 +631,9 @@ export const Newproduct = () => {
                         <TheInput
                             val={pctGan}
                             numType={'real'}
-                            onchange={(e) => { setpctGan(e); calpventa(e) }}
+                            onchange={(e) => { setpctGan(e); calpventa(e)}}
                         />
-                        <span style={{position: 'absolute', top: '6px', left: 3+pctGan.length+'%'}}>
+                        <span style={{position: 'absolute', top: '11px', left: 3+pctGan.length+'%'}}>
                             %
                         </span>
                     </div>
@@ -641,7 +646,13 @@ export const Newproduct = () => {
                         <TheInput
                             val={productData.PVenta}
                             numType={'real'}
-                            onchange={(e) => { changeValuesProducts('PVenta', e); calpctV(e) }}
+                            onchange={(e) => { changeValuesProducts('PVenta', e); 
+                                                calpctV(e);
+                                                if (parseFloat(e)<parseFloat(productData.PCosto))
+                                                    {setColorPVenta('red')}
+                                                else
+                                                    {setColorPVenta('black')}}}
+                            sTyle = {{color: colorPventa}}
                         />
                     </div>
                 </div>

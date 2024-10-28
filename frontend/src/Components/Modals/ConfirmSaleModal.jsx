@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, useRef} from 'react';
 import { TheInput } from '../../Components/InputComponent/TheInput';
 import { useTheContext } from '../../TheProvider';
 import { NewSale } from '../../api';
@@ -20,6 +20,9 @@ export const ConfirmSaleModal = ({show, sendSale , folio , orderslist, width='50
     const [ showTicket, setShowTicket] = useState(false)
     const [ electronic, setElectronic ] = useState(false);
     const { setSection, setSomeData, usD, setUsD } = useTheContext();
+
+    const inputefectivoRef = useRef(null);
+    const inputReferenciaRef = useRef(null);
 
     useEffect(() => {
         if (tipoDePago === 'Efectivo') {
@@ -43,14 +46,19 @@ export const ConfirmSaleModal = ({show, sendSale , folio , orderslist, width='50
 
     useEffect(() => {
         if (tipoDePago === 'Efectivo') {
+            inputefectivoRef.current.focus()
             setEfectivo(total)
             setTransferencia(0)
             setCambio(efectivo - total)
         } else if (tipoDePago === 'Transferencia') {
+            if (inputReferenciaRef.current) {
+                inputReferenciaRef.current.focus();
+            }
             setEfectivo(0)
             setTransferencia(total)
             setCambio(0)
         } else if (tipoDePago === 'Mixto') {
+            inputefectivoRef.current.focus()
             setEfectivo(total)
             setTransferencia(0)
             setCambio(efectivo - total)
@@ -63,6 +71,9 @@ export const ConfirmSaleModal = ({show, sendSale , folio , orderslist, width='50
         if (orderslist.Order && orderslist.Order.length > 0) {orderslist.Order.forEach((item, index) => {
             suma += item.PVenta * item.Cantidad
         })}
+        if (inputefectivoRef.current) {
+            inputefectivoRef.current.focus();
+        }
         setTotal(suma)
         setEfectivo(suma)
         console.log(usD)
@@ -229,6 +240,7 @@ export const ConfirmSaleModal = ({show, sendSale , folio , orderslist, width='50
                                                 numType='real'
                                                 val={efectivo}
                                                 onchange={(e)=>setEfectivo(e)}
+                                                Ref={inputefectivoRef}
                                             />
                                         </div>
                                     </>
@@ -254,6 +266,7 @@ export const ConfirmSaleModal = ({show, sendSale , folio , orderslist, width='50
                                                 type='text'
                                                 value={referencia}
                                                 onChange={(e)=>setReferencia(e.target.value)}
+                                                ref={inputReferenciaRef}
                                             />
                                         </div>
                                     </>

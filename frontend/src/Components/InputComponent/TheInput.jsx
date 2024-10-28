@@ -14,7 +14,8 @@ export const TheInput = ({
     Min=null,
     Max=null,
     select=false,
-    disabled=false}) => {
+    disabled=false,
+    Ref= null}) => {
 
     const [value, setValue] = useState(val);
     
@@ -95,6 +96,7 @@ export const TheInput = ({
             onBlur={(e)=>{handleBlur(e)}}
             autoFocus={autofocus}
             disabled={disabled}
+            ref={Ref}
         />
 
     );

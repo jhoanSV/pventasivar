@@ -51,6 +51,7 @@ export const Cart = () => {
         setRoute(false);
         setShow1(false);
         document.body.classList.remove('modalOpen');
+        console.log("show1 status:", show1);
     }
 
     const handleSendOrder = async() =>{
@@ -182,7 +183,10 @@ export const Cart = () => {
                     Total: {' '}
                     <span style={{color: 'black'}}>${Formater(subTotalC+sendCost)}</span>
                 </div>
-                <button className="btnSendOrd btnStnd btn1" onClick={()=>{setShow1(true);document.body.classList.add('modalOpen')}} disabled={btnDis}>
+                <button
+                    className="btnSendOrd btnStnd btn1"
+                    onClick={()=>{setShow1(true);
+                    document.body.classList.add('modalOpen')}} disabled={btnDis}>
                     Enviar pedido
                 </button>
             </div>
@@ -192,7 +196,9 @@ export const Cart = () => {
             <div className='theModalContainer'>
                 <div className="theModal-content" style={{width: '361.67px', position: 'relative'}}>
                     <div className="modal-content">
-                        <button className="btn1Stnd" style={{position: 'absolute', top: '0px', right: '0px'}} onClick={()=>{handleModalClose()}}>
+                        <button className="btn1Stnd"
+                            style={{position: 'absolute', top: '0px', right: '0px'}}
+                            onClick={()=>{handleModalClose()}}>
                             <i className="bi bi-x-lg"></i>
                         </button>
                         <div className='modal-body'>

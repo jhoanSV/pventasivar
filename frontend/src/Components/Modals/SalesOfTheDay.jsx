@@ -24,7 +24,7 @@ export const SalesOfTheDay = ({show, orderslist, width='90%', height='90%'}) => 
     const [ headerSales, setHeaderSales ] = useState(null);
     const [ dateSearch, setDateSearch ] = useState(new Date());
     const [ showConfirm, setShowConfirm ] = useState(false);
-    const [ allowedButtons, setAllowedButtons ] = useState(false);
+    const [ showReprint, setShowReprint ] = useState(false);
     const { setSection, setSomeData, usD, setUsD, setLogged } = useTheContext();
     // for the tables of the order and the selected order
     const isEditingRef = useRef(false);
@@ -310,8 +310,8 @@ export const SalesOfTheDay = ({show, orderslist, width='90%', height='90%'}) => 
         }
     }
 
-    const returnTheOrder = async(TipoReclamo) => {
-        const confirmCacelTheSale = await TheAlert('¿Esta seguro que desea' + ( TipoReclamo === 1 ? 'devolver el producto':'cancelar la venta') + '?, esta acción es irreversible', 1)
+    const returnTheOrder = async(TipoReclamo, cantidad) => {
+        const confirmCacelTheSale = await TheAlert('¿Esta seguro que desea ' + ( TipoReclamo === 1 ? 'devolver el producto':'cancelar la venta') + '?, esta acción es irreversible', 1)
         if (confirmCacelTheSale) {
             const now = new Date();
             // Obtener la fecha en formato YYYY-MM-DD
@@ -322,8 +322,12 @@ export const SalesOfTheDay = ({show, orderslist, width='90%', height='90%'}) => 
             let suma = 0
             console.log("TipoReclamo: ", TipoReclamo)
             if (TipoReclamo === 1){
-                fila.TipoReclamo = 1
+                fila.Tipo_Reclamo = 1
                 fila.Descripcion_Reclamo = "Devolución parcial de los bienes y/o no aceptación parcial del servicio"
+                let producto = {...fila.Orden[selectedfilaOrderRef.current]}
+                producto.CantidadEn = 0
+                producto.CantidadSa = cantidad
+                fila.Orden = [producto]
             } else if (TipoReclamo === 2){
                 fila.Tipo_Reclamo = 2
                 fila.Descripcion_Reclamo = "Anulacion de Factura electrónica"
@@ -376,11 +380,11 @@ export const SalesOfTheDay = ({show, orderslist, width='90%', height='90%'}) => 
             }
             console.log("fila: ", fila)
             await CancelTheSale(fila)
-            //const today = formatDate(new Date());
-            //TheAlert('Se cancelo la venta con exito')
-            //getOrdersPerday()
+            const today = formatDate(new Date());
+            TheAlert('Se hizo la devolución con exito')
+            getOrdersPerday()
         }
-    }
+    };
 
     const formatDate = (date) => {
         const d = new Date(date);
@@ -463,72 +467,6 @@ export const SalesOfTheDay = ({show, orderslist, width='90%', height='90%'}) => 
                 Url_Pdf: "http://empresa.example.com/Facturacion/empresa/Facturas/18760000001/SETP990000001/SETP990000001.pdf"
             }
         }
-        /*Customer: {
-            Apellido: "",
-            Barrio: "",
-            Consecutivo: 0,
-            Correo: "gersonlvargas.na@gmail.com",
-            Direccion: "",
-            Fecha: "2024-10-10 14:43:22",
-            FormaDePago: 0,
-            IdFerreteria: 242,
-            LimiteDeCredito: 0,
-            NitCC: 222222222222,
-            Nombre: "Consumidor final",
-            Nota: "",
-            Telefono1: 0,
-            Telefono2: 0,
-            Tipo: 0
-        }
-        Electronic: true,
-        Order: [{
-            Cantidad: 2,
-            Categoria: "EBANISTERIA",
-            Clase: 1,
-            Cod: "GLV1",
-            Consecutivo: 20,
-            Descripcion: "ENtertaiment",
-            Detalle: "bones",
-            IdCategoria: 1,
-            IdFerreteria: 242,
-            IdSubCategoria: 1,
-            InvMaximo: 10,
-            InvMinimo: 2,
-            Inventario: 4.571429,
-            Iva: 19,
-            Medida: "Paquete",
-            Medidas: [
-                PCosto: 14000,
-                PVenta: 7000,
-                ]
-            SubCategoria: "AMARRES PLASTICOS",
-            UMedida: 1,
-            Ubicacion: "ayaya"
-        }],
-        RCData: { 
-            Activo: true,
-            CodResponsable: 242,
-            Comentarios: "",
-            Efectivo: 14000,
-            Fecha: "2024-10-10 14:43:22",
-            Folio: 6,
-            IdFerreteria: 242,
-            MedioDePago: "Efectivo",
-            Motivo: "Venta por caja",
-            Referencia: "",
-            Responsable: "Gerson Loaiza",
-            Transferencia: 0
-        },
-        Result: {
-            Codigo: "SETP990000001",
-            CufeCude: "665bf3f7f7a148f6d3e9c4816f7683562d204f53a7c578008fd5467daec87593a64ad83580874d9ba105f0fc0f2de63e",
-            Errores: ""
-            IsValid: "true"
-            StatusCode: "00"
-            StatusDescription: "Procesado Correctamente."
-            Url_Pdf: "http://empresa.example.com/Facturacion/empresa/Facturas/18760000001/SETP990000001/SETP990000001.pdf"
-        }
-        */
         
         if (print) {
             const usDdata = usD
@@ -539,6 +477,32 @@ export const SalesOfTheDay = ({show, orderslist, width='90%', height='90%'}) => 
             window.electron.send('print-ticket', ticketHTML);
             //setShowTicket(true);
         }
+    };
+
+    const ConfirmPrintModal=()=>{
+        return (
+            <div className='theModalContainer'>
+                <div className='theModal-content' style={{width: width, height: height, position: 'relative'}}>
+                    <button className='btn1Stnd' onClick={() => {setShowReprint(false)}} style={{position: 'absolute', top: '0px', right: '0px'}}>
+                        <i className='bi bi-x-lg'/>
+                    </button>
+                    <div className='theModal-body'>
+                        <label>¿Desea reimprimir como remisión o desea generar una factura electronica a partir de esta remisión?</label>
+                    </div>
+                    <button
+                        className="btnStnd btn1"
+                        style={{backgroundColor: 'Green'}}
+                        onClick={()=>{rePrint()}}
+                        >Reimprimir como remisión.
+                    </button>
+                    <button
+                        className="btnStnd btn1"
+                        onClick={()=>{}}
+                        >Generar factura electronica.
+                    </button>
+                </div>
+            </div>
+        )
     }
 
     return (
@@ -609,7 +573,7 @@ export const SalesOfTheDay = ({show, orderslist, width='90%', height='90%'}) => 
                                     <div className='Col'>
                                         {headerSales !== null ? (
                                             <>
-                                                <label>{headerSales.FacturaElectronica === ''? 'Remisión': 'Factura electronica'}</label>
+                                                <label>{headerSales.FacturaElectronica === 0? 'Remisión': 'Factura electronica'}</label>
                                                 <label>{headerSales.Consecutivo}</label>
                                                 <label>{headerSales.Nombre + ' ' + headerSales.Apellido}</label>
                                                 <label>{headerSales.Fecha.split('T')[1].split('.')[0]}</label>
@@ -622,6 +586,7 @@ export const SalesOfTheDay = ({show, orderslist, width='90%', height='90%'}) => 
                                 <div className='data_of_sale'>
                                     <div className='Col'>
                                         <label><strong>Forma de pago:</strong></label>
+                                        <label><strong>Factura:</strong></label>
                                     </div>
                                     <div className='Col'>
                                         {headerSales !== null ? (
@@ -635,7 +600,9 @@ export const SalesOfTheDay = ({show, orderslist, width='90%', height='90%'}) => 
                                                     } else if (orders[selectedfila].Efectico !== 0 && orders[selectedfila].Transferencia !== 0) {
                                                         medioDePago = 'Mixto'
                                                     } return medioDePago
-                                                    })()}</label>
+                                                    })()}
+                                                </label>
+                                                 <label>{headerSales.Prefijo + headerSales.FacturaElectronica}</label>
                                             </>
                                         ) : (
                                             <label>Seleccione una venta</label> // Mostrar un mensaje por defecto o dejar el espacio vacío
@@ -670,14 +637,15 @@ export const SalesOfTheDay = ({show, orderslist, width='90%', height='90%'}) => 
                             >Cancelar venta</button>
                         <button
                             className="btnStnd btn1"
-                            onClick={()=>{askToPrint()}}
+                            onClick={()=>{setShowReprint(true)}}
                             disabled={selectedOrder !== null? false: true}
                             >Imprimir copia</button>
                     </div>
                 </div>
 
-                {showReturnModal && <ReturnProduct show={setShowReturnModal} row={orders[selectedfila]} index={selectedfilaOrder} updateOrders={ChangueSelectedOrder}/>}
+                {showReturnModal && <ReturnProduct show={setShowReturnModal} row={orders[selectedfila]} index={selectedfilaOrder} updateOrders={ChangueSelectedOrder} returnP={returnTheOrder}/>}
                 {showConfirm && <UserConfirm show={setShowConfirm} confirm={returnTheOrder} />}
+                {showReprint && <ConfirmPrintModal/>}
             </div>
         </div>
     );

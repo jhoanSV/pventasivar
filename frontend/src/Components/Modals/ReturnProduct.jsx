@@ -7,14 +7,14 @@ import { validateUser, NewMoneyFlow, NewOutput } from '../../api';
 import { TheAlert } from '../TheAlert';
 import { Formater } from '../../App';
 
-export const ReturnProduct = ({show, row, updateOrders, index, width='50%', height='40%'}) => {
+export const ReturnProduct = ({show, row, updateOrders, index, width='50%', height='40%', returnP}) => {
     const [ cantidad, setCantidad ] = useState(0);
     const [ value, setValue ] = useState(0);
     const [ showConfirm, setShowConfirm ] = useState(false);
     const [ comentarios, setComentarios ] = useState('');
     const { setSection, setSomeData, usD } = useTheContext();
 
-    const returnP = async(Tipo_Reclamo) => {
+    /*const returnP = async(Tipo_Reclamo) => {
         let Cliente = {
             "TipoPersona": 1,
             "NombreTipoPersona": "Persona Jurídica",
@@ -60,7 +60,7 @@ export const ReturnProduct = ({show, row, updateOrders, index, width='50%', heig
                 TipoDeFlujo: 1,
                 Activo: true
             }
-            const dataToSendOutput = {
+            const dataToSendOutput = [{
                 CantidadEn: 0,
                 CantidadSa: cantidad,
                 Cod: row.Orden[index].Cod,
@@ -72,8 +72,8 @@ export const ReturnProduct = ({show, row, updateOrders, index, width='50%', heig
                 UMedida: row.Orden[index].UMedida,
                 VrCosto: row.Orden[index].VrCosto,
                 VrUnitario: row.Orden[index].VrUnitario
-            }
-            /*const dataToSendProduct ={
+            }]
+            const dataToSendProduct ={
                 CodInterno: 0,
                 IdFerreteria: usD.Cod,
                 ConsecutivoProd: row.Orden[index].ConsecutivoProd,
@@ -90,8 +90,8 @@ export const ReturnProduct = ({show, row, updateOrders, index, width='50%', heig
                 ConsecutivoCompra: row.Consecutivo,
                 Medida: row.Orden[index].Medida,
                 UMedida: row.Orden[index].UMedida,
-            }*/
-            NewMoneyFlow(dataToSendMoneyFlow)
+            }
+            //NewMoneyFlow(dataToSendMoneyFlow)
             //NewOutput(dataToSendProduct)
             updateOrders()
             show(false)
@@ -99,7 +99,7 @@ export const ReturnProduct = ({show, row, updateOrders, index, width='50%', heig
         } catch (error) {
             console.error('Error al realizar la devolución:', error);
         }
-    }
+    }*/
 
     const handleCantidad = (Number) => {
         let valueNumber = Number;
@@ -162,8 +162,8 @@ export const ReturnProduct = ({show, row, updateOrders, index, width='50%', heig
                         <label>$ {Formater(value)}</label>
                     </div>
                 </div>
-                <button className='btnStnd btn1' onClick={() => setShowConfirm(true)}>Aceptar</button>
-                <button className='btnStnd btn1'>Cancelar</button>
+                <button className='btnStnd btn1' onClick={() => returnP(1,cantidad)}>Aceptar</button>
+                <button className='btnStnd btn1' onClick={() => show(false)}>Cancelar</button>
             </div>
             {showConfirm && <UserConfirm show={setShowConfirm} confirm={returnP} />}
         </div>

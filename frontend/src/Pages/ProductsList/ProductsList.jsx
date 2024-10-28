@@ -28,6 +28,7 @@ export const ProductsList = () => {
     const verFunction = () =>{
         //navigate('/NewProduct', { state: selected[0]})        
         setSomeData({...selected[0]})
+        console.log(selected[0])
         navigate('/NewProduct')
     }
 

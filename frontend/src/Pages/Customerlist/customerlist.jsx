@@ -104,7 +104,23 @@ export function Customerlist(){
     }
 
     const exportXl = () =>{
-        const theList = contentList.map(({ NitCC, Nombre, Apellidos, Telefono1, Correo }) => ({ NitCC, Nombre, Apellidos, Telefono1, Correo }));
+        const theList = contentList.map(({ NitCC,
+                                           Nombre,
+                                           Apellidos,
+                                           Telefono1,
+                                           Telefono2,
+                                           Correo,
+                                           Direccion,
+                                           Barrio,
+                                           Nota }) => ({NitCC,
+                                                        Nombre,
+                                                        Apellidos,
+                                                        Telefono1,
+                                                        Telefono2,
+                                                        Correo,
+                                                        Direccion,
+                                                        Barrio,
+                                                        Nota }));
         const worksheet = XLSX.utils.json_to_sheet(theList);
         const workbook = XLSX.utils.book_new();
         XLSX.utils.book_append_sheet(workbook, worksheet, "Clientes");
@@ -143,10 +159,10 @@ export function Customerlist(){
                         disabled={(selected.length === 0 || selected.length > 1)}>
                         <i className='bi bi-eye-fill'/>
                     </button>
-                    <button className='btn1Stnd' onClick={()=>(setShow1(true))}
+                    {/*<button className='btn1Stnd' onClick={()=>(setShow1(true))}
                         disabled={selected.length === 0}>
                         <i className='bi bi-trash-fill'/>
-                    </button>
+                    </button>*/}
                     {show1 && <GeneralModal show={setShow1} Contenido={Popop1}/>}
                     {/* {<input id='checkmlsct' type="checkbox" className="" onChange={()=>{setMultiSelect(a=>!a);setSelected([])}}/>
                     <label className='noSelect' style={{padding: '3px'}} htmlFor='checkmlsct'>

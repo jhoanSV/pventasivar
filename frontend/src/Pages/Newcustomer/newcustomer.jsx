@@ -67,7 +67,7 @@ export function Newcustomer(){
             } else {
                 toCheck = t
             }
-            const filterCustomers = contentList.filter((data) => data.NitCC === toCheck)
+            const filterCustomers = contentList.filter((data) => data.NitCC === t)
             if (filterCustomers.length > 0 && id === 'NitCC') {
                 setShowAlertCustomers(true)
             } else {
@@ -79,7 +79,6 @@ export function Newcustomer(){
 
     const validate = async() =>{
         let a = {...customerData}
-        console.log("customerData", a)
         let res, msj1, msj2, msjV = ''
         //* Primero se valida
         const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -111,9 +110,9 @@ export function Newcustomer(){
             return;
         }
         //*-----------------
-        if(customerData.Tipo===1){
+        /*if(customerData.Tipo===1){
             a.NitCC = customerData.NitCC + '-' + verCod
-        }
+        }*/
         const fecha = new Date()
         const today = fecha.getFullYear() + '-' + (fecha.getMonth()+1) + '-' + fecha.getDate() + ' ' + fecha.getHours() + ':' + fecha.getMinutes() + ':' + fecha.getSeconds()
         if(someData){
@@ -131,6 +130,7 @@ export function Newcustomer(){
                 TheAlert('El Nit/Cédula ya existe');
                 return;
             } else {
+
                 console.log("userData: ", a)
                 res = await Newclient(a)
             }
@@ -187,16 +187,6 @@ export function Newcustomer(){
         }
     }
 
-    const handleSelectOccupation = (eventKey) =>{
-        changeValuesCustomer("Ocupacion", eventKey)
-        setOccupation(eventKey);
-    }
-
-    const handleSelectResFiscal = (eventKey) =>{
-        changeValuesCustomer("Ocupacion", eventKey)
-        setResFiscal(eventKey);
-    }
-
     useEffect(() => {
         setSection('Nuevo cliente');
 
@@ -231,10 +221,10 @@ export function Newcustomer(){
                             onChange={(e)=>{{
                                 changeValuesCustomer('Tipo', Number(e.target.value));
                                 if (e.target.value === '0') {
-                                    changeValuesCustomer('ResFiscal', "R-99-PN")
+                                    changeValuesCustomer('ResFiscal', 'R-99-PN')
                                     //console.log("entro a cedula")
                                 } else if (e.target.value === '1'){
-                                    changeValuesCustomer('ResFiscal', "0-13")
+                                    changeValuesCustomer('ResFiscal', '')
                                     //console.log("entro a Nit")
                                 }
                             }}}
@@ -248,7 +238,7 @@ export function Newcustomer(){
                     <div className='Colmn1'>                        
                         <label>Nit/C.C</label>
                     </div>
-                    <div className='Colmn2'>
+                    <div className='Colmn2' style={{display: 'flex'}}>
                         <input 
                             id='numId'
                             type="text"
@@ -257,29 +247,35 @@ export function Newcustomer(){
                             style={{width: '41%', marginRight: '5px'}}
                             onBlur={() => {setVerCod(VerifyCodNit(customerData.NitCC)); ClientExists()}}
                          />
-                        {customerData.Tipo=== 1 && 
+                        {customerData.Tipo=== 1 &&
                             <input
                                 id='nitId'
                                 type="text"
                                 value={verCod}
                                 onChange={(e)=>setVerCod(e.target.value)}/>
                         }
+                        {showAlertCustomers && <div style={{color: 'red'}}><label>El cliente ya existe</label></div>}
                     </div>
-                    {showAlertCustomers && <div style={{color: 'red'}}><label>El cliente ya existe</label></div>}
                 </div>
                 <div className='Row'>
                     <div className='Colmn1'>
                         <label>{customerData.Tipo=== 1 ? 'Razón social' : 'Nombres'}</label>
                     </div>
                     <div className='Colmn2'>
-                        <input id='cnombre' type="text" value={customerData.Nombre} onChange={(e)=>changeValuesCustomer('Nombre', e.target.value)}/>
-                        {customerData.Tipo!== 1 && 
+                        <input
+                            id='cnombre'
+                            type="text"
+                            value={customerData.Nombre}
+                            onChange={(e)=>changeValuesCustomer('Nombre', e.target.value)}
+                            disabled={showAlertCustomers}/>
+                        {customerData.Tipo!== 1 &&
                             <>
                             <label style={{marginLeft: '10px'}}>Apellidos</label>
                             <input id='capellido' type="text"
                                 value={customerData.Apellido}
                                 onChange={(e)=>changeValuesCustomer('Apellido', e.target.value)}
                                 style={{marginLeft: '20px', width: '39%'}}
+                                disabled={showAlertCustomers}
                             />
                             </>
                         }
@@ -294,6 +290,7 @@ export function Newcustomer(){
                             type="text"
                             value={customerData.Telefono1}
                             onChange={(e)=>handleFormat("Telefono1", e)}
+                            disabled={showAlertCustomers}
                         />
                     </div>
                 </div>
@@ -306,6 +303,7 @@ export function Newcustomer(){
                             type="text"
                             value={customerData.Telefono2}
                             onChange={(e)=>handleFormat("Telefono2", e)}
+                            disabled={showAlertCustomers}
                         />
                     </div>
                 </div>
@@ -317,6 +315,7 @@ export function Newcustomer(){
                         <input id='emailId' type="text"
                             value={customerData.Correo}
                             onChange={(e)=>changeValuesCustomer('Correo', e.target.value)}
+                            disabled={showAlertCustomers}
                         />
                     </div>
                 </div>
@@ -328,12 +327,14 @@ export function Newcustomer(){
                         <input id='adId' type="text"
                             value={customerData.Direccion}
                             onChange={(e)=>changeValuesCustomer('Direccion', e.target.value)}
+                            disabled={showAlertCustomers}
                         />
                         <label style={{marginLeft: '10px'}}>Barrio</label>
                         <input id='barrioId' type="text"
                             style={{marginLeft: '20px'}}
                             value={customerData.Barrio}
                             onChange={(e)=>changeValuesCustomer('Barrio', e.target.value)}
+                            disabled={showAlertCustomers}
                         />
                     </div>
                 </div>
@@ -365,12 +366,10 @@ export function Newcustomer(){
                             onChange={(e)=>{
                                 const selectedOption = optionsOccupation.find(option => option.IdOcupacion === parseInt(e.target.value, 10));
                                 changeValuesCustomer('Ocupacion', e.target.value);
-                                //console.log("e.target.value", e.target.value)
-                                //console.log("selectedOption", selectedOption.IdOcupacion)
                             }}
                             onBlur={()=>{}}>
                             <option value="" disabled>Seleccione una opción</option>
-                            {optionsOccupation.map((option) => (
+                            {!showAlertCustomers && optionsOccupation.map((option) => (
                                 <option key={option.IdOcupacion} value={option.IdOcupacion}>{option.Ocupacion}</option>
                             ))}
                         </select>
@@ -383,7 +382,7 @@ export function Newcustomer(){
                         </div>
                         <div className='Colmn2'>
                             <select id='CustomerType'
-                                value={resFiscal !== '' ? resFiscal: 'Seleccione una opción'}
+                                value={customerData.ResFiscal !== '' ? customerData.ResFiscal: ''}
                                 onChange={(e)=>{
                                     const selectedOption = optionsResFiscal.find(option => option.code === e.target.value);
                                     changeValuesCustomer('ResFiscal', selectedOption.code); 
@@ -391,7 +390,7 @@ export function Newcustomer(){
                                 }}
                                 onBlur={()=>{}}>
                                 <option value="" disabled>Seleccione una opción</option>
-                                {optionsResFiscal.map((option) => (
+                                {!showAlertCustomers && optionsResFiscal.map((option) => (
                                     <option key={option.code} value={option.code}>{option.name}</option>
                                 ))}
                             </select>

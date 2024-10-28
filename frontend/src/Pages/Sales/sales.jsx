@@ -94,6 +94,7 @@ export function Sales(){
         if(document.getElementById('NPinput') === document.activeElement){
             const theInvList = invListRef.current
             if (e.key === 'ArrowDown') {
+                console.log("entro a la busqueda de productos")
                 if(selectedFLIRef.current === theInvList.slice(0, 20).length-1){
                     selectedFLIRef.current = 0
                 }else{
@@ -112,7 +113,8 @@ export function Sales(){
                     document.getElementById('NPinput').select();
                     return;
                 } 
-                asktoaddRef.current(selectedItem);
+                askToAddProduct(selectedItem)
+                //asktoaddRef.current(selectedItem);
                 /*document.getElementById('tabsId').removeEventListener('keydown', handleKeyDown2);
                 document.getElementById('NPinput').removeEventListener('keydown', handleKeyDown);
                 document.getElementById('tabsId').addEventListener('keydown', handleKeyDown2);
