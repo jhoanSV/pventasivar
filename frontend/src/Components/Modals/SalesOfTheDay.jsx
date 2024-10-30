@@ -25,6 +25,7 @@ export const SalesOfTheDay = ({show, orderslist, width='90%', height='90%'}) => 
     const [ dateSearch, setDateSearch ] = useState(new Date());
     const [ showConfirm, setShowConfirm ] = useState(false);
     const [ showReprint, setShowReprint ] = useState(false);
+    const [ showToElectronicInvoice, setShowToElectronicInvoice ] = useState(false);
     const { setSection, setSomeData, usD, setUsD, setLogged } = useTheContext();
     // for the tables of the order and the selected order
     const isEditingRef = useRef(false);
@@ -480,26 +481,75 @@ export const SalesOfTheDay = ({show, orderslist, width='90%', height='90%'}) => 
     };
 
     const ConfirmPrintModal=()=>{
+        const [ confirmarConvert, setConfirmarConvert ] = useState('')
+        const printTicket =()=>{
+            if (showToElectronicInvoice === true && confirmarConvert === 'Confirmar') {
+
+            } else {
+                rePrint()
+            }
+        }
         return (
             <div className='theModalContainer'>
-                <div className='theModal-content' style={{width: width, height: height, position: 'relative'}}>
-                    <button className='btn1Stnd' onClick={() => {setShowReprint(false)}} style={{position: 'absolute', top: '0px', right: '0px'}}>
+                <div className='theModal-content' style={{width: '35%', height: '30%', position: 'relative'}}>
+                    <button className='btn1Stnd' onClick={() => {setShowReprint(false); setShowToElectronicInvoice(false)}} style={{position: 'absolute', top: '0px', right: '0px'}}>
                         <i className='bi bi-x-lg'/>
                     </button>
-                    <div className='theModal-body'>
-                        <label>¿Desea reimprimir como remisión o desea generar una factura electronica a partir de esta remisión?</label>
+                    <div className='theModal-body' style={{padding: '15px'}}>
+                        <label style={{
+                                display: 'block',
+                                textAlign: 'center',
+                                width: '100%',
+                            }}>
+                            <strong>
+                                {showToElectronicInvoice ? 
+                                'Para confirmar la conversión a factura electronica escriba "Confirmar"' : 
+                                '¿Desea reimprimir como remisión o desea generar una factura electronica a partir de esta remisión?'}
+                            </strong>
+                        </label>
+                        { showToElectronicInvoice &&
+                            <div>
+                                <input
+                                    type='text'
+                                    placeholder='Confirmar'
+                                    style={{width: '80%'}}
+                                    onChange={(e)=>{setConfirmarConvert(e.target.value)}}/>
+                            </div>
+                        }
+                        { !showToElectronicInvoice &&
+                            <div id='ReprintButtons'>
+                                <button
+                                    className="btnStnd btn1"
+                                    style={{backgroundColor: 'Green'}}
+                                    onClick={()=>{rePrint()}}
+                                    >
+                                    Reimprimir como remisión
+                                </button>
+                                <button
+                                    className="btnStnd btn1"
+                                    onClick={()=>{setShowToElectronicInvoice(true); setConfirmarConvert('')}}
+                                    >Generar factura electronica.
+                                </button>
+                            </div>
+                        }
+                        { showToElectronicInvoice &&
+                            <div id='ReprintButtons'>
+                                <button
+                                    className="btnStnd btn1"
+                                    style={{backgroundColor: confirmarConvert.toLowerCase() === 'confirmar' ? 'Green': 'grey'}}
+                                    onClick={()=>{rePrint()}}
+                                    disabled={confirmarConvert.toLowerCase() !== 'confirmar'}
+                                    >
+                                    Aceptar
+                                </button>
+                                <button
+                                    className="btnStnd btn1"
+                                    onClick={()=>{setShowToElectronicInvoice(false)}}
+                                    >Atras
+                                </button>
+                            </div>
+                        }
                     </div>
-                    <button
-                        className="btnStnd btn1"
-                        style={{backgroundColor: 'Green'}}
-                        onClick={()=>{rePrint()}}
-                        >Reimprimir como remisión.
-                    </button>
-                    <button
-                        className="btnStnd btn1"
-                        onClick={()=>{}}
-                        >Generar factura electronica.
-                    </button>
                 </div>
             </div>
         )
@@ -573,7 +623,7 @@ export const SalesOfTheDay = ({show, orderslist, width='90%', height='90%'}) => 
                                     <div className='Col'>
                                         {headerSales !== null ? (
                                             <>
-                                                <label>{headerSales.FacturaElectronica === 0? 'Remisión': 'Factura electronica'}</label>
+                                                <label>{headerSales.Prefijo === ''? 'Remisión': 'Factura electronica'}</label>
                                                 <label>{headerSales.Consecutivo}</label>
                                                 <label>{headerSales.Nombre + ' ' + headerSales.Apellido}</label>
                                                 <label>{headerSales.Fecha.split('T')[1].split('.')[0]}</label>
@@ -637,7 +687,15 @@ export const SalesOfTheDay = ({show, orderslist, width='90%', height='90%'}) => 
                             >Cancelar venta</button>
                         <button
                             className="btnStnd btn1"
-                            onClick={()=>{setShowReprint(true)}}
+                            onClick={()=>{
+                                if (headerSales.Prefijo === ''){
+                                    setShowReprint(true)
+                                }
+                                else{
+                                    console.log('Digamos que imprime')
+                                    //rePrint()
+                                }
+                                }}
                             disabled={selectedOrder !== null? false: true}
                             >Imprimir copia</button>
                     </div>

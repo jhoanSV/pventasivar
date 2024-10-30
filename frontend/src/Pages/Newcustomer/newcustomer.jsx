@@ -10,7 +10,6 @@ import { Dropdown, DropdownButton } from 'react-bootstrap';
 export function Newcustomer(){
     const WeightDian = [71,67,59,53,47,43,41,37,29,23,19,17,13,7,3]
     const { setSection, someData, usD } = useTheContext();
-    const [ occupation, setOccupation ] = useState('');
     const [ optionsOccupation, setOptionsOccupations ] = useState([]);
     const [ resFiscal, setResFiscal ] = useState('');
     const [ optionsResFiscal, setOptionsResFiscal ] = useState([]);
@@ -267,11 +266,14 @@ export function Newcustomer(){
                             type="text"
                             value={customerData.Nombre}
                             onChange={(e)=>changeValuesCustomer('Nombre', e.target.value)}
-                            disabled={showAlertCustomers}/>
+                            disabled={showAlertCustomers}
+                        />
                         {customerData.Tipo!== 1 &&
                             <>
                             <label style={{marginLeft: '10px'}}>Apellidos</label>
-                            <input id='capellido' type="text"
+                            <input
+                                id='capellido'
+                                type="text"
                                 value={customerData.Apellido}
                                 onChange={(e)=>changeValuesCustomer('Apellido', e.target.value)}
                                 style={{marginLeft: '20px', width: '39%'}}
@@ -299,7 +301,8 @@ export function Newcustomer(){
                         <label>Telefono 2</label>
                     </div>
                     <div className='Colmn2'>
-                        <input id='celId2'
+                        <input
+                            id='celId2'
                             type="text"
                             value={customerData.Telefono2}
                             onChange={(e)=>handleFormat("Telefono2", e)}
@@ -386,7 +389,6 @@ export function Newcustomer(){
                                 onChange={(e)=>{
                                     const selectedOption = optionsResFiscal.find(option => option.code === e.target.value);
                                     changeValuesCustomer('ResFiscal', selectedOption.code); 
-                                    setResFiscal(e.target.code);
                                 }}
                                 onBlur={()=>{}}>
                                 <option value="" disabled>Seleccione una opción</option>
@@ -409,6 +411,7 @@ export function Newcustomer(){
                             placeholder="Notas/Detalles del cliente"
                             value={customerData.Nota}
                             onChange={(e)=>changeValuesCustomer('Nota', e.target.value)}
+                            disabled={showAlertCustomers}
                         />
                     </div>
                 </div>

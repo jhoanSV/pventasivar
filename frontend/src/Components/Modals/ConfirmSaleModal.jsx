@@ -279,13 +279,14 @@ export const ConfirmSaleModal = ({show, sendSale , folio , orderslist, width='50
                                 </div>
                             </div>
                         </div>
-                        <div id='ButtonsOptions'>
+                        <div id='ButtonsOptions' style={{zIndex: 2}}>
                             <label>
-                                <input type ='radio'
+                                <input
+                                    type ='radio'
                                     value ='Remision'
                                     name = 'TipoDeVenta'
                                     defaultChecked = {true}
-                                    onChange = {(e)=>{setElectronic(false); console.log(electronic)}}/>
+                                    onChange = {(e)=>{setElectronic(false)}}/>
                                 Remisión
                             </label>
                             <label>
@@ -293,8 +294,8 @@ export const ConfirmSaleModal = ({show, sendSale , folio , orderslist, width='50
                                     value ='FElectronica'
                                     name = 'TipoDeVenta'
                                     defaultChecked = {false}
-                                    onChange = {(e)=>{setElectronic(true); console.log(electronic)}}/>
-                                Factura
+                                    onChange = {(e)=>{setElectronic(true)}}/>
+                                Factura electronica
                             </label>
                             <div className='btn'>
                                 <button className="btnStnd btn1" onClick={()=>chargeTheOrder(false)}>Solo cobrar</button>

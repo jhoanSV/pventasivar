@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom';
 //import { Clientlist } from '../../api';
 import jsonTest from '../../jsonTest.json';
 import './_SignClient.scss';
-import { Clientlist, Newclient, UpdateClient } from '../../api';
+import { Clientlist, Newclient, UpdateClient, clientOccupation, ResFiscal } from '../../api';
 import { DotProduct } from '../../App';
 
 export const SignClient = ({show, retornar, width='50%', height='80%'}) => {
@@ -14,6 +14,8 @@ export const SignClient = ({show, retornar, width='50%', height='80%'}) => {
     const [ contentList, setContentList] = useState(jsonTest);
     const { setSection, setSomeData, usD } = useTheContext();
     const [ showCustomerList , setShowCustomerList] = useState(true)
+    const [ optionsOccupation, setOptionsOccupations ] = useState([]);
+    const [ optionsResFiscal, setOptionsResFiscal ] = useState([]);
     const refList = useRef([]);
     // para crear un nuevo cliente
     const [cType, setCType] = useState();
@@ -96,6 +98,40 @@ export const SignClient = ({show, retornar, width='50%', height='80%'}) => {
         };
     }
 
+    useEffect(() => {
+        const fetchData = async () => {
+            const listado = await Clientlist({
+                "IdFerreteria": usD.Cod
+            });
+            const customerType = await clientOccupation()
+            const fiscalRes = await ResFiscal(usD.tokenColtek, usD.token)
+            setOptionsResFiscal(fiscalRes.FiscalResponsibility)
+            setOptionsOccupations(customerType)
+            if (listado) {
+                setContentList(listado);
+            }
+        };
+        fetchData();
+        
+        /*if(someData){
+            let data = {...someData};
+            let parts = data.NitCC.split('-');
+            if(parts[1]){
+                data.NitCC = parts[0];
+                setVerCod(parts[1]);
+            }
+            if(data['LimiteDeCredito']>0){
+                document.getElementById('checkCredito').checked = true;
+                setConCredito(true)
+            }
+            data.IdFerreteria = usD.Cod
+            
+            //data.FormaDePago = 0
+            setCustomerData(data)
+        }*/
+        // eslint-disable-next-line
+    }, []);
+
     const customerList = () => {
         return (
             <>
@@ -121,12 +157,14 @@ export const SignClient = ({show, retornar, width='50%', height='80%'}) => {
 
     const CreateCustomerForm = ({cType, value, setValue, creLim, setCreLim}) => {
         const WeightDian = [71,67,59,53,47,43,41,37,29,23,19,17,13,7,3]
-        const { setSection, someData, usD } = useTheContext();
-        const [enableB1, setEnableB1] = useState(false);
-        const [conCredito, setConCredito] = useState(false);
-        const [showAlertCustomers, setShowAlertCustomers] = useState(false)
-        const [verCod, setVerCod] = useState('');//* verificationCode
-        const [customerData, setCustomerData] = useState({
+        const { someData, usD } = useTheContext();
+        //const [ optionsOccupation, setOptionsOccupations ] = useState([]);
+        //const [ optionsResFiscal, setOptionsResFiscal ] = useState([]);
+        const [ enableB1, setEnableB1] = useState(false);
+        const [ conCredito, setConCredito] = useState(false);
+        const [ showAlertCustomers, setShowAlertCustomers] = useState(false)
+        const [ verCod, setVerCod] = useState('');//* verificationCode
+        const [ customerData, setCustomerData] = useState({
             "IdFerreteria": usD.Cod,
             "Tipo": 0, 
             "NitCC": "",
@@ -140,7 +178,10 @@ export const SignClient = ({show, retornar, width='50%', height='80%'}) => {
             "FormaDePago": 0,
             "LimiteDeCredito": 0, //In this stage this have to be always 0
             "Nota": "",
-            "Fecha": "2024-07-20 13:00:00" //Format is AAAA-MM-DD hh:mm:ss
+            "Fecha": "2024-07-20 13:00:00", //Format is AAAA-MM-DD hh:mm:ss
+            "Dv": 0,
+            "Ocupacion": '',
+            "ResFiscal": ''
         });    
 
         const handleFormat = (id, e) => {
@@ -152,7 +193,7 @@ export const SignClient = ({show, retornar, width='50%', height='80%'}) => {
                 } else {
                     toCheck = t
                 }
-                const filterCustomers = contentList.filter((data) => data.NitCC === toCheck)
+                const filterCustomers = contentList.filter((data) => data.NitCC === t)
                 if (filterCustomers.length > 0 && id === 'NitCC') {
                     setShowAlertCustomers(true)
                 } else {
@@ -179,6 +220,17 @@ export const SignClient = ({show, retornar, width='50%', height='80%'}) => {
             if(!regex.test(a.Correo)){
                 msjV = msjV + 'El correo no es válido\n'
             }
+            if(a.Ocupacion === ''){
+                msjV = msjV + 'El campo ocupacion no debe estar vacio\n'
+            }
+            if(a.Tipo === 1 && a.ResFiscal === ''){
+                msjV = msjV + 'La responsabilidad fiscal no debe estar vacia\n'
+            }
+            
+            if (a.Tipo === 0) {
+                a.ResFiscal = 'R-99-PN'
+            }
+    
             if(msjV){
                 TheAlert(msjV);
                 return;
@@ -258,8 +310,22 @@ export const SignClient = ({show, retornar, width='50%', height='80%'}) => {
             }));
         }
 
-        useEffect(() => {
-            if(someData){
+        /*useEffect(() => {
+            const fetchData = async () => {
+                const listado = await Clientlist({
+                    "IdFerreteria": usD.Cod
+                });
+                const customerType = await clientOccupation()
+                const fiscalRes = await ResFiscal(usD.tokenColtek, usD.token)
+                setOptionsResFiscal(fiscalRes.FiscalResponsibility)
+                setOptionsOccupations(customerType)
+                if (listado) {
+                    setContentList(listado);
+                }
+            };
+            fetchData();
+            
+            /*if(someData){
                 let data = {...someData};
                 let parts = data.NitCC.split('-');
                 if(parts[1]){
@@ -271,11 +337,12 @@ export const SignClient = ({show, retornar, width='50%', height='80%'}) => {
                     setConCredito(true)
                 }
                 data.IdFerreteria = usD.Cod
+                
                 //data.FormaDePago = 0
                 setCustomerData(data)
             }
             // eslint-disable-next-line
-        }, []);
+        }, []);*/
 
         return (
             <div id='newCustomer'>
@@ -290,7 +357,16 @@ export const SignClient = ({show, retornar, width='50%', height='80%'}) => {
                         <div className='Colmn2'>
                             <select id='CustomerType'
                                 value={customerData.Tipo}
-                                onChange={(e)=>{changeValuesCustomer('Tipo', Number(e.target.value))}}
+                                onChange={(e)=>{{
+                                    changeValuesCustomer('Tipo', Number(e.target.value));
+                                    if (e.target.value === '0') {
+                                        changeValuesCustomer('ResFiscal', 'R-99-PN')
+                                        //console.log("entro a cedula")
+                                    } else if (e.target.value === '1'){
+                                        changeValuesCustomer('ResFiscal', '')
+                                        //console.log("entro a Nit")
+                                    }
+                                }}}
                                 onBlur={()=>ClientExists()}>
                                 <option value='0'>C&eacute;dula</option>
                                 <option value='1'>Nit</option>
@@ -301,7 +377,7 @@ export const SignClient = ({show, retornar, width='50%', height='80%'}) => {
                         <div className='Colmn1'>                        
                             <label>Nit/C.C</label>
                         </div>
-                        <div className='Colmn2'>
+                        <div className='Colmn2' style={{display: 'flex'}}>
                             <input
                                 id='numId'
                                 type="text"
@@ -311,24 +387,38 @@ export const SignClient = ({show, retornar, width='50%', height='80%'}) => {
                                 onBlur={()=>{setVerCod(VerifyCodNit(customerData.NitCC)) ;ClientExists()}}
                             />
                             {customerData.Tipo=== 1 && 
-                                <input id='nitId' type="text" value={verCod} onChange={(e)=>setVerCod(e.target.value)}/>
+                                <input
+                                    id='nitId'
+                                    type="text"
+                                    value={verCod}
+                                    onChange={(e)=>setVerCod(e.target.value)}
+                                    disabled={showAlertCustomers}/>
                             }
+                            {showAlertCustomers && <div style={{color: 'red'}}><label>El cliente ya existe</label></div>}
                         </div>
-                        {showAlertCustomers && <div style={{color: 'red'}}><label>El cliente ya existe</label></div>}
                     </div>
                     <div className='Row'>
                         <div className='Colmn1'>
                             <label>{customerData.Tipo=== 1 ? 'Razón social' : 'Nombres'}</label>
                         </div>
                         <div className='Colmn2'>
-                            <input id='cnombre' type="text" value={customerData.Nombre} onChange={(e)=>changeValuesCustomer('Nombre', e.target.value)}/>
+                            <input
+                                id='cnombre'
+                                type="text"
+                                value={customerData.Nombre}
+                                onChange={(e)=>changeValuesCustomer('Nombre', e.target.value)}
+                                disabled={showAlertCustomers}
+                            />
                             {customerData.Tipo!== 1 && 
                                 <>
                                 <label style={{marginLeft: '10px'}}>Apellidos</label>
-                                <input id='capellido' type="text"
+                                <input
+                                    id='capellido'
+                                    type="text"
                                     value={customerData.Apellido}
                                     onChange={(e)=>changeValuesCustomer('Apellido', e.target.value)}
                                     style={{marginLeft: '20px', width: '39%'}}
+                                    disabled={showAlertCustomers}
                                 />
                                 </>
                             }
@@ -343,6 +433,7 @@ export const SignClient = ({show, retornar, width='50%', height='80%'}) => {
                                 type="text"
                                 value={customerData.Telefono1}
                                 onChange={(e)=>handleFormat("Telefono1", e)}
+                                disabled={showAlertCustomers}
                             />
                         </div>
                     </div>
@@ -351,10 +442,12 @@ export const SignClient = ({show, retornar, width='50%', height='80%'}) => {
                             <label>Telefono 2</label>
                         </div>
                         <div className='Colmn2'>
-                            <input id='celId2'
+                            <input
+                                id='celId2'
                                 type="text"
                                 value={customerData.Telefono2}
                                 onChange={(e)=>handleFormat("Telefono2", e)}
+                                disabled={showAlertCustomers}
                             />
                         </div>
                     </div>
@@ -363,9 +456,12 @@ export const SignClient = ({show, retornar, width='50%', height='80%'}) => {
                             <label>E-mail</label>
                         </div>
                         <div className='Colmn2'>
-                            <input id='emailId' type="text"
+                            <input
+                                id='emailId'
+                                type="text"
                                 value={customerData.Correo}
                                 onChange={(e)=>changeValuesCustomer('Correo', e.target.value)}
+                                disabled={showAlertCustomers}
                             />
                         </div>
                     </div>
@@ -374,15 +470,21 @@ export const SignClient = ({show, retornar, width='50%', height='80%'}) => {
                             <label>Direccion</label>
                         </div>
                         <div className='Colmn2'>
-                            <input id='adId' type="text"
+                            <input
+                                id='adId'
+                                type="text"
                                 value={customerData.Direccion}
                                 onChange={(e)=>changeValuesCustomer('Direccion', e.target.value)}
+                                disabled={showAlertCustomers}
                             />
                             <label style={{marginLeft: '10px'}}>Barrio</label>
-                            <input id='barrioId' type="text"
+                            <input
+                                id='barrioId'
+                                type="text"
                                 style={{marginLeft: '20px'}}
                                 value={customerData.Barrio}
                                 onChange={(e)=>changeValuesCustomer('Barrio', e.target.value)}
+                                disabled={showAlertCustomers}
                             />
                         </div>
                     </div>
@@ -405,6 +507,46 @@ export const SignClient = ({show, retornar, width='50%', height='80%'}) => {
                         </div>
                     </div>
                     <div className='Row'>
+                    <div className='Colmn1'>
+                        <label>Ocupación</label>
+                    </div>
+                    <div className='Colmn2'>
+                        <select id='CustomerType'
+                            value={customerData.Ocupacion !== 0 ? customerData.Ocupacion: ''}
+                            onChange={(e)=>{
+                                const selectedOption = optionsOccupation.find(option => option.IdOcupacion === parseInt(e.target.value, 10));
+                                changeValuesCustomer('Ocupacion', e.target.value);
+                            }}
+                            onBlur={()=>{}}>
+                            <option value="" disabled>Seleccione una opción</option>
+                            {!showAlertCustomers && optionsOccupation.map((option) => (
+                                <option key={option.IdOcupacion} value={option.IdOcupacion}>{option.Ocupacion}</option>
+                            ))}
+                        </select>
+                    </div>
+                </div>
+                {customerData.Tipo === 1 &&
+                    <div className='Row'>
+                        <div className='Colmn1'>
+                            <label>Responsabilidad fiscal</label>
+                        </div>
+                        <div className='Colmn2'>
+                            <select id='CustomerType'
+                                value={customerData.ResFiscal !== '' ? customerData.ResFiscal: ''}
+                                onChange={(e)=>{
+                                    const selectedOption = optionsResFiscal.find(option => option.code === e.target.value);
+                                    changeValuesCustomer('ResFiscal', selectedOption.code);
+                                }}
+                                onBlur={()=>{}}>
+                                <option value="" disabled>Seleccione una opción</option>
+                                {!showAlertCustomers && optionsResFiscal.map((option) => (
+                                    <option key={option.code} value={option.code}>{option.name}</option>
+                                ))}
+                            </select>
+                        </div>
+                    </div>
+                }
+                    <div className='Row'>
                         <div className='Colmn1'>
                             <label>Notas</label>
                         </div>
@@ -416,6 +558,7 @@ export const SignClient = ({show, retornar, width='50%', height='80%'}) => {
                                 placeholder="Notas/Detalles del cliente"
                                 value={customerData.Nota}
                                 onChange={(e)=>changeValuesCustomer('Nota', e.target.value)}
+                                disabled={showAlertCustomers}
                             />
                         </div>
                     </div>

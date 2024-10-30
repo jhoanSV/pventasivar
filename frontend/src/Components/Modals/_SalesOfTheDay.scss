@@ -25,3 +25,12 @@
     gap: 40px;
     margin-bottom: 3px;
 }
+
+#ReprintButtons {
+        justify-content: space-between;
+        display: flex;
+        bottom: '10px';  // ajusta según sea necesario para la distancia desde la parte inferior
+        left: '10px';    // ajusta según sea necesario para la distancia desde los bordes
+        right: '10px';   // ajusta según sea necesario para la distancia desde los bordes
+        width: 'calc(100% - 20px)' // resta el margen izquierdo y derecho para centrar los botones
+}
