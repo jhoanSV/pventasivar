@@ -4,7 +4,7 @@ import { useTheContext } from '../../TheProvider';
 import { TableComponent, Flatlist, TheAlert } from '../../Components';
 import './_SalesOfTheDay.scss';
 import jsonTest from '../../sales_per_day.json';
-import { SalesPerDay, CancelTheSale, valTokenColtek } from '../../api';
+import { SalesPerDay, CancelTheSale, valTokenColtek, ToRemsionToElectronic} from '../../api';
 import { ReturnProduct } from './ReturnProduct';
 import { UserConfirm } from './UserConfirm';
 import { TokenV } from '../../App';
@@ -395,17 +395,6 @@ export const SalesOfTheDay = ({show, orderslist, width='90%', height='90%'}) => 
         return [year, month, day].join('-');
     };
 
-    const askToPrint =() => {
-        if (orders[selectedfila].FacturaElectronica === '') {
-            let toElectronic = TheAlert('¿Deseas convertir la remision en factura electronica?',1)
-            if (toElectronic) {
-                console.log('se pasa a factura electronica');
-            }
-        } else {
-            rePrint()
-        }
-    };
-
     const rePrint = () => {
         const print = true;
         for (const orden of selectedOrder){
@@ -423,7 +412,13 @@ export const SalesOfTheDay = ({show, orderslist, width='90%', height='90%'}) => 
         } else if (orders[selectedfila].Efectico !== 0 && orders[selectedfila].Transferencia !== 0) {
             medioDePago = 'Mixto'
         }
-        const electronic = headerSales.FacturaElectronica === ''? false: true;
+        const electronic = headerSales.Prefijo === ''? false: true;
+        let NewOrderlist = []
+        for (let orden of selectedOrder) {
+            if ((orden.CantidadSa - orden.CantidadEn)>0){
+                NewOrderlist.push(orden)
+            }
+        }
         const sendedOrden = {
             Customer: {
                 Apellido: orders[selectedfila].Apellido,
@@ -443,7 +438,7 @@ export const SalesOfTheDay = ({show, orderslist, width='90%', height='90%'}) => 
                 Tipo: orders[selectedfila].Tipo
             },
             Electronic: electronic,
-            Order: selectedOrder,
+            Order: NewOrderlist,
             RCData: {
                 Activo: true,
                 CodResponsable: usD.Cod,
@@ -459,7 +454,7 @@ export const SalesOfTheDay = ({show, orderslist, width='90%', height='90%'}) => 
                 Transferencia: orders[selectedfila].Transferencia
             },
             Result: {
-                Codigo: orders[selectedfila].FacturaElectronica,
+                Codigo: orders[selectedfila].Prefijo + orders[selectedfila].FacturaElectronica,
                 CufeCude: orders[selectedfila].Cufe,
                 Errores: "",
                 IsValid: "true",
@@ -480,15 +475,127 @@ export const SalesOfTheDay = ({show, orderslist, width='90%', height='90%'}) => 
         }
     };
 
-    const ConfirmPrintModal=()=>{
+    const ConfirmPrintModal= ()=>{
         const [ confirmarConvert, setConfirmarConvert ] = useState('')
-        const printTicket =()=>{
-            if (showToElectronicInvoice === true && confirmarConvert === 'Confirmar') {
-
+        const printTicket =async()=>{
+            if (showToElectronicInvoice === true && confirmarConvert.toLowerCase() === 'confirmar') {
+                try {
+                    const now = new Date();
+                    // Obtener la fecha en formato YYYY-MM-DD
+                    const date = now.toISOString().split('T')[0];
+                    // Obtener la hora en formato HH:MM:SS
+                    const time = now.toTimeString().split(' ')[0];
+                    let orderslist = {...orders[selectedfila]}
+                    console.log('orderslist: ', orderslist)
+                    let MedioDePagoColtek = 10 //para pago en efectivo
+                    if (orderslist.Transferencia > 0 && orderslist.Efectivo === 0){
+                        MedioDePagoColtek = 31 //para pago por transferencia
+                    }
+                    orderslist.MedioDePagoColtek = MedioDePagoColtek
+                    if (orderslist.IdCliente === 0){
+                        orderslist.Customer = {
+                            Consecutivo: 0,
+                            IdFerreteria: usD.Cod,
+                            Tipo: 0,
+                            NitCC: 222222222222,
+                            Nombre: 'Consumidor final',
+                            Apellido: '',
+                            Telefono1: usD.Telefono,
+                            Telefono2: 0,
+                            Correo: usD.Email,
+                            Direccion: usD.Direccion,
+                            Barrio: '',
+                            FormaDePago: 0,
+                            LimiteDeCredito: 0,
+                            Nota: '',
+                            Fecha: date + ' ' + time,
+                            Dv: usD.Dv,
+                            ResFiscal: usD.ResFiscal
+                        }
+                    } else {
+                        orderslist.Customer = {
+                            Tipo: orderslist.Tipo
+                        }
+                    }
+                    orderslist.RCData = {IdFerreteria: usD.Cod,
+                                        CodResponsable: usD.Cod,
+                                        Responsable: usD.Contacto,
+                                        Folio: orderslist.Folio,
+                                        Fecha: date + ' ' + time,
+                                        Efectivo: orderslist.Efectivo,
+                                        Transferencia: orderslist.Transferencia,
+                                        Motivo: "Venta por caja",
+                                        Comentarios: '',
+                                        Activo: true
+                                        }
+                    if (orderslist.Customer.Tipo === 0) {
+                        //esto es para cedulas
+                        orderslist.Customer.TipoPersona = 2
+                        orderslist.Customer.NombreTipoPersona = 'Persona Natural'
+                        orderslist.Customer.TipoDocumento = 13
+                        orderslist.Customer.NombreTipoDocumento = 'Cédula de ciudadanía '
+                    } else if (orderslist.Customer.Tipo === 1) {
+                        //esto es para NIT
+                        orderslist.Customer.TipoPersona = 1
+                        orderslist.Customer.NombreTipoPersona = 'Persona Jurídica'
+                        orderslist.Customer.TipoDocumento = 31
+                        orderslist.Customer.NombreTipoDocumento = 'NIT'
+                    }
+                    const tokencheck = await valTokenColtek(usD.resColtek.token, usD.token)
+                    if (tokencheck.status){
+                        //If status is true then only put the token on the orderlist
+                        orderslist.tokenColtek = usD.resColtek.token
+                    } else if (!tokencheck.status){
+                        //If status is false then restart the token to the new one
+                        const newUsD = {...usD, resColtek: tokencheck.resColtek}
+                        orderslist.tokenColtek = tokencheck.resColtek.token
+                        setUsD(newUsD)
+                    }
+        
+                    let NewOrderlist = []
+                    //Preparanción de datos para imprimir
+                    for (let orden of orderslist.Orden ) {
+                        let newOrder = orden
+                        newOrder.Cantidad = (orden.CantidadSa - orden.CantidadEn)
+                        newOrder.PVenta = orden.VrUnitario
+                        if ((orden.CantidadSa - orden.CantidadEn)>0){
+                            NewOrderlist.push(newOrder)
+                        }
+                    }
+                    orderslist.Order = NewOrderlist
+                    delete orderslist.Orden
+                    //Fin de la preparación de datos para imprimir
+                    //console.log('orderslist', orderslist);
+                    const sendedOrden = await ToRemsionToElectronic(usD.token, orderslist)
+                    //console.log('sendedOrden: ', sendedOrden)
+                    const electronic = true
+                    const print = true
+                    if (print) {
+                        const usDdata = usD
+                        //console.log('Sended orden: ', sendedOrden)
+                        // Render the component as HTML
+                        const ticketHTML = ReactDOMServer.renderToString(<TicketPrint data={sendedOrden} usD={usDdata} Electronic={electronic}/>);
+                        //Send the HTML to Electron for printing
+                        window.electron.send('print-ticket', ticketHTML);
+                        //setShowTicket(true);
+                    }
+                    TheAlert('Se convirtio con exito')
+                    getOrdersPerday()
+                    setShowReprint(false)
+                    setShowToElectronicInvoice(false)
+                } catch (error) {
+                    TheAlert('Se genero un error al convertir')
+                    setShowReprint(false)
+                    setShowToElectronicInvoice(false)
+                    console.error(error)
+                }
             } else {
                 rePrint()
+                getOrdersPerday()
+                setShowReprint(false)
             }
         }
+
         return (
             <div className='theModalContainer'>
                 <div className='theModal-content' style={{width: '35%', height: '30%', position: 'relative'}}>
@@ -537,7 +644,7 @@ export const SalesOfTheDay = ({show, orderslist, width='90%', height='90%'}) => 
                                 <button
                                     className="btnStnd btn1"
                                     style={{backgroundColor: confirmarConvert.toLowerCase() === 'confirmar' ? 'Green': 'grey'}}
-                                    onClick={()=>{rePrint()}}
+                                    onClick={()=>{printTicket()}}
                                     disabled={confirmarConvert.toLowerCase() !== 'confirmar'}
                                     >
                                     Aceptar
@@ -692,8 +799,7 @@ export const SalesOfTheDay = ({show, orderslist, width='90%', height='90%'}) => 
                                     setShowReprint(true)
                                 }
                                 else{
-                                    console.log('Digamos que imprime')
-                                    //rePrint()
+                                    rePrint()
                                 }
                                 }}
                             disabled={selectedOrder !== null? false: true}

@@ -893,3 +893,18 @@ export const ResFiscal = async(tokenColtek,token) => {
         console.log('TheError: '+ error)
     }
 }
+
+export const ToRemsionToElectronic = async(token, data) => {
+    try {
+        const ToRemsionToElectronic = await fetch(`${API_POS}/toremsiontoelectronic`,{
+            method: 'POST',
+            headers: { Accept: 'application/json',
+                                'Content-Type': 'application/json',
+                                'Authorization': `Bearer ${token}`},
+            body: JSON.stringify(data)
+        })
+        return await ToRemsionToElectronic.json()
+    }catch(error) {
+        console.log('TheError: '+ error)
+    }
+}

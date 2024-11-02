@@ -89,97 +89,103 @@ export const ConfirmSaleModal = ({show, sendSale , folio , orderslist, width='50
     };
 
     const chargeTheOrder = async(print) => {
-        const now = new Date();
-        // Obtener la fecha en formato YYYY-MM-DD
-        const date = now.toISOString().split('T')[0];
-        // Obtener la hora en formato HH:MM:SS
-        const time = now.toTimeString().split(' ')[0];
-        if (tipoDePago !== 'Efectivo' &&  referencia === '') {
-            TheAlert('Debe ingresar una referencia para este tipo de pago')
-        } else if (efectivo === 0 && transferencia === '') {
-            TheAlert('Debe ingresar el efectivo o la transferencia para este tipo de pago')
-        } else {
-            if (Object.keys(orderslist.Customer).length === 0){
-                orderslist.Customer = {
-                    Consecutivo: 0,
-                    IdFerreteria: usD.Cod,
-                    Tipo: 0,
-                    NitCC: 222222222222,
-                    Nombre: 'Consumidor final',
-                    Apellido: '',
-                    Telefono1: 0,
-                    Telefono2: 0,
-                    Correo: usD.Email,
-                    Direccion: usD.Direccion,
-                    Barrio: '',
-                    FormaDePago: 0,
-                    LimiteDeCredito: 0,
-                    Nota: '',
-                    Fecha: date + ' ' + time
+        try {
+            const now = new Date();
+            // Obtener la fecha en formato YYYY-MM-DD
+            const date = now.toISOString().split('T')[0];
+            // Obtener la hora en formato HH:MM:SS
+            const time = now.toTimeString().split(' ')[0];
+            if (tipoDePago !== 'Efectivo' &&  referencia === '') {
+                TheAlert('Debe ingresar una referencia para este tipo de pago')
+            } else if (efectivo === 0 && transferencia === '') {
+                TheAlert('Debe ingresar el efectivo o la transferencia para este tipo de pago')
+            } else {
+                if (Object.keys(orderslist.Customer).length === 0){
+                    orderslist.Customer = {
+                        Consecutivo: 0,
+                        IdFerreteria: usD.Cod,
+                        Tipo: 0,
+                        NitCC: 222222222222,
+                        Nombre: 'Consumidor final',
+                        Apellido: '',
+                        Telefono1: usD.Telefono,
+                        Telefono2: 0,
+                        Correo: usD.Email,
+                        Direccion: usD.Direccion,
+                        Barrio: '',
+                        FormaDePago: 0,
+                        LimiteDeCredito: 0,
+                        Nota: '',
+                        Fecha: date + ' ' + time,
+                        Dv: usD.Dv,
+                        ResFiscal: usD.ResFiscal
+                    }
                 }
+                orderslist.RCData = {IdFerreteria: usD.Cod,
+                                    CodResponsable: usD.Cod,
+                                    Responsable: usD.Contacto,
+                                    Folio: folio,
+                                    Fecha: date + ' ' + time,
+                                    Referencia: referencia,
+                                    MedioDePago: tipoDePago,
+                                    Efectivo: efectivo,
+                                    Transferencia: transferencia,
+                                    Motivo: "Venta por caja",
+                                    Comentarios: '',
+                                    Activo: true
+                                    }
+                orderslist.Electronic = electronic
+                //
+                const tokencheck = await valTokenColtek(usD.resColtek.token, usD.token)
+                if (tokencheck.status){
+                    //If status is true then only put the token on the orderlist
+                    orderslist.tokenColtek = usD.resColtek.token
+                } else if (!tokencheck.status){
+                    //If status is false then restart the token to the new one
+                    const newUsD = {...usD, resColtek: tokencheck.resColtek}
+                    orderslist.tokenColtek = tokencheck.resColtek.token
+                    setUsD(newUsD)
+                }
+                let MedioDePagoColtek = 10
+                if (tipoDePago === 'transferencia'){
+                    MedioDePagoColtek = 31
+                }
+                orderslist.MedioDePagoColtek = MedioDePagoColtek
+    
+                if (orderslist.Customer.Tipo === 0) {
+                    //esto es para cedulas
+                    orderslist.Customer.TipoPersona = 2
+                    orderslist.Customer.NombreTipoPersona = 'Persona Natural'
+                    orderslist.Customer.TipoDocumento = 13
+                    orderslist.Customer.NombreTipoDocumento = 'Cédula de ciudadanía '
+                } else if (orderslist.Customer.Tipo === 1) {
+                    //esto es para NIT
+                    orderslist.Customer.TipoPersona = 1
+                    orderslist.Customer.NombreTipoPersona = 'Persona Jurídica'
+                    orderslist.Customer.TipoDocumento = 31
+                    orderslist.Customer.NombreTipoDocumento = 'NIT'
+                }
+                //const resolucion = await ResolucionColtek(orderslist.tokenColtek)
+                //console.log('resolucion: ', resolucion)
+                //console.log('orderlist: ', orderslist)
+                const sendedOrden = await NewSale(orderslist)
+                //console.log('sendedOrden: ', sendedOrden)
+                //const metodosDePago = await paymentMethodsColtek('http://sivar.colsad.com',orderslist.tokenColtek)
+                //console.log('metodosDePago: ', metodosDePago)
+                if (print) {
+                    const usDdata = usD
+                    //console.log('Sended orden: ', sendedOrden)
+                    // Render the component as HTML
+                    const ticketHTML = ReactDOMServer.renderToString(<TicketPrint data={sendedOrden} usD={usDdata} Electronic={electronic}/>);
+                    //Send the HTML to Electron for printing
+                    window.electron.send('print-ticket', ticketHTML);
+                    //setShowTicket(true);
+                }
+                sendSale()
+                show(false)
             }
-            orderslist.RCData = {IdFerreteria: usD.Cod,
-                                CodResponsable: usD.Cod,
-                                Responsable: usD.Contacto,
-                                Folio: folio,
-                                Fecha: date + ' ' + time,
-                                Referencia: referencia,
-                                MedioDePago: tipoDePago,
-                                Efectivo: efectivo,
-                                Transferencia: transferencia,
-                                Motivo: "Venta por caja",
-                                Comentarios: '',
-                                Activo: true
-                                }
-            orderslist.Electronic = electronic
-            //
-            const tokencheck = await valTokenColtek(usD.resColtek.token, usD.token)
-            if (tokencheck.status){
-                //If status is true then only put the token on the orderlist
-                orderslist.tokenColtek = usD.resColtek.token
-            } else if (!tokencheck.status){
-                //If status is false then restart the token to the new one
-                const newUsD = {...usD, resColtek: tokencheck.resColtek}
-                orderslist.tokenColtek = tokencheck.resColtek.token
-                setUsD(newUsD)
-            }
-            let MedioDePagoColtek = 10
-            if (tipoDePago === 'transferencia'){
-                MedioDePagoColtek = 31
-            }
-            orderslist.MedioDePagoColtek = MedioDePagoColtek
-
-            if (orderslist.Customer.Tipo === 0) {
-                //esto es para cedulas
-                orderslist.Customer.TipoPersona = 2
-                orderslist.Customer.NombreTipoPersona = 'Persona Natural'
-                orderslist.Customer.TipoDocumento = 13
-                orderslist.Customer.NombreTipoDocumento = 'Cédula de ciudadanía '
-            } else if (orderslist.Customer.Tipo === 1) {
-                //esto es para NIT
-                orderslist.Customer.TipoPersona = 1
-                orderslist.Customer.NombreTipoPersona = 'Persona Jurídica'
-                orderslist.Customer.TipoDocumento = 31
-                orderslist.Customer.NombreTipoDocumento = 'NIT'
-            }
-            //const resolucion = await ResolucionColtek(orderslist.tokenColtek)
-            //console.log('resolucion: ', resolucion)
-            console.log('orderlist: ', orderslist)
-            const sendedOrden = await NewSale(orderslist)
-            //console.log('sendedOrden: ', sendedOrden)
-            //const metodosDePago = await paymentMethodsColtek('http://sivar.colsad.com',orderslist.tokenColtek)
-            //console.log('metodosDePago: ', metodosDePago)
-            if (print) {
-                const usDdata = usD
-                //console.log('Sended orden: ', sendedOrden)
-                // Render the component as HTML
-                const ticketHTML = ReactDOMServer.renderToString(<TicketPrint data={sendedOrden} usD={usDdata} Electronic={electronic}/>);
-                //Send the HTML to Electron for printing
-                window.electron.send('print-ticket', ticketHTML);
-                //setShowTicket(true);
-            }
-            sendSale()
-            show(false)
+        } catch (error) {
+            TheAlert('Ocurrio un error al generar la venta', error)
         }
     }
 
