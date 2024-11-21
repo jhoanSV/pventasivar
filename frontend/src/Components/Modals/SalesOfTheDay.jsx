@@ -11,6 +11,8 @@ import { TokenV } from '../../App';
 import { Formater } from '../../App';
 import ReactDOMServer from 'react-dom/server';
 import { TicketPrint } from '../TickerPrint';
+import progress from '../../Assets/AVIF/progress.gif';
+import CargadoConExito from '../../Assets/AVIF/CargadoConExito.png'
 
 
 export const SalesOfTheDay = ({show, orderslist, width='90%', height='90%'}) => {
@@ -26,6 +28,8 @@ export const SalesOfTheDay = ({show, orderslist, width='90%', height='90%'}) => 
     const [ showConfirm, setShowConfirm ] = useState(false);
     const [ showReprint, setShowReprint ] = useState(false);
     const [ showToElectronicInvoice, setShowToElectronicInvoice ] = useState(false);
+    const [ visiblevCargando, setVisiblevCargando ] = useState(false);
+    const [ visibleEnvioExitoso, setVisibleEnvioExitoso] = useState(false);
     const { setSection, setSomeData, usD, setUsD, setLogged } = useTheContext();
     // for the tables of the order and the selected order
     const isEditingRef = useRef(false);
@@ -314,6 +318,7 @@ export const SalesOfTheDay = ({show, orderslist, width='90%', height='90%'}) => 
     const returnTheOrder = async(TipoReclamo, cantidad) => {
         const confirmCacelTheSale = await TheAlert('¿Esta seguro que desea ' + ( TipoReclamo === 1 ? 'devolver el producto':'cancelar la venta') + '?, esta acción es irreversible', 1)
         if (confirmCacelTheSale) {
+            setVisiblevCargando(true)
             const now = new Date();
             // Obtener la fecha en formato YYYY-MM-DD
             const date = now.toISOString().split('T')[0];
@@ -382,8 +387,13 @@ export const SalesOfTheDay = ({show, orderslist, width='90%', height='90%'}) => 
             console.log("fila: ", fila)
             await CancelTheSale(fila)
             const today = formatDate(new Date());
-            TheAlert('Se hizo la devolución con exito')
+            //TheAlert('Se hizo la devolución con exito')
             getOrdersPerday()
+            setVisiblevCargando(false)
+            setVisibleEnvioExitoso(true)
+            setTimeout(() => {  
+                setVisibleEnvioExitoso(false)
+              }, 2000);
         }
     };
 
@@ -475,11 +485,67 @@ export const SalesOfTheDay = ({show, orderslist, width='90%', height='90%'}) => 
         }
     };
 
+    const ModarChargin = () => {
+        return(
+            <div
+                className='theModalContainer'
+                style={{
+                    display: 'flex',
+                    justifyContent: 'center', // Centra horizontalmente
+                    alignItems: 'center',    // Centra verticalmente
+                    height: '100vh',         // Ocupa toda la altura de la ventana
+                    backgroundColor: 'rgba(0, 0, 0, 0.5)', // Fondo semitransparente (opcional)
+                  }}>
+                <div className='theModal-content' style={{width: '400px', height: '400px', position: 'relative'}}>
+                    <div className='theModal-body' style={{display: 'flex',  flexDirection: 'column', justifyContent: 'center', alignItems: 'center'}}>
+                        <img 
+                            src={progress}
+                            style={{
+                                width: '80%',
+                                height: 'auto', // Mantiene la proporción de la imagen
+                              }}
+                            alt="Cargando..."/>
+                        <label style={{ marginTop: '10px', fontSize: '30px', textAlign: 'center', color: '#193773' }}>
+                            <strong>Cargando...</strong>
+                        </label>
+                    </div>
+                </div>
+            </div>
+        )
+    }
+
+    const ModarSuccessfulSubmission = () => {
+        return(
+            <div
+                className='theModalContainer'
+                style={{
+                    display: 'flex',
+                    justifyContent: 'center', // Centra horizontalmente
+                    alignItems: 'center',    // Centra verticalmente
+                    height: '100vh',         // Ocupa toda la altura de la ventana
+                    backgroundColor: 'rgba(0, 0, 0, 0.5)', // Fondo semitransparente (opcional)
+                  }}>
+                <div className='theModal-content' style={{width: '400px', height: '400px', position: 'relative'}}>
+                    <div className='theModal-body' style={{display: 'flex',  flexDirection: 'column', justifyContent: 'center', alignItems: 'center'}}>
+                        <img 
+                            src={CargadoConExito}
+                            style={{
+                                width: '80%',
+                                height: 'auto', // Mantiene la proporción de la imagen
+                              }}
+                            alt="CargadoConExito"/>
+                    </div>
+                </div>
+            </div>
+        )
+    }
+
     const ConfirmPrintModal= ()=>{
         const [ confirmarConvert, setConfirmarConvert ] = useState('')
         const printTicket =async()=>{
             if (showToElectronicInvoice === true && confirmarConvert.toLowerCase() === 'confirmar') {
                 try {
+                    setVisiblevCargando(true)
                     const now = new Date();
                     // Obtener la fecha en formato YYYY-MM-DD
                     const date = now.toISOString().split('T')[0];
@@ -579,7 +645,12 @@ export const SalesOfTheDay = ({show, orderslist, width='90%', height='90%'}) => 
                         window.electron.send('print-ticket', ticketHTML);
                         //setShowTicket(true);
                     }
-                    TheAlert('Se convirtio con exito')
+                    setVisiblevCargando(false)
+                    setVisibleEnvioExitoso(true)
+                    setTimeout(() => {  
+                        setVisibleEnvioExitoso(false)
+                    }, 2000);
+                    //TheAlert('Se convirtio con exito')
                     getOrdersPerday()
                     setShowReprint(false)
                     setShowToElectronicInvoice(false)
@@ -674,7 +745,9 @@ export const SalesOfTheDay = ({show, orderslist, width='90%', height='90%'}) => 
                     </div>
                     <div className='twoColumnsContainer'>
                         <div>
-                            <div>
+                            <div style={{display: 'flex', 
+                                justifyContent: 'space-between',
+                                alignItems: 'center'}}>
                                 <label><strong>Buscar: </strong></label>
                                 <input
                                     type='text'
@@ -810,6 +883,8 @@ export const SalesOfTheDay = ({show, orderslist, width='90%', height='90%'}) => 
                 {showReturnModal && <ReturnProduct show={setShowReturnModal} row={orders[selectedfila]} index={selectedfilaOrder} updateOrders={ChangueSelectedOrder} returnP={returnTheOrder}/>}
                 {showConfirm && <UserConfirm show={setShowConfirm} confirm={returnTheOrder} />}
                 {showReprint && <ConfirmPrintModal/>}
+                { visiblevCargando && <ModarChargin/>}
+                { visibleEnvioExitoso && <ModarSuccessfulSubmission/>}
             </div>
         </div>
     );

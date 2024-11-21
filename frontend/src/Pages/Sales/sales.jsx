@@ -11,7 +11,7 @@ import { StartOfCash } from '../../Components/Modals/StartOfCash';
 import "./_sales.scss";
 import ticketsJson from '../../tickets-text.json';
 import { useTheContext } from '../../TheProvider';
-import { CashFlow, Inventory } from '../../api';
+import { CashFlow, Inventory, Alias} from '../../api';
 import { CSSTransition } from 'react-transition-group';
 import { Formater } from '../../App';
 
@@ -77,12 +77,14 @@ export function Sales(){
     const [ selectProduct, setSelectProduct] = useState(null);
     const [ inputValue, setInputValue] = useState('');
     const [ showFL, setShowFL] = useState(false);
+    const [ aliasList, setAliasList] =  useState([])
     //const [limit, setLimit] = useState(0);
     const [ sBText, setSBText] = useState('');
     const [ invList, setInvList] = useState([]);
     const [ selectedFLI, setSelectedFLI] = useState(0);
-    const nodeRef = useRef(null), divSRef = useRef();
+    const nodeRef = useRef(null),divSRef = useRef();
     const refList = useRef([]), invListRef = useRef([]);
+    const refAliasList = useRef([]);
     const selectedfilaRef = useRef(selectedfila);
     const selectedTabRef = useRef(currentTab);
     const selectedFLIRef = useRef(selectedFLI);
@@ -433,12 +435,60 @@ export function Sales(){
         let c = refList.current;
         console.log(c);
         if (text !== ''){
-            sl(c.filter((i)=>filterByText(i, text)));
+            //sl(c.filter((i)=>filterByText(i, text)));
+            filterProduct(text)
         }else{
             fetchInventoryList();
         }
     }
 
+    ///////////////////////////////////////////////////////////
+    //Filter of products with a alias
+    const filterProduct = (text) => {
+        //Searh the list of products that includes the text, either because it is in the "products" table or in the "alias" table  
+        let proData = refList.current//The whole table "products".
+        let aliasData = refAliasList.current//The whole table "alias".
+        try {
+            if (text === '' || text < 2) {
+                setInvList([]);
+            }else{
+              console.log('ax2');
+              // Define a case-insensitive text filter function
+              const filterByText = (item) =>
+              item.Cod.toLowerCase().includes(text) ||
+              item.Descripcion.toLowerCase().includes(text);
+              // Filter products based on the text
+              const TFiltro1 = proData.filter(filterByText);
+              // Filter aliases based on the text
+              const TFiltro2 = aliasData.filter((item) => item.Alias.toLowerCase().includes(text));
+              // Extract unique cod values from aliasData
+              const CodAlias = [...new Set(TFiltro2.map((item) => item.Cod))];
+              // Filter products based on unique cod values
+              const aliasProducts = proData.filter((item) => CodAlias.includes(item.Cod));
+              // Extract unique cod values from aliasProducts
+              //const uniqueAliasProducts = [...new Set(aliasProducts.map((item) => item.cod))];
+              // Combine the unique cod values from TFiltro1 and aliasProducts
+              const filtro = [...new Set([...TFiltro1, ...aliasProducts])];
+              // Convert the json into an array of objects to reorder by score
+              const dataArray = filtro.map((value, key) => ({ key, ...value }));
+              // Order the array deppending on the score
+              dataArray.sort((a, b) => b.Score - a.Scote);
+              // Convert the array into a json object
+              //!const sortedJson = JSON.stringify(dataArray);
+              //sortedJson2 = sortedJson
+              setInvList(dataArray)
+              //setFilteredProducts(sortedJson);
+            }
+        } catch (error) {
+            //sortedJson2 = false
+            console.log('error-->' + error);
+            setInvList(false)
+        }
+      }
+
+
+
+    ////////////////////////////////////////////////////////////
     const addProduct = async(item) =>{
         const PAdded = JSON.parse(localStorage.getItem('PAdded'));
         //let paddedItem;
@@ -513,9 +563,12 @@ export function Sales(){
         const list = await Inventory({
             "IdFerreteria": usD.Cod
         })
+        const aliasList1 = await Alias()
+        setAliasList(aliasList1)
         if(list){
             setInvList(list);
             refList.current = list;
+            refAliasList.current = aliasList1;
         }
     }
 

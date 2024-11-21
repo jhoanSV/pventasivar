@@ -283,7 +283,7 @@ export const Newproduct = () => {
             TheAlert('El campo '+ text1 + ' no puede estar vacío');
             return;
         }
-        if(productData.Clase!==0&&productData.Medidas.length===0){
+        if(productData.Clase!==0 && productData.Medidas.length===0){
             TheAlert('Revisar medidas de venta para granel');
             return;
         }
@@ -409,6 +409,7 @@ export const Newproduct = () => {
     useEffect(() => {
         if (someData) {
             toModifyProduct(someData)
+            console.log('Datos del producto: ', someData)
         } else {
             setSection('Nuevo Producto');
         }

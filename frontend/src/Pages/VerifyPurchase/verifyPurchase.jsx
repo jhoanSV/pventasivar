@@ -102,11 +102,12 @@ export function VerifyPurchase(){
             if(order[isSelected].PVenta !== null || e.target.checked === false){
                 const res = await UpdateVefiedPurchase({
                     "Verificado": (e.target.checked),
-                    "IdFerreteria": 242,
-                    "NPreFactura": 10725,
+                    "IdFerreteria": usD.Cod,
+                    "NPreFactura": someData.NPreFactura,
                     "Cod" : item.Cod
                 });
-                console.log(res);
+                item.Verificado = e.target.checked ? 1 : 0;
+                console.log('res: ', res);
             }else{
                 e.target.checked = false;
                 TheAlert('El precio de venta de "' + order[isSelected].Descripcion + '" no puede estar vacío ');
@@ -185,6 +186,7 @@ export function VerifyPurchase(){
     }
 
     const recepcionar = async() =>{
+        console.log('order: ', order)
         const allVerified = order.every(item => item.Verificado === 1);
         if(allVerified){
             const theOrder = order.map(item => ({
@@ -255,7 +257,7 @@ export function VerifyPurchase(){
         <section className="ShoppingList">
             <div className='Titles'>
                 <h2>Factura</h2>
-                <h2>{someData.NPreFactura}</h2>
+                <h2>{someData.FacturaElectronica}</h2>
             </div>
             <div className='Row'>
                 <button className='btn1Stnd' onClick={()=>(verifyProduct())}
@@ -298,7 +300,7 @@ export function VerifyPurchase(){
                         <label style={{fontWeight: 600}}>N° pre-factura:</label>
                     </div>
                     <div className='column'>
-                        <label>000000</label>
+                        <label>{someData.NPreFactura}</label>
                     </div>
                 </div>
                 <div className="Row">

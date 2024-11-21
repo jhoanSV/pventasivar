@@ -87,6 +87,17 @@ export const VerifyToken = async(dataUser, token) => {
     }
 }
 
+export const Alias = async() => {
+    /*Return the list of alias of the products*/
+    try {
+        const res = await fetch(`${API}/TAlias`, {
+            method: 'GET'})
+        return await res.json()
+    }catch(error) {
+        console.log(error)
+    }
+}
+
 //*All related to products %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 export const NuevoProducto = async(NewproductValues) => {
@@ -304,6 +315,25 @@ export const AddProduct = async(AddProduct) => {
         return res
     }catch(error) {
         console.log(error)
+    }
+}
+
+export const SubClases = async(ClientlistValues) => {
+    /*get the list of clientes deppending on the hardware store
+    you have to send a json of the form:
+    {
+        "IdFerreteria": "242"
+    }
+    */
+    try {
+        const res = await fetch(`${API_POS}/subclases`,{
+            method: 'POST',
+            headers: { Accept: 'application/json','Content-Type': 'application/json'},
+            body: JSON.stringify(ClientlistValues)
+        })
+        return await res.json()
+    }catch(error) {
+        console.log('TheError: '+ error)
     }
 }
 

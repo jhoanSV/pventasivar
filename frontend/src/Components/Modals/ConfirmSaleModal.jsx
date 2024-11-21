@@ -9,6 +9,8 @@ import { TheAlert } from '../TheAlert';
 import '../../Fonts_CSS/PayIcon.css';
 import { Formater} from '../../App';
 import { ResolucionColtek, valTokenColtek, paymentMethodsColtek} from '../../api';
+import progress from '../../Assets/AVIF/progress.gif';
+import CargadoConExito from '../../Assets/AVIF/CargadoConExito.png'
 
 export const ConfirmSaleModal = ({show, sendSale , folio , orderslist, width='50%', height='50%', totalE}) => {
     const [ efectivo, setEfectivo] = useState(5000)
@@ -19,6 +21,8 @@ export const ConfirmSaleModal = ({show, sendSale , folio , orderslist, width='50
     const [ referencia, setReferencia] = useState('');
     const [ showTicket, setShowTicket] = useState(false)
     const [ electronic, setElectronic ] = useState(false);
+    const [ visiblevCargando, setVisiblevCargando ] = useState(false);
+    const [ visibleEnvioExitoso, setVisibleEnvioExitoso] = useState(false);
     const { setSection, setSomeData, usD, setUsD } = useTheContext();
 
     const inputefectivoRef = useRef(null);
@@ -88,8 +92,64 @@ export const ConfirmSaleModal = ({show, sendSale , folio , orderslist, width='50
         setTotal(suma)
     };
 
+    const ModarChargin = () => {
+        return(
+            <div
+                className='theModalContainer'
+                style={{
+                    display: 'flex',
+                    justifyContent: 'center', // Centra horizontalmente
+                    alignItems: 'center',    // Centra verticalmente
+                    height: '100vh',         // Ocupa toda la altura de la ventana
+                    backgroundColor: 'rgba(0, 0, 0, 0.5)', // Fondo semitransparente (opcional)
+                  }}>
+                <div className='theModal-content' style={{width: '400px', height: '400px', position: 'relative'}}>
+                    <div className='theModal-body' style={{display: 'flex',  flexDirection: 'column', justifyContent: 'center', alignItems: 'center'}}>
+                        <img 
+                            src={progress}
+                            style={{
+                                width: '80%',
+                                height: 'auto', // Mantiene la proporción de la imagen
+                              }}
+                            alt="Cargando..."/>
+                        <label style={{ marginTop: '10px', fontSize: '30px', textAlign: 'center', color: '#193773' }}>
+                            <strong>Cargando...</strong>
+                        </label>
+                    </div>
+                </div>
+            </div>
+        )
+    }
+
+    const ModarSuccessfulSubmission = () => {
+        return(
+            <div
+                className='theModalContainer'
+                style={{
+                    display: 'flex',
+                    justifyContent: 'center', // Centra horizontalmente
+                    alignItems: 'center',    // Centra verticalmente
+                    height: '100vh',         // Ocupa toda la altura de la ventana
+                    backgroundColor: 'rgba(0, 0, 0, 0.5)', // Fondo semitransparente (opcional)
+                  }}>
+                <div className='theModal-content' style={{width: '400px', height: '400px', position: 'relative'}}>
+                    <div className='theModal-body' style={{display: 'flex',  flexDirection: 'column', justifyContent: 'center', alignItems: 'center'}}>
+                        <img 
+                            src={CargadoConExito}
+                            style={{
+                                width: '80%',
+                                height: 'auto', // Mantiene la proporción de la imagen
+                              }}
+                            alt="CargadoConExito"/>
+                    </div>
+                </div>
+            </div>
+        )
+    }
+
     const chargeTheOrder = async(print) => {
         try {
+            setVisiblevCargando(true);
             const now = new Date();
             // Obtener la fecha en formato YYYY-MM-DD
             const date = now.toISOString().split('T')[0];
@@ -169,20 +229,51 @@ export const ConfirmSaleModal = ({show, sendSale , folio , orderslist, width='50
                 //console.log('resolucion: ', resolucion)
                 //console.log('orderlist: ', orderslist)
                 const sendedOrden = await NewSale(orderslist)
+                console.log('sendedOrden: ', sendedOrden)
+                if (Object.keys(sendedOrden).length === 0){
+                    setVisiblevCargando(false)
+                    TheAlert('Ocurrio un error al enviar la venta')
+                } else {
+                    if (print) {
+                        const usDdata = usD
+                        //console.log('Sended orden: ', sendedOrden)
+                        // Render the component as HTML
+                        const ticketHTML = ReactDOMServer.renderToString(<TicketPrint data={sendedOrden} usD={usDdata} Electronic={electronic}/>);
+                        //Send the HTML to Electron for printing
+                        window.electron.send('print-ticket', ticketHTML);
+                        //setShowTicket(true);
+                    }
+                }
+                setVisiblevCargando(false)
+                setVisibleEnvioExitoso(true)
+                setTimeout(() => {  
+                    sendSale()
+                    show(false)
+                    setVisibleEnvioExitoso(false)
+                  }, 2000);
+                /*try {
+                    const sendedOrden = await NewSale(orderslist);
+                    if (print) {
+                        const usDdata = usD
+                        //console.log('Sended orden: ', sendedOrden)
+                        // Render the component as HTML
+                        const ticketHTML = ReactDOMServer.renderToString(<TicketPrint data={sendedOrden} usD={usDdata} Electronic={electronic}/>);
+                        //Send the HTML to Electron for printing
+                        window.electron.send('print-ticket', ticketHTML);
+                        //setShowTicket(true);
+                    }
+                    sendSale()
+                    show(false)
+                    //setSuccess(true);
+                    //setError(null); // Limpia errores previos
+                } catch (error) {
+                    //setError(error.message || 'Ocurrió un error al enviar la venta.');
+                    //setSuccess(false); // Limpia éxitos previos
+                    TheAlert('Ocurrio un error al generar la venta', error)
+                }*/
                 //console.log('sendedOrden: ', sendedOrden)
                 //const metodosDePago = await paymentMethodsColtek('http://sivar.colsad.com',orderslist.tokenColtek)
                 //console.log('metodosDePago: ', metodosDePago)
-                if (print) {
-                    const usDdata = usD
-                    //console.log('Sended orden: ', sendedOrden)
-                    // Render the component as HTML
-                    const ticketHTML = ReactDOMServer.renderToString(<TicketPrint data={sendedOrden} usD={usDdata} Electronic={electronic}/>);
-                    //Send the HTML to Electron for printing
-                    window.electron.send('print-ticket', ticketHTML);
-                    //setShowTicket(true);
-                }
-                sendSale()
-                show(false)
             }
         } catch (error) {
             TheAlert('Ocurrio un error al generar la venta', error)
@@ -325,6 +416,9 @@ export const ConfirmSaleModal = ({show, sendSale , folio , orderslist, width='50
                     </div>
                 </div>
             }
+
+            { visiblevCargando && <ModarChargin/>}
+            { visibleEnvioExitoso && <ModarSuccessfulSubmission/>}
         </div>
     );
 }

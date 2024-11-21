@@ -47,6 +47,7 @@ export function Newcustomer(){
             });
             const customerType = await clientOccupation()
             const fiscalRes = await ResFiscal(usD.tokenColtek, usD.token)
+            console.log('fiscalRes: ', fiscalRes)
             setOptionsResFiscal(fiscalRes.FiscalResponsibility)
             setOptionsOccupations(customerType)
             if (listado) {

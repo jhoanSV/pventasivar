@@ -49,7 +49,9 @@ export const StartOfCash = ({show, aceptar}) => {
                     <div style={{
                         textAlign: 'center',
                         marginBottom: '10px',
-                        display: 'flex'
+                        display: 'flex',
+                        flexDirection: 'column', // Asegura apilamiento vertical
+                        alignItems: 'center'
                         }}>
                         <label>Bienvenido {usD.Contacto} un gusto verte de nuevo<br/></label>
                         <label>¿Con cuanto dinero inicias la caja hoy?</label>

@@ -1,3 +1,5 @@
+@import "../../scss/_colors.scss";
+
 .twoColumnsContainer{
     display: grid;
     grid-template-columns: repeat(2, 1fr); /* Dos columnas de igual tamaño */
@@ -20,10 +22,11 @@
 
 .header_Sales_Of_the_Day {
     display: flex;
-    background-color: rgb(202, 202, 202);
     padding: 0px 60px;
     gap: 40px;
     margin-bottom: 3px;
+    background: linear-gradient(to right, $azulPrincipal, #FFFFFF);
+    color: $blancoPrincipal;
 }
 
 #ReprintButtons {

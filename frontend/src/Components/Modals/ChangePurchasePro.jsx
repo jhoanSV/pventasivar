@@ -48,21 +48,31 @@ export const ChangePurchasePro = ({data, show, width}) => {
             "PVenta": data.PVenta,
         });
         console.log(theCost);
-        const res = await ModifyPurchaseProduct({
-            "ConsecutivoProd": data.ConsecutivoProd,
-            "Cod" : data.Cod,
-            "IdFerreteria": usD.Cod,
-            "NPreFactura" : someData.NPreFactura,
-            "PCosto": theCost,
-            "PVenta": data.PVenta,
-        });
-        if(res && res.message === 'Transacción completada con éxito'){
+
+        if (data.PVenta !== null && data.PCostoLP !== null && someData.Estado !== 'Recibido'){
+            const res = await ModifyPurchaseProduct({
+                "ConsecutivoProd": data.ConsecutivoProd,
+                "Cod" : data.Cod,
+                "IdFerreteria": usD.Cod,
+                "NPreFactura" : someData.NPreFactura,
+                "PCosto": theCost,
+                "PVenta": data.PVenta,
+            });
+            if(res && res.message === 'Transacción completada con éxito'){
+                show(false);
+                data.Verificado = 1
+                await TheAlert('Producto modificado con éxito');
+                document.getElementById('id'+data.Cod).checked = true;
+            } else {
+                await TheAlert('Ocurrió un error inesperado al modificar el producto');
+            }
+        } else {
             show(false);
             data.Verificado = 1
-            await TheAlert('Producto modificado con éxito');
+            data.InvMinimo = 1;
+            data.InvMaximo = 1;
+            data.PCostoLP = 0;
             document.getElementById('id'+data.Cod).checked = true;
-        } else {
-            await TheAlert('Ocurrió un error inesperado al modificar el producto');
         }
     }
 
@@ -82,7 +92,7 @@ export const ChangePurchasePro = ({data, show, width}) => {
                     <label className='subtitle'>{data.Descripcion}</label>
                 </div>
                 {(data.PVenta !== null && data.PCostoLP !== null && someData.Estado !== 'Recibido') &&
-                    <div className='Rows' style={{paddingBottom: '10px', borderBottom: '1px solid'}}>
+                    <div className='Rows' style={{paddingBottom: '10px', borderBottom: '1px solid', marginTop: '0px'}}>
                         <div className='column1'>
                             <label className='subtitle'>Inventario actual:</label>
                         </div>
@@ -140,16 +150,19 @@ export const ChangePurchasePro = ({data, show, width}) => {
                     </div>
                     <div className='form-row'>
                         <label className='subtitle'>Ganancia:</label>
-                        {someData.Estado === 'Por ingresar' ?
-                            <TheInput
-                                numType='real'
-                                val={Formater(newGanancia)}
-                                onchange={(e)=>ganancia(e)}/>
-                        :
-                            <label>
-                                {Formater(newGanancia)}
-                            </label>
-                        }
+                        <div>
+                            {someData.Estado === 'Por ingresar' ?
+                                <TheInput
+                                    numType='real'
+                                    val={Formater(newGanancia)}
+                                    onchange={(e)=>ganancia(e)}/>
+                            :
+                                <label>
+                                    {Formater(newGanancia)}
+                                </label>
+                            }
+                            <label className='subtitle'>%</label>
+                        </div>
                     </div>
                     <div className='form-row'>
                         <label className='subtitle'>

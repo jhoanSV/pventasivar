@@ -9,13 +9,13 @@
         "NumeroFinal":10000,
         "ClaveTecnica":"thtdEqNQPCyVbVgo"
         },
-    "Factura":"FVCS19",
-    "Fecha":"2024-11-01",
-    "Hora":"15:03:24",
+    "Factura":"FVCS23",
+    "Fecha":"2024-11-06",
+    "Hora":"08:49:25",
     "Observacion":"Observacion",
     "FormaDePago":"1",
     "MedioDePago":10,
-    "FechaVencimiento":"2024-11-01",
+    "FechaVencimiento":"2024-11-06",
     "CantidadArticulos":2,
     "Cliente":{
         "TipoPersona":2,
@@ -23,7 +23,7 @@
         "TipoDocumento":13,
         "NombreTipoDocumento":"Cédula de ciudadanía ",
         "Documento":222222222222,
-        "Dv":"6",
+        "Dv":6,
         "NombreComercial":"Consumidor final ",
         "RazonSocial":"Consumidor final ",
         "Telefono":"3219155489",
@@ -41,66 +41,56 @@
         "DetallesTributario":{
             "Codigo":"01",
             "Nombre":"IVA"
-            }
-        },
-    "Articulos":[
-        {
-        "CodigoInterno":214,
-        "Nombre":"Fusible carro Gigante 40 Amp",
+        }},
+    "Articulos":[{
+        "CodigoInterno":40,
+        "Nombre":"Producto prueba 5",
         "Cantidad":1,
-        "PrecioUnitario":210,
-        "Total":210,
+        "PrecioUnitario":1255,
+        "Total":1054.6218487394958,
         "Regalo":"false",
         "DescuentoYRecargos":[],
         "Impuestos":{
             "IVA":{
                 "Codigo":"01",
-                "Total":210,
-                "porcentajes":[
-                    {"porcentaje":19,
-                    "Base":176.47058823529412,
-                    "Total":210}
-                    ]
-                }
-            }
-        },
-        {
-        "CodigoInterno":20,
-        "Nombre":"ENtertaiment",
+                "Total":200.37815126050418,
+                "porcentajes":[{
+                    "porcentaje":19,
+                    "Base":1054.6218487394958,
+                    "Total":200.37815126050418
+                    }
+                ]}
+            }},{
+        "CodigoInterno":56,
+        "Nombre":"producto de sivar",
         "Cantidad":1,
-        "PrecioUnitario":7000,
-        "Total":7000,
+        "PrecioUnitario":1000,
+        "Total":840.3361344537816,
         "Regalo":"false",
         "DescuentoYRecargos":[],
         "Impuestos":{
             "IVA":{
                 "Codigo":"01",
-                "Total":7000,
-                "porcentajes":[
-                    {"porcentaje":19,
-                    "Base":5882.352941176471,
-                    "Total":7000}
-                    ]
-                }
-            }
-        }],
+                "Total":159.6638655462184,
+                "porcentajes":[{
+                    "porcentaje":19,
+                    "Base":840.3361344537816,
+                    "Total":159.6638655462184
+                    }]
+                    }
+        }}],
     "Totales":{
-        "Bruto":6058.823529411765,
-        "BaseImpuestos":6058.823529411765,
+        "Bruto":1894.9579831932774,
+        "BaseImpuestos":1894.9579831932774,
         "Descuentos":0,
         "Cargos":0,
-        "APagar":7210,
-        "Impuestos":1369.9
-        },
+        "APagar":2255,
+        "Impuestos":428.45},
     "Impuestos":{
         "IVA":{
             "Codigo":"01",
             "porcentajes":[{
                 "porcentaje":19,
-                "Base":5882.352941176471,
-                "Total":7000
-                }],
-            "Total":7210
-            }
-        }
-    }
+                "Base":840.3361344537816,
+                "Total":159.6638655462184}],
+        "Total":2255}}}
