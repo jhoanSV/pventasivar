@@ -5,8 +5,10 @@ import { useTheContext } from '../../TheProvider';
 import { TheAlert } from '../TheAlert';
 
 export const ChangePurchasePro = ({data, show, width}) => {
-    console.log(data);
+    const [colorPVenta, setColorPVenta ] = useState('black')
     const [newPventa, setNewPventa] = useState(data.PVenta ? data.PVenta : '');
+    
+    console.log("datos del producto: ", data);
     // eslint-disable-next-line
     const [theCost, setTheCost] = useState(data.PCostoLP ? data.PCostoLP : data.PCosto);
     const [newGanancia, setNewGanancia] = useState(
@@ -121,7 +123,7 @@ export const ChangePurchasePro = ({data, show, width}) => {
                             <label className='subtitle'>Precio Venta:</label>
                         </div>
                         <div className='column2'>
-                        <label>$ {data.PVenta ? Formater(data.PVenta) : Formater(0)}</label>
+                            <label>$ {data.PVenta ? Formater(data.PVenta) : Formater(0)}</label>
                         </div>
                     </div>
                 }
@@ -181,7 +183,13 @@ export const ChangePurchasePro = ({data, show, width}) => {
                                 numType='real'
                                 val={Formater(newPventa)}
                                 pholder={'Nuevo p. Venta'}
-                                onchange={(e)=>precioVenta(e)}>
+                                onchange={(e)=>{precioVenta(e);
+                                    if (parseFloat(e)<parseFloat(data.PCosto))
+                                        {setColorPVenta('red')}
+                                    else
+                                        {setColorPVenta('black')}
+                                }}
+                                sTyle={{color: colorPVenta}}>
                             </TheInput>
                         :
                             <label>$ {Formater(data.PVenta)}</label>

@@ -726,6 +726,7 @@ export function Sales(){
                 </div>
                 <ModalBusca
                     list={refList.current}
+                    Alias = {refAliasList.current}
                     click={askToAddProduct}
                     sh={SearchHandle}
                 />

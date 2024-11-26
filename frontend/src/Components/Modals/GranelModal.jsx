@@ -117,6 +117,8 @@ export const GranelModal = ({show, productData, pctGan, updtState}) => {
                 updtState('Medidas', newMedidas);
                 show(false);
             }
+        } else if (productData.Clase === 0 || productData.Clase === 1 || productData.Clase === 2){
+            show(false);
         }
     };
 
@@ -133,7 +135,7 @@ export const GranelModal = ({show, productData, pctGan, updtState}) => {
                         <span style={{width: '134px', textAlign: 'end', marginRight: '10px'}}>
                             Unidad de medida:
                         </span>
-                        {productData.Clase === 0 || productData.Clase === 1  ?
+                        {productData.Clase === 0 || productData.Clase === 1  || productData.Clase === 2 ?
                             <>
                                 <select value={(productData.Clase!==0&&productData.Medidas.length!==0) ? productData.Clase : ''} name='medida'
                                     onChange={(e)=>{handleMeasureChange(e)}}
@@ -159,7 +161,7 @@ export const GranelModal = ({show, productData, pctGan, updtState}) => {
                                     <th>Medida Unitaria</th>
                                     <th>Costo</th>
                                     <th>P. venta</th>
-                                    <th>% Gananacia</th>                                
+                                    <th>% Ganancia</th>                                
                                 </tr>
                             </thead>
                             {productData.Medidas.length !== 0 &&
@@ -179,7 +181,7 @@ export const GranelModal = ({show, productData, pctGan, updtState}) => {
                                         return (
                                         <tr key={index}>
                                             <td>{Med.Medida}</td>
-                                            {productData.Clase === 0 || productData.Clase === 1?
+                                            {productData.Clase === 0 || productData.Clase === 1 || productData.Clase === 2 ?
                                                 <td>
                                                 <TheInput
                                                         numType='real'

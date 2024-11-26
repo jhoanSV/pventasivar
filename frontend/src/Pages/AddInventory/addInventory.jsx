@@ -3,7 +3,7 @@ import "./_addInventory.scss";
 import { useNavigate } from 'react-router-dom';
 import { useTheContext } from '../../TheProvider';
 import { TheInput } from '../../Components/InputComponent/TheInput';
-import { Inventory, AddProduct  } from '../../api';
+import { Inventory, AddProduct, Alias  } from '../../api';
 import { Flatlist, ModalBusca, TheAlert } from '../../Components';
 import { CSSTransition } from 'react-transition-group';
 import { Formater } from '../../App';
@@ -44,6 +44,7 @@ export function AddInventory(){
     const invListRef = useRef([]);
     const asktoaddRef = useRef(null);
     const theProductRef = useRef([]);
+    const refAliasList = useRef([]);
 
     const handleKeyDown = async(e) => {
         if(document.getElementById('NPinputNP') === document.activeElement){
@@ -88,9 +89,8 @@ export function AddInventory(){
         setShowFL(false)
     }
     
-    const cancel = async() => {
-        const cancelAcept = await TheAlert('Se perderan los cambios si decide cancelar, ¿Desea continuar?', 1)
-        if (cancelAcept) {
+    const cancel = async(valueBoolean) => {
+        if (valueBoolean) {
             setProductData({
                 'Cod': '',
                 'Descripcion': '',
@@ -144,9 +144,11 @@ export function AddInventory(){
         const list = await Inventory({
             "IdFerreteria": usD.Cod
         })
+        const aliasList1 = await Alias()
         if(list){
             setInvList(list);
             refList.current = list;
+            refAliasList.current = aliasList1;
         }
     }
 
@@ -217,8 +219,7 @@ export function AddInventory(){
             if (addTheProduct.status === 200) {
                 const MoreAdd = await TheAlert('Se añadio con exito, ¿desea añadir mas productos?', 1)
                 if (MoreAdd) {
-
-                    cancel()
+                    cancel(true)
                 } else {
                     navigate('/PurchaseList')
                 }
@@ -287,6 +288,7 @@ export function AddInventory(){
                 </div>
                 <ModalBusca
                     list={refList.current}
+                    Alias={refAliasList.current}
                     click={askToAddProduct}
                     sh={SearchHandle}
                 />
@@ -343,7 +345,7 @@ export function AddInventory(){
                     <TheInput
                         val={productData.PVenta}
                         numType={'real'}
-                        onchange={(e)=>{changeValuesProducts('PVenta', Formater(e))}}>
+                        onchange={(e)=>{changeValuesProducts('PVenta', e)}}>
                     </TheInput>
                 </div>
             </div>
@@ -381,7 +383,8 @@ export function AddInventory(){
                 </button>
                 <button
                     className='btnStnd btn1'
-                    onClick={()=>{cancel()}}
+                    onClick={async()=>{ const cancelAcept = await TheAlert('Se perderan los cambios si decide cancelar, ¿Desea continuar?', 1)
+                                        cancel(cancelAcept)}}
                     >Cancelar
                 </button>
                 <button

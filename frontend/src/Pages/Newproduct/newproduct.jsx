@@ -5,7 +5,7 @@ import { useTheContext } from '../../TheProvider';
 import { TheAlert, TheInput, UserConfirm, ModalBusca } from '../../Components';
 import imgPlaceHolder from '../../Assets/AVIF/placeHolderProduct.avif'
 import { GranelModal } from '../../Components/Modals/GranelModal';
-import { NuevoProducto, postUpdateInventory, UpdateProduct, ProductList, AddProduct } from '../../api';
+import { NuevoProducto, postUpdateInventory, UpdateProduct, ProductList, AddProduct, Alias } from '../../api';
 import { CSSTransition } from 'react-transition-group';
 
 export const Newproduct = () => {
@@ -51,6 +51,7 @@ export const Newproduct = () => {
     const invListRef = useRef([]);
     const asktoaddRef = useRef(null);
     const theSomeData = useRef(someData);
+    const refAliasList = useRef([]);
 
     
 
@@ -210,6 +211,7 @@ export const Newproduct = () => {
 
     const handleBtn1 = async () => {
         //*Validations-------------------------------------------------------
+        console.log('Entro en handleBtn1')
         let emptValue;
         for (let key in productData) {
             if ((key !== 'Detalle' &&
@@ -290,7 +292,7 @@ export const Newproduct = () => {
         
         const fecha = new Date();
         const today = fecha.getFullYear() + '-' + (fecha.getMonth() + 1) + '-' + fecha.getDate() + ' ' + fecha.getHours() + ':' + fecha.getMinutes() + ':' + fecha.getSeconds();
-        if (!fromSivarToNew) {
+        if (fromSivarToNew) {
             const codeFind = productCodes.map(code => code.toLowerCase()).includes(productData.Cod.toLowerCase());
             if((productData.Cod !== someData.Cod) && codeFind){
                 TheAlert('El código de producto ya existe');
@@ -305,7 +307,7 @@ export const Newproduct = () => {
             console.log(a);
             
             
-            if(modificarProducto && ((someData.PCosto!==0&&!someData.PVenta!==0)||someData.Inventario!==0)){
+            if(modificarProducto && ((someData.PCosto !== 0 && !someData.PVenta !== 0) || someData.Inventario !== 0)){
                 console.log('Es para modificar un producto ya creado pero que no tiene inventario por lo que no está creado en mi inventario sjj');
                 const res = await postUpdateInventory({
                     "IdFerreteria": someData.IdFerreteria,
@@ -331,26 +333,6 @@ export const Newproduct = () => {
                 TheAlert('Ocurrió un error inesperado al modificar el producto');
             }
         } else {
-            /*const addInv = {
-                IdFerreteria: usD.Cod,
-                ConsecutivoProd: theSomeData.current.Consecutivo,
-                Cantidad: 0,
-                Cod: theSomeData.current.Cod,
-                Descripcion: theSomeData.current.Descripcion,
-                PCosto: 0,
-                PCostoLP: theSomeData.current.PCosto,
-                Fecha: today,
-                Iva: 19,
-                CodResponsable: usD.Cod,
-                Responsable: usD.Contacto,
-                Motivo: 'Agregar producto a inventario',
-                ConsecutivoCompra: 0,
-                Medida: 'Unidad',
-                UMedida: 1
-            }
-            console.log('addInv', addInv)
-            console.log('theSomeData', theSomeData)*/
-            //*This part of the code only add the producuct to the inventory
             const res = await postUpdateInventory({
                 "IdFerreteria": usD.Cod,
                 "CodResponsable": usD.Cod,
@@ -410,6 +392,8 @@ export const Newproduct = () => {
         if (someData) {
             toModifyProduct(someData)
             console.log('Datos del producto: ', someData)
+            console.log("modificarProducto : ", modificarProducto)
+            console.log("theSomeData.ExisteEnDetalle: ", theSomeData.ExisteEnDetalle)
         } else {
             setSection('Nuevo Producto');
         }
@@ -418,6 +402,7 @@ export const Newproduct = () => {
             setPList(pro);
             refList.current = pro
         }
+
         products();
         document.addEventListener('keydown', handleKeyDown);
         //document.addEventListener('mousedown', handleClickOutside);
@@ -479,8 +464,9 @@ export const Newproduct = () => {
         setSBText((text))
         let c = refList.current;
         if (text !== ''){
-            const filteredList = c.filter((i)=>filterByText(i, text))
-            setPList(filteredList);
+            //const filteredList = c.filter((i)=>filterByText(i, text))
+            //setPList(filteredList);
+            const filteredList = filterProduct(text)
             if (modificarProducto === false && filteredList.length > 0){
             setShowFL(true)
             }
@@ -494,7 +480,7 @@ export const Newproduct = () => {
         let modifyProduct = await TheAlert('El producto ya existe, ¿desea modificar el producto?', 1)
         if (modifyProduct){
             console.log('item', item)
-            if (item.Inventario === 0 && item.InvMinimo === 0 &&  item.InvMaximo === 0 ){
+            if (item.ExisteEnDetalle){
                 setFromSivarToNew(true)
             }
             toModifyProduct(item)
@@ -514,6 +500,8 @@ export const Newproduct = () => {
         const list = await ProductList({
             "IdFerreteria": usD.Cod
         })
+        const aliasList1 = await Alias()
+        refAliasList.current = aliasList1;
         if(list){
             setPList(list);
             refList.current = list;
@@ -525,6 +513,50 @@ export const Newproduct = () => {
           setShowFL(false);
         }
       }, [pList, setShowFL]);
+
+    const filterProduct = (text) => {
+        //Searh the list of products that includes the text, either because it is in the "products" table or in the "alias" table  
+        let proData = refList.current//The whole table "products".
+        let aliasData = refAliasList.current//The whole table "alias".
+        try {
+            if (text === '' || text < 2) {
+                setPList([]);
+                return []
+            }else{
+                console.log('ax2');
+                // Define a case-insensitive text filter function
+                const filterByText = (item) =>
+                item.Cod.toLowerCase().includes(text) ||
+                item.Descripcion.toLowerCase().includes(text);
+                // Filter products based on the text
+                const TFiltro1 = proData.filter(filterByText);
+                // Filter aliases based on the text
+                const TFiltro2 = aliasData.filter((item) => item.Alias.toLowerCase().includes(text));
+                // Extract unique cod values from aliasData
+                const CodAlias = [...new Set(TFiltro2.map((item) => item.Cod))];
+                // Filter products based on unique cod values
+                const aliasProducts = proData.filter((item) => CodAlias.includes(item.Cod));
+                // Extract unique cod values from aliasProducts
+                //const uniqueAliasProducts = [...new Set(aliasProducts.map((item) => item.cod))];
+                // Combine the unique cod values from TFiltro1 and aliasProducts
+                const filtro = [...new Set([...TFiltro1, ...aliasProducts])];
+                // Convert the json into an array of objects to reorder by score
+                const dataArray = filtro.map((value, key) => ({ key, ...value }));
+                // Order the array deppending on the score
+                dataArray.sort((a, b) => b.Score - a.Scote);
+                // Convert the array into a json object
+                //!const sortedJson = JSON.stringify(dataArray);
+                //sortedJson2 = sortedJson
+                setPList(dataArray)
+                //setFilteredProducts(sortedJson);
+                return dataArray;
+            }
+        } catch (error) {
+            //sortedJson2 = false
+            console.log('error-->' + error);
+            setPList(false)
+        }
+    }
 
     return (
         <section className='Newproduct'>
@@ -675,7 +707,8 @@ export const Newproduct = () => {
                                 <i className={`icon-${item}`}></i>
                             </label>
                         ))*/}
-                        <select value={selectedCategory} onChange={(e)=>{handleSelectedCategory('Categoria', e)}} style={{width: '41%'}} disabled={productData.IdFerreteria===0}>
+                        <select
+                            value={selectedCategory} onChange={(e)=>{handleSelectedCategory('Categoria', e)}} style={{width: '41%'}} disabled={productData.IdFerreteria===0}>
                             <option value="">Categoria...</option>
                             {categories.map(c => (
                                 <option key={c.IdCategoria} value={c.IdCategoria}>
@@ -776,7 +809,7 @@ export const Newproduct = () => {
                             <label>Inv actual</label>
                         </div>
                         <div className='Colmn2'>
-                            {modificarProducto && ((theSomeData.current.PCosto!==0&&!theSomeData.current.PVenta!==0)||theSomeData.Inventario!==0) && !fromSivarToNew ?
+                            {modificarProducto && theSomeData.current.ExisteEnDetalle ?
                                 <label>{Formater(productData.Inventario)==='' ? 0 : Formater(productData.Inventario)}</label>
                                 :
                                 <TheInput

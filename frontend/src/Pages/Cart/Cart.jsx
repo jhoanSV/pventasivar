@@ -79,7 +79,7 @@ export const Cart = () => {
             "FechaDeEntrega": thisSendDate,
             "FechaVencimiento" : thisSendDate,
             "NotaVenta": notes,
-            "VECommerce": "1",
+            "VECommerce": "2",
             "TIngresados": TIngresados
         })
         if(orderReq['success']===true){

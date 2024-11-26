@@ -3,7 +3,7 @@ import "./_ProductsList.scss";
 import { useNavigate } from 'react-router-dom';
 import { useTheContext } from '../../TheProvider';
 import { TableComponent } from '../../Components';
-import { ProductList } from '../../api';
+import { ProductList, Alias } from '../../api';
 //import { LevenDistance } from '../../App';
 //import { ModalBusca } from '../../Components/Modals/ModalBusca';
 
@@ -21,6 +21,7 @@ export const ProductsList = () => {
     const [selected, setSelected] = useState([]);
     const [contentList, setContentList] = useState([]);
     const refList = useRef([]);
+    const refAliasList = useRef([]); 
     const debounceSearch = useRef(null);
     //const [multiSelect, setMultiSelect] = useState(false);//* De momento se omite esto
     const { setSection, setSomeData, usD, setProductCodes} = useTheContext();
@@ -41,11 +42,54 @@ export const ProductsList = () => {
         let c = refList.current;
         if (text !== ''){
             //c = c.filter((i)=>filterByText(i, text))
-            setContentList(c.filter((i)=>filterByText(i, text)));
+            //setContentList(c.filter((i)=>filterByText(i, text)));
+            filterProduct(text)
         }else{
             ProductsFetch();
         }
     }
+
+    const filterProduct = (text) => {
+        //Searh the list of products that includes the text, either because it is in the "products" table or in the "alias" table  
+        let proData = refList.current//The whole table "products".
+        let aliasData = refAliasList.current//The whole table "alias".
+        try {
+            if (text === '' || text < 2) {
+                setContentList([]);
+            }else{
+              console.log('ax2');
+              // Define a case-insensitive text filter function
+              const filterByText = (item) =>
+              item.Cod.toLowerCase().includes(text) ||
+              item.Descripcion.toLowerCase().includes(text);
+              // Filter products based on the text
+              const TFiltro1 = proData.filter(filterByText);
+              // Filter aliases based on the text
+              const TFiltro2 = aliasData.filter((item) => item.Alias.toLowerCase().includes(text));
+              // Extract unique cod values from aliasData
+              const CodAlias = [...new Set(TFiltro2.map((item) => item.Cod))];
+              // Filter products based on unique cod values
+              const aliasProducts = proData.filter((item) => CodAlias.includes(item.Cod));
+              // Extract unique cod values from aliasProducts
+              //const uniqueAliasProducts = [...new Set(aliasProducts.map((item) => item.cod))];
+              // Combine the unique cod values from TFiltro1 and aliasProducts
+              const filtro = [...new Set([...TFiltro1, ...aliasProducts])];
+              // Convert the json into an array of objects to reorder by score
+              const dataArray = filtro.map((value, key) => ({ key, ...value }));
+              // Order the array deppending on the score
+              dataArray.sort((a, b) => b.Score - a.Scote);
+              // Convert the array into a json object
+              //!const sortedJson = JSON.stringify(dataArray);
+              //sortedJson2 = sortedJson
+              setContentList(dataArray)
+              //setFilteredProducts(sortedJson);
+            }
+        } catch (error) {
+            //sortedJson2 = false
+            console.log('error-->' + error);
+            setContentList(false)
+        }
+      }
 
     const Test1 = (i) =>{
         return(
@@ -110,10 +154,12 @@ export const ProductsList = () => {
         const listado = await ProductList({
             "IdFerreteria" : usD.Cod
         })
+        const aliasList1 = await Alias()
         if(listado){
             let codes = []
             setContentList(listado);
             refList.current = listado;
+            refAliasList.current = aliasList1;
             for(let a in listado){
                 codes.push(listado[a].Cod);
             }

@@ -699,7 +699,7 @@ export const SalesOfTheDay = ({show, orderslist, width='90%', height='90%'}) => 
                                 <button
                                     className="btnStnd btn1"
                                     style={{backgroundColor: 'Green'}}
-                                    onClick={()=>{rePrint()}}
+                                    onClick={()=>{rePrint(); setShowReprint(false)}}
                                     >
                                     Reimprimir como remisión
                                 </button>
@@ -743,7 +743,7 @@ export const SalesOfTheDay = ({show, orderslist, width='90%', height='90%'}) => 
                     <div className='header_Sales_Of_the_Day'>
                         <h2>Ventas del dia</h2>
                     </div>
-                    <div className='twoColumnsContainer'>
+                    <div className='twoColumnsContainer' style={{padding: '10px'}}>
                         <div>
                             <div style={{display: 'flex', 
                                 justifyContent: 'space-between',
@@ -757,14 +757,21 @@ export const SalesOfTheDay = ({show, orderslist, width='90%', height='90%'}) => 
                                     style={{width: '80%'}}>
                                 </input>
                             </div>
-                            <div className='Table'>               
+                            <div
+                                className='Table'
+                                style={{
+                                    height: '90%',
+                                    //flex: '1',
+                                    padding: '10px',
+                                    overflow: 'auto',}}>               
                                 <Flatlist
                                     data={orders}
                                     row={RowOrder}
                                     headers={ctHeaders}
                                     selectedRow={selectedfila}
                                     setSelectedRow={setSelectedfila}
-                                    Height='600px'
+                                    Height='100%'
+                                    Width='100%'
                                 />
                             </div>
                             <div>
@@ -840,7 +847,7 @@ export const SalesOfTheDay = ({show, orderslist, width='90%', height='90%'}) => 
                                     </div>
                                 </div>
                             </div>
-                            <div className='Table'>
+                            <div className='Table' style={{paddingBottom: '10px'}}>
                                 <Flatlist
                                     data={selectedOrder}
                                     row={RowOfSelectedOrder}
@@ -855,9 +862,10 @@ export const SalesOfTheDay = ({show, orderslist, width='90%', height='90%'}) => 
                                 className="btnStnd btn1"
                                 onClick={()=>returnProductM()}
                                 disabled={selectedOrder !== null? false: true}
-                                >Devolver articulo</button>
-                            <label>Total:</label>
-                            <label>${Formater(total)}</label>
+                                >Devolver articulo
+                            </button>
+                            <label> <strong>Total: </strong></label>
+                            <label> <strong>${Formater(total)} </strong></label>
                             
                         </div>
                         <button
