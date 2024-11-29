@@ -30,20 +30,21 @@ export const LowInv = () => {
             //setLista(list);
             setLimit(20);
         }else{
-            lInv_query();
+            lInv_query(section);
             setLimit(20);
         }
     }
 
-    const lInv_query = async() =>{
+    const lInv_query = async(section) =>{
+        console.log(section === 'Bajos de inventario');
+        const validar =  section === 'Nueva Compra' ? true : section === 'Bajos de inventario' ? false : true
         const shppList = await ShoppingList({
             "IdFerreteria": usD.Cod,
-            "Compras": section === 'Nueva Compra' ? true : section === 'Bajos de inventario' ? false : true
+            "Compras": validar
         })
-        const aliasList1 = await Alias()
-        refAliasList.current = aliasList1;
+        console.log('shppList: ', shppList);
         if(shppList){
-            if(section!=='Bajos de inventario') setSection('Nueva Compra');
+            //if(section!=='Bajos de inventario')setSection('Nueva Compra');
             const a = shppList.filter(obj => obj.SVenta === 1);
             const b = shppList.filter(obj => obj.SVenta !== 1);
 
@@ -53,7 +54,7 @@ export const LowInv = () => {
             refList.current = ab;
             console.log(ab);
         }
-    }    
+    }
 
     const observeT3 = () =>{
         const obsT = document.getElementById('obsTrigger3')
@@ -67,12 +68,17 @@ export const LowInv = () => {
 
     useEffect(() => {
         console.log('cambia section');
-        lInv_query();
+        lInv_query(section);
         // eslint-disable-next-line
     }, [section]);
 
     useEffect(() => {
-        lInv_query();
+        lInv_query(section);
+        const AliasQuery = async() =>{
+            const aliasList1 = await Alias()
+            refAliasList.current = aliasList1;
+        }
+        AliasQuery();
         setLimit(20);
         observeT3();
         // eslint-disable-next-line
@@ -135,7 +141,7 @@ export const LowInv = () => {
                     onChange={(e)=>{SearchHandle((e.target.value).toLowerCase())}}/>
             </div>
             <div className="productsContainer">
-                { lista &&
+                { (lista && lista.length > 0) ?
                     <>
                         {lista.slice(0,limit).map((product, index) => {
                             return(
@@ -153,14 +159,22 @@ export const LowInv = () => {
                                         showInv: true,
                                         Height:'215px'
                                     })}
-                                    showModal={(show, theImg)=><AddPurchaseModal
+                                    showModal={(show, theImg)=>
+                                    <AddPurchaseModal
                                         P={product}
                                         Show={show}
                                         img={theImg}
                                     />}
                                 />
                             )
-                        })}                        
+                        })}
+                    </>
+                    :
+                    <>
+                        <div style={{alignContent: 'Center', display: 'flex'}}>
+                            <i className="bi bi-list-columns-reverse" style={{fontSize: '62px'}}></i>
+                            <span style={{fontSize: '2rem'}}>No hay productos bajos de inventario</span>
+                        </div>
                     </>
                 }
                 <div id='obsTrigger3' style={{height: '10px'}}></div>

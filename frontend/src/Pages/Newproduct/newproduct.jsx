@@ -11,7 +11,7 @@ import { CSSTransition } from 'react-transition-group';
 export const Newproduct = () => {
     
     const navigate = useNavigate()
-    const { setSection, someData, setSomeData, setInvAdAuth, usD, productCodes, subC, categories } = useTheContext();
+    const { setSection, section, someData, setSomeData, setInvAdAuth, usD, productCodes, subC, categories } = useTheContext();
 
     const [ imgSrc, setImgSrc] = useState(someData && `https://sivarwebresources.s3.amazonaws.com/AVIF/${someData.Cod}.avif`)
     const [ selectedCategory, setSelectedCategory] = useState(''); // set the selected category
@@ -251,7 +251,7 @@ export const Newproduct = () => {
         a.Motivo = "Nuevo producto al inventario";
         // *----------------------------------------
         a.Iva = 19 //* En discusión 
-        console.log(a);
+        console.log('a', a);
         const res = await NuevoProducto(a);
         console.log(res);
         if(res && res.message === 'Transacción completada con éxito'){
@@ -412,6 +412,29 @@ export const Newproduct = () => {
         };
         // eslint-disable-next-line
     }, []);
+
+    useEffect(() => {
+        if ( section === 'Nuevo Producto') {
+            setProductData({
+                'Cod': '',
+                'Descripcion': '',
+                'InvMaximo': '',
+                'InvMinimo': '',
+                'Inventario': '',
+                'PCosto': '',
+                'PVenta': '',
+                'IdSubCategoria':'',
+                'Ubicacion': '',
+                'Medidas': [],
+                'Detalle': '',
+                'Clase': '',
+            });
+            setpctGan("");
+            setSelectedCategory("");
+            setModificarProducto(false);
+        }
+    }, [section])
+    
 
     const toModifyProduct = (dataProduct) => {
         theSomeData.current = dataProduct
@@ -625,7 +648,7 @@ export const Newproduct = () => {
                                         className={`flItem ${index === selectedFLI ? 'selected' : ''}`}
                                         onClick={()=>{
                                             askToAddProduct(item)}}
-                                        style={{color: Number(item.Inventario)<=0 && 'red'}}
+                                        style={{color: item.ExisteEnDetalle === 0 && 'red'}}
                                     >
                                         {item.Descripcion}
                                         <div className='codFlitem'>
@@ -723,7 +746,11 @@ export const Newproduct = () => {
                         <label>Sub-Categor&iacute;a</label>
                     </div>
                     <div className='Colmn2'>
-                        <select value={productData.IdSubCategoria} onChange={(e)=>{handleSelectedCategory('subCat', e)}} style={{width: '41%'}} disabled={productData.IdFerreteria===0}>
+                        <select
+                            value={productData.IdSubCategoria}
+                            onChange={(e)=>{handleSelectedCategory('subCat', e)}}
+                            style={{width: '41%'}}
+                            disabled={productData.IdFerreteria===0}>
                             <option value="">Seleccione...</option>
                             {subCatList.map(sc => (
                                 <option key={sc.IdSubCategoria} value={sc.IdSubCategoria}>{sc.SubCategoria}</option>
@@ -731,22 +758,11 @@ export const Newproduct = () => {
                         </select>
                     </div>
                 </div>
-                {/* {modificarProducto && //* For the next step
-                    <div className='Row'>
-                        <div className='Colmn1'>
-                            <label>Proveedor</label>
-                        </div>
-                        <div className='Colmn2'>
-                            <input type="text" className="" value={productData.Descripcion} onChange={(e) => changeValuesProducts("Descripcion", e.target.value)} readOnly={productData.IdFerreteria ? false : true} />
-                        </div>
-                    </div>
-                } */}
                 <div className={'Row salesMethod ' + ((productData.Cod && productData.Descripcion && productData.PCosto && productData.PVenta) && 'show')}>
                     <div className='Colmn1'>
                         <label>Modo de venta:</label>
                     </div>
                     <div className='Row'>
-                        { productData.IdFerreteria !== 0 &&
                         <label className="custom-label">
                             <input type="radio" className="custom-radio" name="uniorpack"
                                 checked={productData.Clase===0}
@@ -759,11 +775,14 @@ export const Newproduct = () => {
                             />
                             <i></i>
                             por unidad
-                        </label>}
+                        </label>
                         <label className="custom-label">
                             <input type="radio" className="custom-radio" name="uniorpack"
                                 checked={productData.Clase!==0 && productData.Clase!==''}
-                                onChange={() => { }}
+                                onChange={() => {let pd = {...productData}
+                                pd.Clase = 1
+                                pd.Medidas = []
+                                setProductData(pd) }}
                                 onClick={() => { setShow2(true) }}
                             />
                             <i></i>
@@ -814,7 +833,7 @@ export const Newproduct = () => {
                                 :
                                 <TheInput
                                     val={productData.Inventario}
-                                    numType={'nat'}
+                                    numType={'real'}
                                     onchange={(e) => { changeValuesProducts('Inventario', e) }}
                                 />
                             }

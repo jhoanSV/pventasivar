@@ -80,9 +80,13 @@ export const MoneyFlow = ({show, typeOfFlow , aceptar }) => {
         if (isConfirmed) {
             const now = new Date();
             // Obtener la fecha en formato YYYY-MM-DD
-            const date = now.toISOString().split('T')[0];
+            const date = now.getFullYear() +
+                        '-' + String(now.getMonth() + 1).padStart(2, '0') +
+                        '-' + String(now.getDate()).padStart(2, '0');
             // Obtener la hora en formato HH:MM:SS
-            const time = now.toTimeString().split(' ')[0];
+            const time =  String(now.getHours()).padStart(2, '0') +
+                        ':' + String(now.getMinutes()).padStart(2, '0') +
+                        ':' + String(now.getSeconds()).padStart(2, '0');
             const dataToSend ={
                 ConsecutivoCV: 0,
                 IdFerreteria: usD.Cod,

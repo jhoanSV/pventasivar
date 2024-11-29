@@ -11,7 +11,7 @@ import { DotProduct } from '../../App';
 export const SignClient = ({show, retornar, width='50%', height='80%'}) => {
     const [ selected, setSelected] = useState([]);
     const [ multiSelect, setMultiSelect] = useState(false);
-    const [ contentList, setContentList] = useState(jsonTest);
+    const [ contentList, setContentList] = useState([]);
     const { setSection, setSomeData, usD } = useTheContext();
     const [ showCustomerList , setShowCustomerList] = useState(true)
     const [ optionsOccupation, setOptionsOccupations ] = useState([]);
@@ -77,18 +77,18 @@ export const SignClient = ({show, retornar, width='50%', height='80%'}) => {
         }
     }
 
-    useEffect(() => {
+    /*useEffect(() => {
         setSomeData(null)
         CustomerFetch()
         // eslint-disable-next-line
-    }, []);
+    }, []);*/
 
     const verFunction = (item) => {
         retornar(selected)
         show(false)
     }
 
-    const CustomerFetch = async() =>{
+    /*const CustomerFetch = async() =>{
         const listado = await Clientlist({
             "IdFerreteria" : usD.Cod
         })
@@ -96,7 +96,7 @@ export const SignClient = ({show, retornar, width='50%', height='80%'}) => {
             setContentList(listado)
             refList.current = listado;
         };
-    }
+    }*/
 
     useEffect(() => {
         const fetchData = async () => {
@@ -110,8 +110,10 @@ export const SignClient = ({show, retornar, width='50%', height='80%'}) => {
             if (listado) {
                 setContentList(listado);
             }
+            console.log('listado: ', listado)
         };
         fetchData();
+
         
         /*if(someData){
             let data = {...someData};
@@ -133,6 +135,7 @@ export const SignClient = ({show, retornar, width='50%', height='80%'}) => {
     }, []);
 
     const customerList = () => {
+        console.log('contentList: ', contentList)
         return (
             <>
                 <div>
@@ -262,6 +265,7 @@ export const SignClient = ({show, retornar, width='50%', height='80%'}) => {
             console.log(res);
             if(res.insertId || res.message === 'Transacción completada con éxito'){
                 //console.log(a)
+                a.Consecutivo = res.insertId
                 retornar([a])
                 //navigate('/Customerlist')
                 //TheAlert(msj1);
@@ -309,40 +313,6 @@ export const SignClient = ({show, retornar, width='50%', height='80%'}) => {
                 [key]: value // Reemplaza el valor de la clave específica
             }));
         }
-
-        /*useEffect(() => {
-            const fetchData = async () => {
-                const listado = await Clientlist({
-                    "IdFerreteria": usD.Cod
-                });
-                const customerType = await clientOccupation()
-                const fiscalRes = await ResFiscal(usD.tokenColtek, usD.token)
-                setOptionsResFiscal(fiscalRes.FiscalResponsibility)
-                setOptionsOccupations(customerType)
-                if (listado) {
-                    setContentList(listado);
-                }
-            };
-            fetchData();
-            
-            /*if(someData){
-                let data = {...someData};
-                let parts = data.NitCC.split('-');
-                if(parts[1]){
-                    data.NitCC = parts[0];
-                    setVerCod(parts[1]);
-                }
-                if(data['LimiteDeCredito']>0){
-                    document.getElementById('checkCredito').checked = true;
-                    setConCredito(true)
-                }
-                data.IdFerreteria = usD.Cod
-                
-                //data.FormaDePago = 0
-                setCustomerData(data)
-            }
-            // eslint-disable-next-line
-        }, []);*/
 
         return (
             <div id='newCustomer'>

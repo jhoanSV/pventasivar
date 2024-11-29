@@ -24,17 +24,27 @@ export function InvAdjustment(){
             console.log('formattedNum', formattedNum)
             setNewCant(Formater(((currCant+formattedNum)).toString()))
         }else if(op==='nc'){
-            setCantAdj(Formater((-(currCant-Number(e))).toString()))
-            setNewCant(Formater(Number(e)))
+            setCantAdj(Formater(((formattedNum-currCant)).toString()))
+            setNewCant(Formater(formattedNum.toString()));
         }
+    }
+
+    const NPToNumber = (num) => {
+        let a
+        if (!(typeof (num) === 'number')) {
+            a = Number(num.replace(/[.,]/g, (a) => (a === "." ? "" : ".")))
+        } else {
+            a = num
+        }
+        return a
     }
 
     const modifyCant = async() =>{
         const fecha = new Date()
         const today = fecha.getFullYear() + '-' + (fecha.getMonth() + 1) + '-' + fecha.getDate() + ' ' + fecha.getHours() + ':' + fecha.getMinutes() + ':' + fecha.getSeconds()
         let d = someData;
-        d.Inventario = Number(newCant.replace(/\./g, ''));
-        console.log({
+        d.Inventario = NPToNumber(newCant)//newCant.replace(/\./g, ''));
+        console.log('Para modificar el inventario', {
             "IdFerreteria": someData.IdFerreteria,
             "CodResponsable": usD.Cod,
             "Responsable": usD.Ferreteria,

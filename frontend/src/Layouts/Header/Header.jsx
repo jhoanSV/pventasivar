@@ -129,6 +129,7 @@ export const Header = () => {
                                 <Link to={'/NewProduct'} id='minuevoproducto' className='genLink' onClick={()=>{
                                     setSomeData(null)
                                     hideSideBar()
+                                    setSection('Nuevo Producto')
                                 }}>
                                     NUEVO
                                 </Link>

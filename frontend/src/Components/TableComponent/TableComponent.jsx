@@ -93,6 +93,7 @@ export const TableComponent = ({data, headers, selected, setSelected, multiSelec
         createResizableTable(document.getElementById('theTableId'));
         setLimit(20)
         observeT()
+        console.log('data', data)
         // eslint-disable-next-line
     }, []);
 

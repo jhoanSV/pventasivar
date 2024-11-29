@@ -152,9 +152,13 @@ export const ConfirmSaleModal = ({show, sendSale , folio , orderslist, width='50
             setVisiblevCargando(true);
             const now = new Date();
             // Obtener la fecha en formato YYYY-MM-DD
-            const date = now.toISOString().split('T')[0];
+            const date = now.getFullYear() +
+                        '-' + String(now.getMonth() + 1).padStart(2, '0') +
+                        '-' + String(now.getDate()).padStart(2, '0');
             // Obtener la hora en formato HH:MM:SS
-            const time = now.toTimeString().split(' ')[0];
+            const time = String(now.getHours()).padStart(2, '0') +
+                        ':' + String(now.getMinutes()).padStart(2, '0') +
+                        ':' + String(now.getSeconds()).padStart(2, '0');
             if (tipoDePago !== 'Efectivo' &&  referencia === '') {
                 TheAlert('Debe ingresar una referencia para este tipo de pago')
             } else if (efectivo === 0 && transferencia === '') {
@@ -204,6 +208,8 @@ export const ConfirmSaleModal = ({show, sendSale , folio , orderslist, width='50
                     //If status is false then restart the token to the new one
                     const newUsD = {...usD, resColtek: tokencheck.resColtek}
                     orderslist.tokenColtek = tokencheck.resColtek.token
+                    console.log('newUsD', newUsD)
+                    console.log('orderslist.tokenColtek', orderslist.tokenColtek)
                     setUsD(newUsD)
                 }
                 let MedioDePagoColtek = 10
@@ -229,7 +235,7 @@ export const ConfirmSaleModal = ({show, sendSale , folio , orderslist, width='50
                 //console.log('resolucion: ', resolucion)
                 //console.log('orderlist: ', orderslist)
                 const sendedOrden = await NewSale(orderslist)
-                console.log('sendedOrden: ', sendedOrden)
+                //console.log('sendedOrden: ', sendedOrden)
                 if (Object.keys(sendedOrden).length === 0){
                     setVisiblevCargando(false)
                     TheAlert('Ocurrio un error al enviar la venta')
@@ -243,37 +249,14 @@ export const ConfirmSaleModal = ({show, sendSale , folio , orderslist, width='50
                         window.electron.send('print-ticket', ticketHTML);
                         //setShowTicket(true);
                     }
+                    setVisiblevCargando(false)
+                    setVisibleEnvioExitoso(true)
+                    setTimeout(() => {  
+                        sendSale()
+                        show(false)
+                        setVisibleEnvioExitoso(false)
+                      }, 2000);
                 }
-                setVisiblevCargando(false)
-                setVisibleEnvioExitoso(true)
-                setTimeout(() => {  
-                    sendSale()
-                    show(false)
-                    setVisibleEnvioExitoso(false)
-                  }, 2000);
-                /*try {
-                    const sendedOrden = await NewSale(orderslist);
-                    if (print) {
-                        const usDdata = usD
-                        //console.log('Sended orden: ', sendedOrden)
-                        // Render the component as HTML
-                        const ticketHTML = ReactDOMServer.renderToString(<TicketPrint data={sendedOrden} usD={usDdata} Electronic={electronic}/>);
-                        //Send the HTML to Electron for printing
-                        window.electron.send('print-ticket', ticketHTML);
-                        //setShowTicket(true);
-                    }
-                    sendSale()
-                    show(false)
-                    //setSuccess(true);
-                    //setError(null); // Limpia errores previos
-                } catch (error) {
-                    //setError(error.message || 'Ocurrió un error al enviar la venta.');
-                    //setSuccess(false); // Limpia éxitos previos
-                    TheAlert('Ocurrio un error al generar la venta', error)
-                }*/
-                //console.log('sendedOrden: ', sendedOrden)
-                //const metodosDePago = await paymentMethodsColtek('http://sivar.colsad.com',orderslist.tokenColtek)
-                //console.log('metodosDePago: ', metodosDePago)
             }
         } catch (error) {
             TheAlert('Ocurrio un error al generar la venta', error)

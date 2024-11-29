@@ -253,9 +253,7 @@ export const ShoppingList = async(shoppinglist) => {
         IdFerreteria: 242,
         Compras: false, //if it is false then is because is the low inventory list but if it's true then is the full list of products of sivar
     }
-    */
-   console.log('this try', shoppinglist);
-   
+    */   
     try {
         const res = await fetch(`${API_POS}/shoppinglist` ,{
             method: 'POST',
@@ -840,7 +838,8 @@ export const valTokenColtek = async(tokenColtek, token) => {
             responseLoginColtek = await logInColtek(toLoginColteck[0].Api,user)
         }
         const respuesta = {status: status.status,
-                            resColtek: responseLoginColtek}
+                           resColtek: responseLoginColtek}
+        console.log('respuesta: ', respuesta)
         return respuesta
     }catch(error) {
         console.log('TheError: '+ error)
