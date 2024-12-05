@@ -199,18 +199,20 @@ export const ConfirmSaleModal = ({show, sendSale , folio , orderslist, width='50
                                     Activo: true
                                     }
                 orderslist.Electronic = electronic
-                //
-                const tokencheck = await valTokenColtek(usD.resColtek.token, usD.token)
-                if (tokencheck.status){
-                    //If status is true then only put the token on the orderlist
-                    orderslist.tokenColtek = usD.resColtek.token
-                } else if (!tokencheck.status){
-                    //If status is false then restart the token to the new one
-                    const newUsD = {...usD, resColtek: tokencheck.resColtek}
-                    orderslist.tokenColtek = tokencheck.resColtek.token
-                    console.log('newUsD', newUsD)
-                    console.log('orderslist.tokenColtek', orderslist.tokenColtek)
-                    setUsD(newUsD)
+                //it only verify the token then is electronic
+                if (electronic) {
+                    const tokencheck = await valTokenColtek(usD.resColtek.token, usD.token)
+                    if (tokencheck.status){
+                        //If status is true then only put the token on the orderlist
+                        orderslist.tokenColtek = usD.resColtek.token
+                    } else if (!tokencheck.status){
+                        //If status is false then restart the token to the new one
+                        const newUsD = {...usD, resColtek: tokencheck.resColtek}
+                        orderslist.tokenColtek = tokencheck.resColtek.token
+                        console.log('newUsD', newUsD)
+                        console.log('orderslist.tokenColtek', orderslist.tokenColtek)
+                        setUsD(newUsD)
+                    }
                 }
                 let MedioDePagoColtek = 10
                 if (tipoDePago === 'transferencia'){
@@ -231,10 +233,17 @@ export const ConfirmSaleModal = ({show, sendSale , folio , orderslist, width='50
                     orderslist.Customer.TipoDocumento = 31
                     orderslist.Customer.NombreTipoDocumento = 'NIT'
                 }
+                //console.log(orderslist.tokenColtek)
                 //const resolucion = await ResolucionColtek(orderslist.tokenColtek)
                 //console.log('resolucion: ', resolucion)
                 //console.log('orderlist: ', orderslist)
                 const sendedOrden = await NewSale(orderslist)
+                //console.log('sendedOrden: ', sendedOrden)
+                //console.log('sendedOrden.Result: ', sendedOrden.Result.IsValid === 'false')
+                if (electronic && sendedOrden.Result.IsValid === 'false') {
+                    TheAlert('Ocurrio un error al crear la facura electronica,\n se generará la venta como remisión \n el error es: ' + sendedOrden.Result.Errores)
+                    setVisiblevCargando(false)
+                }
                 //console.log('sendedOrden: ', sendedOrden)
                 if (Object.keys(sendedOrden).length === 0){
                     setVisiblevCargando(false)
@@ -259,7 +268,7 @@ export const ConfirmSaleModal = ({show, sendSale , folio , orderslist, width='50
                 }
             }
         } catch (error) {
-            TheAlert('Ocurrio un error al generar la venta', error)
+            TheAlert('Ocurrio un error al generar la venta'+ error)
         }
     }
 

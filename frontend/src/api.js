@@ -1,7 +1,7 @@
-// const API_POS = process.env.REACT_APP_SIVARPOS;
-// const API = process.env.REACT_APP_API;
-const API_POS = 'http://192.168.1.110:3000/pos';
-const API = 'http://192.168.1.110:3000/tasks';
+const API_POS = process.env.REACT_APP_API_SERVER_SIVARPOS;
+const API = process.env.REACT_APP_API_SERVER;
+//const API_POS = 'http://192.168.1.110:4000/pos';
+//const API = 'http://192.168.1.110:3000/tasks';
 
 export const validateUser = async(validateValueUser) => {
     /*Validate the user information and if it's correct return the data of the user
@@ -788,6 +788,46 @@ export const SalesByCategory = async(salesbycategory) => {
     }
 }
 
+export const Profit = async(profit) => {
+    /*return the product to the table entradas
+    you have to send a json of the form:
+    {
+        IdFerreteria: 242,
+        Fecha: '2024-08-22'
+    }
+    */
+    try {
+        const res = await fetch(`${API_POS}/profit`,{
+            method: 'POST',
+            headers: { Accept: 'application/json','Content-Type': 'application/json'},
+            body: JSON.stringify(profit)
+        })
+        return await res.json()
+    }catch(error) {
+        console.log('TheError: '+ error)
+    }
+}
+
+export const Returns = async(returns) => {
+    /*return the product to the table entradas
+    you have to send a json of the form:
+    {
+        IdFerreteria: 242,
+        Fecha: '2024-08-22'
+    }
+    */
+    try {
+        const res = await fetch(`${API_POS}/returns`,{
+            method: 'POST',
+            headers: { Accept: 'application/json','Content-Type': 'application/json'},
+            body: JSON.stringify(returns)
+        })
+        return await res.json()
+    }catch(error) {
+        console.log('TheError: '+ error)
+    }
+}
+
 export const BestProducts = async(bestproducts) => {
     /*return the product to the table entradas
     you have to send a json of the form:
@@ -816,7 +856,8 @@ export const ResolucionColtek = async(token) => {
                                'Content-Type': 'application/json',
                                'Authorization': `Bearer ${token}`}
         })
-        return await res.json()
+        const response = await res.json()
+        return await response
     }catch(error) {
         console.log('TheError: '+ error)
     }

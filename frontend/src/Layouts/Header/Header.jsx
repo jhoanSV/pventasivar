@@ -224,7 +224,7 @@ export const Header = () => {
                             />
                             <img
                                 width={'45px'}
-                                style={{marginRight: '10px'}}
+                                style={{marginRight: '10px', marginTop: '-20px'}}
                                 alt="LogoSivar"
                                 decoding="async"
                             />

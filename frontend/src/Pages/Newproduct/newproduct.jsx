@@ -53,8 +53,6 @@ export const Newproduct = () => {
     const theSomeData = useRef(someData);
     const refAliasList = useRef([]);
 
-    
-
     const handleKeyDown = async(e) => {
         if(document.getElementById('NPinputNP') === document.activeElement){
             const theInvList = invListRef.current
@@ -72,12 +70,13 @@ export const Newproduct = () => {
                 }
             } else if (e.key === 'Enter') {
                 const selectedItem = theInvList[selectedFLIRef.current];
+                askToAddProduct(selectedItem)
                 if(!selectedItem){
                     document.getElementById('NPinputNP').focus();
                     document.getElementById('NPinputNP').select();
                     return;
                 } 
-                asktoaddRef.current(selectedItem);
+                //asktoaddRef.current(selectedItem);
                 /*document.getElementById('tabsId').removeEventListener('keydown', handleKeyDown2);
                 document.getElementById('NPinput').removeEventListener('keydown', handleKeyDown);
                 document.getElementById('tabsId').addEventListener('keydown', handleKeyDown2);
@@ -161,9 +160,7 @@ export const Newproduct = () => {
 
     const handleError = (e) => {
         console.log('error?', e);
-        
         setImgSrc(imgPlaceHolder)
-
     }
 
     const NPToNumber = (num) => {
@@ -391,9 +388,9 @@ export const Newproduct = () => {
     useEffect(() => {
         if (someData) {
             toModifyProduct(someData)
-            console.log('Datos del producto: ', someData)
-            console.log("modificarProducto : ", modificarProducto)
-            console.log("theSomeData.ExisteEnDetalle: ", theSomeData.ExisteEnDetalle)
+            //console.log('Datos del producto: ', someData)
+            //console.log("modificarProducto : ", modificarProducto)
+            //console.log("theSomeData.ExisteEnDetalle: ", theSomeData.ExisteEnDetalle)
         } else {
             setSection('Nuevo Producto');
         }
@@ -438,7 +435,7 @@ export const Newproduct = () => {
 
     const toModifyProduct = (dataProduct) => {
         theSomeData.current = dataProduct
-        setImgSrc(theSomeData && `https://sivarwebresources.s3.amazonaws.com/AVIF/${theSomeData.Cod}.avif`)
+        setImgSrc(theSomeData && `https://sivarwebresources.s3.amazonaws.com/AVIF/${theSomeData.current.Cod}.avif`)
         let data = { ...dataProduct}
         console.log("Datos a modificar: ", data);
         if (data.PVenta && data.PCosto) {
@@ -490,6 +487,7 @@ export const Newproduct = () => {
             //const filteredList = c.filter((i)=>filterByText(i, text))
             //setPList(filteredList);
             const filteredList = filterProduct(text)
+            invListRef.current = filteredList
             if (modificarProducto === false && filteredList.length > 0){
             setShowFL(true)
             }
@@ -502,7 +500,7 @@ export const Newproduct = () => {
     const askToAddProduct = async(item) => {
         let modifyProduct = await TheAlert('El producto ya existe, ¿desea modificar el producto?', 1)
         if (modifyProduct){
-            console.log('item', item)
+            console.log('item: ', item)
             if (item.ExisteEnDetalle){
                 setFromSivarToNew(true)
             }
@@ -647,8 +645,13 @@ export const Newproduct = () => {
                                     <div key={index}
                                         className={`flItem ${index === selectedFLI ? 'selected' : ''}`}
                                         onClick={()=>{
-                                            askToAddProduct(item)}}
-                                        style={{color: item.ExisteEnDetalle === 0 && 'red'}}
+                                            askToAddProduct(item)
+                                        }}
+                                        onMouseEnter={() => {setSelectedFLI(index)}}
+                                        style={{color: item.ExisteEnDetalle ? 'black':'red'}}
+                                        onMouseDown={() => {
+                                            askToAddProduct(item);
+                                        }}
                                     >
                                         {item.Descripcion}
                                         <div className='codFlitem'>
@@ -800,6 +803,7 @@ export const Newproduct = () => {
                                     srcSet={imgSrc}
                                 />
                                 <img
+                                    src={imgSrc}
                                     onError={(e)=>handleError(e)}
                                     alt="imgProducto"
                                     decoding="async"

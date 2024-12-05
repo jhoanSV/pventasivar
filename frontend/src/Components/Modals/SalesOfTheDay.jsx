@@ -321,9 +321,13 @@ export const SalesOfTheDay = ({show, orderslist, width='90%', height='90%'}) => 
             setVisiblevCargando(true)
             const now = new Date();
             // Obtener la fecha en formato YYYY-MM-DD
-            const date = now.toISOString().split('T')[0];
+            const date = now.getFullYear() +
+                        '-' + String(now.getMonth() + 1).padStart(2, '0') +
+                        '-' + String(now.getDate()).padStart(2, '0');
             // Obtener la hora en formato HH:MM:SS
-            const time = now.toTimeString().split(' ')[0];
+            const time = String(now.getHours()).padStart(2, '0') +
+                        ':' + String(now.getMinutes()).padStart(2, '0') +
+                        ':' + String(now.getSeconds()).padStart(2, '0');
             const fila = {...orders[selectedfila]}
             let suma = 0
             console.log("TipoReclamo: ", TipoReclamo)
