@@ -429,6 +429,7 @@ export const Newproduct = () => {
             setpctGan("");
             setSelectedCategory("");
             setModificarProducto(false);
+            fetchProductList()
         }
     }, [section])
     

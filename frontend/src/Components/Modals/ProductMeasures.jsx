@@ -27,13 +27,16 @@ export const ProductMeasures = ({show, product, aceptar}) => {
             const verdaderaCantidad = typeof(cantidad) === 'string' ? 
                 Number(cantidad.replace(/[.,]/g, (a) => (a === "." ? "" : "."))) :
                 cantidad
+            //const costoMedidas = product.PCosto / product.Medidas[selectedOption].UMedida// * cantidad
+            //const VerdaderoCosto = 
+            //console.log('product.PCosto / product.Medidas[selectedOption].UMedida: ', product.PCosto / product.Medidas[selectedOption].UMedida)
             /*console.log(verdaderaCantidad, product.Inventario, product.Medidas[selectedOption].UMedida);
             console.log(product.Inventario*product.Medidas[selectedOption].UMedida);
             return*/
             if(verdaderaCantidad <= (product.Inventario*product.Medidas[selectedOption].UMedida)){
                 let theProduct = {...product};
                 theProduct.Cantidad = verdaderaCantidad;
-                theProduct.PCosto = product.PCosto / product.Medidas[selectedOption].UMedida * cantidad;
+                theProduct.PCosto = product.PCosto / product.Medidas[selectedOption].UMedida;
                 theProduct.Medida = product.Medidas[selectedOption].Medida;
                 theProduct.UMedida = product.Medidas[selectedOption].UMedida;
                 theProduct.PVenta = product.Medidas[selectedOption].PVentaUM;

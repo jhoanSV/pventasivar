@@ -96,12 +96,18 @@ export const SalesOfTheDay = ({show, orderslist, width='90%', height='90%'}) => 
         TokenV({ IdFerreteria: usD.Cod }, usD.token, setLogged)
         const now = new Date();
         // Obtener la fecha en formato YYYY-MM-DD
-        const date = now.toISOString().split('T')[0];
+        const date = now.getFullYear() +
+                    '-' + String(now.getMonth() + 1).padStart(2, '0') +
+                    '-' + String(now.getDate()).padStart(2, '0');
         // Obtener la hora en formato HH:MM:SS
-        const time = now.toTimeString().split(' ')[0];
+        const time = String(now.getHours()).padStart(2, '0') +
+                    ':' + String(now.getMinutes()).padStart(2, '0') +
+                    ':' + String(now.getSeconds()).padStart(2, '0');
         const response = await SalesPerDay({
             'IdFerreteria' : usD.Cod,
-            'Fecha': dateSearch.toISOString().split('T')[0]
+            'Fecha': dateSearch.getFullYear() +
+                    '-' + String(now.getMonth() + 1).padStart(2, '0') +
+                    '-' + String(now.getDate()).padStart(2, '0')
         });
         const sortedSelectedOrder  = response.sort((a,b)=> (b.Consecutivo-a.Consecutivo))
         console.log('sortedSelectedOrder', sortedSelectedOrder)
@@ -388,7 +394,7 @@ export const SalesOfTheDay = ({show, orderslist, width='90%', height='90%'}) => 
                     setUsD(newUsD)
                 }
             }
-            console.log("fila: ", fila)
+            //console.log("fila: ", fila)
             await CancelTheSale(fila)
             const today = formatDate(new Date());
             //TheAlert('Se hizo la devolución con exito')
@@ -739,19 +745,32 @@ export const SalesOfTheDay = ({show, orderslist, width='90%', height='90%'}) => 
 
     return (
         <div className='theModalContainer'>
-            <div className='theModal-content' style={{width: width, height: height, position: 'relative'}}>
+            <div className='theModal-content' style={{width: width, height: '90%', position: 'relative'}}>
                 <button className='btn1Stnd' onClick={() => {show(false)}} style={{position: 'absolute', top: '0px', right: '0px'}}>
                     <i className='bi bi-x-lg'/>
                 </button>
-                <div className='theModal-body'>
+                <div
+                    className='theModal-body'
+                    style={{
+                        height: '100%',
+                        position: 'relative'
+                    }}
+                    >
                     <div className='header_Sales_Of_the_Day'>
                         <h2>Ventas del dia</h2>
                     </div>
-                    <div className='twoColumnsContainer' style={{padding: '10px'}}>
-                        <div>
-                            <div style={{display: 'flex', 
-                                justifyContent: 'space-between',
-                                alignItems: 'center'}}>
+                    <div
+                        className='twoColumnsContainer'
+                        style={{height: '92%'}}
+                    >
+                        <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between', height: '100%' }}>
+                            <div
+                                style={{
+                                    display: 'flex', 
+                                    justifyContent: 'space-between',
+                                    alignItems: 'center',
+                                    padding: '10px'
+                                }}>
                                 <label><strong>Buscar: </strong></label>
                                 <input
                                     type='text'
@@ -763,11 +782,7 @@ export const SalesOfTheDay = ({show, orderslist, width='90%', height='90%'}) => 
                             </div>
                             <div
                                 className='Table'
-                                style={{
-                                    height: '90%',
-                                    //flex: '1',
-                                    padding: '10px',
-                                    overflow: 'auto',}}>               
+                                style={{height: '80%'}}>
                                 <Flatlist
                                     data={orders}
                                     row={RowOrder}
@@ -778,7 +793,7 @@ export const SalesOfTheDay = ({show, orderslist, width='90%', height='90%'}) => 
                                     Width='100%'
                                 />
                             </div>
-                            <div>
+                            <div style={{margin: '5px'}}>
                                 <label><strong>Fecha seleccionada: </strong></label>
                                 <input
                                     type="date"
@@ -801,9 +816,21 @@ export const SalesOfTheDay = ({show, orderslist, width='90%', height='90%'}) => 
                                     })()}
                                 />
                             </div>
+                            <button
+                                style={{
+                                    height: '40px',
+                                    width: '100%',
+                                    marging: '5px'
+                                }}
+                                className="btnStnd btn1"
+                                onClick={()=>returnTheOrder(2)}
+                                disabled={selectedOrder === null || total === 0? true: false} 
+                            >
+                                Cancelar venta
+                            </button>
                         </div>
-                        <div>
-                            <div className='twoColumnsContainer'>
+                        <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between', height: '100%' }}>
+                            <div className='twoColumnsContainer' >
                                 <div className='data_of_sale'>
                                     <div className='Col'>
                                         <label><strong>Tipo de venta:</strong></label>
@@ -851,44 +878,51 @@ export const SalesOfTheDay = ({show, orderslist, width='90%', height='90%'}) => 
                                     </div>
                                 </div>
                             </div>
-                            <div className='Table' style={{paddingBottom: '10px'}}>
+                            <div
+                                className='Table'
+                                style={{
+                                    paddingBottom: '10px',
+                                    height: '70%'
+                                }}>
                                 <Flatlist
                                     data={selectedOrder}
                                     row={RowOfSelectedOrder}
                                     headers={HeadersOrderSelected}
                                     selectedRow={selectedfilaOrder}
                                     setSelectedRow={setSelectedfilaOrder}
-                                    Height='500px'
-                                    maxHeight={'30%'}
+                                    Height='100%'
+                                    
                                 />
                             </div>
+                            <div>
+                                <button
+                                    className="btnStnd btn1"
+                                    onClick={()=>returnProductM()}
+                                    disabled={selectedOrder !== null? false: true}
+                                    style={{margin: '5px'}}
+                                    >Devolver articulo
+                                </button>
+                                <label> <strong>Total: $ {Formater(total)} </strong></label>
+                            </div>
                             <button
-                                className="btnStnd btn1"
-                                onClick={()=>returnProductM()}
-                                disabled={selectedOrder !== null? false: true}
-                                >Devolver articulo
-                            </button>
-                            <label> <strong>Total: </strong></label>
-                            <label> <strong>${Formater(total)} </strong></label>
-                            
-                        </div>
-                        <button
-                            className="btnStnd btn1"
-                            onClick={()=>returnTheOrder(2)}
-                            disabled={selectedOrder === null || total === 0? true: false} 
-                            >Cancelar venta</button>
-                        <button
-                            className="btnStnd btn1"
-                            onClick={()=>{
-                                if (headerSales.Prefijo === ''){
-                                    setShowReprint(true)
-                                }
-                                else{
-                                    rePrint()
-                                }
+                                style={{
+                                    height: '40px',
+                                    width: '100%',
+                                    marging: '5px'
                                 }}
-                            disabled={selectedOrder !== null? false: true}
-                            >Imprimir copia</button>
+                                className="btnStnd btn1"
+                                onClick={()=>{
+                                    if (headerSales.Prefijo === ''){
+                                        setShowReprint(true)
+                                    }
+                                    else{
+                                        rePrint()
+                                    }
+                                    }}
+                                disabled={selectedOrder !== null? false: true}
+                                >Imprimir copia
+                            </button>
+                        </div>                     
                     </div>
                 </div>
 

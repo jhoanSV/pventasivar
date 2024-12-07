@@ -8,7 +8,7 @@ import './_SignClient.scss';
 import { Clientlist, Newclient, UpdateClient, clientOccupation, ResFiscal } from '../../api';
 import { DotProduct } from '../../App';
 
-export const SignClient = ({show, retornar, width='50%', height='80%'}) => {
+export const SignClient = ({show, retornar, width='70%', height='85%'}) => {
     const [ selected, setSelected] = useState([]);
     const [ multiSelect, setMultiSelect] = useState(false);
     const [ contentList, setContentList] = useState([]);
@@ -110,7 +110,7 @@ export const SignClient = ({show, retornar, width='50%', height='80%'}) => {
             if (listado) {
                 setContentList(listado);
             }
-            console.log('listado: ', listado)
+            //console.log('listado: ', listado)
         };
         fetchData();
 
@@ -135,12 +135,14 @@ export const SignClient = ({show, retornar, width='50%', height='80%'}) => {
     }, []);
 
     const customerList = () => {
-        console.log('contentList: ', contentList)
+        //console.log('contentList: ', contentList)
         return (
             <>
-                <div>
+                <div style={{display: 'flex', gap: '10px', margin: '5px'}}>
                     <label>Filtrar/Buscar: </label>
-                    <input type="text" style={{width: '56%'}}
+                    <input 
+                        type="text"
+                        style={{width: '70%'}}
                         onChange={(e)=>{SearchHandle((e.target.value).toLowerCase())}}
                     />
                 </div>
@@ -153,7 +155,11 @@ export const SignClient = ({show, retornar, width='50%', height='80%'}) => {
                 />
                 <button
                     className="btnStnd btn1"
-                    onClick={()=>setShowCustomerList(false)}>Crear cliente</button>
+                    onClick={()=>setShowCustomerList(false)}
+                    style={{marginTop: '5px'}}
+                >
+                Crear cliente
+                </button>
             </>
         )
     };
