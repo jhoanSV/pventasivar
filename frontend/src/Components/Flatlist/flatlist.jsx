@@ -5,7 +5,7 @@ export const Flatlist = ({ data,
                             row,
                             Width = '100%',
                             Height = '100%',
-                            maxHeight = 'none',
+                            maxHeight = '100%',
                             headers = [],
                             selectedRow,
                             setSelectedRow,
@@ -40,12 +40,12 @@ export const Flatlist = ({ data,
     };
 
     return (
-        <div className='Flatlist' id='FlastListID' style={{height: Height, maxHeight: maxHeight}}>
+        <div className='Flatlist' id='FlastListID' style={{height: Height, maxHeight: maxHeight, overflowY: 'auto' }}>
             <table className='theTable' >
-                <thead style={{position: 'sticky', top: '0'}}>
+                <thead style={{position: 'sticky', top: '0', zIndex: 1}}>
                     <tr>
                         {headers.map((item, index) =>
-                            <th key={index} style={{width: item['defaultWidth'] , backgroundColor: principalColor}} >
+                            <th key={index} style={{width: item['defaultWidth'] , backgroundColor: principalColor, overflow: 'hidden'}} >
                                 <div className='cellContent'>{item['header']}</div>
                             </th>
                         )}

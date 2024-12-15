@@ -41,10 +41,9 @@ export const ModalBusca = ({list, Alias ,click=false, sh}) => {
         //Searh the list of products that includes the text, either because it is in the "products" table or in the "alias" table  
         let proData = refList.current//The whole table "products".
         let aliasData = refAliasList.current//The whole table "alias".
-        console.log('proData: ', proData, aliasData)
         try {
             if (text === '' || text < 2) {
-                setLista([]);
+                setLista(proData);
                 return []
             }else{
                 console.log('ax2');

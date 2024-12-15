@@ -117,7 +117,19 @@ export const GranelModal = ({show, productData, pctGan, updtState}) => {
                 updtState('Medidas', newMedidas);
                 show(false);
             }
-        } else if (productData.Clase === 0 || productData.Clase === 1 || productData.Clase === 2){
+        } else if (productData.Medidas.length !== 0){//if (productData.Medidas.length !== 0){//productData.Clase === 0 || productData.Clase === 1 || productData.Clase === 2){
+            let meds = {...productData}.Medidas;
+            console.log('meds: ', meds);
+            let a = meds[0];
+            if(a.PVentaUM){
+                let pcosto = productData.PCosto.replace(/[.,]/g, (a) => (a === "." ? "" : "."));
+                let pct = (((productData.PVenta.replace(/[.,]/g, (a) => (a === "." ? "" : ".")) - (pcosto)) / (pcosto)) * 100);
+                //console.log(Med.PVentaUM, pcosto/um, pct);
+                pct = pct % 1 === 0 ? pct.toString() : pct.toFixed(2);
+                a.pctUM = Formater(pct);//Si hay pventaum cambia el pctGanancia
+                a.PVentaUM = productData.PVenta;
+            }
+            updtState('Medidas', meds);//Modifica la unidad en la medida
             show(false);
         }
     };

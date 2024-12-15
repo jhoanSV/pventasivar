@@ -43,7 +43,7 @@ function createWindow() {
   //mainWindow.loadURL("http://localhost:" + PORT);
   //a mainWindow.loadURL("http://localhost:" + PORT);
   // Open the DevTools.
-  //mainWindow.webContents.openDevTools()
+  mainWindow.webContents.openDevTools()
 }
 
 ipcMain.on('open-external-link', (event, url) => {
@@ -73,6 +73,21 @@ ipcMain.on('print-ticket', (event, ticketHTML) => {
     });
   });
 });
+
+
+// Maneja la apertura de nuevas ventanas
+/*ipcMain.handle('open-new-window', (event, link) => {
+  const newWindow = new BrowserWindow({
+      width: 800,
+      height: 600,
+      webPreferences: {
+          contextIsolation: true,
+      },
+  });
+
+  newWindow.loadURL(link); // Abre el link proporcionado
+});*/
+
 
 //* For the update process ********************************
 // This method will be called when Electron has finished

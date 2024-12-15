@@ -131,12 +131,12 @@ export function CashReconciliation() {
         let entradasEnEfectivo = 0
         let salidasEnEfectivo = 0
         for (const row of filtroEntradas) {
-            if (row.Activo = 1) {
+            if (row.Activo = 1 && row.TipoDeFlujo === 0) { 
                 entradasEnEfectivo += row.Efectivo
             }
         }
         for (const row of filtroSalidas) {
-            if (row.Activo = 1) {
+            if (row.Activo = 1 && row.TipoDeFlujo === 1) {
                 salidasEnEfectivo += row.Efectivo
             }
         }
@@ -146,7 +146,8 @@ export function CashReconciliation() {
         setCash(
             (CR['Inicio de caja'] ? CR['Inicio de caja'].Efectivo : 0) +
             (CR['Venta por caja'] ? CR['Venta por caja'].Efectivo : 0) +
-            (CR['Ingreso por caja'] ? CR['Ingreso por caja'].Efectivo : 0) -
+            (SalesData.current.entradasEnEfectivo ? SalesData.current.entradasEnEfectivo: 0)-
+            (SalesData.current.salidasEnEfectivo ? SalesData.current.salidasEnEfectivo: 0) -
             (CR['Devolución Entrada']? CR['Devolución Entrada'].Efectivo : 0) -
             (CR['Devolución mercancia'] ? CR['Devolución mercancia'].Efectivo : 0)
           );
@@ -166,10 +167,6 @@ export function CashReconciliation() {
         const colors = salesCategory.map(row => row.ColorCategoria)
         const profits = salesCategory.map(row => row.ventas - row.Costos)
         const darkerColors = lightenColors(colors, 10);
-        //console.log('darkerColors: ', darkerColors)
-        //console.log('labets: ', labels)
-        //console.log('datasets: ', datasets)
-        //console.log('profits: ', profits)
         const data = {
             labels: labels,//['Red', 'Blue', 'Yellow'], // Etiquetas para cada segmento de la torta
             datasets: [
@@ -284,6 +281,13 @@ export function CashReconciliation() {
             key: 'Valor',
             defaultWidth: 100,
             type: 'text',
+        },
+        ,
+        {
+            header: 'Hora',
+            key: 'Hora',
+            defaultWidth: 100,
+            type: 'text',
         }
     ];
 
@@ -349,7 +353,10 @@ export function CashReconciliation() {
 
         };
         // Extraer la hora de la fecha
-        const hora = new Date(item.Fecha).toLocaleTimeString('en-GB', { hour12: false });
+        const fecha = new Date(item.Fecha)
+        const hora = String(fecha.getHours()).padStart(2, '0') +
+                    ':' + String(fecha.getMinutes()).padStart(2, '0') +
+                    ':' + String(fecha.getSeconds()).padStart(2, '0');
         return (
                 <>
                     <td style={{...styles, width: columnsWidth[0]}}>
@@ -366,6 +373,9 @@ export function CashReconciliation() {
                     </td>
                     <td style={{...styles, width: columnsWidth[0]}}>
                         <label>{item.Valor}</label>
+                    </td>
+                    <td style={{...styles, width: columnsWidth[0]}}>
+                        <label>{hora}</label>
                     </td>
                 </>
         );
@@ -436,7 +446,7 @@ export function CashReconciliation() {
                                 <label style={{color: '#C70039', fontWeight: 'bold'}}>Salidas en efectivo:</label>
                             </td>
                             <td>
-                                <label>$ {Formater(CRData['Ingreso por caja'] ? CRData['Ingreso por caja'].Efectivo: 0)}</label>
+                                <label>$ {Formater(SalesData.current.salidasEnEfectivo ? SalesData.current.salidasEnEfectivo: 0 )}</label>
                             </td>
                         </tr>
                         <tr>
@@ -549,7 +559,7 @@ export function CashReconciliation() {
                 <h1>Cuentas por categoria</h1>
                 <PieChart/>
             </div>
-        <div className='TwoColumns' style={{gap: '10%', paddingBottom: '15px'}}>
+        <div className='TwoColumns' style={{gap: '2%', paddingBottom: '15px'}}>
             <div style={{
                     display: 'flex',
                     flexDirection: 'column', // Coloca los elementos en columna

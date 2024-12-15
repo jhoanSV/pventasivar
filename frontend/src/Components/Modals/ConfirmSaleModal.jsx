@@ -23,6 +23,8 @@ export const ConfirmSaleModal = ({show, sendSale , folio , orderslist, width='50
     const [ electronic, setElectronic ] = useState(false);
     const [ visiblevCargando, setVisiblevCargando ] = useState(false);
     const [ visibleEnvioExitoso, setVisibleEnvioExitoso] = useState(false);
+    const [ showConfirmElectronicInvoice, setShowConfirmElectronicInvoice ] = useState(false);
+    const [selectedOption, setSelectedOption] = useState('Remision'); // Estado del radio button seleccionado
     const { setSection, setSomeData, usD, setUsD } = useTheContext();
 
     const inputefectivoRef = useRef(null);
@@ -272,6 +274,48 @@ export const ConfirmSaleModal = ({show, sendSale , folio , orderslist, width='50
         }
     }
 
+    const handleRadioChange = (e) => {
+        const value = e.target.value;
+        if (value === 'FElectronica') {
+            // Si intenta seleccionar "Factura Electrónica" sin confirmar
+            setShowConfirmElectronicInvoice(true); // Mostrar modal
+        } else {
+            // Cambiar la selección directamente
+            setSelectedOption(value);
+        }
+    };
+
+    const ConfirmElectronicInvoice = () => {
+        const [confirmElectronic, setconfirmElectronic] = useState('')
+        return (
+            <div className='theModalContainer'>
+            <div className='theModal-content' style={{position: 'relative'}}>
+                <button className='btn1Stnd' onClick={() => {setShowConfirmElectronicInvoice(false); setElectronic(false)}} style={{position: 'absolute', top: '0px', right: '0px'}}>
+                    <i className='bi bi-x-lg'/>
+                </button>
+                <div className='theModal-body' style={{display: 'flex', flexDirection: 'column', gap: '5px', margin: '10px'}}>
+                    <label>Para hacer factura electronica escribe "Confirmar"</label>
+                    <input
+                        type='text'
+                        value={confirmElectronic}
+                        onChange={(e)=>setconfirmElectronic(e.target.value)}
+                    />
+                    <button
+                        className="btnStnd btn1"
+                        disabled={confirmElectronic.toLowerCase() !== 'confirmar'}
+                        onClick={()=>{
+                            setElectronic(true);
+                            setSelectedOption('FElectronica');
+                            setShowConfirmElectronicInvoice(false)}}
+                    >
+                    Aceptar
+                    </button>
+                </div>
+            </div>
+            </div>  
+        )
+    }
+
     return (
         <div className='theModalContainer'>
             <div className='theModal-content' style={{position: 'relative'}}>
@@ -374,16 +418,18 @@ export const ConfirmSaleModal = ({show, sendSale , folio , orderslist, width='50
                                     type ='radio'
                                     value ='Remision'
                                     name = 'TipoDeVenta'
-                                    defaultChecked = {true}
-                                    onChange = {(e)=>{setElectronic(false)}}/>
+                                    //defaultChecked = {true}
+                                    checked={selectedOption === 'Remision'}
+                                    onChange = {(e)=>{setElectronic(false); setSelectedOption('Remision');}}/>
                                 Remisión
                             </label>
                             <label>
-                                <input type ='radio'
+                                <input
+                                    type ='radio'
                                     value ='FElectronica'
                                     name = 'TipoDeVenta'
-                                    defaultChecked = {false}
-                                    onChange = {(e)=>{setElectronic(true)}}/>
+                                    checked={selectedOption === 'FElectronica'}
+                                    onChange={()=>{setShowConfirmElectronicInvoice(true)}}/>
                                 Factura electronica
                             </label>
                             <div className='btn'>
@@ -411,6 +457,7 @@ export const ConfirmSaleModal = ({show, sendSale , folio , orderslist, width='50
 
             { visiblevCargando && <ModarChargin/>}
             { visibleEnvioExitoso && <ModarSuccessfulSubmission/>}
+            { showConfirmElectronicInvoice && <ConfirmElectronicInvoice/>}
         </div>
     );
 }

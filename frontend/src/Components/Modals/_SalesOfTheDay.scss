@@ -37,3 +37,22 @@
         right: '10px';   // ajusta según sea necesario para la distancia desde los bordes
         width: 'calc(100% - 20px)' // resta el margen izquierdo y derecho para centrar los botones
 }
+
+/* Define el estilo inicial del div */
+.link-style {
+    display: inline-flex; /* Para alinear el icono y texto juntos */
+    align-items: center; /* Centra verticalmente los elementos */
+    color: blue; /* Color inicial */
+    text-decoration: none; /* Sin subrayado, como un link */
+    cursor: pointer; /* Cambia el cursor al pasar el mouse */
+}
+
+/* Cambia el color al pasar el mouse */
+.link-style:hover {
+    color: green; /* Cambia el color al pasar el mouse */
+}
+
+/* Opcional: Agregar animación suave al cambio de color */
+.link-style {
+    transition: color 0.3s ease;
+}

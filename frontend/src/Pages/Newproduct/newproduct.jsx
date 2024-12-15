@@ -127,11 +127,9 @@ export const Newproduct = () => {
             if(e.target.value!==''){
                 setSelectedCategory(e.target.value);
                 console.log("category: ", e.target.value);
-                //changeValuesProducts('Categoria', categories.find(c => c.IdCategoria === Number(e.target.value)).Categoria);
                 setSubCatList(subC.filter(c => c.IdCategoria === Number(e.target.value)));
                 console.log(subC.filter(c => c.IdCategoria === Number(e.target.value)));
             }else{
-                //changeValuesProducts('Categoria', '');
                 setSelectedCategory('');
                 setSubCatList(subC);
             }
@@ -143,9 +141,7 @@ export const Newproduct = () => {
                 setSubCatList(subC.filter(c => c.IdCategoria === Number(subC[e.target.value-1].IdCategoria)));
                 changeValuesProducts('IdSubCategoria', Number(e.target.value));
             }else{
-                //changeValuesProducts('Categoria', '');
                 changeValuesProducts('IdSubCategoria', '')
-                //setSelectedCategory('')
             }
         }
     };
@@ -213,7 +209,7 @@ export const Newproduct = () => {
         for (let key in productData) {
             if ((key !== 'Detalle' &&
                 key !== 'Ubicacion' &&
-                //key !== 'Clase' &&
+                //key !== 'Cod' &&
                 key !== 'Medida'
             ) && productData[key] === '') {
                 emptValue = key; // Si algún campo está vacío, la validación falla
@@ -221,6 +217,7 @@ export const Newproduct = () => {
         }
         if (emptValue) {
             let text1 = emptValue;
+            if(text1 === 'Cod') text1 = 'codigo';
             if(text1 === 'IdSubCategoria') text1 = 'Sub-Categoría';
             if(text1 === 'Clase') text1 = 'Modo de venta';
             if(text1 === 'Inventario') text1 = 'Inv Actual';
@@ -291,27 +288,29 @@ export const Newproduct = () => {
         const today = fecha.getFullYear() + '-' + (fecha.getMonth() + 1) + '-' + fecha.getDate() + ' ' + fecha.getHours() + ':' + fecha.getMinutes() + ':' + fecha.getSeconds();
         if (fromSivarToNew) {
             const codeFind = productCodes.map(code => code.toLowerCase()).includes(productData.Cod.toLowerCase());
-            if((productData.Cod !== someData.Cod) && codeFind){
+            if((productData.Cod !== theSomeData.current.Cod) && codeFind){
                 TheAlert('El código de producto ya existe');
+                return;
+            } else if (productData.Cod === ''){
+                TheAlert('El código de producto no debe ser vacio');
                 return;
             }
             //*---------------------------------------
             let a = prepData();
             a.IdFerreteria = usD.Cod;
             a.Iva = 19 //* En discusión 
-            a.ConsecutivoProd = someData.Consecutivo
-            console.log(productData);
-            console.log(a);
+            a.ConsecutivoProd = theSomeData.current.Consecutivo
+            //console.log(productData);
+            //console.log(a);
             
-            
-            if(modificarProducto && ((someData.PCosto !== 0 && !someData.PVenta !== 0) || someData.Inventario !== 0)){
+            if(modificarProducto && ((theSomeData.current.PCosto !== 0 && !theSomeData.current.PVenta !== 0) || theSomeData.current.Inventario !== 0)){
                 console.log('Es para modificar un producto ya creado pero que no tiene inventario por lo que no está creado en mi inventario sjj');
                 const res = await postUpdateInventory({
-                    "IdFerreteria": someData.IdFerreteria,
+                    "IdFerreteria": theSomeData.current.IdFerreteria,
                     "CodResponsable": usD.Cod,
                     "Responsable": usD.Ferreteria,
-                    "ConsecutivoProd": someData.Consecutivo,
-                    "Cantidad": someData.Inventario,
+                    "ConsecutivoProd": theSomeData.current.Consecutivo,
+                    "Cantidad": theSomeData.current.Inventario,
                     "Fecha": today,
                     "Motivo": 'Agregar producto a inventario'
                 });
@@ -322,7 +321,7 @@ export const Newproduct = () => {
             }
             
             const res2 = await UpdateProduct(a);
-            console.log(res2);
+            //console.log(res2);
             if(res2 && res2.message === 'Transacción completada con éxito'){
                 navigate('/ProductsList');
                 TheAlert('Producto modificado con éxito');
@@ -352,7 +351,7 @@ export const Newproduct = () => {
                 preparedData.IdFerreteria = usD.Cod;
                 console.log('preparedData', preparedData)
                 const res2 = await UpdateProduct(preparedData);
-                console.log(res2);
+                //console.log(res2);
                 if(res2 && res2.message === 'Transacción completada con éxito'){
                     navigate('/ProductsList');
                     TheAlert('Producto modificado con éxito');
@@ -596,6 +595,10 @@ export const Newproduct = () => {
                                 onChange={(e) => changeValuesProducts("Cod", e.target.value)}
                                 value={productData.Cod}
                                 disabled={productData.IdFerreteria===0}
+                                onBlur={(e) => {
+                                    const trimmedValue = e.target.value.trim(); // Quitar espacios en blanco
+                                    changeValuesProducts("Cod", trimmedValue); // Actualizar el valor sin espacios
+                                }}
                                 />
                             <div className={(handleCodVali()) ? 'warningCloud' : 'd-none'}>
                                 Este c&oacute;digo ya existe
@@ -706,7 +709,19 @@ export const Newproduct = () => {
                         <TheInput
                             val={productData.PVenta}
                             numType={'real'}
-                            onchange={(e) => { changeValuesProducts('PVenta', e); 
+                            onchange={(e) => { changeValuesProducts('PVenta', e);
+                                                if (productData.Medidas.length > 0) {
+                                                    console.log('entro en medidas');
+                                                    let meds = [...productData.Medidas]
+                                                    let a = meds[0]
+                                                    let pcosto = productData.PCosto.replace(/[.,]/g, (a) => (a === "." ? "" : "."));
+                                                    let pct = (((productData.PVenta.replace(/[.,]/g, (a) => (a === "." ? "" : ".")) - (pcosto)) / (pcosto)) * 100);
+                                                    //console.log(Med.PVentaUM, pcosto/um, pct);
+                                                    pct = pct % 1 === 0 ? pct.toString() : pct.toFixed(2);
+                                                    a.pctUM = Formater(pct);//Si hay pventaum cambia el pctGanancia
+                                                    a.PVentaUM = e
+                                                    changeValuesProducts('Medidas', meds);
+                                                }
                                                 calpctV(e);
                                                 if (parseFloat(e)<parseFloat(productData.PCosto))
                                                     {setColorPVenta('red')}

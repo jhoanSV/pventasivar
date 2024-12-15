@@ -106,6 +106,7 @@ export function AddInventory(){
                 'Clase': '',
                 'Medida': '',
                 'UMedida': 1,
+                'Medidas': []
             });
             setcantidadYProveedor({
                 'Cantidad': '',
@@ -209,16 +210,16 @@ export function AddInventory(){
                 Motivo: 'compra externa',
                 ConsecutivoCompra: 0,
                 Medida: data.Medida,
-                UMedida: 1
+                UMedida: 1,
+                Medidas: data.Medidas
             }
-            //data.PCostoLP = theProductRef.current.PCosto.replace(/[.,]/g, (a)=>(a === '.'? '': ','))
-            //data.PCosto = data.PCosto.replace(/[.,]/g, (a)=>(a === '.'? '': ','))
-            //data.PVenta = data.PVenta.replace(/[.,]/g, (a)=>(a === '.'? '': ','))
+
             console.log(newData)
             const addTheProduct = await AddProduct(newData)
             if (addTheProduct.status === 200) {
                 const MoreAdd = await TheAlert('Se añadio con exito, ¿desea añadir mas productos?', 1)
                 if (MoreAdd) {
+                    fetchInventoryList();
                     cancel(true)
                 } else {
                     navigate('/PurchaseList')
@@ -378,6 +379,7 @@ export function AddInventory(){
             <div id='RowSearch'>
                 <button
                     className='btnStnd btn1'
+                    disabled={productData.Cod === ''}
                     onClick={()=>{toAddInventory()}}
                     >Agregar
                 </button>

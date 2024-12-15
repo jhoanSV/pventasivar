@@ -5,6 +5,8 @@
     width: 100%;
     height: 65vh;
     overflow-y: auto;
+    max-height: 100%; /* Limita la altura máxima */
+    height: 100%;
     .rowflatlist.selected {
       //background-color: rgba(39, 83, 172, 0.5803921569); // Color for the selected row
 

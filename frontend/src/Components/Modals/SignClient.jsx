@@ -236,6 +236,10 @@ export const SignClient = ({show, retornar, width='70%', height='85%'}) => {
                 msjV = msjV + 'La responsabilidad fiscal no debe estar vacia\n'
             }
             
+            if(a.Direccion === ''){
+                msjV = msjV + 'La dirección no debe estar vacia\n'
+            }
+
             if (a.Tipo === 0) {
                 a.ResFiscal = 'R-99-PN'
             }

@@ -540,6 +540,7 @@ export function Sales(){
     }
 
     const askToAddProduct = (item) => {
+        console.log('item: ', item)
         if (item.Clase === 0){
             let theProduct = {...item};
             theProduct.Medida = '';
@@ -602,7 +603,6 @@ export function Sales(){
     }, [selectedfila]);
     
     useEffect(() => {
-        //asktoaddRef.current = askToAddProduct
         localStorage.setItem('CurrentTab', JSON.stringify(currentTab));
         selectedTabRef.current = currentTab;
         // eslin-disable-next-line
@@ -799,7 +799,7 @@ export function Sales(){
                         </div>
                         <button className="btnStnd btn1" onClick={()=>confirmarVenta()}
                             style={{fontSize: '16px', padding: '16px 14px'}}>
-                            F2-Cobrar
+                            Cobrar
                         </button>
                     </div>
                     <div>

@@ -106,8 +106,8 @@ export const SalesOfTheDay = ({show, orderslist, width='90%', height='90%'}) => 
         const response = await SalesPerDay({
             'IdFerreteria' : usD.Cod,
             'Fecha': dateSearch.getFullYear() +
-                    '-' + String(now.getMonth() + 1).padStart(2, '0') +
-                    '-' + String(now.getDate()).padStart(2, '0')
+                    '-' + String(dateSearch.getMonth() + 1).padStart(2, '0') +
+                    '-' + String(dateSearch.getDate()).padStart(2, '0')
         });
         const sortedSelectedOrder  = response.sort((a,b)=> (b.Consecutivo-a.Consecutivo))
         console.log('sortedSelectedOrder', sortedSelectedOrder)
@@ -252,6 +252,7 @@ export const SalesOfTheDay = ({show, orderslist, width='90%', height='90%'}) => 
         item.Orden.forEach(valor => {
             suma += valor.VrUnitario * (valor.CantidadSa - valor.CantidadEn);
         });
+        const fecha = new Date(item.Fecha);
         const styles = {
             textDecoration: suma === 0 ? 'line-through' : 'none',
             color: suma === 0 ? '#999999' : '#000000',
@@ -268,7 +269,10 @@ export const SalesOfTheDay = ({show, orderslist, width='90%', height='90%'}) => 
                         <label>{item.Nombre}</label>
                     </td>
                     <td style={{...styles, width: columnsWidth[3]}} onClick={()=>{ChangueSelectedOrder(item); isEditingRef.current = false}}>
-                        <label>{item.Fecha.split('T')[1].split('.')[0]}</label>
+                        <label>{String(fecha.getHours()).padStart(2, '0') +
+                                ':' + String(fecha.getMinutes()).padStart(2, '0') +
+                                ':' + String(fecha.getSeconds()).padStart(2, '0')}
+                        </label>
                     </td>
                     <td style={{...styles, width: columnsWidth[4]}} onClick={()=>{ChangueSelectedOrder(item); isEditingRef.current = false}}>
                         <label>${Formater(suma)}</label>
@@ -336,7 +340,6 @@ export const SalesOfTheDay = ({show, orderslist, width='90%', height='90%'}) => 
                         ':' + String(now.getSeconds()).padStart(2, '0');
             const fila = {...orders[selectedfila]}
             let suma = 0
-            console.log("TipoReclamo: ", TipoReclamo)
             if (TipoReclamo === 1){
                 fila.Tipo_Reclamo = 1
                 fila.Descripcion_Reclamo = "Devolución parcial de los bienes y/o no aceptación parcial del servicio"
@@ -367,13 +370,14 @@ export const SalesOfTheDay = ({show, orderslist, width='90%', height='90%'}) => 
                     Codigo: 11001,
                     Nombre: "Bogota, DC."
                 },
-                Direccion: usD.Dirección,
+                Direccion: usD.Direccion,
                 ResponsabilidadFiscal: "R-99-PN",
                 DetallesTributario: {
                     Codigo: "01",
                     Nombre: "IVA"
                 }
             }
+            
             fila.Orden.forEach(valor => {
                 suma += valor.VrUnitario * (valor.CantidadSa - valor.CantidadEn);
             });
@@ -394,16 +398,43 @@ export const SalesOfTheDay = ({show, orderslist, width='90%', height='90%'}) => 
                     setUsD(newUsD)
                 }
             }
-            //console.log("fila: ", fila)
-            await CancelTheSale(fila)
-            const today = formatDate(new Date());
-            //TheAlert('Se hizo la devolución con exito')
-            getOrdersPerday()
-            setVisiblevCargando(false)
-            setVisibleEnvioExitoso(true)
-            setTimeout(() => {  
+            const cancelOrder = await CancelTheSale(fila)
+            if (fila.Cufe !== '' && cancelOrder.Result.IsValid === 'false'){
+                
+                setVisiblevCargando(false)
                 setVisibleEnvioExitoso(false)
-              }, 2000);
+                TheAlert('No se pudo generar Nota credito:\n el error es: ' + cancelOrder.Result.Errores)
+                setShowReturnModal(false)
+                return
+            } else if (fila.Cufe !== '' && cancelOrder.Result.IsValid === 'true'){
+                
+                getOrdersPerday()
+                setVisiblevCargando(false)
+                setVisibleEnvioExitoso(true)
+                setTimeout(() => {
+                    setVisibleEnvioExitoso(false)
+                    setShowReturnModal(false)
+                }, 2000);
+                return
+            } else if (fila.Cufe === '' && cancelOrder.IsValid === true) {
+                
+                getOrdersPerday()
+                setVisiblevCargando(false)
+                setVisibleEnvioExitoso(true)
+                setTimeout(() => {
+                    setVisibleEnvioExitoso(false)
+                    setShowReturnModal(false)
+                }, 2000);
+                return
+            } else if (fila.Cufe === '' && cancelOrder.IsValid === true) {
+                
+                setVisiblevCargando(false)
+                setVisibleEnvioExitoso(false)
+                TheAlert('No se pudo generar Nota credito:\n el error es: ' + cancelOrder.Errores)
+                setShowReturnModal(false)
+                return
+            }
+            
         }
     };
 
@@ -550,6 +581,11 @@ export const SalesOfTheDay = ({show, orderslist, width='90%', height='90%'}) => 
         )
     }
 
+    const openElectronicInvoice = () => {
+        const link = `http://${usD.resColtek.usuario.name.toLowerCase()}.colsad.com/Facturacion/${usD.resColtek.usuario.name.toLowerCase()}/Facturas/${orders[selectedfila].Resolucion}/${headerSales.Prefijo + headerSales.FacturaElectronica}/${headerSales.Prefijo + headerSales.FacturaElectronica}.pdf`; // Cambia el link según lo necesites
+        window.electron.openExternalLink(link);
+    }
+
     const ConfirmPrintModal= ()=>{
         const [ confirmarConvert, setConfirmarConvert ] = useState('')
         const printTicket =async()=>{
@@ -558,9 +594,13 @@ export const SalesOfTheDay = ({show, orderslist, width='90%', height='90%'}) => 
                     setVisiblevCargando(true)
                     const now = new Date();
                     // Obtener la fecha en formato YYYY-MM-DD
-                    const date = now.toISOString().split('T')[0];
+                    const date = now.getFullYear() +
+                                '-' + String(now.getMonth() + 1).padStart(2, '0') +
+                                '-' + String(now.getDate()).padStart(2, '0');
                     // Obtener la hora en formato HH:MM:SS
-                    const time = now.toTimeString().split(' ')[0];
+                    const time = String(now.getHours()).padStart(2, '0') +
+                                ':' + String(now.getMinutes()).padStart(2, '0') +
+                                ':' + String(now.getSeconds()).padStart(2, '0');
                     let orderslist = {...orders[selectedfila]}
                     console.log('orderslist: ', orderslist)
                     let MedioDePagoColtek = 10 //para pago en efectivo
@@ -643,7 +683,11 @@ export const SalesOfTheDay = ({show, orderslist, width='90%', height='90%'}) => 
                     //Fin de la preparación de datos para imprimir
                     //console.log('orderslist', orderslist);
                     const sendedOrden = await ToRemsionToElectronic(usD.token, orderslist)
-                    //console.log('sendedOrden: ', sendedOrden)
+                    console.log('sendedOrden: ', sendedOrden)
+                    if (sendedOrden.Result.IsValid === 'false') {
+                        TheAlert('Ocurrio un error al crear la facura electronica,\n el error es: ' + sendedOrden.Result.Errores)
+                        setVisiblevCargando(false)
+                    }
                     const electronic = true
                     const print = true
                     if (print) {
@@ -666,6 +710,7 @@ export const SalesOfTheDay = ({show, orderslist, width='90%', height='90%'}) => 
                     setShowToElectronicInvoice(false)
                 } catch (error) {
                     TheAlert('Se genero un error al convertir')
+                    setVisiblevCargando(false)
                     setShowReprint(false)
                     setShowToElectronicInvoice(false)
                     console.error(error)
@@ -745,7 +790,7 @@ export const SalesOfTheDay = ({show, orderslist, width='90%', height='90%'}) => 
 
     return (
         <div className='theModalContainer'>
-            <div className='theModal-content' style={{width: width, height: '90%', position: 'relative'}}>
+            <div className='theModal-content' style={{display: 'flex', flexDirection: 'column', width: width, height: '90%', position: 'relative'}}>
                 <button className='btn1Stnd' onClick={() => {show(false)}} style={{position: 'absolute', top: '0px', right: '0px'}}>
                     <i className='bi bi-x-lg'/>
                 </button>
@@ -753,7 +798,8 @@ export const SalesOfTheDay = ({show, orderslist, width='90%', height='90%'}) => 
                     className='theModal-body'
                     style={{
                         height: '100%',
-                        position: 'relative'
+                        position: 'relative',
+                        overflow: 'hidden'
                     }}
                     >
                     <div className='header_Sales_Of_the_Day'>
@@ -761,7 +807,11 @@ export const SalesOfTheDay = ({show, orderslist, width='90%', height='90%'}) => 
                     </div>
                     <div
                         className='twoColumnsContainer'
-                        style={{height: '92%'}}
+                        style={{
+                            height: '92%',
+                            display: 'flex',
+                            overflow: 'hidden'
+                        }}
                     >
                         <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between', height: '100%' }}>
                             <div
@@ -791,6 +841,7 @@ export const SalesOfTheDay = ({show, orderslist, width='90%', height='90%'}) => 
                                     setSelectedRow={setSelectedfila}
                                     Height='100%'
                                     Width='100%'
+                                    MaxHeight='100%'
                                 />
                             </div>
                             <div style={{margin: '5px'}}>
@@ -855,6 +906,17 @@ export const SalesOfTheDay = ({show, orderslist, width='90%', height='90%'}) => 
                                     <div className='Col'>
                                         <label><strong>Forma de pago:</strong></label>
                                         <label><strong>Factura:</strong></label>
+                                        {headerSales !== null && headerSales.Prefijo !== '' &&
+                                            headerSales.Prefijo !== '' && 
+                                            <div
+                                                className="link-style"
+                                                onClick={
+                                                    () => openElectronicInvoice()
+                                                }>
+                                                <span>Ver PDF </span>
+                                                <i class="bi bi-filetype-pdf" ></i>
+                                            </div>
+                                        }
                                     </div>
                                     <div className='Col'>
                                         {headerSales !== null ? (
@@ -891,7 +953,7 @@ export const SalesOfTheDay = ({show, orderslist, width='90%', height='90%'}) => 
                                     selectedRow={selectedfilaOrder}
                                     setSelectedRow={setSelectedfilaOrder}
                                     Height='100%'
-                                    
+                                    MaxHeight='100%'
                                 />
                             </div>
                             <div>
