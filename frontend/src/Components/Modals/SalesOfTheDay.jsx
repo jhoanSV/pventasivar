@@ -51,7 +51,6 @@ export const SalesOfTheDay = ({show, orderslist, width='90%', height='90%'}) => 
             const filterByBody = order.Orden.some(item => item.Cod.toString().toLowerCase().includes(text.toString().toLowerCase()) || item.Descripcion.toString().toLowerCase().includes(text.toString().toLowerCase()));
             return filterByHead || filterByBody;
         });
-        console.log('filtro: ', filtro)
         if (filtro.length > 0){
             setOrders(filtro);
             setSelectedfila(0);
@@ -329,7 +328,9 @@ export const SalesOfTheDay = ({show, orderslist, width='90%', height='90%'}) => 
         const confirmCacelTheSale = await TheAlert('¿Esta seguro que desea ' + ( TipoReclamo === 1 ? 'devolver el producto':'cancelar la venta') + '?, esta acción es irreversible', 1)
         if (confirmCacelTheSale) {
             setVisiblevCargando(true)
+            const fila = {...orders[selectedfila]}
             const now = new Date();
+            const dateOrder = new date(fila.Fecha)
             // Obtener la fecha en formato YYYY-MM-DD
             const date = now.getFullYear() +
                         '-' + String(now.getMonth() + 1).padStart(2, '0') +
@@ -338,7 +339,13 @@ export const SalesOfTheDay = ({show, orderslist, width='90%', height='90%'}) => 
             const time = String(now.getHours()).padStart(2, '0') +
                         ':' + String(now.getMinutes()).padStart(2, '0') +
                         ':' + String(now.getSeconds()).padStart(2, '0');
-            const fila = {...orders[selectedfila]}
+            const dateOfTheOrder = now.getFullYear() +
+                                    '-' + String(now.getMonth() + 1).padStart(2, '0') +
+                                    '-' + String(now.getDate()).padStart(2, '0');
+            // Obtener la hora en formato HH:MM:SS
+            const timeOfTheOrder = String(now.getHours()).padStart(2, '0') +
+                                    ':' + String(now.getMinutes()).padStart(2, '0') +
+                                    ':' + String(now.getSeconds()).padStart(2, '0');
             let suma = 0
             if (TipoReclamo === 1){
                 fila.Tipo_Reclamo = 1
@@ -381,7 +388,10 @@ export const SalesOfTheDay = ({show, orderslist, width='90%', height='90%'}) => 
             fila.Orden.forEach(valor => {
                 suma += valor.VrUnitario * (valor.CantidadSa - valor.CantidadEn);
             });
-            fila.FechaActual = date + ' ' + time
+            fila.FechaFactura = dateOfTheOrder
+            fila.HoraFactura = timeOfTheOrder
+            fila.FechaActual = date
+            fila.HoraActual = time
             fila.Total = suma
             fila.IdFerreteria = usD.Cod
             fila.Responsable = usD.Contacto
