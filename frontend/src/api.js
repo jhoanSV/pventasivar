@@ -748,6 +748,7 @@ export const CancelTheSale = async(cancelthesale) => {
     }
 }
 
+//*All related to studies %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 export const CRDetail = async(crdetail) => {
     /*return the product to the table entradas
     you have to send a json of the form:
@@ -761,6 +762,28 @@ export const CRDetail = async(crdetail) => {
             method: 'POST',
             headers: { Accept: 'application/json','Content-Type': 'application/json'},
             body: JSON.stringify(crdetail)
+        })
+        return await res.json()
+    }catch(error) {
+        console.log('TheError: '+ error)
+    }
+}
+
+export const StudiesQuery = async(dataStudies) => {
+    /*return the product to the table entradas
+    you have to send a json of the form:
+    {
+        IdFerreteria: usD.Cod,
+        Type: dataType, 
+        FechaMin: dateMinValue,
+        FechaMax: dateMaxValue
+    }
+    */
+    try {
+        const res = await fetch(`${API_POS}/studies`,{
+            method: 'POST',
+            headers: { Accept: 'application/json','Content-Type': 'application/json'},
+            body: JSON.stringify(dataStudies)
         })
         return await res.json()
     }catch(error) {

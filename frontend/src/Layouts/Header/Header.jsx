@@ -124,25 +124,25 @@ export const Header = () => {
                                 <Link to={'/ProductsList'} id='milistadodeproductos' className='genLink' onClick={()=>{
                                     hideSideBar()
                                 }}>
-                                    LISTADO
+                                    Listado
                                 </Link>
                                 <Link to={'/NewProduct'} id='minuevoproducto' className='genLink' onClick={()=>{
                                     setSomeData(null)
                                     hideSideBar()
                                     setSection('Nuevo Producto')
                                 }}>
-                                    NUEVO
+                                    Nuevo
                                 </Link>
                                 <Link to={'/Inventory'} id='miinventario' className='genLink' onClick={()=>{
                                     hideSideBar()
                                 }}>
-                                    INVENTARIO
+                                    Inventario
                                 </Link>
                                 <Link to={'/LowInv'} id='mibajosdeinventario' className='genLink' onClick={()=>{
                                     hideSideBar();
                                     setSection('Bajos de inventario');
                                 }}>
-                                    BAJO INVENTARIO
+                                    Bajo inventario
                                 </Link>
                             </div>
                         </div>
@@ -157,13 +157,13 @@ export const Header = () => {
                                 <Link to={'/Customerlist'} id='milistadeclientes' className='genLink' onClick={(e)=>{
                                     hideSideBar();
                                 }}>
-                                    LISTADO
+                                    Listado
                                 </Link>
                                 <Link to={'/NewCustomer'} id='minuevocliente' className='genLink' onClick={(e)=>{
                                     setSomeData(null)
                                     hideSideBar()
                                 }}>
-                                    NUEVO
+                                    Nuevo
                                 </Link>
                                 {/* {<Link to={'/BalanceReport'} id='mireportedesaldos' className='genLink' onClick={(e)=>{
                                     hideSideBar()
@@ -178,9 +178,24 @@ export const Header = () => {
                             </Link>
                         </div>
                         <div>
-                            <Link to={'/CashReconciliation'} className='genLink' onClick={()=>{hideSideBar()}}>
+                            <Link className='genLink' onClick={(e)=>{e.currentTarget.classList.toggle('m-open')}}>
                                 ADMINISTRACION
-                            </Link>                            
+                                <i className="bi bi-caret-right-fill"></i>
+                            </Link>
+                            <div className='subm-container'>
+                                <Link to={'/CashReconciliation'} id='milistadeclientes' className='genLink' onClick={(e)=>{
+                                    hideSideBar();
+                                    setSection('CORTE DEL DÍA')
+                                }}>
+                                    Corte del día
+                                </Link>
+                                <Link to={'/Studies'} id='milistadeclientes' className='genLink' onClick={(e)=>{
+                                    hideSideBar();
+                                    setSection('ESTUDIOS')
+                                }}>
+                                    Estudios
+                                </Link>
+                            </div>                            
                         </div>
                         <div>
                             <Link to={'/Config'} id='miconfig' className='genLink' onClick={()=>{hideSideBar()}}>

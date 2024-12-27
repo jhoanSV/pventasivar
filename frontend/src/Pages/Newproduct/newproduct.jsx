@@ -122,21 +122,16 @@ export const Newproduct = () => {
 
     const handleSelectedCategory = (value2Ch, e) => {
         //*This function handles the selected category and
-        console.log(value2Ch, e.target.value);
         if(value2Ch === 'Categoria'){
             if(e.target.value!==''){
                 setSelectedCategory(e.target.value);
-                console.log("category: ", e.target.value);
                 setSubCatList(subC.filter(c => c.IdCategoria === Number(e.target.value)));
-                console.log(subC.filter(c => c.IdCategoria === Number(e.target.value)));
             }else{
                 setSelectedCategory('');
                 setSubCatList(subC);
             }
         }else{
             if(e.target.value!==''){
-                console.log(e.target.value);
-                console.log(subC[e.target.value-1].IdCategoria);
                 setSelectedCategory(subC[e.target.value-1].IdCategoria);
                 setSubCatList(subC.filter(c => c.IdCategoria === Number(subC[e.target.value-1].IdCategoria)));
                 changeValuesProducts('IdSubCategoria', Number(e.target.value));
@@ -245,9 +240,7 @@ export const Newproduct = () => {
         a.Motivo = "Nuevo producto al inventario";
         // *----------------------------------------
         a.Iva = 19 //* En discusión 
-        console.log('a', a);
         const res = await NuevoProducto(a);
-        console.log(res);
         if(res && res.message === 'Transacción completada con éxito'){
             navigate('/ProductsList');
             TheAlert('Producto creado con éxito');
@@ -300,8 +293,6 @@ export const Newproduct = () => {
             a.IdFerreteria = usD.Cod;
             a.Iva = 19 //* En discusión 
             a.ConsecutivoProd = theSomeData.current.Consecutivo
-            //console.log(productData);
-            //console.log(a);
             
             if(modificarProducto && ((theSomeData.current.PCosto !== 0 && !theSomeData.current.PVenta !== 0) || theSomeData.current.Inventario !== 0)){
                 console.log('Es para modificar un producto ya creado pero que no tiene inventario por lo que no está creado en mi inventario sjj');
@@ -321,7 +312,6 @@ export const Newproduct = () => {
             }
             
             const res2 = await UpdateProduct(a);
-            //console.log(res2);
             if(res2 && res2.message === 'Transacción completada con éxito'){
                 navigate('/ProductsList');
                 TheAlert('Producto modificado con éxito');
@@ -343,15 +333,12 @@ export const Newproduct = () => {
                 return;
             } else {
                 //Once we have the product added to the inventory we can update the product
-                console.log('res', res)
                 //This part of the code update the product
                 const preparedData = prepData()
                 preparedData.ConsecutivoProd = theSomeData.current.Consecutivo
                 preparedData.Iva = 19;
                 preparedData.IdFerreteria = usD.Cod;
-                console.log('preparedData', preparedData)
                 const res2 = await UpdateProduct(preparedData);
-                //console.log(res2);
                 if(res2 && res2.message === 'Transacción completada con éxito'){
                     navigate('/ProductsList');
                     TheAlert('Producto modificado con éxito');
@@ -387,9 +374,6 @@ export const Newproduct = () => {
     useEffect(() => {
         if (someData) {
             toModifyProduct(someData)
-            //console.log('Datos del producto: ', someData)
-            //console.log("modificarProducto : ", modificarProducto)
-            //console.log("theSomeData.ExisteEnDetalle: ", theSomeData.ExisteEnDetalle)
         } else {
             setSection('Nuevo Producto');
         }
@@ -437,7 +421,6 @@ export const Newproduct = () => {
         theSomeData.current = dataProduct
         setImgSrc(theSomeData && `https://sivarwebresources.s3.amazonaws.com/AVIF/${theSomeData.current.Cod}.avif`)
         let data = { ...dataProduct}
-        console.log("Datos a modificar: ", data);
         if (data.PVenta && data.PCosto) {
             let pct = ((data.PVenta - data.PCosto) / data.PCosto) * 100
             pct = pct % 1 === 0 ? pct : pct.toFixed(2);
@@ -462,7 +445,20 @@ export const Newproduct = () => {
         data.Inventario = Formater(data.Inventario);
         data.InvMinimo = Formater(data.InvMinimo);
         data.InvMaximo = Formater(data.InvMaximo);
-        console.log(data);
+        //To the inventory detail
+        if (data.Medidas.length > 0 && Formater(data.Inventario)!== '') {
+            // Parte entera
+            const inventarioNumber = parseFloat(data.Inventario.replace(',', '.'));
+            const entero = Math.trunc(inventarioNumber); // Trunca la parte decimal
+            const decimal = inventarioNumber - entero;
+            const maxUMedida = parseInt(data.Medidas.at(-1).UMedida, 10);
+            const newDecimal = decimal * maxUMedida
+            data.InventaryDetail = entero.toString() + ' ' + data.Medidas[0].Medida + ' ' + newDecimal.toFixed(2).toString() + ' ' + data.Medidas.at(-1).Medida
+        } else if (Formater(data.Inventario) === ''){
+            data.InventaryDetail = Formater(0)
+        } else if (data.Medidas.length === 0 && Formater(data.Inventario)!==''){
+            data.InventaryDetail = Formater(data.Inventario)
+        }
         setSelectedCategory(data.Categoria.toLowerCase());
         setProductData(data);
         setSelectedCategory(data.IdCategoria);
@@ -500,7 +496,6 @@ export const Newproduct = () => {
     const askToAddProduct = async(item) => {
         let modifyProduct = await TheAlert('El producto ya existe, ¿desea modificar el producto?', 1)
         if (modifyProduct){
-            console.log('item: ', item)
             if (item.ExisteEnDetalle){
                 setFromSivarToNew(true)
             }
@@ -514,6 +509,27 @@ export const Newproduct = () => {
                 InvMinimo: Formater(0),
                 InvMaximo: Formater(0)
             }
+        }
+    }
+
+    function inventoryDetayl(medida){
+        console.log('productData.Medidas.length: ', productData.Medidas.length)
+        if (productData.Medidas.length > 0 && Formater(productData.Inventario)!=='') {
+            const [enteroStr, decimalStr] = productData.Inventario.split('.')
+            const entero = parseInt(enteroStr, 10);
+            const decimal = parseInt(decimalStr, 10);
+            const maxUMedida = parseInt(productData.Medidas[-1].UMedida, 10);
+            const newDecimal = decimal * maxUMedida
+            console.log(entero.toString() + productData.Medidas[0].Medida + newDecimal.toString() + productData.Medidas[-1].Medida)
+            return entero.toString() + productData.Medidas[0].Medida + newDecimal.toString() + productData.Medidas[-1].Medida
+        } else if (Formater(productData.Inventario) === ''){
+            console.log(0)
+            return 0
+        } else if (productData.Medidas.length === 0 && Formater(productData.Inventario)!==''){
+            console.log(Formater(productData.Inventario))
+            return Formater(productData.Inventario)
+        } else {
+            console.log('no retorna nada')
         }
     }
 
@@ -849,7 +865,10 @@ export const Newproduct = () => {
                         </div>
                         <div className='Colmn2'>
                             {modificarProducto && theSomeData.current.ExisteEnDetalle ?
-                                <label>{Formater(productData.Inventario)==='' ? 0 : Formater(productData.Inventario)}</label>
+                                <div>
+                                    {/*<label>{Formater(productData.Inventario)==='' ? 0 : Formater(productData.Inventario)}</label>*/}
+                                    <label>{productData.InventaryDetail}</label>
+                                </div>
                                 :
                                 <TheInput
                                     val={productData.Inventario}

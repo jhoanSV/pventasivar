@@ -15,7 +15,7 @@ ChartJS.register(
 );
 
 export function CashReconciliation() {
-    const { setSection, setSomeData, usD } = useTheContext();
+    const { setSection, usD } = useTheContext();
     const [ CRData, setCRData ] = useState({});
     const [ entradas, setEntradas ] = useState([]);
     const [ salidas, setSalidas ] = useState([]);
@@ -99,27 +99,22 @@ export function CashReconciliation() {
     };
 
     const CaschRDetail = async()=>{
-        const now = dateSearch;
         // Obtener la fecha en formato YYYY-MM-DD
-        const date = now.getFullYear() +
-                    '-' + String(now.getMonth() + 1).padStart(2, '0') +
-                    '-' + String(now.getDate()).padStart(2, '0');
-        // Obtener la hora en formato HH:MM:SS
-        const time = String(now.getHours()).padStart(2, '0') +
-                    ':' + String(now.getMinutes()).padStart(2, '0') +
-                    ':' + String(now.getSeconds()).padStart(2, '0');
+        const date = dateSearch.getFullYear() +
+                            '-' + String(dateSearch.getMonth() + 1).padStart(2, '0') +
+                            '-' + String(dateSearch.getDate()).padStart(2, '0');
         const CR = await CRDetail({
             IdFerreteria: usD.Cod,
             Fecha: date
         })
         const cashFlow = await CashFlow({
             IdFerreteria: usD.Cod,
-            Fecha: date,
+            Fecha: date
         })
 
         const profitData = await Profit({
             IdFerreteria: usD.Cod,
-            Fecha: date,
+            Fecha: date
         })
         setGanancias(profitData[0].Ganancia)
         //console.log('profitData: ', profitData[0].Ganancia)
@@ -154,7 +149,8 @@ export function CashReconciliation() {
         setCRData(CR)
         const salesCategory = await SalesByCategory({
             IdFerreteria: usD.Cod,
-            Fecha: date
+            FechaMin: date,
+            FechaMax: date
         })
         const retunData = await Returns({
             IdFerreteria: usD.Cod,
@@ -165,7 +161,7 @@ export function CashReconciliation() {
         const labels = salesCategory.map(row => row.Categoria)
         const datasets = salesCategory.map(row => row.ventas)
         const colors = salesCategory.map(row => row.ColorCategoria)
-        const profits = salesCategory.map(row => row.ventas - row.Costos)
+        const profits = salesCategory.map(row => row.Ganancias)
         const darkerColors = lightenColors(colors, 10);
         const data = {
             labels: labels,//['Red', 'Blue', 'Yellow'], // Etiquetas para cada segmento de la torta
@@ -189,25 +185,23 @@ export function CashReconciliation() {
         setDataPie(data)
         const bestProductData = await BestProducts({
             IdFerreteria: usD.Cod,
-            Fecha: date
+            FechaMin: date,
+            FechaMax: date
         })
         setBestPData(bestProductData)
     }
 
     const PieChart = () => {
-        const options = {
-            plugins: {
-                legend: {
-                    display: true, // Asegúrate de que las etiquetas estén habilitadas
-                    position: 'top', // Cambia según tu preferencia ('top', 'left', etc.)
-                },
-                tooltip: {
-                    enabled: true, // Muestra un tooltip al pasar el cursor
-                }
-            }
-        };
         return (
-            <div style={{ width: '100%', height: '500px' }}>
+            <div
+                style={{
+                    width: '100%',
+                    height: '500px',
+                    display: 'flex',
+                    flexDirection: 'column', // Coloca los elementos en columna
+                    alignItems: 'center',    // Centra horizontalmente
+                    justifyContent: 'center'
+                }}>
                 <Bar
                     data={dataPie}
                 />
@@ -293,7 +287,6 @@ export function CashReconciliation() {
 
     const RowOrder = (item, index, columnsWidth) => {
         //const [changeVrVenta, setChangeVrVenta] = useState(false)
-        let suma = 0
         const styles = {
             textDecoration: item.Activo === 0 ? 'line-through' : 'none',
             color: item.Activo === 0 ? '#999999' : '#000000',
@@ -320,7 +313,6 @@ export function CashReconciliation() {
 
     const RowBestProducts = (item, index, columnsWidth) => {
         //const [changeVrVenta, setChangeVrVenta] = useState(false)
-        let suma = 0
         const styles = {
             textDecoration: item.Activo === 0 ? 'line-through' : 'none',
             color: item.Activo === 0 ? '#999999' : '#000000',
@@ -328,8 +320,6 @@ export function CashReconciliation() {
             wordWrap: 'break-word'
 
         };
-        // Extraer la hora de la fecha
-        const hora = new Date(item.Fecha).toLocaleTimeString('en-GB', { hour12: false });
         return (
                 <>
                     <td style={{...styles, width: columnsWidth[0]}}>
@@ -344,7 +334,6 @@ export function CashReconciliation() {
 
     const RowReturn = (item, index, columnsWidth) => {
         //const [changeVrVenta, setChangeVrVenta] = useState(false)
-        let suma = 0
         const styles = {
             textDecoration: item.Activo === 0 ? 'line-through' : 'none',
             color: item.Activo === 0 ? '#999999' : '#000000',
@@ -383,7 +372,7 @@ export function CashReconciliation() {
 
     return (
       <div>
-        <div style={{display: 'flex', justifyContent: 'flex-end', padding: '10px'}}>
+        <div style={{display: 'flex', justifyContent: 'flex-end', padding: '10px', gap: '5px'}}>
             <input
                 type="date"
                 value={formatDate(dateSearch)}
@@ -548,17 +537,17 @@ export function CashReconciliation() {
                     />
             </div>
         </div>
-            <div 
-                style={{
-                    display: 'flex',
-                    flexDirection: 'column', // Coloca los elementos en columna
-                    alignItems: 'center',    // Centra horizontalmente
-                    justifyContent: 'center', // Centra verticalmente
-                    height: '70vh'           // Ocupa toda la altura de la ventana
-                }}>
-                <h1>Cuentas por categoria</h1>
-                <PieChart/>
-            </div>
+        <div 
+            style={{
+                display: 'flex',
+                flexDirection: 'column', // Coloca los elementos en columna
+                alignItems: 'center',    // Centra horizontalmente
+                justifyContent: 'center', // Centra verticalmente
+                height: '70vh'           // Ocupa toda la altura de la ventana
+            }}>
+            <h1>Cuentas por categoria</h1>
+            <PieChart/>
+        </div>
         <div className='TwoColumns' style={{gap: '2%', paddingBottom: '15px'}}>
             <div style={{
                     display: 'flex',
@@ -586,7 +575,7 @@ export function CashReconciliation() {
                 }}>
                 <h2>mejores productos</h2>
                     <Flatlist
-                        data={bestPData}
+                        data={bestPData.BestProducts}
                         headers={HeadersBestProducts}
                         row={RowBestProducts}
                         selectedRow={selectedPData}

@@ -19,7 +19,8 @@ import { Customerlist,
          LowInv,
          Cart,
          CashReconciliation,
-         Configuration
+         Configuration,
+         Studies
 } from "../Pages";
 
 export function RoutesComponent() {
@@ -44,6 +45,7 @@ export function RoutesComponent() {
             <Route path='/Cart' element={ <Cart/>}/>
             <Route path='/CashReconciliation' element={ <CashReconciliation/>}/>
             <Route path='/Config' element={ <Configuration/>}/>
+            <Route path='/Studies' element={ <Studies/>}/>
         </Routes>
     );
 }

@@ -98,7 +98,7 @@ export const ModalBusca = ({list, Alias ,click=false, sh}) => {
                             <input
                                 type='text'
                                 placeholder='Buscar'
-                                onChange={(e)=>{filterProduct(e.target.value)}}
+                                onChange={(e)=>{filterProduct(e.target.value.toLowerCase())}}
                             />
                             <div className="productsContainer MB">
                                 {

@@ -19,3 +19,4 @@ export * from './LowInv';
 export * from './Cart';
 export * from './CashReconciliation';
 export * from './Configuration';
+export * from './Studies';

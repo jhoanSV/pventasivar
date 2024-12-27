@@ -137,20 +137,20 @@ export const App = () => {
         //? To solve this comment all windoe.electron lines and uncomment the line handleUpdateNotAvailable();
         handleUpdateNotAvailable();
 
-        //window.electron.onUpdateAvailable(handleUpdateAvailable);
-        //window.electron.onUpdateNotAvailable(handleUpdateNotAvailable);
-        //window.electron.onUpdateDownloaded(handleUpdateDownloaded);
-        //window.electron.onUpdateError(async()=>{
-        //    await TheAlert('Cant check versions');
-        //});
+        /*window.electron.onUpdateAvailable(handleUpdateAvailable);
+        window.electron.onUpdateNotAvailable(handleUpdateNotAvailable);
+        window.electron.onUpdateDownloaded(handleUpdateDownloaded);
+        window.electron.onUpdateError(async()=>{
+            await TheAlert('Cant check versions');
+        });
     
         // Cleanup the event listeners on component unmount
-        //return () => {
-        //    window.electron.onUpdateAvailable(() => {});
-        //    window.electron.onUpdateNotAvailable(() => {});
-        //    window.electron.onUpdateError(()=>{});
-        //    window.electron.onUpdateDownloaded(()=>{});
-        //};
+        return () => {
+            window.electron.onUpdateAvailable(() => {});
+            window.electron.onUpdateNotAvailable(() => {});
+            window.electron.onUpdateError(()=>{});
+            window.electron.onUpdateDownloaded(()=>{});
+        };*/
     }, []);
 
     return (

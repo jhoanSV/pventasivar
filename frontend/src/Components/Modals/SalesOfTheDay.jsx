@@ -330,7 +330,8 @@ export const SalesOfTheDay = ({show, orderslist, width='90%', height='90%'}) => 
             setVisiblevCargando(true)
             const fila = {...orders[selectedfila]}
             const now = new Date();
-            const dateOrder = new date(fila.Fecha)
+
+            const dateorder = new Date(fila.Fecha)
             // Obtener la fecha en formato YYYY-MM-DD
             const date = now.getFullYear() +
                         '-' + String(now.getMonth() + 1).padStart(2, '0') +
@@ -339,13 +340,13 @@ export const SalesOfTheDay = ({show, orderslist, width='90%', height='90%'}) => 
             const time = String(now.getHours()).padStart(2, '0') +
                         ':' + String(now.getMinutes()).padStart(2, '0') +
                         ':' + String(now.getSeconds()).padStart(2, '0');
-            const dateOfTheOrder = now.getFullYear() +
-                                    '-' + String(now.getMonth() + 1).padStart(2, '0') +
-                                    '-' + String(now.getDate()).padStart(2, '0');
+            const dateOfTheOrder = dateorder.getFullYear() +
+                                    '-' + String(dateorder.getMonth() + 1).padStart(2, '0') +
+                                    '-' + String(dateorder.getDate()).padStart(2, '0');
             // Obtener la hora en formato HH:MM:SS
-            const timeOfTheOrder = String(now.getHours()).padStart(2, '0') +
-                                    ':' + String(now.getMinutes()).padStart(2, '0') +
-                                    ':' + String(now.getSeconds()).padStart(2, '0');
+            const timeOfTheOrder = String(dateorder.getHours()).padStart(2, '0') +
+                                    ':' + String(dateorder.getMinutes()).padStart(2, '0') +
+                                    ':' + String(dateorder.getSeconds()).padStart(2, '0');
             let suma = 0
             if (TipoReclamo === 1){
                 fila.Tipo_Reclamo = 1
@@ -612,7 +613,6 @@ export const SalesOfTheDay = ({show, orderslist, width='90%', height='90%'}) => 
                                 ':' + String(now.getMinutes()).padStart(2, '0') +
                                 ':' + String(now.getSeconds()).padStart(2, '0');
                     let orderslist = {...orders[selectedfila]}
-                    console.log('orderslist: ', orderslist)
                     let MedioDePagoColtek = 10 //para pago en efectivo
                     if (orderslist.Transferencia > 0 && orderslist.Efectivo === 0){
                         MedioDePagoColtek = 31 //para pago por transferencia
