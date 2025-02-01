@@ -1,0 +1,11 @@
+.Exit{
+    color: white;
+    background-color: #CD1717;
+    box-shadow: 0px 3px 0px 0px #5c0728;
+    &:active{
+        background-color: #a10f47;
+        box-shadow: none;
+        transform: translateY(3px);
+    }
+}
+

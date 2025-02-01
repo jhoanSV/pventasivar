@@ -14,6 +14,7 @@ import { useTheContext } from '../../TheProvider';
 import { CashFlow, Inventory, Alias} from '../../api';
 import { CSSTransition } from 'react-transition-group';
 import { Formater } from '../../App';
+import { NewService } from '../../Components/Modals/NewService';
 
 export function Sales(){
     //*---------------------
@@ -73,6 +74,7 @@ export function Sales(){
     const [ showProductMeasures, setShowProductMeasures] = useState(false);
     const [ showStartCahs, setShowStartCahs ] = useState(false);
     const [ showMoneyFlow, setShowMoneyFlow ] = useState(false);
+    const [ showNewServise, setShowNewServise ] = useState(false);
     const [ typeMoneyFlow, setTypeMoneyFlow ] = useState(false);
     const [ selectProduct, setSelectProduct] = useState(null);
     const [ inputValue, setInputValue] = useState('');
@@ -247,15 +249,6 @@ export function Sales(){
                 </>
         );
     };
-    
-    /*const Formater = (number) =>{
-        //it gives a number format
-        if (number === '') return '';
-        const numberString = String(number).replace(/,/g, '.');
-        const numberfromat = Number(numberString);
-        return Intl.NumberFormat('de-DE').format(numberfromat);
-    };*/
-    
 
     const updateCantidad = async(selectedRow, amount) => {
         let st = JSON.parse(localStorage.getItem('ticketsJson'));
@@ -496,8 +489,8 @@ export function Sales(){
         if(!PAdded[item.Cod])PAdded[item.Cod] = {};
         if(!PAdded[item.Cod]['Cantidades'])PAdded[item.Cod].Cantidades = 0;
         
-        console.log(Number(item.Cantidad), (item.UMedida), (item.Inventario),(umin));
-        console.log(Number(PAdded[item.Cod].Cantidades), Number(item.Cantidad/item.UMedida), (item.Inventario));
+        //console.log(Number(item.Cantidad), (item.UMedida), (item.Inventario),(umin));
+        //console.log(Number(PAdded[item.Cod].Cantidades), Number(item.Cantidad/item.UMedida), (item.Inventario));
         if(Number(PAdded[item.Cod].Cantidades)+Number(item.Cantidad/item.UMedida)>(item.Inventario)){
             await TheAlert('No hay suficiente inventario.');
             setSBText('')
@@ -509,7 +502,7 @@ export function Sales(){
         const productAlreadyExistsIndex = theOrder.findIndex(
             (prod) => prod.Cod === item.Cod && prod.Medida === item.Medida
         );
-        if(productAlreadyExistsIndex === -1){
+        if(productAlreadyExistsIndex === -1 || item.Consecutivo === 1){
             //*Product doesnt exist
             theOrder.push(item);
             setOrderslist(a => {
@@ -730,6 +723,11 @@ export function Sales(){
                     click={askToAddProduct}
                     sh={SearchHandle}
                 />
+                <button
+                    className="btnStnd btn1"
+                    onClick={()=>setShowNewServise(true)}
+                    >Añadir servicio
+                </button>
             </div>
             <div id='sales-main-view'>
                 <div style={{display: 'flex', gap: '5px', marginTop: '10px'}}>
@@ -815,6 +813,7 @@ export function Sales(){
                 { showProductMeasures && <ProductMeasures show={setShowProductMeasures} product={selectProduct} aceptar={addProduct}/>}
                 { showMoneyFlow && <MoneyFlow show={setShowMoneyFlow} typeOfFlow={typeMoneyFlow}></MoneyFlow>}
                 { showStartCahs && <StartOfCash show={setShowStartCahs}></StartOfCash>}
+                { showNewServise && <NewService show={setShowNewServise} AddService={askToAddProduct}></NewService>}
             </div>
         </section>
     );

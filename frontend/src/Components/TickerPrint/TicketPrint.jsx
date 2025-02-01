@@ -21,7 +21,10 @@ export const TicketPrint = ({data, usD, Electronic = false}) => {
         base += (detail.PVenta * detail.Cantidad)/(1+(detail.Iva/100));
         iva += base * (detail.Iva/100)//((detail.Pventa * detail.Cantidad)/(1+(detail.Iva/100))) * (detail.Iva/100);
     });
-
+    let Observation = false;
+    if (data.RCData.Comentarios !== '') {
+        Observation = true;
+    }
     let CufeQR = '';
 
     if (Electronic) {
@@ -44,6 +47,7 @@ export const TicketPrint = ({data, usD, Electronic = false}) => {
                 <label style={{display: 'block'}}><strong>Cliente:</strong> {data.Customer.Nombre + data.Customer.Apellido}</label>
                 <label style={{display: 'block'}}><strong>E-Mail:</strong> {data.Customer.Correo}</label>
                 <label style={{display: 'block'}}><strong>Telefono:</strong> {data.Customer.Telefono1}</label>
+                <label style={{display: 'block'}}><strong>Dirección:</strong> {data.Customer.Direccion}</label>
             </div>
             {Electronic &&
                 <div style={{textAlign: 'Center'}}>
@@ -82,6 +86,12 @@ export const TicketPrint = ({data, usD, Electronic = false}) => {
                     <label style={{display: 'block'}}>${Formater(parseFloat(data.RCData.Efectivo).toFixed(2)-total.toFixed(2))}</label>
                 </div>
             </div>
+            {Observation &&
+                <div>
+                    <label style={{display: 'block'}}><strong>Observación:</strong><label>
+                    </label> {data.RCData.Comentarios}</label>
+                </div>
+            }
             {Electronic && 
             <div>
                 <div>

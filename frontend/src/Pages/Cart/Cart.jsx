@@ -148,7 +148,7 @@ export const Cart = () => {
         <section className='theCart'>
             <div className='banner1'>
                 <div className='textBanner1Container'>
-                    Por compras superiores a $300.000 el env&iacute;o es gratis
+                    Compra con propósito, con Sivar mi negocio siempre progresa.
                 </div>
             </div>
             <div className='itemsCart grayContainer'>
@@ -178,15 +178,20 @@ export const Cart = () => {
             </div>
             <div className='dtlCart grayContainer'>
                 <div>SubTotal: $ {Formater(subTotalC)}</div>
-                <div>Envio: $ {Formater(sendCost)}</div>
+                {/*<div>Envio: $ {Formater(sendCost)}</div>*/}
                 <div style={{marginTop: '10px', fontWeight: 'bold', fontSize: '20px', color: '#193773'}}>
                     Total: {' '}
-                    <span style={{color: 'black'}}>${Formater(subTotalC+sendCost)}</span>
+                    <span style={{color: 'black'}}>${Formater(subTotalC)}</span>
                 </div>
                 <button
                     className="btnSendOrd btnStnd btn1"
-                    onClick={()=>{setShow1(true);
-                    document.body.classList.add('modalOpen')}} disabled={btnDis}>
+                    onClick={()=>{{
+                        if (subTotalC < 200000) {
+                            TheAlert('Recuerda que el monto mínimo de compra es $200.000.')
+                        } else {
+                            setShow1(true);
+                        }
+                    document.body.classList.add('modalOpen')}}} disabled={btnDis}>
                     Enviar pedido
                 </button>
             </div>
@@ -243,10 +248,10 @@ export const Cart = () => {
                                         />
                                     </div>
                                     <div>SubTotal: $ {Formater(subTotalC)}</div>
-                                    <div>Env&iacute;o: $ {Formater(sendCost)}</div>
+                                    {/*<div>Env&iacute;o: $ {Formater(sendCost)}</div>*/}
                                     <div style={{color: '#193773', fontWeight: 'bold', fontSize: '20px'}}>
                                         Total: {' '}
-                                        <span style={{color: 'black'}}>${Formater(subTotalC+sendCost)}</span>
+                                        <span style={{color: 'black'}}>${Formater(subTotalC)}</span>
                                     </div>
                                     <div style={{display: 'flex', marginTop: '15px'}}>
                                         <button type="button" className="btnModal btnBack"

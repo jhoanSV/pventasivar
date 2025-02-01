@@ -10,3 +10,4 @@ export * from './MoneyFlow';
 export * from './ReturnProduct';
 export * from './StartOfCash';
 export * from './AddPurchaseModal';
+export * from './NewService';

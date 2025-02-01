@@ -32,8 +32,8 @@ export const MoneyFlow = ({show, typeOfFlow , aceptar }) => {
             type: 'text',
         },
         {
-            header: 'Fecha',
-            key: 'Fecha',
+            header: 'Hora',
+            key: 'Hora',
             defaultWidth: 200,
             type: 'text',
         },
@@ -59,6 +59,8 @@ export const MoneyFlow = ({show, typeOfFlow , aceptar }) => {
     },[showPrevio])
     
     const selectFlow = async() => {
+        const now = new Date();
+
         if(typeOfFlow === false){
             setTitle('Entrada');
 
@@ -68,7 +70,9 @@ export const MoneyFlow = ({show, typeOfFlow , aceptar }) => {
         }
         const cashFlow = await CashFlow({
             IdFerreteria: usD.Cod,
-            Fecha: new Date().toISOString().split('T')[0],
+            Fecha: now.getFullYear() +
+                    '-' + String(now.getMonth() + 1).padStart(2, '0') +
+                    '-' + String(now.getDate()).padStart(2, '0')
         })
         const filterFlow = cashFlow.filter(flow => !!flow.TipoDeFlujo === !!typeOfFlow && flow.Motivo !== 'Inicio de caja')
         setMoneyFlow(filterFlow)
@@ -184,7 +188,9 @@ export const MoneyFlow = ({show, typeOfFlow , aceptar }) => {
                         />
                     </td>
                     <td style={{...styles, width: columnsWidth[2]}}>
-                        <label>{date.toLocaleTimeString('en-GB', { hour12: false })}</label>
+                        <label>{String(date.getHours()).padStart(2, '0') +
+                                ':' + String(date.getMinutes()).padStart(2, '0') +
+                                ':' + String(date.getSeconds()).padStart(2, '0')}</label>
                     </td>
                     <td
                         style={{...styles, width: columnsWidth[3]}}

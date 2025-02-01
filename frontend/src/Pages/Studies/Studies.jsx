@@ -22,6 +22,8 @@ export function Studies() {
     const [ selectedRowProfits, setSelectedRowProfits ] = useState(0);
     const [ bestPData, setBestPData ] = useState([]);
     const [ dataType, setDataType ] = useState('Week');
+    const [ totalVentas, setDataTotalVentas] = useState(0);
+    const [ totalGanancias,setDataTotalGanancias ] = useState(0);
     const [ dataByPeriod, setDataByPeriod ] = useState({labels: ['Red', 'Blue', 'Yellow'], // Etiquetas para cada segmento de la torta
         datasets: [
             {
@@ -177,6 +179,10 @@ export function Studies() {
                 },
             ],
         }
+        const totalVentas = salesPeriod.reduce((total, item) => total + (item.Ventas || 0), 0);
+        const totalGanancias = salesPeriod.reduce((total, item) => total + (item.Ganancias || 0), 0);
+        setDataTotalVentas(totalVentas)
+        setDataTotalGanancias(totalGanancias)
         setDataByPeriod(dataPeriods)
         //To the data of the studies by category
         const labels = salesCategory.map(row => row.Categoria)
@@ -372,13 +378,22 @@ export function Studies() {
                     })()}
                 />
             </div>
+            <div className='twoColumnsContainer'>
+                <div className='Col' style={{paddingLeft: '5px'}}>
+                    <h1>Ventas: $ {Formater(totalVentas)}</h1>
+                </div>
+                <div className='Col'>
+                    <h1>Ganancias: $ {Formater(totalGanancias)}</h1>
+                </div>
+            </div>
             <div 
                 style={{
                     display: 'flex',
                     flexDirection: 'column', // Coloca los elementos en columna
                     alignItems: 'center',    // Centra horizontalmente
                     justifyContent: 'center', // Centra verticalmente
-                    height: '70vh'           // Ocupa toda la altura de la ventana
+                    padding: '20px', // Agrega espacio interno para mayor separación
+                    gap: '20px',// Ocupa toda la altura de la ventana
                 }}>
                 <h1>ventas/ganancias por periodo</h1>
                 <BarStudyByPeriots/>
@@ -389,7 +404,8 @@ export function Studies() {
                     flexDirection: 'column', // Coloca los elementos en columna
                     alignItems: 'center',    // Centra horizontalmente
                     justifyContent: 'center', // Centra verticalmente
-                    height: '70vh'           // Ocupa toda la altura de la ventana
+                    padding: '20px', // Agrega espacio interno para mayor separación
+                    gap: '20px',// Ocupa toda la altura de la ventana
                 }}>
                 <h1>Ventas/ganancias por categoria</h1>
                 <PieChart/>

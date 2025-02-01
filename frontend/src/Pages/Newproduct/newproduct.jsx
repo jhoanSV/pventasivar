@@ -255,7 +255,7 @@ export const Newproduct = () => {
         for (let key in productData) {
             if ((key !== 'Detalle' &&
                 key !== 'Ubicacion' &&
-                //key !== 'Clase' &&
+                key !== 'InventaryDetail' &&
                 key !== 'Medida'
             ) && productData[key] === '') {
                 emptValue = key; // Si algún campo está vacío, la validación falla
@@ -472,9 +472,7 @@ export const Newproduct = () => {
     }, [productData]);
 
     //For the search of products that already exist.
-    const filterByText = (item, text) =>
-        item.Cod.toString().toLowerCase().includes(text) ||
-        item.Descripcion.toString().toLowerCase().includes(text);
+    //const filterByText = (item, text) => item.Cod.toString().toLowerCase().includes(text) || item.Descripcion.toString().toLowerCase().includes(text);
 
     const SearchHandle = (text, sl) =>{
         setSBText((text))
@@ -509,27 +507,6 @@ export const Newproduct = () => {
                 InvMinimo: Formater(0),
                 InvMaximo: Formater(0)
             }
-        }
-    }
-
-    function inventoryDetayl(medida){
-        console.log('productData.Medidas.length: ', productData.Medidas.length)
-        if (productData.Medidas.length > 0 && Formater(productData.Inventario)!=='') {
-            const [enteroStr, decimalStr] = productData.Inventario.split('.')
-            const entero = parseInt(enteroStr, 10);
-            const decimal = parseInt(decimalStr, 10);
-            const maxUMedida = parseInt(productData.Medidas[-1].UMedida, 10);
-            const newDecimal = decimal * maxUMedida
-            console.log(entero.toString() + productData.Medidas[0].Medida + newDecimal.toString() + productData.Medidas[-1].Medida)
-            return entero.toString() + productData.Medidas[0].Medida + newDecimal.toString() + productData.Medidas[-1].Medida
-        } else if (Formater(productData.Inventario) === ''){
-            console.log(0)
-            return 0
-        } else if (productData.Medidas.length === 0 && Formater(productData.Inventario)!==''){
-            console.log(Formater(productData.Inventario))
-            return Formater(productData.Inventario)
-        } else {
-            console.log('no retorna nada')
         }
     }
 
@@ -727,7 +704,6 @@ export const Newproduct = () => {
                             numType={'real'}
                             onchange={(e) => { changeValuesProducts('PVenta', e);
                                                 if (productData.Medidas.length > 0) {
-                                                    console.log('entro en medidas');
                                                     let meds = [...productData.Medidas]
                                                     let a = meds[0]
                                                     let pcosto = productData.PCosto.replace(/[.,]/g, (a) => (a === "." ? "" : "."));

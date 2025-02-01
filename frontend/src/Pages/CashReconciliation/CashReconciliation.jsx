@@ -295,11 +295,13 @@ export function CashReconciliation() {
 
         };
         // Extraer la hora de la fecha
-        const hora = new Date(item.Fecha).toLocaleTimeString('en-GB', { hour12: false });
+        const hora = new Date(item.Fecha)
         return (
                 <>
                     <td style={{...styles, width: columnsWidth[0]}}>
-                        <label>{hora}</label>
+                        <label>{String(hora.getHours()).padStart(2, '0') +
+                                ':' + String(hora.getMinutes()).padStart(2, '0') +
+                                ':' + String(hora.getSeconds()).padStart(2, '0')}</label>
                     </td>
                     <td style={{...styles, width: columnsWidth[1]}}>
                         <label>{item.Comentarios}</label>

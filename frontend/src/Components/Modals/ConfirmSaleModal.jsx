@@ -24,7 +24,8 @@ export const ConfirmSaleModal = ({show, sendSale , folio , orderslist, width='50
     const [ visiblevCargando, setVisiblevCargando ] = useState(false);
     const [ visibleEnvioExitoso, setVisibleEnvioExitoso] = useState(false);
     const [ showConfirmElectronicInvoice, setShowConfirmElectronicInvoice ] = useState(false);
-    const [selectedOption, setSelectedOption] = useState('Remision'); // Estado del radio button seleccionado
+    const [ observacion, setObservacion ] = useState('');
+    const [ selectedOption, setSelectedOption ] = useState('Remision'); // Estado del radio button seleccionado
     const { setSection, setSomeData, usD, setUsD } = useTheContext();
 
     const inputefectivoRef = useRef(null);
@@ -197,7 +198,7 @@ export const ConfirmSaleModal = ({show, sendSale , folio , orderslist, width='50
                                     Efectivo: efectivo,
                                     Transferencia: transferencia,
                                     Motivo: "Venta por caja",
-                                    Comentarios: '',
+                                    Comentarios: observacion,
                                     Activo: true
                                     }
                 orderslist.Electronic = electronic
@@ -211,8 +212,6 @@ export const ConfirmSaleModal = ({show, sendSale , folio , orderslist, width='50
                         //If status is false then restart the token to the new one
                         const newUsD = {...usD, resColtek: tokencheck.resColtek}
                         orderslist.tokenColtek = tokencheck.resColtek.token
-                        console.log('newUsD', newUsD)
-                        console.log('orderslist.tokenColtek', orderslist.tokenColtek)
                         setUsD(newUsD)
                     }
                 }
@@ -443,6 +442,16 @@ export const ConfirmSaleModal = ({show, sendSale , folio , orderslist, width='50
                                 <label>{orderslist.Order.length}</label>
                             </div>
                         </div>
+                    </div>
+                    <div>
+                        <label><strong>OBSERVACION:</strong></label>
+                        <textarea
+                            type='text'
+                            value={observacion}
+                            style={{backgroundColor: '#d9d9d9', resize: 'none', width: '100%', border: 'none'}}
+                            onChange={e => setObservacion(e.target.value)}
+                            autoComplete='off'
+                        />
                     </div>
                 </div>
             </div>

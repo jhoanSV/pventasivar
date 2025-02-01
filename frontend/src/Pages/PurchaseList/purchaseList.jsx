@@ -2,7 +2,7 @@ import React, { useEffect, useState, useRef } from 'react';
 import "./_purchaseList.scss";
 import { useNavigate } from 'react-router-dom';
 import { useTheContext } from '../../TheProvider';
-import { Flatlist } from '../../Components';
+import { Flatlist, TheAlert } from '../../Components';
 import { PurchaseList as listaCompras } from '../../api';
 
 export function PurchaseList(){
@@ -199,9 +199,14 @@ export function PurchaseList(){
         return currentValue;
     };
     const verPurchase = () =>{
-        navigate('/VerifyPurchase');
-        setSection('Verificar Compra');
-        setSomeData(ordersList[selectedfila]);
+        console.log(ordersList.length)
+        if (ordersList.length !== 0) {
+            navigate('/VerifyPurchase');
+            setSection('Verificar Compra');
+            setSomeData(ordersList[selectedfila]);
+        } else {
+            TheAlert('No hay pedidos para verificar')
+        }
     }
     
     useEffect(() => {

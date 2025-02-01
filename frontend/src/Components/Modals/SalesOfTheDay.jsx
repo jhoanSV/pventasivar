@@ -364,10 +364,10 @@ export const SalesOfTheDay = ({show, orderslist, width='90%', height='90%'}) => 
                 NombreTipoPersona: fila.Tipo === 0 ? 'Persona Natural' : 'Persona Jurídica',
                 TipoDocumento: fila.Tipo === 0 ? 13 : 31,
                 NombreTipoDocumento: fila.Tipo === 0 ? 'Cédula de ciudadanía ': 'NIT',
-                Documento: usD.Nit,
+                Documento: 222222222222,
                 Dv: usD.Dv,
-                NombreComercial: usD.Ferreteria,
-                RazonSocial: usD.Ferreteria,
+                NombreComercial: 'Consumidor final',
+                RazonSocial: 'Consumidor final',
                 Telefono: usD.Telefono,
                 Correo: usD.Email,
                 Departamento: {
@@ -504,7 +504,7 @@ export const SalesOfTheDay = ({show, orderslist, width='90%', height='90%'}) => 
             RCData: {
                 Activo: true,
                 CodResponsable: usD.Cod,
-                Comentarios: "",
+                Comentarios: orders[selectedfila].Comentarios,
                 Efectivo: orders[selectedfila].Efectivo,
                 Fecha: day + ' ' + hour,
                 Folio: orders[selectedfila].Folio,
@@ -651,7 +651,7 @@ export const SalesOfTheDay = ({show, orderslist, width='90%', height='90%'}) => 
                                         Efectivo: orderslist.Efectivo,
                                         Transferencia: orderslist.Transferencia,
                                         Motivo: "Venta por caja",
-                                        Comentarios: '',
+                                        Comentarios: orderslist.Comentarios,
                                         Activo: true
                                         }
                     if (orderslist.Customer.Tipo === 0) {
