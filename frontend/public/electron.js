@@ -74,6 +74,7 @@ ipcMain.on('print-ticket', (event, ticketHTML) => {
   });
 });
 
+//* To open the cash register without printing the order.
 
 // Maneja la apertura de nuevas ventanas
 /*ipcMain.handle('open-new-window', (event, link) => {

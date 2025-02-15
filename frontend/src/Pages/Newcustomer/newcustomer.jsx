@@ -12,7 +12,6 @@ export function Newcustomer(){
     const { setSection, someData, usD } = useTheContext();
     const [ optionsOccupation, setOptionsOccupations ] = useState([]);
     const [ resFiscal, setResFiscal ] = useState('');
-    const [ optionsResFiscal, setOptionsResFiscal ] = useState([]);
     const [ enableB1, setEnableB1] = useState(false);
     const [ conCredito, setConCredito] = useState(false);
     const [ verCod, setVerCod] = useState('');//* verificationCode
@@ -37,6 +36,26 @@ export function Newcustomer(){
         "Ocupacion": '',
         "ResFiscal": ''
     });    
+    const optionsResFiscal = [{
+        "code":"O-13",
+        "name":"Gran contribuyente"
+    },
+    {
+        "code":"O-15",
+        "name":"Autorretenedor"
+    },
+    {
+        "code":"O-23",
+        "name":"Agente de retención IVA"
+    },
+    {
+        "code":"O-47",
+        "name":"Régimen simple de tributación"
+    },
+    {
+        "code":"R-99-PN",
+        "name":"No responsable"
+    }];
     
     const navigate = useNavigate()
 
@@ -46,10 +65,13 @@ export function Newcustomer(){
                 "IdFerreteria": usD.Cod
             });
             const customerType = await clientOccupation()
-            const fiscalRes = await ResFiscal(usD.tokenColtek, usD.token)
-            console.log('fiscalRes: ', fiscalRes)
-            setOptionsResFiscal(fiscalRes.FiscalResponsibility)
             setOptionsOccupations(customerType)
+            /*const fiscalRes = await ResFiscal(usD.tokenColtek, usD.token)
+            if (fiscalRes && Array.isArray(fiscalRes.FiscalResponsibility) && fiscalRes.FiscalResponsibility.length > 0) {
+                setOptionsResFiscal(fiscalRes.FiscalResponsibility);
+            } else {
+                setOptionsResFiscal([]);
+            }*/
             if (listado) {
                 setContentList(listado);
             }
@@ -373,13 +395,17 @@ export function Newcustomer(){
                             value={customerData.Ocupacion !== 0 ? customerData.Ocupacion: ''}
                             onChange={(e)=>{
                                 const selectedOption = optionsOccupation.find(option => option.IdOcupacion === parseInt(e.target.value, 10));
-                                changeValuesCustomer('Ocupacion', e.target.value);
+                                changeValuesCustomer('Ocupacion', e.target.value)
                             }}
                             onBlur={()=>{}}>
                             <option value="" disabled>Seleccione una opción</option>
-                            {!showAlertCustomers && optionsOccupation.map((option) => (
-                                <option key={option.IdOcupacion} value={option.IdOcupacion}>{option.Ocupacion}</option>
-                            ))}
+                            {!showAlertCustomers && optionsOccupation.map((option) => {
+                                return (
+                                    <option key={option.IdOcupacion} value={option.IdOcupacion}>
+                                        {option.Ocupacion}
+                                    </option>
+                                );
+                            })}
                         </select>
                     </div>
                 </div>

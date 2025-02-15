@@ -167,8 +167,7 @@ export function Sales(){
         if (theAmount > 0) {
             const PAdded = JSON.parse(localStorage.getItem('PAdded'));
             let item = theOrder[row];
-            console.log(Number(PAdded[item.Cod].Cantidades), Number(theAmount/item.UMedida), item.Inventario);
-            if((Number(PAdded[item.Cod].Cantidades)+Number(theAmount/item.UMedida))>(item.Inventario)){
+            if( (Number(PAdded[item.Cod].Cantidades - item.Cantidad) + Number(theAmount/item.UMedida)) > (item.Inventario)){
                 await TheAlert('No hay suficiente inventario');
                 PAdded[item.Cod].Cantidades = item.Cantidad;
                 theOrder[row].Cantidad = Number(item.Cantidad);
@@ -176,6 +175,14 @@ export function Sales(){
                 setChangeQuantity(null);
                 return;
             }
+            /*if((Number(PAdded[item.Cod].Cantidades)+ Number(theAmount/item.UMedida))>(item.Inventario)){
+                await TheAlert('No hay suficiente inventario');
+                PAdded[item.Cod].Cantidades = item.Cantidad;
+                theOrder[row].Cantidad = Number(item.Cantidad);
+                setOrderslist(theOrder);
+                setChangeQuantity(null);
+                return;
+            }*/
             PAdded[item.Cod].Cantidades = Number(theAmount/item.UMedida);
             localStorage.setItem('PAdded', JSON.stringify(PAdded));
             theOrder[row].Cantidad = Number(theAmount);

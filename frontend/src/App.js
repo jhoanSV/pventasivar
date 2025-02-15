@@ -135,9 +135,9 @@ export const App = () => {
         };
         //! Care with this, window.electron doesnt works on devMode, only in production
         //? To solve this comment all windoe.electron lines and uncomment the line handleUpdateNotAvailable();
-        //handleUpdateNotAvailable();
+        handleUpdateNotAvailable();
 
-        window.electron.onUpdateAvailable(handleUpdateAvailable);
+        /*window.electron.onUpdateAvailable(handleUpdateAvailable);
         window.electron.onUpdateNotAvailable(handleUpdateNotAvailable);
         window.electron.onUpdateDownloaded(handleUpdateDownloaded);
         window.electron.onUpdateError(async()=>{
@@ -150,7 +150,7 @@ export const App = () => {
             window.electron.onUpdateNotAvailable(() => {});
             window.electron.onUpdateError(()=>{});
             window.electron.onUpdateDownloaded(()=>{});
-        };
+        };*/
     }, []);
 
     return (

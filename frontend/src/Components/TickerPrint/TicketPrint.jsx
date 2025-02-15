@@ -38,7 +38,8 @@ export const TicketPrint = ({data, usD, Electronic = false}) => {
                 <label style={{display: 'block'}}><strong>{usD.Cel}</strong></label>
                 <label style={{display: 'block'}}><strong>{usD.Direccion}</strong></label>
                 <label style={{display: 'block'}}><strong>{usD.Email}</strong></label>
-                <label style={{display: 'block'}}><strong>Nit:</strong></label>
+                <label style={{display: 'block'}}><strong>Nit: {usD.Nit}</strong></label>
+                <label style={{display: 'block'}}><strong>Cel: {usD.Telefono}</strong></label>
             </div>
             <div>
                 <label style={{display: 'block'}}><strong>Datos del cliente</strong></label>

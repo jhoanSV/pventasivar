@@ -155,7 +155,7 @@ export function Studies() {
             FechaMax: dateMaxValue
         })
         setBestPData(bestProductData)
-        console.log(bestProductData.BestProducts)
+        //console.log(bestProductData.BestProducts)
         //To the data of the studies by period
         const labelsPeroids = salesPeriod.map(row => row.DiaSemana)
         const salesPeriods = salesPeriod.map(row => row.Ventas)

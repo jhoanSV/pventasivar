@@ -15,7 +15,26 @@ export const SignClient = ({show, retornar, width='70%', height='85%'}) => {
     const { setSection, setSomeData, usD } = useTheContext();
     const [ showCustomerList , setShowCustomerList] = useState(true)
     const [ optionsOccupation, setOptionsOccupations ] = useState([]);
-    const [ optionsResFiscal, setOptionsResFiscal ] = useState([]);
+    const optionsResFiscal = [{
+        "code":"O-13",
+        "name":"Gran contribuyente"
+    },
+    {
+        "code":"O-15",
+        "name":"Autorretenedor"
+    },
+    {
+        "code":"O-23",
+        "name":"Agente de retención IVA"
+    },
+    {
+        "code":"O-47",
+        "name":"Régimen simple de tributación"
+    },
+    {
+        "code":"R-99-PN",
+        "name":"No responsable"
+    }];
     const refList = useRef([]);
     // para crear un nuevo cliente
     const [cType, setCType] = useState();
@@ -104,9 +123,35 @@ export const SignClient = ({show, retornar, width='70%', height='85%'}) => {
                 "IdFerreteria": usD.Cod
             });
             const customerType = await clientOccupation()
-            const fiscalRes = await ResFiscal(usD.tokenColtek, usD.token)
-            setOptionsResFiscal(fiscalRes.FiscalResponsibility)
             setOptionsOccupations(customerType)
+            /*const fiscalRes = await ResFiscal(usD.tokenColtek, usD.token)
+            if (fiscalRes && Array.isArray(fiscalRes.FiscalResponsibility) && fiscalRes.FiscalResponsibility.length > 0) {
+                setOptionsResFiscal(fiscalRes.FiscalResponsibility);
+                console.log("fiscalRes.FiscalResponsibility: ", JSON.stringify(fiscalRes.FiscalResponsibility))
+            } else {
+                setOptionsResFiscal([
+                    {
+                        "code":"O-13",
+                        "name":"Gran contribuyente"
+                    },
+                    {
+                        "code":"O-15",
+                        "name":"Autorretenedor"
+                    },
+                    {
+                        "code":"O-23",
+                        "name":"Agente de retención IVA"
+                    },
+                    {
+                        "code":"O-47",
+                        "name":"Régimen simple de tributación"
+                    },
+                    {
+                        "code":"R-99-PN",
+                        "name":"No responsable"
+                    }
+                ]);
+            }*/
             if (listado) {
                 setContentList(listado);
             }
