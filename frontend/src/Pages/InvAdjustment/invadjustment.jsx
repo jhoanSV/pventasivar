@@ -132,7 +132,7 @@ export function InvAdjustment(){
                     <textarea
                         type="textbox"
                         className="npTextArea taStnd"
-                        placeholder="Notas/Detalles del producto"
+                        placeholder="Notas/Motivo del ajuste "
                         onChange={(e)=>setTaValue(e.target.value)}
                         value={taValue}
                     />
