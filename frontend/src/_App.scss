@@ -1,0 +1,259 @@
+@import "../node_modules/bootstrap-icons/font/bootstrap-icons.scss";
+@import "./Fonts_CSS/fontello.css";
+@import "./Scss/_colors.scss";
+
+.genLink{
+  text-decoration: none;
+}
+
+.Row{
+  display: flex;
+}
+
+.Colmn1{
+  text-align: end;
+  width: 15%;
+  padding: 5px 10px;
+}
+
+.Colmn2{
+  width: 70%;
+  padding: 5px 10px;
+}
+
+.gridCont{
+  display: grid;
+}
+
+.btnStnd{
+  cursor: pointer;
+  padding: 5px 10px;
+  border: none;
+  border-radius: 5px;  
+}
+.btn1{
+  color: white;
+  background-color: #193773;
+  box-shadow: 0px 3px 0px 0px rgba(16, 35, 73);
+  &:active{
+    background-color: #2454B5;
+    box-shadow: none;
+    transform: translateY(3px);
+  }
+  &:disabled{
+    background-color: #68799b;
+    cursor: default;
+    box-shadow: 0px 3px 0px 0px rgb(67 77 96);
+    transform: translateY(0px);
+  }
+  &:focus-visible, &:focus{
+    outline: solid 2px #F2CB05;
+  }
+}
+
+.btn3{
+  color: #193773;
+  background-color: #d9d9d9;
+  box-shadow: 0px 3px 0px 0px rgb(175, 175, 175);
+  &:active{
+    box-shadow: none;
+    transform: translateY(3px);
+  }
+}
+
+.btn1Stnd{
+  cursor: pointer;
+  background-color: transparent;
+  border: none;
+  border-radius: 25px;
+  height: max-content;
+  aspect-ratio: 1 / 1;
+}
+.btn1Stnd:hover{
+  background-color: rgb(0 0 0 / 26%);
+}
+.btn1Stnd:disabled:hover{
+  cursor: default;
+  background-color: transparent;
+}
+
+.tableContainer{
+  background-color: #d9d9d9;
+  width: 100%;
+  height: 65vh;
+  overflow-y: auto;
+}
+
+input[type="text"], input[type="number"], input[type="password"] {
+  background-color: #d9d9d9;
+  border: none;
+  border-radius: 5px;
+  padding: 6px;
+  &:disabled{
+    background-color: white;
+  }
+}
+
+.noInputArrows::-webkit-outer-spin-button,
+.noInputArrows::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.taStnd {
+  border: solid #193773 10px;
+  border-radius: 16px;
+}
+
+.noSelect{
+  user-select: none; /* Standard syntax */
+}
+
+.elipsisText{
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+}
+
+.elipsisText.lines2{
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+}
+
+.d-none{
+  display: none;
+}
+
+.modalOpen, .side-bar-showed{
+  overflow: hidden;
+  /*padding-right: 17px;
+  #root {
+    margin: 0px -17px 0 auto;
+  }*/
+}
+
+.BPContainer {
+  display: flex;
+  position: fixed;
+  top: 0px;
+  left: 0px;
+  width: 100%;
+  height: 100%;
+  z-index: 10;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+.BegPage{
+  background-color: #f2f2f2;
+  border-radius: 12px;
+  font-size: 24px;
+  margin: auto;
+  padding: 40px;
+  max-width: 450px;
+  .iconBegPage{
+    font-size: 44px;
+    color: #afafaf;
+  }
+  .crebanisteria{
+    animation: changeColor1 12s infinite;
+    animation-delay: 0s;
+    //color: $cEbanisteria;
+  }
+  .crgas{
+    animation: changeColor2 12s infinite;
+    animation-delay: 2s;
+    //color: $cGas;
+  }
+  .crelectricos{
+    animation: changeColor3 12s infinite;
+    animation-delay: 4s;
+    //color: $cElectricos;
+  }
+  .crgriferia{
+    animation: changeColor4 12s infinite;
+    animation-delay: 6s;
+    //color: $cGriferia;
+  }
+  .crestudiantil{
+    animation: changeColor5 12s infinite;
+    animation-delay: 8s;
+    //color: $cEstudiantil;
+  }
+  .crtornilleria{
+    animation: changeColor6 12s infinite;
+    animation-delay: 10s;
+    //color: $cTornilleria;
+  }
+}
+
+html{
+  scrollbar-color: #F2CB05 #193773;
+}
+
+@keyframes changeColor1 {
+  0%, 100% {
+    color: #afafaf;
+  }    
+  8.33% {
+    color: $cEbanisteria;
+  }
+  16.66%, 100% {
+    color: #afafaf;
+  }
+}
+@keyframes changeColor2 {
+  0%, 100% {
+    color: #afafaf;
+  }    
+  8.33% {
+    color: $cGas;
+  }
+  16.66%, 100% {
+    color: #afafaf;
+  }
+}
+@keyframes changeColor3 {
+  0%, 100% {
+    color: #afafaf;
+  }    
+  8.33% {
+    color: $cElectricos;
+  }
+  16.66%, 100% {
+    color: #afafaf;
+  }
+}
+@keyframes changeColor4 {
+  0%, 100% {
+    color: #afafaf;
+  }    
+  8.33% {
+    color: $cGriferia;
+  }
+  16.66%, 100% {
+    color: #afafaf;
+  }
+}
+@keyframes changeColor5 {
+  0%, 100% {
+    color: #afafaf;
+  }    
+  8.33% {
+    color: $cEstudiantil;
+  }
+  16.66%, 100% {
+    color: #afafaf;
+  }
+}
+@keyframes changeColor6 {
+  0%, 100% {
+    color: #afafaf;
+  }    
+  8.33% {
+    color: $cTornilleria;
+  }
+  16.66%, 100% {
+    color: #afafaf;
+  }
+}

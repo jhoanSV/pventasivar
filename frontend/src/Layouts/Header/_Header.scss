@@ -1,0 +1,226 @@
+.headContainer{
+    display: flex;
+    height: 63px;
+    min-height: unset;
+    position: relative;
+    padding: 10px 25px 10px 200px;
+    background-color: #193773;
+    color: white;
+    font-size: 40px;
+    justify-content: space-between;
+}
+
+.mainLogoHead{
+    background-color: #193773;
+    position: absolute;
+    left: -2px;
+    top: 0;
+    width: 116px;
+    padding: 10px;
+    border-radius: 150px;
+    z-index: 1;
+    //transition: 0.3s;
+    cursor: pointer;
+}
+.mlh-selected{
+    width: 0px;
+    padding: 0px;
+    left: 81px;
+    top: 10px;
+    //transition: 0.3s;
+}
+.Ins-mlh{
+    background-color: #193773;
+    position: absolute;
+    left: -2px;
+    top: 0;
+    z-index: 2;
+    width: 116px;
+    padding: 10px;
+    border-radius: 150px;
+    transition: 0.4s;
+    cursor: pointer;
+}
+.Ins-mlh.show{
+    width: 250px;
+    padding: 0px;
+    left: 81px;
+    top: 10px;
+    transition: 0.4s;
+}
+
+.equis{
+    position: absolute;    
+    cursor: pointer;
+}
+
+.side-bar-container {
+    position: fixed;
+    z-index: 20;
+    left: 0;
+    top: 0;
+    width: 0;
+    height: 100%;
+    overflow: hidden;
+    transition-delay: 0.2s;
+}
+
+.side-bar{
+    position: relative;
+    z-index: 21;
+    width: 0px;
+    height: 100%;
+    background-color: #193773;
+    overflow-y: auto;
+    overflow-x: hidden;
+    transition: 0.3s ease;
+}
+
+.side-bar-container.show {
+    width: 100%;
+    background-color: #00000029;
+    transition-delay: 0s;
+    .side-bar{
+        width: 412px;
+        transition: 0.3s ease;
+    }
+}
+
+.side-menu{
+    padding-top: 300px;
+}
+.side-menu > div a, .clsBtn{
+    text-wrap: nowrap;
+    font-size: 34px;
+    padding: 0px 34px;
+    color: #959595;
+    cursor: pointer;
+}
+
+.side-menu > div a:hover, .clsBtn:hover{
+    color: white;
+}
+
+.htud{
+    display: flex;
+    .wapphtud{
+        position: relative;
+        .text{
+            position: absolute;
+            //transition: all 0.8s cubic-bezier(0, 0, 0.23, 1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-image: linear-gradient(90deg, #193773, #193773 50%, white 0);
+            background-size: 200% 100%;
+            background-position: 0;
+            font-size: 20px;
+            color: white;
+            text-align: left;
+            font-weight: 800;
+            letter-spacing: 2.59px;
+            transform: translate(-110%, 0px);
+            animation: shiftBackground 24s infinite;
+            /*&:hover{
+                background-position: 100%;
+                color: white;
+            }*/
+        }
+        .bi-whatsapp:hover{
+            cursor: pointer;
+            color: #25D366;
+        }
+    }
+    .btnCart{
+        position: relative;
+        display: flex;
+        color: #f6e501;
+        font-size: 40px;
+        font-weight: bold;
+        text-decoration: none;
+        transition: transform 0.3s ease;
+        transform-origin: bottom left;
+        .bi-cart4{
+            line-height: 1;
+        }
+    }
+    .fdhtud:hover{
+        .btnCart{
+            animation: rotar 0.6s ease forwards;
+        }
+    }
+}
+
+.m-selected{
+    color: #F2CB05 !important;
+}
+
+.subm-container{
+    display: flex;
+    padding-left: 20px;
+    height: 0px;
+    overflow: hidden;
+    flex-direction: column;
+}
+
+.m-open + .subm-container{
+    height: auto;
+}
+.m-open > .bi-caret-right-fill::before{
+    transform: rotate(90deg);
+}
+
+.floatingNumber{
+    aspect-ratio: 1 / 1;
+    border-radius: 25px;
+    line-height: 1;
+    font-size: 17px;
+    padding: 2px;
+    position: absolute;
+    right: -10%;
+    top: -17%;
+    width: max-content;
+}
+
+#ud{
+    display: flex;
+    font-size: 20px;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+//960
+@media screen and (max-width: 960px) {
+    .headContainer{
+        font-size: 20px;
+        padding: 10px 25px 10px 154px;
+    }
+}
+
+@keyframes rotar {
+    0% {
+      transform: rotate(0deg);
+    }
+    50% {
+      transform: rotate(-8deg);
+    }
+    100% {
+      transform: rotate(0deg);
+    }
+}
+
+@keyframes shiftBackground {
+    0% {
+        background-position: 0;
+    }
+    
+    4% {
+        background-position: 100%;
+    }
+    20% {
+        background-position: 100%;
+    }
+    24% {
+        background-position: 0%;
+    }
+}

@@ -1,0 +1,210 @@
+@import "../../scss/_colors.scss";
+
+// .Sales{
+//     height: calc(100vh - 63px);
+// }
+.Search {
+    display: flex;
+    background-color: #D9D9D9;
+    padding: 10px 160px;
+    border-bottom-left-radius: 100px;
+    border-bottom-right-radius: 100px;
+    gap: 10px;
+}
+.FloatingList{
+    position: absolute;
+    width: 100%;
+    max-height: 50vh;
+    overflow-y: scroll;
+    background-color: #f2f2f2;
+    margin-top: 10px;
+    padding: 6px;
+    border: solid 1px #193773;
+    border-radius: 10px;
+    z-index: 4;
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;  /* Firefox */
+    .flItem{
+        display: flex;
+        justify-content: space-between;
+        user-select: none;
+        cursor: pointer;
+        .codFlitem{
+            color: gray;
+        }
+        &.selected{
+            background-color: #5374b4;
+            color: white;
+            .codFlitem{
+                color: white;
+            }
+        }
+        &:hover{
+            background-color: #718bbf;
+            color: white;
+            .codFlitem{
+                color: white;
+            }
+        }
+    }
+}
+
+.FloatingList::-webkit-scrollbar {
+    display: none;
+}
+
+.FLA-enter {
+    max-height: 2px;
+    opacity: 0;
+}
+.FLA-enter-active {
+    max-height: 50vh;
+    opacity: 1;
+    transition: opacity 200ms, max-height 200ms;
+}
+.FLA-exit {
+    max-height: 50vh;
+    opacity: 1;
+}
+.FLA-exit-active {
+    max-height: 2px;
+    opacity: 0;
+    transition: opacity 200ms, max-height 200ms;
+}
+//*tabs style %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+.tabs {
+    margin: 10px auto;
+    flex-grow: 1;
+    height: 53%;
+    width: 100%;
+}
+
+#tabsId {
+    .rowflatlist{
+        background-color: #d9d9d9 !important;
+        color: black !important;
+    }
+    &:focus{
+        .rowflatlist.selected{
+            background-color: #2753ac94 !important;
+            color: white !important;
+        }
+    }
+    &:focus-visible{
+        outline: none;
+        .rowflatlist.selected{
+            background-color: #2753ac94 !important;
+            color: white !important;
+        }
+    }
+}
+
+#NPinput{
+    background-color: white;
+}
+
+.tabButtons {
+    display: flex;
+    position: relative;
+    padding-left: 4px;
+    width: max-content;
+    border-bottom: solid 4px #F2CB05;
+    & .tabButtonModel {
+        position: relative;
+        background-color: #D0D9F2;
+        border-radius: 20px 20px 0px 0px;
+        padding: 0px 10px;
+        margin: 0px -4px;
+        z-index: 2;
+        & .tabButton {
+            position: relative;
+            opacity: 0;
+        }
+    }
+}
+
+
+.tabButtonModel:has(input[type="radio"]:checked){
+    background-color: $amarilloPrincipal;
+    padding: 0px 10px;
+    z-index: 3;
+}
+
+/* Style for the close button */
+.tab-btn-close {
+    position: relative;
+    border: none;
+    background-color: transparent;
+    color: transparent;
+    cursor: pointer;
+    transition: background-color 0.3s, color 0.3s;
+    margin-left: 5px; /* Add some spacing between the label and close button */
+    border-radius: 50px;
+    z-index: 4;
+}
+
+.tab-btn-close:hover {
+    background-color: red;
+    color: white;
+    border: 50px;
+}
+
+.add-tab {
+    border-radius: 10px 10px 0 0;
+    border-style: none;
+    background-color: #d0d9f2;
+    padding: 0px 10px;
+    z-index: 3;
+}
+
+.moneyEnt{
+    color: white;
+    background-color: #1a6d24;
+    box-shadow: 0px 3px 0px 0px #15521d;
+    &:active{
+        background-color: #299c38;
+        box-shadow: none;
+        transform: translateY(3px);
+    }
+}
+
+.moneyExt{
+    color: white;
+    background-color: #900c3f;
+    box-shadow: 0px 3px 0px 0px #5c0728;
+    &:active{
+        background-color: #a10f47;
+        box-shadow: none;
+        transform: translateY(3px);
+    }
+}
+//*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+.generalsc{
+    display: flex;
+    flex-direction: column;
+    padding: 20px 70px;
+    height: calc(100vh - 63px - 47px);
+}
+
+.sDetail{
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.total-label{
+    width: 250px;
+    font-size: 28px;
+    padding: 10px 10px;
+    margin: 0px 10px 0px 0px;
+    background-color: #d9d9d9;
+}
+
+#sales-main-view{
+    padding: 20px 70px;
+    overflow-y: hidden;
+    height: calc(100vh - 110px);
+    display: flex;
+    flex-direction: column;
+}

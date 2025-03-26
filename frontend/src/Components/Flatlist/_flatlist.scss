@@ -1,0 +1,31 @@
+@import "../../scss/_colors.scss";
+
+.Flatlist {
+    background-color: #d9d9d9;
+    width: 100%;
+    height: 65vh;
+    overflow-y: auto;
+    .rowflatlist.selected {
+      //background-color: rgba(39, 83, 172, 0.5803921569); // Color for the selected row
+
+      .selected-label {
+        font-weight: 600; // Apply bold font weight to the label in the selected row
+      }
+    }
+}
+
+.Table {
+    width: 100%;
+    margin: 20;
+}
+
+.Flatlist thead tr{
+    //background-color: #193773;
+    color: #ffffff;
+    text-align: left;
+}
+
+.Flatlist tbody tr:hover{
+    //background-color: rgba(0, 0, 0, 0.1);
+    box-shadow: inset -5px -13px 15px 0px rgba(0, 0, 0, 0.15);
+}

@@ -1,0 +1,35 @@
+[{
+    "cantidad": 3,
+    "cod": "TNC25",
+    "descripcion": "Motoreductor amarillo dlble eje",
+    "vrUnitario": 5500,
+    "vrUnitarioSistem": 5400,
+    "diferencia": -100,
+    "vrTotal": 3000,
+    "estado": 0,
+    "existencia": 4
+},
+{
+    "cantidad": 1,
+    "cod": "HER06",
+    "descripcion": "Plomada 100 Gr en punta",
+    "vrUnitario": 18500,
+    "vrUnitarioSistem": 19000,
+    "diferencia": -200,
+    "vrTotal": 18500,
+    "estado": 0,
+    "existencia": 0
+},
+{
+    "cantidad": 100,
+    "cod": "AEV07A",
+    "descripcion": "Empaque 3/8 Nitrilo conico",
+    "vrUnitario": 120,
+    "vrUnitarioSistem": 120,
+    "diferencia": 0,
+    "vrTotal": 12000,
+    "estado": 0,
+    "existencia": 100
+}
+
+]

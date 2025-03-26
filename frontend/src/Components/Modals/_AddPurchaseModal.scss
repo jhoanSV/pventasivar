@@ -1,0 +1,119 @@
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button
+{
+  -webkit-appearance: none;
+  margin: 0;
+  border-style: none;
+}
+
+.addPurchMo{
+    width: 65vw;
+    height: min-content;
+    position: relative;
+    padding: 30px;
+    h1{
+        margin-top: 0;
+    }
+    .btnAddCart{
+        width: 100%;
+        font-size: 18px;
+        font-weight: 700;
+        height: 65px;
+        background-color: #F2CB05;
+        box-shadow: 0px 4px 0px 0px rgb(197 176 74);
+        color: #193773;
+        margin: auto 0px 4px 0px;
+        &.btn1:active{
+            box-shadow: none;
+            transform: translateY(4px);
+        }
+        &.btn1:disabled{
+            opacity: .5;
+        }
+    }
+    .description {
+        overflow-y: auto;
+        background-color: #d9d9d9;
+        height: 120px;
+    }
+    .theLogo{
+        display: flex;
+        justify-content: left;
+        overflow: hidden;
+        position: relative;
+        picture{
+            width: 3.625rem;
+        }
+    }
+}
+
+.soldOutMod{
+    position: absolute;
+    padding: 0px 111px;
+    color: #FF4A4A;
+    font-weight: 700;
+    background-color: rgba(255, 0, 0, 0.34);
+    transform: translate(-50%, -50%) rotate(-45deg);
+    top: 20%;
+    left: 20%;
+}
+
+.imgWB{
+    display: flex;
+    justify-content: center;
+    overflow: hidden;
+    padding: 10px;
+    position: relative;
+    picture{
+        position: relative;
+        overflow: hidden;
+        display: flex;
+        width: 70%;
+    }
+    img{
+        aspect-ratio: 1 / 1;
+        border: solid;
+        border-radius: 25%;
+        object-fit: contain;
+        width: 100%;
+    }
+}
+
+.quantityBox .quantity{
+    text-align: center;
+    font-size: 18px;
+    background-color: unset;
+}
+
+.TMCD3 .Col{
+    flex-grow: 1;
+}
+
+.btn2{
+    color: white;
+    background-color: #193773;
+    box-shadow: 0px 3px 0px 0px rgb(16, 35, 73);
+    &.active{
+        background-color: #2454B5;
+        box-shadow: none;
+        transform: translateY(3px);
+    }
+}
+
+@media screen and (max-width: 900px) {
+    .addPurchMo{
+        h1{
+            font-size: 1rem;
+        }
+        .imgModal{
+            padding: 0px;
+            img{
+                width: 100%;
+            }
+        }
+    }
+    .soldOutMod{
+        top: 30%;
+        left: 30%;
+    }
+}

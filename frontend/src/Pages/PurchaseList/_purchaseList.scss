@@ -1,0 +1,49 @@
+@import "../../scss/_colors.scss";
+
+.searchSection {
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.search {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-left: auto;
+    gap: 10px;
+    & .searcher {
+        width: 80%;
+        align-self: center;
+    }
+}
+
+.Table {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.searchDate {
+    display: flex;
+    margin: 10px 10px 10px auto;
+    gap: 10px;
+}
+
+.ButtonActios {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 10px;
+}
+
+@media screen and (max-width: 843px) {
+    .searchSection{
+        padding-left: 24px;
+    }
+}
+@media screen and (max-width: 800px) {
+    .searchSection{
+        padding-left: 40px;
+    }
+}

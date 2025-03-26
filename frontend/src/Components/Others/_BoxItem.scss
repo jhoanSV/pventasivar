@@ -1,0 +1,70 @@
+.productsContainer{
+    display: flex;
+    flex-wrap: wrap;
+    padding: 10px 8%;
+    height: 70vh;
+    overflow-y: auto;
+    box-shadow: 0px 4px 11px 0px black;
+    border-radius: 14px;
+    -ms-overflow-style: none;
+    scrollbar-width: thin;
+    & > div:has(.caja-product){
+        margin: 0 3% 3% 3%;
+    }
+    & > div:has(.caja-product.caja-productHover):hover {
+        position: absolute;
+        transform: scale(1.025);
+        z-index: 9;
+        .caja-product{
+            max-height: unset;
+        }
+        .detailBox{
+            -webkit-line-clamp: unset;
+            line-clamp: unset;
+        }
+    }
+}
+
+.caja-product{
+    position: relative;
+    padding: 4%;
+    width: 100%;
+    max-height: 205px;
+    min-height: 200px;
+    border: solid 1px black;
+    background-color: #f2f2f2;
+    overflow: hidden;
+    .detailBox{
+        overflow: hidden;
+        display: -webkit-box;
+        -webkit-line-clamp: 3;
+        line-clamp: 3;
+        -webkit-box-orient: vertical;
+    }
+}
+
+
+.BimgContainer{
+    img{        
+        width: 100%;
+        aspect-ratio: 1 / 1;
+        object-fit: contain;
+    }
+}
+
+.soldOutLI{
+    position: absolute;
+    padding: 0px 111px;
+    color: #FF4A4A;
+    font-weight: 700;
+    background-color: rgba(255, 0, 0, 0.34);
+    transform: translate(-50%, -50%) rotate(-45deg);
+    top: 20%;
+    left: 26%;
+}
+
+.LowInvSpanner{
+    position: absolute;
+    right: -18%;
+    bottom: -12%;
+}

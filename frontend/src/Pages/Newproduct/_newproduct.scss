@@ -1,0 +1,180 @@
+@import "../../scss/_colors.scss";
+
+.warningCloud{
+    position: absolute;
+    padding: 2px;
+    background-color: #f2cb05a1;
+    border-radius: 10px;
+    font-weight: 700;
+    inset-block-end: 100%;
+    inset-inline-start: 0px;
+}
+
+.Newproduct{
+    padding: 10px 212px;
+    input[type=text]{
+        width: 41%;
+    }
+    .Colmn2{
+        width: 100%;
+    }
+    .Colmn1{
+        width: 16%;
+    }
+}
+
+.Inv{
+    width: 380px;
+    position: absolute;
+    right: 0;
+    top: 3%;
+}
+
+.InvLabel{
+    text-align: center;
+    padding-bottom: 15px;
+    border-bottom: solid 0px;
+    border-color: $azulPrincipal;
+}
+
+.Inv .Colmn1{
+    width: 28%;
+}
+
+.ProImgContainer{
+    width: 200px;
+    height: max-content;
+    aspect-ratio: 1 / 1;
+    border: solid 1px;
+    margin-right: 150px;
+    picture{
+        display: block;
+        height: 0;
+    }
+    img{
+        width: 100%;
+        aspect-ratio: 1 / 1;
+        object-fit: contain;
+    }
+}
+
+.npTextArea{
+    width: 500px;
+    height: 144px;
+    margin: auto 2px;
+    resize: none;
+}
+
+#productName{
+    width: 600px;
+}
+
+.catIconLabel{
+    position: relative;
+    input[type="radio"]{
+        margin: 10px 14px;
+        opacity: 0;
+        &:checked.crebanisteria + i::before{
+            color: $cEbanisteria;
+        }
+        &:checked.crgas + i::before{
+            color: $cGas;
+        }
+        &:checked.crelectricos + i::before{
+            color: $cElectricos;
+        }
+        &:checked.crgriferia + i::before{
+            color: $cGriferia;
+        }
+        &:checked.crestudiantil + i::before{
+            color: $cEstudiantil;
+        }
+        &:checked.crtornilleria + i::before{
+            color: $cTornilleria;
+        }
+    }
+    i{
+        position: absolute;
+        left: 0;
+        font-size: 28px;
+        color: #D9D9D9;
+    }
+}
+
+.custom-radio {
+    position: relative;
+    opacity: 0;
+    cursor: pointer;
+    margin-right: 5px;
+    margin-left: 5px;
+    border-color: $amarilloPrincipal;
+    border: 1px solid;
+  }
+
+.custom-label {
+    position: relative;
+    padding-left: 10px; /* Adjust padding for better spacing */
+    margin-right: 5px;
+    cursor: pointer;
+    user-select: none;
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+  
+    i::before {
+      content: "";
+      position: absolute;
+      top: 50%;
+      left: 0;
+      transform: translateY(-50%);
+      width: 20px; /* Increase width for larger border */
+      height: 20px; /* Increase height for larger border */
+      border: 4px solid; /* Increase border width and set color */
+      border-color: #D9D9D9;
+      border-radius: 50%;
+      background-color: white;
+      transition: border-color 0.2s ease-in-out;
+    }
+}
+
+.custom-radio:checked + i::before {
+    border-color: $amarilloPrincipal; /* Change border color when checked */
+}
+
+.salesMethod{
+    overflow: hidden;
+    max-height: 0;
+    transition: all 0.5s;
+}
+.salesMethod.show{
+    max-height: 500px;
+    transition: all 2s;
+}
+
+@media screen and (max-width: 1188px) {
+    .Newproduct{
+        padding: 10px 130px;
+    }
+}
+
+@media screen and (max-width: 1000px) {
+    .Newproduct{
+        padding: 10px 99px;
+    }
+    .catIconLabel{
+        position: relative;
+        input[type="radio"]{
+            margin: 10px 10px;
+            opacity: 0;
+        }
+        i {
+            font-size: 24px;
+        }
+    }
+}
+
+@media screen and (max-width: 935px){
+    .Inv{
+        right: -14%;
+    }    
+}
