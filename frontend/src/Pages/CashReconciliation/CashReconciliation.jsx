@@ -505,7 +505,8 @@ export function CashReconciliation() {
                     flexDirection: 'column', // Coloca los elementos en columna
                     alignItems: 'center',    // Centra horizontalmente
                     justifyContent: 'center', // Centra verticalmente
-                    height: '50vh'           // Ocupa toda la altura de la ventana
+                    padding: '20px', // Agrega espacio interno para mayor separación
+                    gap: '20px',// Ocupa toda la altura de la ventana
                 }}>
                 <h2>Entradas en efectivo</h2>
                     <Flatlist
@@ -524,7 +525,8 @@ export function CashReconciliation() {
                     flexDirection: 'column', // Coloca los elementos en columna
                     alignItems: 'center',    // Centra horizontalmente
                     justifyContent: 'center', // Centra verticalmente
-                    height: '50vh'           // Ocupa toda la altura de la ventana
+                    padding: '20px', // Agrega espacio interno para mayor separación
+                    gap: '20px',// Ocupa toda la altura de la ventana
                 }}>
                 <h2>Salidas en efectivo</h2>
                     <Flatlist
@@ -545,7 +547,8 @@ export function CashReconciliation() {
                 flexDirection: 'column', // Coloca los elementos en columna
                 alignItems: 'center',    // Centra horizontalmente
                 justifyContent: 'center', // Centra verticalmente
-                height: '70vh'           // Ocupa toda la altura de la ventana
+                padding: '20px', // Agrega espacio interno para mayor separación
+                gap: '20px',// Ocupa toda la altura de la ventana
             }}>
             <h1>Cuentas por categoria</h1>
             <PieChart/>
@@ -556,7 +559,9 @@ export function CashReconciliation() {
                     flexDirection: 'column', // Coloca los elementos en columna
                     alignItems: 'center',    // Centra horizontalmente
                     justifyContent: 'center', // Centra verticalmente
-                    height: '50vh'           // Ocupa toda la altura de la ventana
+                    padding: '20px', // Agrega espacio interno para mayor separación
+                    height: '500px',
+                    gap: '20px',// Ocupa toda la altura de la ventana
                 }}>
                 <h2>Devoluciones</h2>
                     <Flatlist
@@ -565,7 +570,7 @@ export function CashReconciliation() {
                         row={RowReturn}
                         selectedRow={selectedReturn}
                         setSelectedRow={setSelectedReturn}
-                        Height='100 px'
+                        Height='500 px'
                     />
             </div>
             <div style={{
@@ -573,7 +578,9 @@ export function CashReconciliation() {
                     flexDirection: 'column', // Coloca los elementos en columna
                     alignItems: 'center',    // Centra horizontalmente
                     justifyContent: 'center', // Centra verticalmente
-                    height: '50vh'          // Ocupa toda la altura de la ventana
+                    padding: '20px', // Agrega espacio interno para mayor separación
+                    height: '500px',
+                    gap: '20px',// Ocupa toda la altura de la ventana
                 }}>
                 <h2>mejores productos</h2>
                     <Flatlist

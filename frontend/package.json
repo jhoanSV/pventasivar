@@ -1,6 +1,6 @@
 {
   "name": "sivar_pos",
-  "version": "1.0.9",
+  "version": "1.0.10",
   "private": true,
   "main": "public/electron.js",
   "author": "SivarDevs",

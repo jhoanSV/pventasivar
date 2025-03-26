@@ -59,7 +59,7 @@ export const BoxItem = ({Codigo, Descripcion, simpleFunct, showModal, SVenta, Ag
                                 />
                                 <img
                                     src={img}
-                                    onError={()=>{setImg(imgPlaceHolder)}}
+                                    onError={imgPlaceHolder}
                                     alt="imgProducto"
                                     decoding="async"
                                 />

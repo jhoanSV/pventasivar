@@ -303,7 +303,8 @@ export const Newproduct = () => {
                     "ConsecutivoProd": theSomeData.current.Consecutivo,
                     "Cantidad": theSomeData.current.Inventario,
                     "Fecha": today,
-                    "Motivo": 'Agregar producto a inventario'
+                    "Motivo": 'Agregar producto a inventario',
+                    "Detalle": productData.Detalle
                 });
                 if(!(res && res.message === 'Transacción completada con éxito')){
                     await TheAlert('Ocurrió un error inesperado al agregar producto al inventario');
@@ -326,7 +327,8 @@ export const Newproduct = () => {
                 "ConsecutivoProd": theSomeData.current.Consecutivo,
                 "Cantidad": productData.Inventario,
                 "Fecha": today,
-                "Motivo": 'Agregar producto a inventario'
+                "Motivo": 'Agregar producto a inventario',
+                "Detalle": productData.Detalle
             });
             if(!(res && res.message === 'Transacción completada con éxito')){
                 await TheAlert('Ocurrió un error inesperado al agregar producto al inventario');
@@ -466,10 +468,6 @@ export const Newproduct = () => {
         setButtons("Modificar producto");
         setModificarProducto(true);
     };
-
-    useEffect(() => {
-        console.log('-->', productData);
-    }, [productData]);
 
     //For the search of products that already exist.
     //const filterByText = (item, text) => item.Cod.toString().toLowerCase().includes(text) || item.Descripcion.toString().toLowerCase().includes(text);
@@ -823,6 +821,7 @@ export const Newproduct = () => {
                     }
                     <textarea
                         type="textbox"
+                        maxlength="200"
                         className="taStnd npTextArea"
                         placeholder="Detalles del producto"
                         value={productData.Detalle}

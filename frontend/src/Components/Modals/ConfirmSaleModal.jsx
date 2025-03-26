@@ -164,8 +164,10 @@ export const ConfirmSaleModal = ({show, sendSale , folio , orderslist, width='50
                         ':' + String(now.getSeconds()).padStart(2, '0');
             if (tipoDePago !== 'Efectivo' &&  referencia === '') {
                 TheAlert('Debe ingresar una referencia para este tipo de pago')
+                return setVisiblevCargando(false)
             } else if (efectivo === 0 && transferencia === '') {
                 TheAlert('Debe ingresar el efectivo o la transferencia para este tipo de pago')
+                return setVisiblevCargando(false)
             } else {
                 if (Object.keys(orderslist.Customer).length === 0){
                     orderslist.Customer = {
